@@ -1,6 +1,5 @@
 import Image from "next/image";
 import type { Metadata } from "next";
-import { Tweaks } from "./Tweaks";
 import "./home.css";
 
 export const metadata: Metadata = {
@@ -11,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <Tweaks>
+    <div className="lc-home" data-hero="a" data-accent="orange">
       {/* ============ NAV ============ */}
       <nav className="nav">
         <div className="nav-inner">
@@ -19,8 +18,8 @@ export default function Home() {
             <Image
               src="/longevity-coach-horizontal-logo.png"
               alt="Longevity Coach"
-              width={160}
-              height={64}
+              width={220}
+              height={88}
               priority
             />
           </div>
@@ -647,8 +646,8 @@ export default function Home() {
             <Image
               src="/longevity-coach-horizontal-logo.png"
               alt="Longevity Coach"
-              width={140}
-              height={56}
+              width={200}
+              height={80}
             />
           </div>
           <div className="links">
@@ -660,6 +659,6 @@ export default function Home() {
           <div>© 2026 · LONGEVITY COACH LTD</div>
         </div>
       </footer>
-    </Tweaks>
+    </div>
   );
 }
