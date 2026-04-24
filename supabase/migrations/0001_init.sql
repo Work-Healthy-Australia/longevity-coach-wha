@@ -5,16 +5,19 @@
 --   risk_scores     : de-identified bio-age + domain risk scores
 --   subscriptions   : Stripe billing state
 --
+-- This migration is idempotent — safe to re-run if a previous attempt
+-- partially applied. It uses gen_random_uuid() (built-in since PG 13)
+-- rather than uuid-ossp's uuid_generate_v4(), which lives in Supabase's
+-- `extensions` schema and isn't on the default search_path.
+--
 -- TODO before production launch: move PII columns in `profiles`
 -- (full_name, phone, date_of_birth) into Supabase Vault. Email stays in
 -- auth.users. RLS is the primary access control; Vault is defense in depth.
 
-create extension if not exists "uuid-ossp";
-
 -- ---------------------------------------------------------------------------
 -- profiles : identifier store
 -- ---------------------------------------------------------------------------
-create table public.profiles (
+create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   full_name text,
   phone text,
@@ -25,6 +28,11 @@ create table public.profiles (
 );
 
 alter table public.profiles enable row level security;
+
+drop policy if exists "profiles_owner_select" on public.profiles;
+drop policy if exists "profiles_owner_update" on public.profiles;
+drop policy if exists "profiles_owner_insert" on public.profiles;
+drop policy if exists "profiles_admin_select" on public.profiles;
 
 create policy "profiles_owner_select" on public.profiles
   for select using (auth.uid() = id);
@@ -38,8 +46,8 @@ create policy "profiles_admin_select" on public.profiles
 -- ---------------------------------------------------------------------------
 -- health_profiles : de-identified questionnaire responses
 -- ---------------------------------------------------------------------------
-create table public.health_profiles (
-  id uuid primary key default uuid_generate_v4(),
+create table if not exists public.health_profiles (
+  id uuid primary key default gen_random_uuid(),
   user_uuid uuid not null references auth.users(id) on delete cascade,
   responses jsonb not null default '{}'::jsonb,
   completed_at timestamptz,
@@ -47,9 +55,13 @@ create table public.health_profiles (
   updated_at timestamptz not null default now()
 );
 
-create index health_profiles_user_uuid_idx on public.health_profiles(user_uuid);
+create index if not exists health_profiles_user_uuid_idx
+  on public.health_profiles(user_uuid);
 
 alter table public.health_profiles enable row level security;
+
+drop policy if exists "health_owner_all" on public.health_profiles;
+drop policy if exists "health_admin_select" on public.health_profiles;
 
 create policy "health_owner_all" on public.health_profiles
   for all using (auth.uid() = user_uuid) with check (auth.uid() = user_uuid);
@@ -59,8 +71,8 @@ create policy "health_admin_select" on public.health_profiles
 -- ---------------------------------------------------------------------------
 -- risk_scores : bio-age and per-domain risk
 -- ---------------------------------------------------------------------------
-create table public.risk_scores (
-  id uuid primary key default uuid_generate_v4(),
+create table if not exists public.risk_scores (
+  id uuid primary key default gen_random_uuid(),
   user_uuid uuid not null references auth.users(id) on delete cascade,
   biological_age numeric(5,2),
   cv_risk numeric(5,2),
@@ -71,9 +83,13 @@ create table public.risk_scores (
   computed_at timestamptz not null default now()
 );
 
-create index risk_scores_user_uuid_idx on public.risk_scores(user_uuid);
+create index if not exists risk_scores_user_uuid_idx
+  on public.risk_scores(user_uuid);
 
 alter table public.risk_scores enable row level security;
+
+drop policy if exists "risk_owner_select" on public.risk_scores;
+drop policy if exists "risk_admin_select" on public.risk_scores;
 
 -- Reads only; writes happen via service_role (server-side risk engine).
 create policy "risk_owner_select" on public.risk_scores
@@ -84,8 +100,8 @@ create policy "risk_admin_select" on public.risk_scores
 -- ---------------------------------------------------------------------------
 -- subscriptions : Stripe state (wired up in a later sprint day)
 -- ---------------------------------------------------------------------------
-create table public.subscriptions (
-  id uuid primary key default uuid_generate_v4(),
+create table if not exists public.subscriptions (
+  id uuid primary key default gen_random_uuid(),
   user_uuid uuid not null references auth.users(id) on delete cascade,
   stripe_customer_id text unique,
   stripe_subscription_id text unique,
@@ -97,9 +113,13 @@ create table public.subscriptions (
   updated_at timestamptz not null default now()
 );
 
-create index subscriptions_user_uuid_idx on public.subscriptions(user_uuid);
+create index if not exists subscriptions_user_uuid_idx
+  on public.subscriptions(user_uuid);
 
 alter table public.subscriptions enable row level security;
+
+drop policy if exists "subs_owner_select" on public.subscriptions;
+drop policy if exists "subs_admin_select" on public.subscriptions;
 
 create policy "subs_owner_select" on public.subscriptions
   for select using (auth.uid() = user_uuid);
@@ -123,6 +143,7 @@ begin
 end;
 $$;
 
+drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
@@ -138,14 +159,17 @@ begin
 end;
 $$;
 
+drop trigger if exists profiles_set_updated_at on public.profiles;
 create trigger profiles_set_updated_at
   before update on public.profiles
   for each row execute function public.set_updated_at();
 
+drop trigger if exists health_profiles_set_updated_at on public.health_profiles;
 create trigger health_profiles_set_updated_at
   before update on public.health_profiles
   for each row execute function public.set_updated_at();
 
+drop trigger if exists subscriptions_set_updated_at on public.subscriptions;
 create trigger subscriptions_set_updated_at
   before update on public.subscriptions
   for each row execute function public.set_updated_at();
