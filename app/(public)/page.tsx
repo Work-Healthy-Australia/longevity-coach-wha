@@ -23,13 +23,6 @@ export default function Home() {
               priority
             />
           </div>
-          <div className="nav-links">
-            <a href="#how">How it works</a>
-            <a href="#what">What you get</a>
-            <a href="#science">Science</a>
-            <a href="#founder">Our team</a>
-            <a href="#stories">Member stories</a>
-          </div>
           <div className="nav-cta">
             <a className="btn btn-ghost" href="/login">Sign in</a>
             <a className="btn btn-primary" href="/signup">Get my bio-age</a>
@@ -57,7 +50,7 @@ export default function Home() {
               </p>
               <div className="ctas">
                 <a className="btn btn-primary btn-lg" href="/signup">Get my bio-age →</a>
-                <a className="btn btn-ghost btn-lg" href="#">See a sample report</a>
+                <a className="btn btn-ghost btn-lg" href="/sample-report">See a sample report</a>
               </div>
               <div className="mini">
                 <span><span className="dot" />&nbsp;&nbsp;No credit card to start</span>
@@ -144,7 +137,7 @@ export default function Home() {
 
             <div className="cta-row">
               <a className="btn btn-primary btn-lg" href="/signup">Get my bio-age →</a>
-              <a className="btn btn-ghost btn-lg" href="#">See a sample report</a>
+              <a className="btn btn-ghost btn-lg" href="/sample-report">See a sample report</a>
               <span className="legal">NO CREDIT CARD · 7 MINUTES · CANCEL ANYTIME</span>
             </div>
           </div>
@@ -619,7 +612,7 @@ export default function Home() {
             </p>
             <div className="ctas">
               <a className="btn btn-accent btn-lg" href="/signup">Get my bio-age →</a>
-              <a className="btn btn-ghost btn-lg" href="#" style={{ color: "#fff" }}>See a sample report</a>
+              <a className="btn btn-ghost btn-lg" href="/sample-report" style={{ color: "#fff" }}>See a sample report</a>
             </div>
           </div>
           <div className="points">
