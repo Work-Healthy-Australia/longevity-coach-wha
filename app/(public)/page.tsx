@@ -31,8 +31,8 @@ export default function Home() {
             <a href="#stories">Member stories</a>
           </div>
           <div className="nav-cta">
-            <a className="btn btn-ghost" href="#">Sign in</a>
-            <a className="btn btn-primary" href="#">Get my bio-age</a>
+            <a className="btn btn-ghost" href="/login">Sign in</a>
+            <a className="btn btn-primary" href="/signup">Get my bio-age</a>
           </div>
         </div>
       </nav>
@@ -56,7 +56,7 @@ export default function Home() {
                 supplement protocol made for you - not for everyone.
               </p>
               <div className="ctas">
-                <a className="btn btn-primary btn-lg" href="#">Get my bio-age →</a>
+                <a className="btn btn-primary btn-lg" href="/signup">Get my bio-age →</a>
                 <a className="btn btn-ghost btn-lg" href="#">See a sample report</a>
               </div>
               <div className="mini">
@@ -143,7 +143,7 @@ export default function Home() {
             </div>
 
             <div className="cta-row">
-              <a className="btn btn-primary btn-lg" href="#">Get my bio-age →</a>
+              <a className="btn btn-primary btn-lg" href="/signup">Get my bio-age →</a>
               <a className="btn btn-ghost btn-lg" href="#">See a sample report</a>
               <span className="legal">NO CREDIT CARD · 7 MINUTES · CANCEL ANYTIME</span>
             </div>
@@ -618,7 +618,7 @@ export default function Home() {
               written for one person.
             </p>
             <div className="ctas">
-              <a className="btn btn-accent btn-lg" href="#">Get my bio-age →</a>
+              <a className="btn btn-accent btn-lg" href="/signup">Get my bio-age →</a>
               <a className="btn btn-ghost btn-lg" href="#" style={{ color: "#fff" }}>See a sample report</a>
             </div>
           </div>

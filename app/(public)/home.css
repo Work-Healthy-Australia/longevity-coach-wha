@@ -452,11 +452,14 @@
   display: grid; grid-template-columns: repeat(3, 1fr);
   gap: 0;
   border-top: 1px solid var(--lc-ink);
+  align-items: stretch;
 }
 .lc-home .step {
   padding: 40px 32px 44px 0;
   border-right: 1px solid var(--lc-line);
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 .lc-home .step:last-child { border-right: none; padding-right: 0; }
 .lc-home .step + .step { padding-left: 32px; }
@@ -484,6 +487,7 @@
   padding: 16px 18px;
   font-size: 13px;
   display: grid; gap: 8px;
+  margin-top: auto;
 }
 .lc-home .step .mini-card .k { font-family: var(--lc-mono); font-size: 11px; letter-spacing: 0.08em; color: var(--lc-grey); }
 .lc-home .step .mini-card .v { font-family: var(--lc-serif); font-size: 17px; letter-spacing: -0.01em; }
