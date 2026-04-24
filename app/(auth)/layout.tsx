@@ -11,10 +11,10 @@ export default function AuthLayout({
     <div className="lc-auth">
       <Link href="/" className="auth-brand">
         <Image
-          src="/longevity-coach-logo.png"
+          src="/longevity-coach-horizontal-logo.png"
           alt="Longevity Coach"
-          width={180}
-          height={56}
+          width={200}
+          height={80}
           priority
         />
       </Link>

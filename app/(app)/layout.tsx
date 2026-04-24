@@ -30,10 +30,11 @@ export default async function AppLayout({
       >
         <Link href="/dashboard" style={{ display: "flex", alignItems: "center" }}>
           <Image
-            src="/longevity-coach-logo.png"
+            src="/longevity-coach-horizontal-logo.png"
             alt="Longevity Coach"
-            width={120}
-            height={40}
+            width={140}
+            height={56}
+            priority
           />
         </Link>
         <form action={signOut}>

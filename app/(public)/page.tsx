@@ -17,12 +17,12 @@ export default function Home() {
         <div className="nav-inner">
           <div className="brand">
             <Image
-              src="/longevity-coach-logo.png"
-              alt=""
-              width={34}
-              height={34}
+              src="/longevity-coach-horizontal-logo.png"
+              alt="Longevity Coach"
+              width={160}
+              height={64}
+              priority
             />
-            <span className="wordmark">Longevity Coach</span>
           </div>
           <div className="nav-links">
             <a href="#how">How it works</a>
@@ -645,12 +645,11 @@ export default function Home() {
         <div className="wrap">
           <div className="brand-f">
             <Image
-              src="/longevity-coach-logo.png"
-              alt=""
-              width={28}
-              height={28}
+              src="/longevity-coach-horizontal-logo.png"
+              alt="Longevity Coach"
+              width={140}
+              height={56}
             />
-            <span className="wordmark">Longevity Coach</span>
           </div>
           <div className="links">
             <a href="#">Privacy</a>
