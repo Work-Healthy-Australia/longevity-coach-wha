@@ -13,8 +13,8 @@ export default function AuthLayout({
         <Image
           src="/longevity-coach-horizontal-logo.png"
           alt="Longevity Coach"
-          width={200}
-          height={80}
+          width={600}
+          height={125}
           priority
         />
       </Link>

@@ -4,10 +4,10 @@
 //
 // Deferred for Sunday with James:
 //   - File uploads (blood, imaging, genetic, microbiome, hormonal, other)
-//     — needs Supabase Storage bucket + RLS decision
+//     - needs Supabase Storage bucket + RLS decision
 //   - Detailed family-history sub-fields (age of onset, cancer types)
-//     — start with a simple yes/no per category, deepen later
-//   - Payment step — handled by /api/stripe/checkout, not part of this form
+//     - start with a simple yes/no per category, deepen later
+//   - Payment step - handled by /api/stripe/checkout, not part of this form
 
 import type { QuestionnaireDef } from "./schema";
 
@@ -112,7 +112,7 @@ export const onboardingQuestionnaire: QuestionnaireDef = {
       id: "lifestyle",
       label: "Lifestyle",
       description:
-        "Lifestyle factors are the most modifiable part of your risk profile — this is where we can make the biggest impact.",
+        "Lifestyle factors are the most modifiable part of your risk profile - this is where we can make the biggest impact.",
       fields: [
         {
           id: "smoking",

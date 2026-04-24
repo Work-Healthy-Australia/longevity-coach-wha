@@ -32,8 +32,8 @@ export default async function AppLayout({
           <Image
             src="/longevity-coach-horizontal-logo.png"
             alt="Longevity Coach"
-            width={140}
-            height={56}
+            width={600}
+            height={125}
             priority
           />
         </Link>

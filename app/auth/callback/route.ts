@@ -1,21 +1,40 @@
 import { NextResponse, type NextRequest } from "next/server";
+import type { EmailOtpType } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 import { sendWelcomeEmail } from "@/lib/email/welcome";
 
 const JUST_CONFIRMED_WINDOW_MS = 60_000;
 
+// Handles two Supabase auth callbacks against the same URL:
+//
+//   1. Email confirmation / password reset / magic link via verifyOtp.
+//      Supabase email templates send users to ?token_hash=...&type=signup
+//      (or recovery, email, invite, magiclink, email_change).
+//
+//   2. OAuth / PKCE-style code exchange via exchangeCodeForSession.
+//      Used by social sign-in and PKCE magic-link flows that pass ?code=.
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
+  const tokenHash = url.searchParams.get("token_hash");
+  const type = url.searchParams.get("type") as EmailOtpType | null;
   const next = url.searchParams.get("next") ?? "/dashboard";
 
-  if (!code) {
-    return NextResponse.redirect(new URL("/login?error=auth_callback_failed", url));
+  const supabase = await createClient();
+
+  let authError: string | null = null;
+  if (tokenHash && type) {
+    const { error } = await supabase.auth.verifyOtp({ type, token_hash: tokenHash });
+    if (error) authError = error.message;
+  } else if (code) {
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    if (error) authError = error.message;
+  } else {
+    authError = "missing token_hash or code";
   }
 
-  const supabase = await createClient();
-  const { error } = await supabase.auth.exchangeCodeForSession(code);
-  if (error) {
+  if (authError) {
+    console.error("auth callback failed:", authError);
     return NextResponse.redirect(new URL("/login?error=auth_callback_failed", url));
   }
 

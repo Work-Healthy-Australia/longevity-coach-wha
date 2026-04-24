@@ -19,7 +19,7 @@ export async function sendWelcomeEmail({ to, firstName, appUrl }: WelcomeArgs) {
       </h1>
       <p style="font-size:15px;line-height:1.55;margin:0 0 16px;color:#4B4B4B;">${greeting}</p>
       <p style="font-size:15px;line-height:1.55;margin:0 0 16px;color:#4B4B4B;">
-        Your account is ready. The next step is a short health assessment —
+        Your account is ready. The next step is a short health assessment -
         about 10 minutes. We'll use it to calculate your biological age, your
         risk scores across five domains, and a personalised supplement protocol.
       </p>
@@ -41,18 +41,18 @@ export async function sendWelcomeEmail({ to, firstName, appUrl }: WelcomeArgs) {
 
   const text = `${greeting}
 
-Your Longevity Coach account is ready. The next step is a short health assessment — about 10 minutes. We'll use it to calculate your biological age, your risk scores across five domains, and a personalised supplement protocol.
+Your Longevity Coach account is ready. The next step is a short health assessment - about 10 minutes. We'll use it to calculate your biological age, your risk scores across five domains, and a personalised supplement protocol.
 
 Start your assessment: ${appUrl}/onboarding
 
 Questions? Just reply to this email.
 
-— The Longevity Coach team`;
+- The Longevity Coach team`;
 
   return resend.emails.send({
     from: getFromAddress(),
     to,
-    subject: "Welcome to Longevity Coach — let's get started",
+    subject: "Welcome to Longevity Coach - let's get started",
     html,
     text,
   });

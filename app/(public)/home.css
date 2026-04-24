@@ -1,4 +1,4 @@
-/* Longevity Coach — Home page styles
+/* Longevity Coach - Home page styles
  * Ported from design bundle (claude.ai/design). Self-contained: does not
  * depend on Tailwind utilities. Fonts are loaded via next/font in layout.tsx
  * and surfaced as --font-lc-* CSS variables.
@@ -128,7 +128,7 @@
 .lc-home .wrap { max-width: 1280px; margin: 0 auto; padding: 0 48px; }
 .lc-home section { padding: 96px 0; border-bottom: 1px solid var(--lc-line); }
 
-/* ============ HERO — SAFE (A) ============ */
+/* ============ HERO - SAFE (A) ============ */
 .lc-home .hero-a {
   padding: 88px 0 96px;
   border-bottom: 1px solid var(--lc-line);
@@ -248,7 +248,7 @@
 .lc-home .report::before { inset: -10px -10px auto auto; width: 90%; height: 100%; transform: rotate(2deg); opacity: 0.6; }
 .lc-home .report::after  { inset: auto auto -14px -14px; width: 85%; height: 90%; transform: rotate(-2deg); opacity: 0.45; }
 
-/* ============ HERO — BOLDER (B) ============ */
+/* ============ HERO - BOLDER (B) ============ */
 .lc-home .hero-b {
   padding: 72px 0 0;
   background: var(--lc-surface);

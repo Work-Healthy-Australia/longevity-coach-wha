@@ -12,7 +12,7 @@ export async function updateSession(request: NextRequest) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
-  // Supabase not configured yet — pass through. Lets us deploy
+  // Supabase not configured yet - pass through. Lets us deploy
   // marketing previews without requiring auth env vars.
   if (!url || !key) return NextResponse.next({ request });
 

@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "./database.types";
 
-// Service-role client — bypasses RLS. Server-only. NEVER import from
+// Service-role client - bypasses RLS. Server-only. NEVER import from
 // client components or expose the secret. Used by Stripe/webhook handlers
 // that need to write rows on behalf of any user.
 export function createAdminClient() {

@@ -5,7 +5,7 @@
 --   risk_scores     : de-identified bio-age + domain risk scores
 --   subscriptions   : Stripe billing state
 --
--- This migration is idempotent — safe to re-run if a previous attempt
+-- This migration is idempotent - safe to re-run if a previous attempt
 -- partially applied. It uses gen_random_uuid() (built-in since PG 13)
 -- rather than uuid-ossp's uuid_generate_v4(), which lives in Supabase's
 -- `extensions` schema and isn't on the default search_path.

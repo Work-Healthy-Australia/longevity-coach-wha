@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import "./home.css";
 
 export const metadata: Metadata = {
-  title: "Longevity Coach — Live longer, on purpose.",
+  title: "Longevity Coach - Live longer, on purpose.",
   description:
     "Seven minutes of honest questions. A clinically-grounded biological age, risk scores across five domains, and a supplement protocol made for you.",
 };
@@ -18,8 +18,8 @@ export default function Home() {
             <Image
               src="/longevity-coach-horizontal-logo.png"
               alt="Longevity Coach"
-              width={220}
-              height={88}
+              width={600}
+              height={125}
               priority
             />
           </div>
@@ -53,7 +53,7 @@ export default function Home() {
               <p className="sub">
                 Seven minutes of honest questions. A clinically-grounded
                 biological age, risk scores across five domains, and a
-                supplement protocol made for you — not for everyone.
+                supplement protocol made for you - not for everyone.
               </p>
               <div className="ctas">
                 <a className="btn btn-primary btn-lg" href="#">Get my bio-age →</a>
@@ -127,7 +127,7 @@ export default function Home() {
               <div className="lede">
                 A seven-minute intake. A clinically-grounded biological age.
                 Five risk domains and a supplement protocol built for one
-                person — you.
+                person - you.
               </div>
               <div className="stat">
                 <div className="n">5,400+</div>
@@ -285,7 +285,7 @@ export default function Home() {
               <h3>Tell us about <em>your life.</em></h3>
               <p>
                 A plain-English intake: what you eat, how you sleep, how you
-                move, who came before you. Save and come back — nothing is
+                move, who came before you. Save and come back - nothing is
                 submitted until you confirm.
               </p>
               <div className="mini-card">
@@ -297,9 +297,9 @@ export default function Home() {
               <div className="num">STEP 02 · CLINICAL MODELS</div>
               <h3>Your <em>biological age,</em> five domains scored.</h3>
               <p>
-                We run your answers through five peer-reviewed risk models —
+                We run your answers through five peer-reviewed risk models -
                 cardiovascular, metabolic, neurological, oncological,
-                musculoskeletal — and reconcile them into one age.
+                musculoskeletal - and reconcile them into one age.
               </p>
               <div className="mini-card">
                 <span className="k">OUTPUT</span>
@@ -310,7 +310,7 @@ export default function Home() {
               <div className="num">STEP 03 · YOUR PROTOCOL</div>
               <h3>A plan written <em>for one person.</em></h3>
               <p>
-                Specific supplements, specific doses, specific timing — with
+                Specific supplements, specific doses, specific timing - with
                 the rationale for each. Download as a branded PDF, or take it
                 to your GP.
               </p>
@@ -344,7 +344,7 @@ export default function Home() {
               <h3>The only number <em>you actually need.</em></h3>
               <p className="sub">
                 One figure. Updated every time your data changes. Compared
-                honestly against your chronological age — no hype.
+                honestly against your chronological age - no hype.
               </p>
               <div className="feat-big-n">34.8<span className="u">yrs</span></div>
             </div>
@@ -354,7 +354,7 @@ export default function Home() {
               <h3>Five domains, <em>measured.</em></h3>
               <p className="sub">
                 Cardiovascular, metabolic, neurological, oncological,
-                musculoskeletal — low, moderate, or high, with what&rsquo;s
+                musculoskeletal - low, moderate, or high, with what&rsquo;s
                 driving each.
               </p>
               <div className="proof">
@@ -367,7 +367,7 @@ export default function Home() {
               <span className="eyebrow eye" style={{ color: "var(--lc-plum-700)" }}>03 · SUPPLEMENTS</span>
               <h3>A protocol, <em>not a pile.</em></h3>
               <p className="sub">
-                3–7 supplements, specific doses, specific times — and the
+                3–7 supplements, specific doses, specific times - and the
                 reason each one is on your list.
               </p>
               <div className="proof">
@@ -380,7 +380,7 @@ export default function Home() {
               <span className="eyebrow eye on-dark">04 · A BRANDED PDF</span>
               <h3>Something you can <em>show your GP.</em></h3>
               <p className="sub">
-                Every report is exported as a clean, clinician-ready PDF —
+                Every report is exported as a clean, clinician-ready PDF -
                 your bio-age, risk domains, protocol and the methodology
                 behind each number.
               </p>
@@ -455,9 +455,9 @@ export default function Home() {
                 <div>
                   <h4>Based on <em>replicated</em> cohort data.</h4>
                   <p>
-                    We combine established risk engines — QRISK3 for CV,
+                    We combine established risk engines - QRISK3 for CV,
                     FINDRISC for metabolic, and peer-reviewed equivalents for
-                    the other three domains — rather than a single black-box
+                    the other three domains - rather than a single black-box
                     algorithm.
                   </p>
                 </div>
@@ -468,7 +468,7 @@ export default function Home() {
                   <h4>Every score carries a <em>confidence interval.</em></h4>
                   <p>
                     When we don&rsquo;t have enough input to be confident, we
-                    tell you — and we ask for the specific data point that
+                    tell you - and we ask for the specific data point that
                     would sharpen the number.
                   </p>
                 </div>
@@ -479,7 +479,7 @@ export default function Home() {
                   <h4>We never pretend <em>a questionnaire is a lab.</em></h4>
                   <p>
                     When a biomarker would genuinely change your plan,
-                    we&rsquo;ll say so — and connect you to a partner lab
+                    we&rsquo;ll say so - and connect you to a partner lab
                     rather than guess.
                   </p>
                 </div>
@@ -523,7 +523,7 @@ export default function Home() {
               <blockquote className="founder-quote">
                 &ldquo;I spent fifteen years telling patients to lose weight
                 and sleep better. Longevity Coach is what happens when you
-                give that advice the <em>specificity</em> it deserves — for
+                give that advice the <em>specificity</em> it deserves - for
                 one person, not the average patient.&rdquo;
               </blockquote>
               <div className="founder-attribution">
@@ -629,7 +629,7 @@ export default function Home() {
             </div>
             <div className="p">
               <span className="n">02</span>
-              <span>Cancel your membership in one click. Your data is yours — export it or delete it anytime.</span>
+              <span>Cancel your membership in one click. Your data is yours - export it or delete it anytime.</span>
             </div>
             <div className="p">
               <span className="n">03</span>
@@ -646,8 +646,8 @@ export default function Home() {
             <Image
               src="/longevity-coach-horizontal-logo.png"
               alt="Longevity Coach"
-              width={200}
-              height={80}
+              width={600}
+              height={125}
             />
           </div>
           <div className="links">
