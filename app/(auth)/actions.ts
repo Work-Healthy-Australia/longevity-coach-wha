@@ -5,7 +5,13 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 
-type State = { error?: string; success?: string };
+type State = {
+  error?: string;
+  success?: string;
+  // Echo back submitted values so the form can repopulate inputs after a
+  // server-side validation error (without storing the password).
+  values?: { email?: string; full_name?: string };
+};
 
 function originFromHeaders(h: Headers): string {
   const proto = h.get("x-forwarded-proto") ?? "https";
@@ -16,12 +22,14 @@ function originFromHeaders(h: Headers): string {
 export async function signIn(_: State, formData: FormData): Promise<State> {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
+  const values = { email };
 
-  if (!email || !password) return { error: "Email and password are required." };
+  if (!email || !password)
+    return { error: "Email and password are required.", values };
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) return { error: error.message };
+  if (error) return { error: error.message, values };
 
   revalidatePath("/", "layout");
   redirect("/dashboard");
@@ -31,9 +39,12 @@ export async function signUp(_: State, formData: FormData): Promise<State> {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
   const fullName = String(formData.get("full_name") ?? "").trim();
+  const values = { email, full_name: fullName };
 
-  if (!email || !password) return { error: "Email and password are required." };
-  if (password.length < 8) return { error: "Password must be at least 8 characters." };
+  if (!email || !password)
+    return { error: "Email and password are required.", values };
+  if (password.length < 8)
+    return { error: "Password must be at least 8 characters.", values };
 
   const supabase = await createClient();
   const origin = originFromHeaders(await headers());
@@ -46,7 +57,7 @@ export async function signUp(_: State, formData: FormData): Promise<State> {
       data: { full_name: fullName },
     },
   });
-  if (error) return { error: error.message };
+  if (error) return { error: error.message, values };
 
   redirect(`/verify-email?email=${encodeURIComponent(email)}`);
 }

@@ -1,0 +1,200 @@
+[
+  {
+    "area": "Landing",
+    "name": "headline 'Live longer' visible",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "Landing",
+    "name": "logo image renders",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "Landing",
+    "name": "Sign in CTA present in nav",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "Landing",
+    "name": "primary CTA 'Get my bio-age' present",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "Landing",
+    "name": "secondary CTA 'See a sample report' present",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "Landing",
+    "name": "trust line: 'No credit card to start'",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "Landing",
+    "name": "trust line: 'GMC-registered clinicians'",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "nav 'Get my bio-age' link points to /signup",
+    "name": "Nav",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "nav 'Sign in' link points to /login",
+    "name": "Nav",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "hero 'Get my bio-age' navigates to /signup",
+    "name": "Nav",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "'See a sample report' link points to /sample-report",
+    "name": "Nav",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "Science (/science) renders 200",
+    "name": "PublicPages",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "Science has at least one heading",
+    "name": "PublicPages",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "Science renders the brand logo",
+    "name": "PublicPages",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "Team (/team) renders 200",
+    "name": "PublicPages",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "Team has at least one heading",
+    "name": "PublicPages",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "Team renders the brand logo",
+    "name": "PublicPages",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "Stories (/stories) renders 200",
+    "name": "PublicPages",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "Stories has at least one heading",
+    "name": "PublicPages",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "Stories renders the brand logo",
+    "name": "PublicPages",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "Sample Report (/sample-report) renders 200",
+    "name": "PublicPages",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "Sample Report has at least one heading",
+    "name": "PublicPages",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "Sample Report renders the brand logo",
+    "name": "PublicPages",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "/login renders heading 'Welcome back'",
+    "name": "AuthPages",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "/signup renders heading 'Create your account'",
+    "name": "AuthPages",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "/forgot-password renders heading 'Reset your password'",
+    "name": "AuthPages",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "/dashboard \u2192 /login?redirect=/dashboard when unauthenticated",
+    "name": "AuthGuard",
+    "status": "PASS",
+    "detail": "destination preserved by proxy.ts for post-login bounce"
+  },
+  {
+    "area": "/onboarding \u2192 /login?redirect=/onboarding when unauthenticated",
+    "name": "AuthGuard",
+    "status": "PASS",
+    "detail": "destination preserved by proxy.ts for post-login bounce"
+  },
+  {
+    "area": "/auth/callback (no token) \u2192 safe error redirect",
+    "name": "AuthGuard",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "no JS console errors across landing + public pages",
+    "name": "Console",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "no failed requests across landing + public pages",
+    "name": "Network",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "landing page <title> contains 'Longevity'",
+    "name": "SEO",
+    "status": "PASS",
+    "detail": "actual: Longevity Coach - Live longer, on purpose."
+  },
+  {
+    "area": "/favicon.ico responds 200",
+    "name": "Assets",
+    "status": "PASS",
+    "detail": ""
+  }
+]
