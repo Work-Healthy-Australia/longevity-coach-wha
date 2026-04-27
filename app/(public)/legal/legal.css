@@ -1,0 +1,21 @@
+.lc-legal {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 48px 24px 96px;
+  color: var(--lc-ink);
+  line-height: 1.6;
+}
+.lc-legal h1 { font-size: 28px; margin: 8px 0 4px; }
+.lc-legal h2 { font-size: 18px; margin: 32px 0 8px; }
+.lc-legal p, .lc-legal ul { margin: 8px 0; }
+.lc-legal ul { padding-left: 22px; }
+.lc-legal-eyebrow {
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--lc-ink-soft);
+  margin: 0;
+}
+.lc-legal-meta { color: var(--lc-ink-soft); font-size: 13px; }
+.lc-legal-back { margin-top: 48px; font-size: 14px; }
+.lc-legal a { color: var(--lc-accent); }

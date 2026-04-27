@@ -9,10 +9,21 @@ export type FieldType =
   | "text"
   | "textarea"
   | "number"
+  | "date"
   | "select"
   | "multiselect"
   | "chips"   // multi-select with a selection limit, rendered as pill buttons
-  | "toggle";
+  | "toggle"
+  | "allergy_list"; // FHIR AllergyIntolerance — list of {substance, category, criticality, reaction}
+
+// Shape of a single allergy entry in `allergy_list` field values.
+// Aligned with FHIR AllergyIntolerance.category + criticality value sets.
+export type AllergyEntry = {
+  substance: string;
+  category: "medication" | "food" | "environment" | "biologic" | "other";
+  criticality: "low" | "high" | "unable-to-assess";
+  reaction?: string;
+};
 
 export type FieldDef = {
   id: string;

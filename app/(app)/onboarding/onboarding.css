@@ -72,9 +72,36 @@
   font-size: 14px;
   margin: 0 0 24px;
 }
+.lc-onboarding .card .step-greeting {
+  font-size: 15px;
+  font-weight: 500;
+  margin: 0 0 8px;
+}
+.lc-onboarding .card .step-callout {
+  background: var(--lc-bg-soft, #f4f6fa);
+  border-left: 3px solid var(--lc-accent);
+  padding: 10px 14px;
+  margin: 0 0 20px;
+  font-size: 14px;
+}
+.lc-onboarding .card .step-callout a { color: var(--lc-accent); font-weight: 500; }
 
 .lc-onboarding .fields { display: flex; flex-direction: column; gap: 16px; }
 .lc-onboarding .field { display: flex; flex-direction: column; gap: 6px; }
+.lc-onboarding .field-help { color: var(--lc-ink-soft); font-size: 13px; margin: 0; }
+
+.lc-onboarding .allergy-list { display: flex; flex-direction: column; gap: 8px; }
+.lc-onboarding .allergy-empty { color: var(--lc-ink-soft); font-size: 13px; margin: 0; }
+.lc-onboarding .allergy-row {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1.4fr auto;
+  gap: 6px;
+  align-items: center;
+}
+.lc-onboarding .allergy-row input,
+.lc-onboarding .allergy-row select { font-size: 14px; padding: 8px; }
+.lc-onboarding .allergy-remove { padding: 4px 10px; font-size: 18px; line-height: 1; }
+.lc-onboarding .allergy-add { align-self: flex-start; }
 .lc-onboarding .field label {
   font-size: 13px;
   font-weight: 500;

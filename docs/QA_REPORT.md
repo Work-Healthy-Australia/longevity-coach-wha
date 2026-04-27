@@ -14,28 +14,25 @@
 | Vitest unit | 18 | 18 | 0 | 0 |
 | Vitest integration | 29 | 29 | 0 | 0 |
 | Live QA (Playwright, non-auth) | 33 | 33 | 0 | 0 |
-| Live QA auth flow (manual + scripted) | 11 | 9 | 1 | 1 |
+| Live QA auth flow (manual + scripted) | 11 | 10 | 0 | 1 |
 | pgTAP RLS (written, not yet executed against DB) | 20 | — | — | — |
-| **Total executed** | **91** | **89** | **1** | **1** |
+| **Total executed** | **91** | **90** | **0** | **1** |
 
-**One real bug found and one external limitation.** Everything else is healthy.
+**BUG-1 fixed (2026-04-27); one external limitation remains.** Everything else is healthy.
 
 ---
 
 ## Findings
 
-### 🐞 BUG-1 — Signup form clears all fields after a server-side validation error
+### ✅ BUG-1 — Signup form clears all fields after a server-side validation error — FIXED 2026-04-27
 
 - **Severity:** Medium (UX)
+- **Status:** Fixed
 - **File:** [app/(auth)/signup/signup-form.tsx](app/(auth)/signup/signup-form.tsx)
-- **Reproduction:**
-  1. Go to `/signup`.
-  2. Disable HTML5 validation (or submit a password that passes `minLength=8` but fails another server check).
-  3. Server returns `{ error: "Password must be at least 8 characters." }`.
-  4. After the response, `full_name`, `email`, and `password` inputs are all empty.
-- **Why it happens:** the form uses uncontrolled inputs with no `defaultValue`, so React re-renders empty after the action returns.
-- **Impact:** users have to retype their full name and email every time the server rejects their submission.
-- **Fix:** capture the submitted values in `useActionState`'s state object and pass them back as `defaultValue` on each input. Confirmed by automated test: `tests/live-qa/qa_run.py::test_signup_short_password` line "REGRESSION: form values preserved after server error".
+- **Original symptom:** after a server validation error (e.g. server-side password rejection when HTML5 was bypassed), `full_name`, `email`, and `password` inputs all came back empty, forcing users to retype everything.
+- **Root cause:** the form used uncontrolled inputs with no `defaultValue`, so React re-rendered empty after the action returned.
+- **Fix:** the `signUp` / `signIn` actions in [app/(auth)/actions.ts](app/(auth)/actions.ts) now echo `{ email, full_name }` back on every error path via `state.values`, and the form passes those into `defaultValue` on the `full_name` and `email` inputs ([signup-form.tsx:19](app/(auth)/signup/signup-form.tsx:19), [signup-form.tsx:29](app/(auth)/signup/signup-form.tsx:29)). Password is deliberately NOT echoed back (kept off the wire).
+- **Verification:** `tests/live-qa/qa_run.py::test_signup_short_password` ("REGRESSION: form values preserved after server error") now passes.
 
 ### ⚠️ EXT-1 — Supabase email rate limit blocks repeated signup tests
 
@@ -66,7 +63,7 @@ Per gap analysis: the upload portal, family-history depth, risk engine, patient 
 | Short password blocked client-side via `minLength=8` (defence in depth) | ✅ |
 | Short password rejected by server when HTML5 bypassed | ✅ |
 | `/forgot-password` returns non-enumerable success ("If an account exists…") | ✅ |
-| Form fields preserve values after server error | ❌ **BUG-1** |
+| Form fields preserve values after server error | ✅ (BUG-1 fixed) |
 | Valid signup → `/verify-email` with email shown | ⚠️ rate-limited (EXT-1) |
 
 ### Auth guard (proxy.ts)
@@ -228,7 +225,7 @@ Live QA via skill:
 
 ## Recommendations
 
-1. **Fix BUG-1** (signup form clearing). One-line change in `signup-form.tsx` — pass `defaultValue` from action state to each input.
+1. ~~**Fix BUG-1** (signup form clearing).~~ ✅ Done 2026-04-27.
 2. **Add a seeded test user fixture** so authenticated E2E tests can run in CI without hitting email rate limits.
 3. **Run `pnpm test` in CI on every PR** — already configured, just needs a workflow file.
 4. **Consider rotating the Supabase secret key** that was committed to `.env.example`.
