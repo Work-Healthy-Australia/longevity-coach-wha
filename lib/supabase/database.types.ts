@@ -14,6 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
+      patient_uploads: {
+        Row: {
+          id: string
+          user_uuid: string
+          storage_path: string
+          original_filename: string
+          mime_type: string
+          file_size_bytes: number
+          janet_status: "pending" | "processing" | "done" | "error"
+          janet_category: string | null
+          janet_summary: string | null
+          janet_findings: Json | null
+          janet_error: string | null
+          janet_processed_at: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_uuid: string
+          storage_path: string
+          original_filename: string
+          mime_type: string
+          file_size_bytes: number
+          janet_status?: "pending" | "processing" | "done" | "error"
+          janet_category?: string | null
+          janet_summary?: string | null
+          janet_findings?: Json | null
+          janet_error?: string | null
+          janet_processed_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_uuid?: string
+          storage_path?: string
+          original_filename?: string
+          mime_type?: string
+          file_size_bytes?: number
+          janet_status?: "pending" | "processing" | "done" | "error"
+          janet_category?: string | null
+          janet_summary?: string | null
+          janet_findings?: Json | null
+          janet_error?: string | null
+          janet_processed_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       health_profiles: {
         Row: {
           completed_at: string | null
