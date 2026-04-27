@@ -19,7 +19,13 @@ export function LoginForm() {
       {error && <div className="auth-error">{error}</div>}
       <label>
         Email
-        <input type="email" name="email" autoComplete="email" required />
+        <input
+          type="email"
+          name="email"
+          autoComplete="email"
+          required
+          defaultValue={state.values?.email ?? ""}
+        />
       </label>
       <label>
         Password

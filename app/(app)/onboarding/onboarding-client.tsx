@@ -1,8 +1,9 @@
 "use client";
 
 import { useCallback, useState, useTransition } from "react";
-import type { FieldDef, ResponsesByStep, StepDef } from "@/lib/questionnaire/schema";
+import type { FieldDef, ResponsesByStep } from "@/lib/questionnaire/schema";
 import { onboardingQuestionnaire } from "@/lib/questionnaire/questions";
+import { requiredMissing } from "@/lib/questionnaire/validation";
 import { saveDraft, submitAssessment } from "./actions";
 import "./onboarding.css";
 
@@ -104,14 +105,18 @@ export function OnboardingClient({ initialResponses }: Props) {
         </div>
 
         <div className="footer">
-          <button
-            type="button"
-            className="btn btn-ghost"
-            onClick={onBack}
-            disabled={stepIdx === 0 || pending}
-          >
-            Back
-          </button>
+          {stepIdx > 0 ? (
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={onBack}
+              disabled={pending}
+            >
+              Back
+            </button>
+          ) : (
+            <span />
+          )}
           <span className="save-state">
             {pending ? "Saving…" : savedAt ? `Saved ${savedAt.toLocaleTimeString()}` : ""}
           </span>
@@ -138,26 +143,6 @@ export function OnboardingClient({ initialResponses }: Props) {
       </div>
     </div>
   );
-}
-
-function requiredMissing(
-  step: StepDef,
-  values: Record<string, unknown>,
-): string | null {
-  for (const field of step.fields) {
-    if (field.optional) continue;
-    const v = values[field.id];
-    if (field.type === "toggle") {
-      if (v !== true) return field.label;
-      continue;
-    }
-    if (field.type === "multiselect" || field.type === "chips") {
-      if (!Array.isArray(v) || v.length === 0) return field.label;
-      continue;
-    }
-    if (v === undefined || v === null || v === "") return field.label;
-  }
-  return null;
 }
 
 function FieldRenderer({

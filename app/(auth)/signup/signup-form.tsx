@@ -11,11 +11,23 @@ export function SignupForm() {
       {state.error && <div className="auth-error">{state.error}</div>}
       <label>
         Full name
-        <input type="text" name="full_name" autoComplete="name" required />
+        <input
+          type="text"
+          name="full_name"
+          autoComplete="name"
+          required
+          defaultValue={state.values?.full_name ?? ""}
+        />
       </label>
       <label>
         Email
-        <input type="email" name="email" autoComplete="email" required />
+        <input
+          type="email"
+          name="email"
+          autoComplete="email"
+          required
+          defaultValue={state.values?.email ?? ""}
+        />
       </label>
       <label>
         Password

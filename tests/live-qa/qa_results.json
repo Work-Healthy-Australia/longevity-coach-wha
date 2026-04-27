@@ -1,0 +1,194 @@
+[
+  {
+    "area": "Landing",
+    "name": "headline 'Live longer' visible",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "Landing",
+    "name": "Sign in link in nav",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "Landing",
+    "name": "Get my bio-age CTA visible",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "Landing",
+    "name": "no console errors on load",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "Login",
+    "name": "page renders heading",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "Login",
+    "name": "email input present",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "Login",
+    "name": "password input present",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "Login",
+    "name": "Sign in button present",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "Login",
+    "name": "Forgot password link present",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "Login",
+    "name": "Create one link goes to /signup",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "empty submit triggers HTML5 validation on email",
+    "name": "Login",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "wrong creds \u2192 'Invalid login credentials' shown",
+    "name": "Login",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "Signup",
+    "name": "page renders heading",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "Signup",
+    "name": "full_name input present",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "Signup",
+    "name": "email input present",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "Signup",
+    "name": "password input present",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "Signup",
+    "name": "Create account button present",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "short password blocked by HTML5 validation (minLength=8)",
+    "name": "Signup",
+    "status": "PASS",
+    "detail": "client-side defence in depth"
+  },
+  {
+    "area": "server rejects short password (HTML5 bypassed)",
+    "name": "Signup",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "REGRESSION: form values preserved after server error",
+    "name": "Signup",
+    "status": "FAIL",
+    "detail": "name='' email='' \u2014 fields cleared on error"
+  },
+  {
+    "area": "valid signup redirects to /verify-email",
+    "name": "Signup",
+    "status": "FAIL",
+    "detail": "didn't redirect; current url=http://localhost:3000/signup"
+  },
+  {
+    "area": "ForgotPwd",
+    "name": "page renders heading",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "non-enumerable success message shown",
+    "name": "ForgotPwd",
+    "status": "PASS",
+    "detail": "good security practice \u2014 does not confirm whether email exists"
+  },
+  {
+    "area": "/dashboard \u2192 /login?redirect=/dashboard when unauthenticated",
+    "name": "AuthGuard",
+    "status": "PASS",
+    "detail": "destination preserved for post-login bounce"
+  },
+  {
+    "area": "/onboarding \u2192 /login?redirect=/onboarding when unauthenticated",
+    "name": "AuthGuard",
+    "status": "PASS",
+    "detail": "destination preserved for post-login bounce"
+  },
+  {
+    "area": "no token \u2192 safe error redirect to /login",
+    "name": "AuthCallback",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "garbage token \u2192 safe error redirect to /login",
+    "name": "AuthCallback",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "/science renders (200)",
+    "name": "PublicPages",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "/team renders (200)",
+    "name": "PublicPages",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "/stories renders (200)",
+    "name": "PublicPages",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "/sample-report renders (200)",
+    "name": "PublicPages",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "area": "upload portal NOT yet built (per gap analysis)",
+    "name": "Gaps",
+    "status": "PASS",
+    "detail": "expected: no /uploads route in current build"
+  }
+]

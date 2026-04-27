@@ -1,0 +1,26 @@
+import "@testing-library/jest-dom/vitest";
+import { vi } from "vitest";
+
+vi.mock("next/cache", () => ({
+  revalidatePath: vi.fn(),
+  revalidateTag: vi.fn(),
+}));
+
+vi.mock("next/navigation", () => ({
+  redirect: vi.fn((path: string) => {
+    throw new Error(`NEXT_REDIRECT:${path}`);
+  }),
+  notFound: vi.fn(),
+  useRouter: () => ({ push: vi.fn(), replace: vi.fn(), refresh: vi.fn() }),
+  usePathname: () => "/",
+  useSearchParams: () => new URLSearchParams(),
+}));
+
+vi.mock("next/headers", () => ({
+  headers: vi.fn(async () => new Headers()),
+  cookies: vi.fn(async () => ({
+    getAll: () => [],
+    set: vi.fn(),
+    get: vi.fn(),
+  })),
+}));
