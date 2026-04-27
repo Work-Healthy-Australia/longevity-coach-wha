@@ -9,7 +9,74 @@
 //     - start with a simple yes/no per category, deepen later
 //   - Payment step - handled by /api/stripe/checkout, not part of this form
 
-import type { QuestionnaireDef } from "./schema";
+import type { FieldDef, QuestionnaireDef } from "./schema";
+
+const RELATIVES = [
+  "Mother",
+  "Father",
+  "Sister",
+  "Brother",
+  "Maternal grandmother",
+  "Maternal grandfather",
+  "Paternal grandmother",
+  "Paternal grandfather",
+  "Aunt or uncle",
+  "None",
+] as const;
+
+const VITAL_STATUS = ["Alive", "Deceased", "Unknown"] as const;
+
+// Per-condition pair: which relatives were affected + earliest age of onset.
+// Both fields are optional; a user with no family history simply leaves them
+// empty (or selects "None"). The risk engine treats absence as "no signal".
+function familyConditionFields(id: string, label: string): FieldDef[] {
+  return [
+    {
+      id: `${id}_relatives`,
+      label: `${label} — affected relatives`,
+      type: "multiselect",
+      optional: true,
+      options: [...RELATIVES],
+    },
+    {
+      id: `${id}_onset_age`,
+      label: `${label} — earliest age of onset`,
+      type: "number",
+      optional: true,
+      placeholder: "e.g. 55",
+      suffix: "years",
+    },
+  ];
+}
+
+// Per-relative trio: vital status + age + cause of death. Cause/age are only
+// meaningful when status === "Deceased" but we don't yet support conditional
+// fields, so all three are optional and skip-friendly.
+function deceasedRelativeFields(id: string, label: string): FieldDef[] {
+  return [
+    {
+      id: `${id}_status`,
+      label: `${label} — status`,
+      type: "select",
+      optional: true,
+      options: [...VITAL_STATUS],
+    },
+    {
+      id: `${id}_age`,
+      label: `${label} — age (current or at death)`,
+      type: "number",
+      optional: true,
+      suffix: "years",
+    },
+    {
+      id: `${id}_cause_of_death`,
+      label: `${label} — cause of death`,
+      type: "text",
+      optional: true,
+      placeholder: "e.g. heart attack, stroke, cancer (lung)",
+    },
+  ];
+}
 
 export const onboardingQuestionnaire: QuestionnaireDef = {
   steps: [
@@ -19,14 +86,22 @@ export const onboardingQuestionnaire: QuestionnaireDef = {
       description:
         "Let's start with the basics. This helps us calibrate your risk scores and personalise your protocols.",
       fields: [
-        { id: "first_name", label: "First name", type: "text", placeholder: "James" },
-        { id: "last_name", label: "Last name", type: "text", placeholder: "Smith" },
-        { id: "age", label: "Age", type: "number", placeholder: "42", suffix: "years" },
+        { id: "date_of_birth", label: "Date of birth", type: "date" },
         {
-          id: "sex",
-          label: "Sex",
+          id: "sex_at_birth",
+          label: "Sex assigned at birth",
           type: "select",
-          options: ["Male", "Female", "Prefer not to say"],
+          options: ["Male", "Female", "Intersex", "Prefer not to say"],
+          helpText:
+            "Used by the risk engine for sex-specific clinical scoring (cardiovascular, cancer, hormonal). FHIR-aligned.",
+        },
+        {
+          id: "gender_identity",
+          label: "Gender identity",
+          type: "select",
+          optional: true,
+          options: ["Man", "Woman", "Non-binary", "Other", "Prefer not to say"],
+          helpText: "How you identify. Used for respectful communication.",
         },
         { id: "height_cm", label: "Height", type: "number", placeholder: "178", suffix: "cm" },
         { id: "weight_kg", label: "Weight", type: "number", placeholder: "82", suffix: "kg" },
@@ -45,6 +120,18 @@ export const onboardingQuestionnaire: QuestionnaireDef = {
             "Mixed",
             "Other",
           ],
+        },
+        {
+          id: "phone_mobile",
+          label: "Mobile phone",
+          type: "text",
+          placeholder: "+61 4XX XXX XXX",
+        },
+        {
+          id: "address_postal",
+          label: "Postal address",
+          type: "textarea",
+          placeholder: "Street, city, state, postcode, country",
         },
       ],
     },
@@ -89,9 +176,10 @@ export const onboardingQuestionnaire: QuestionnaireDef = {
         {
           id: "allergies",
           label: "Allergies",
-          type: "text",
+          type: "allergy_list",
           optional: true,
-          placeholder: "e.g. penicillin, shellfish",
+          helpText:
+            "Capture each allergy with its category and severity. High-severity allergies are flagged to your clinician.",
         },
       ],
     },
@@ -99,13 +187,30 @@ export const onboardingQuestionnaire: QuestionnaireDef = {
       id: "family",
       label: "Family history",
       description:
-        "Toggle on any conditions present in first-degree relatives (parents, siblings).",
+        "For each condition, mark which relatives were affected and (if known) the earliest age it appeared. This feeds your inherited-risk score.",
       fields: [
-        { id: "cardiovascular", label: "Heart disease or stroke", type: "toggle" },
-        { id: "cancer", label: "Cancer", type: "toggle" },
-        { id: "neurodegenerative", label: "Neurodegenerative (Alzheimer's, Parkinson's)", type: "toggle" },
-        { id: "diabetes", label: "Type 2 diabetes", type: "toggle" },
-        { id: "osteoporosis", label: "Osteoporosis or fractures", type: "toggle" },
+        ...familyConditionFields("cardiovascular", "Heart disease or stroke"),
+        ...familyConditionFields("cancer", "Cancer"),
+        ...familyConditionFields(
+          "neurodegenerative",
+          "Neurodegenerative (Alzheimer's, Parkinson's)",
+        ),
+        ...familyConditionFields("diabetes", "Type 2 diabetes"),
+        ...familyConditionFields("osteoporosis", "Osteoporosis or fractures"),
+      ],
+    },
+    {
+      id: "family_deaths",
+      label: "Deaths in family",
+      description:
+        "If known, record cause of death and age for parents and grandparents. This is the strongest single signal for inherited longevity — the actuarial models depend on it. Skip any you don't know.",
+      fields: [
+        ...deceasedRelativeFields("mother", "Mother"),
+        ...deceasedRelativeFields("father", "Father"),
+        ...deceasedRelativeFields("maternal_grandmother", "Maternal grandmother"),
+        ...deceasedRelativeFields("maternal_grandfather", "Maternal grandfather"),
+        ...deceasedRelativeFields("paternal_grandmother", "Paternal grandmother"),
+        ...deceasedRelativeFields("paternal_grandfather", "Paternal grandfather"),
       ],
     },
     {
@@ -236,18 +341,19 @@ export const onboardingQuestionnaire: QuestionnaireDef = {
       id: "consent",
       label: "Consent",
       description:
-        "Confirm you understand how we'll use your data and that this isn't a substitute for medical advice.",
+        "Before we generate your risk scores we need three confirmations. Please read the linked Personal information collection notice — it lists every third party we share your data with and your rights under the Australian Privacy Principles.",
       fields: [
         {
           id: "data_processing",
           label:
-            "I consent to my health data being processed to generate personalised risk scores and recommendations.",
+            "I have read the Personal information collection notice and consent to my health data being processed (including disclosure to overseas processors named in the notice) to generate personalised risk scores and recommendations.",
           type: "toggle",
+          helpText: "Required. Acceptance is recorded against the notice version shown on that page.",
         },
         {
           id: "not_medical_advice",
           label:
-            "I understand this is not a substitute for medical advice and should be used alongside professional healthcare.",
+            "I understand this service is informational and is not a substitute for medical advice, diagnosis or treatment from a qualified health practitioner.",
           type: "toggle",
         },
         {
