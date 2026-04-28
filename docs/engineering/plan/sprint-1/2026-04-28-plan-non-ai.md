@@ -122,7 +122,7 @@ Visible work members will feel. Each item is independently shippable.
 - Out-of-range values clamped with a warning.
 - Acceptance: dragging LDL from 160 to 100 visibly drops `cv_risk` in real-time.
 
-### B7 — Out-of-range alerts & repeat-test reminders **(S, ~1 day)** — *Epic 8*
+### B7 — Out-of-range alerts & repeat-test reminders **(S, ~1 day)** — *Epic 8* — ✅ **DONE 2026-04-28** (migration `0031_member_alerts.sql`, not `0022` — chain moved)
 - After a `biomarkers.lab_results` row writes, evaluate against reference ranges.
 - Insert a row into a new `public.member_alerts` table (one-time migration `0022_member_alerts.sql`).
 - Surface on dashboard as a small chip in the hero.

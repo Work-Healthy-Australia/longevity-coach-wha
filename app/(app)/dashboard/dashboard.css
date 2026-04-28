@@ -113,6 +113,75 @@
   letter-spacing: 0.04em;
 }
 
+/* ----- Alert chip ----- */
+.lc-alert-chip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: var(--lc-surface);
+  border: 1px solid var(--lc-line);
+  border-left-width: 4px;
+  border-radius: 12px;
+  padding: 14px 18px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+.lc-alert-info {
+  border-left-color: var(--lc-sage);
+  background: var(--lc-sage-50);
+}
+.lc-alert-attention {
+  border-left-color: var(--lc-warning);
+  background: #FBF1E5;
+}
+.lc-alert-urgent {
+  border-left-color: var(--lc-danger);
+  background: #FBE7E2;
+}
+.lc-alert-body {
+  flex: 1;
+  min-width: 0;
+}
+.lc-alert-title {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--lc-ink);
+  margin-bottom: 2px;
+}
+.lc-alert-text {
+  font-size: 13px;
+  color: var(--lc-ink-soft);
+  line-height: 1.4;
+}
+.lc-alert-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.lc-alert-view {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--lc-primary);
+  text-decoration: none;
+}
+.lc-alert-view:hover { text-decoration: underline; }
+.lc-alert-dismiss {
+  background: transparent;
+  border: 1px solid var(--lc-line);
+  color: var(--lc-ink-soft);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.lc-alert-dismiss:hover {
+  background: var(--lc-surface);
+  color: var(--lc-ink);
+}
+
 /* ----- Today strip ----- */
 .lc-today {
   display: grid;
