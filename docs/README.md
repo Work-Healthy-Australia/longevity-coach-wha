@@ -9,11 +9,14 @@
 
 ## Product
 
-High-level product vision, phased roadmap, and user-story epics. Start here for product context.
+High-level product vision, twelve thematic epics, status dashboard, and the legacy phased roadmap. Start with `product.md`.
 
 | Document | Contents |
 |---|---|
-| [Product Overview](./product/00-product-overview.md) | Vision, audiences, value proposition, business model |
+| [Product](./product/product.md) | **Step-back vision (Dan Shipper frame).** Audiences, four ranked values, moat, business model. |
+| [Epics](./product/epics.md) | **Twelve thematic epics.** Each with thesis, bundle, mechanism, success criterion. |
+| [Epic Status](./product/epic-status.md) | **At-a-glance dashboard.** Pipeline glyphs, % estimate, open/closed bug counts per epic. |
+| [Product Overview](./product/00-product-overview.md) | Original executive brief — vision, audiences, value proposition, business model |
 | [Product Timeline](./product/01-product-timeline.md) | Six-phase roadmap with goals and status per phase |
 | [Phase 1 — Foundation](./product/phase-01-foundation.md) | Marketing, account creation, questionnaire, payment, dashboard ✅ |
 | [Phase 2 — Intelligence](./product/phase-02-intelligence.md) | Biological age, risk scoring, supplement protocol, PDF report 🔄 |
@@ -73,10 +76,11 @@ Each change delivered via the `dev-loop` skill produces a dated subfolder here c
 
 ## QA
 
-Quality assurance reports and test findings.
+Quality assurance plan, regression reports, and test findings.
 
 | Document | Contents |
 |---|---|
+| [QA Plan](./qa/qa-plan.md) | **Forever QA plan (Dan Shipper × webapp-testing skill).** Tier 1–8 testing pyramid, AI evals (Atlas/Sage/Janet/document analyser), manual best practices, quality gates, sequencing. |
 | [QA Report (2026-04-27)](./qa/2026-04-27-qa-report.md) | Full regression report: 91 tests, 1 bug fixed, 1 external limitation |
 
 ---
