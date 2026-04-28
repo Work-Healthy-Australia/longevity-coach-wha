@@ -3,509 +3,439 @@ import {
   Page,
   Text,
   View,
-  StyleSheet,
-  Font,
+  Image,
 } from "@react-pdf/renderer";
+import path from "node:path";
+import { palette, riskLevelColor, riskLevelLabel, styles } from "./styles";
 
-Font.register({
-  family: "Helvetica",
-  fonts: [],
-});
+export type DomainKey =
+  | "cardiovascular"
+  | "metabolic"
+  | "neurodegenerative"
+  | "oncological"
+  | "musculoskeletal";
 
-const palette = {
-  navy: "#1A3A4A",
-  teal: "#2F6F8F",
-  lightBlue: "#E8F3F8",
-  green: "#22863A",
-  amber: "#B45309",
-  red: "#C0392B",
-  muted: "#6B7C85",
-  border: "#D4E0E8",
-  white: "#FFFFFF",
-  bg: "#F4F7F9",
+export type EngineOutput = {
+  longevity_score: number;
+  longevity_label: string;
+  composite_risk: number;
+  biological_age: number;
+  chronological_age: number | null;
+  age_delta: number | null;
+  risk_level: "very_low" | "low" | "moderate" | "high" | "very_high";
+  domains: Record<
+    DomainKey,
+    {
+      score: number;
+      risk_level: string;
+      top_modifiable_risks: Array<{
+        name: string;
+        score: number;
+        optimal_range?: string;
+      }>;
+    }
+  >;
+  top_risks: Array<{
+    name: string;
+    domain: string;
+    score: number;
+    optimal_range?: string;
+  }>;
+  data_completeness: number;
+  score_confidence: { level: string; note: string };
+  trajectory_6month: {
+    current_longevity_score: number;
+    projected_longevity_score: number;
+    improvements: Array<{
+      factor: string;
+      current_score: number;
+      projected_score: number;
+    }>;
+  };
 };
 
-const styles = StyleSheet.create({
-  page: {
-    backgroundColor: palette.bg,
-    fontFamily: "Helvetica",
-    fontSize: 10,
-    color: palette.navy,
-    padding: 40,
-  },
-  header: {
-    marginBottom: 24,
-    borderBottom: `2 solid ${palette.teal}`,
-    paddingBottom: 16,
-  },
-  headerTop: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-end",
-  },
-  brandName: {
-    fontSize: 18,
-    color: palette.teal,
-    fontFamily: "Helvetica-Bold",
-    letterSpacing: 0.5,
-  },
-  brandTagline: {
-    fontSize: 8,
-    color: palette.muted,
-    marginTop: 2,
-  },
-  reportDate: {
-    fontSize: 8,
-    color: palette.muted,
-  },
-  hero: {
-    backgroundColor: palette.teal,
-    borderRadius: 10,
-    padding: 20,
-    marginBottom: 20,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 20,
-  },
-  bioAgeBox: {
-    alignItems: "center",
-    minWidth: 80,
-  },
-  bioAgeNumber: {
-    fontSize: 48,
-    color: palette.white,
-    fontFamily: "Helvetica-Bold",
-    lineHeight: 1,
-  },
-  bioAgeLabel: {
-    fontSize: 8,
-    color: "rgba(255,255,255,0.8)",
-    marginTop: 4,
-    textTransform: "uppercase",
-    letterSpacing: 1,
-  },
-  heroDivider: {
-    width: 1,
-    backgroundColor: "rgba(255,255,255,0.25)",
-    alignSelf: "stretch",
-    marginHorizontal: 8,
-  },
-  heroText: {
-    flex: 1,
-  },
-  heroTitle: {
-    fontSize: 11,
-    color: palette.white,
-    fontFamily: "Helvetica-Bold",
-    marginBottom: 6,
-  },
-  heroNarrative: {
-    fontSize: 9,
-    color: "rgba(255,255,255,0.9)",
-    lineHeight: 1.5,
-  },
-  confidenceBadge: {
-    backgroundColor: "rgba(255,255,255,0.15)",
-    borderRadius: 4,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    marginTop: 8,
-    alignSelf: "flex-start",
-  },
-  confidenceText: {
-    fontSize: 7,
-    color: "rgba(255,255,255,0.8)",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-  },
-  sectionCard: {
-    backgroundColor: palette.white,
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 16,
-    border: `1 solid ${palette.border}`,
-  },
-  sectionTitle: {
-    fontSize: 12,
-    fontFamily: "Helvetica-Bold",
-    color: palette.navy,
-    marginBottom: 12,
-    borderBottom: `1 solid ${palette.border}`,
-    paddingBottom: 6,
-  },
-  domainsGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  domainCard: {
-    width: "18%",
-    backgroundColor: palette.bg,
-    borderRadius: 6,
-    padding: 10,
-    alignItems: "center",
-  },
-  domainLabel: {
-    fontSize: 7,
-    color: palette.muted,
-    textAlign: "center",
-    marginBottom: 4,
-    textTransform: "uppercase",
-    letterSpacing: 0.3,
-  },
-  domainValue: {
-    fontSize: 22,
-    fontFamily: "Helvetica-Bold",
-    lineHeight: 1,
-  },
-  domainBar: {
-    height: 4,
-    backgroundColor: palette.border,
-    borderRadius: 2,
-    width: "100%",
-    marginTop: 6,
-    overflow: "hidden",
-  },
-  domainBarFill: {
-    height: 4,
-    borderRadius: 2,
-  },
-  twoCol: {
-    flexDirection: "row",
-    gap: 12,
-    marginBottom: 16,
-  },
-  halfCard: {
-    flex: 1,
-    backgroundColor: palette.white,
-    borderRadius: 8,
-    padding: 16,
-    border: `1 solid ${palette.border}`,
-  },
-  listItem: {
-    flexDirection: "row",
-    marginBottom: 5,
-    alignItems: "flex-start",
-  },
-  bullet: {
-    width: 14,
-    color: palette.teal,
-    fontFamily: "Helvetica-Bold",
-    fontSize: 9,
-  },
-  listText: {
-    flex: 1,
-    fontSize: 9,
-    lineHeight: 1.4,
-    color: palette.navy,
-  },
-  supplementTier: {
-    marginBottom: 12,
-  },
-  tierLabel: {
-    fontSize: 8,
-    fontFamily: "Helvetica-Bold",
-    textTransform: "uppercase",
-    letterSpacing: 0.8,
-    marginBottom: 6,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 3,
-    alignSelf: "flex-start",
-  },
-  supplementItem: {
-    backgroundColor: palette.bg,
-    borderRadius: 6,
-    padding: 10,
-    marginBottom: 6,
-  },
-  supplementHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 3,
-  },
-  supplementName: {
-    fontSize: 10,
-    fontFamily: "Helvetica-Bold",
-    color: palette.navy,
-  },
-  supplementDosage: {
-    fontSize: 9,
-    color: palette.muted,
-  },
-  supplementTiming: {
-    fontSize: 8,
-    color: palette.teal,
-    marginBottom: 3,
-  },
-  supplementRationale: {
-    fontSize: 8,
-    color: palette.muted,
-    lineHeight: 1.4,
-  },
-  supplementNote: {
-    fontSize: 8,
-    color: palette.amber,
-    marginTop: 3,
-    lineHeight: 1.3,
-  },
-  footer: {
-    marginTop: 20,
-    paddingTop: 12,
-    borderTop: `1 solid ${palette.border}`,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  footerText: {
-    fontSize: 7,
-    color: palette.muted,
-  },
-  disclaimer: {
-    fontSize: 7,
-    color: palette.muted,
-    lineHeight: 1.4,
-    maxWidth: 360,
-  },
-});
-
-type SupplementItem = {
+export type SupplementRow = {
   name: string;
-  form: string;
-  dosage: string;
-  timing: string;
-  priority: "critical" | "high" | "recommended" | "performance";
-  domains: string[];
-  rationale: string;
+  dose: string;
+  timing?: string;
+  tier?: "critical" | "high" | "recommended" | "performance";
   note?: string;
 };
 
-type ReportData = {
-  biologicalAge: number | null;
-  confidenceLevel: string | null;
-  narrative: string | null;
-  cvRisk: number | null;
-  metabolicRisk: number | null;
-  neuroRisk: number | null;
-  oncoRisk: number | null;
-  mskRisk: number | null;
-  topRiskDrivers: string[];
-  topProtectiveLevers: string[];
-  recommendedScreenings: string[];
-  supplements: SupplementItem[];
-  assessmentDate: string | null;
+export type ReportData = {
+  memberName: string | null;
+  dateOfBirth: string | null;
+  generatedAt: string; // ISO
+  engineOutput: EngineOutput | null;
+  supplementItems: SupplementRow[];
 };
 
-function riskColor(value: number): string {
-  if (value <= 25) return palette.green;
-  if (value <= 45) return "#16A34A";
-  if (value <= 65) return palette.amber;
-  if (value <= 80) return "#D97706";
-  return palette.red;
-}
+// Logo lives in /public so it ships with the build.
+const LOGO_PATH = path.join(
+  process.cwd(),
+  "public/longevity-coach-horizontal-logo.png",
+);
 
-function tierColor(tier: string): string {
-  const map: Record<string, string> = {
-    critical: "#FEE2E2",
-    high: "#FEF3C7",
-    recommended: "#DBEAFE",
-    performance: "#D1FAE5",
-  };
-  return map[tier] ?? palette.bg;
-}
+const DISCLAIMER =
+  "Informational only. Not a substitute for medical advice. Consult a qualified healthcare practitioner before changing supplement, medication, or lifestyle decisions.";
 
-function tierTextColor(tier: string): string {
-  const map: Record<string, string> = {
-    critical: palette.red,
-    high: palette.amber,
-    recommended: palette.teal,
-    performance: palette.green,
-  };
-  return map[tier] ?? palette.muted;
-}
+const DOMAIN_LABEL: Record<DomainKey, string> = {
+  cardiovascular: "Cardiovascular",
+  metabolic: "Metabolic",
+  neurodegenerative: "Neurodegenerative",
+  oncological: "Oncological",
+  musculoskeletal: "Musculoskeletal",
+};
 
-function tierLabel(tier: string): string {
-  const map: Record<string, string> = {
-    critical: "Critical",
-    high: "High priority",
-    recommended: "Recommended",
-    performance: "Performance",
-  };
-  return map[tier] ?? tier;
-}
-
-const domains: { label: string; key: keyof ReportData }[] = [
-  { label: "Cardiovascular", key: "cvRisk" },
-  { label: "Metabolic", key: "metabolicRisk" },
-  { label: "Neurological", key: "neuroRisk" },
-  { label: "Oncological", key: "oncoRisk" },
-  { label: "Musculoskeletal", key: "mskRisk" },
+const DOMAIN_ORDER: DomainKey[] = [
+  "cardiovascular",
+  "metabolic",
+  "neurodegenerative",
+  "oncological",
+  "musculoskeletal",
 ];
 
-export function ReportDocument({ data }: { data: ReportData }) {
-  const assessmentDateStr = data.assessmentDate
-    ? new Date(data.assessmentDate).toLocaleDateString("en-AU", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
-    : new Date().toLocaleDateString("en-AU", { year: "numeric", month: "long", day: "numeric" });
+function formatDate(iso: string): string {
+  try {
+    return new Date(iso).toLocaleDateString("en-AU", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  } catch {
+    return iso;
+  }
+}
 
-  const tiers: Array<"critical" | "high" | "recommended" | "performance"> = [
-    "critical",
-    "high",
-    "recommended",
-    "performance",
-  ];
+function tierColor(tier?: string): string {
+  switch (tier) {
+    case "critical":
+      return palette.riskHigh;
+    case "high":
+      return palette.riskModerate;
+    case "recommended":
+      return palette.primary;
+    case "performance":
+      return palette.sage;
+    default:
+      return palette.grey;
+  }
+}
+
+function bioAgeText(bio: number, chron: number | null, delta: number | null): string {
+  if (chron == null || delta == null) return `Bio age ${bio}`;
+  if (Math.abs(delta) < 0.5) return `Bio age ${bio} · matches chronological`;
+  if (delta > 0) return `Bio age ${bio} · ${delta.toFixed(1)} years younger`;
+  return `Bio age ${bio} · ${Math.abs(delta).toFixed(1)} years older`;
+}
+
+function Pill({ level }: { level: string }) {
+  return (
+    <Text style={[styles.pill, { backgroundColor: riskLevelColor(level) }]}>
+      {riskLevelLabel(level)}
+    </Text>
+  );
+}
+
+function PageHeader({ title }: { title: string }) {
+  return (
+    <View style={styles.pageHeader} fixed>
+      <Image src={LOGO_PATH} style={styles.headerLogo} />
+      <Text style={styles.headerEyebrow}>{title}</Text>
+    </View>
+  );
+}
+
+function PageFooter({ generatedAt }: { generatedAt: string }) {
+  return (
+    <View style={styles.footer} fixed>
+      <View style={styles.footerLeft}>
+        <Text style={styles.footerText}>{DISCLAIMER}</Text>
+        <Text style={styles.footerText}>
+          Generated {formatDate(generatedAt)} · longevity-coach.io
+        </Text>
+      </View>
+      <Text
+        style={[styles.footerText, styles.footerRight]}
+        render={({ pageNumber, totalPages }) =>
+          `${pageNumber} / ${totalPages}`
+        }
+      />
+    </View>
+  );
+}
+
+export function ReportDocument({ data }: { data: ReportData }) {
+  const { memberName, generatedAt, engineOutput, supplementItems } = data;
+  const displayName = memberName?.trim() || "Member";
+
+  if (!engineOutput) {
+    return (
+      <Document
+        title="Longevity Coach — Health Report"
+        author="Longevity Coach"
+      >
+        <Page size="A4" style={styles.page}>
+          <Image src={LOGO_PATH} style={styles.coverLogo} />
+          <Text style={styles.coverEyebrow}>Personal Health Report</Text>
+          <Text style={styles.coverMemberName}>{displayName}</Text>
+          <Text style={styles.coverDate}>{formatDate(generatedAt)}</Text>
+          <View style={styles.hero}>
+            <View style={styles.heroLeft}>
+              <Text style={styles.heroEyebrow}>Status</Text>
+              <Text style={styles.heroBig}>Not yet ready</Text>
+              <Text style={styles.heroSub}>
+                Your risk scores are still being computed. Check back shortly,
+                or refresh your dashboard.
+              </Text>
+            </View>
+          </View>
+          <PageFooter generatedAt={generatedAt} />
+        </Page>
+      </Document>
+    );
+  }
+
+  const bioAge = Math.round(engineOutput.biological_age);
+  const chronAge = engineOutput.chronological_age;
+  const delta = engineOutput.age_delta;
+  const confidence = engineOutput.score_confidence;
+  const dataPoints = Math.round(engineOutput.data_completeness * 100);
+  const longevity = Math.round(engineOutput.longevity_score);
+  const composite = Math.round(engineOutput.composite_risk);
+
+  const topRisks = engineOutput.top_risks.slice(0, 5);
+  const supplementsToShow = supplementItems.slice(0, 12);
+  const supplementOverflow = Math.max(0, supplementItems.length - 12);
+
+  const traj = engineOutput.trajectory_6month;
+  const improvements = traj.improvements.slice(0, 5);
+
+  const topRiskDomain =
+    topRisks[0]?.domain
+      ? topRisks[0].domain.charAt(0).toUpperCase() + topRisks[0].domain.slice(1)
+      : "—";
 
   return (
     <Document
       title="Longevity Coach — Health Report"
       author="Longevity Coach"
-      subject="Biological Age & Supplement Protocol"
+      subject="Personalised Health Risk Report"
     >
+      {/* ---------- Page 1 — Cover (dashboard-style) ---------- */}
       <Page size="A4" style={styles.page}>
-        {/* Header */}
-        <View style={styles.header}>
-          <View style={styles.headerTop}>
-            <View>
-              <Text style={styles.brandName}>Longevity Coach</Text>
-              <Text style={styles.brandTagline}>Powered by Work Healthy Australia</Text>
-            </View>
-            <Text style={styles.reportDate}>Report generated: {assessmentDateStr}</Text>
+        <Image src={LOGO_PATH} style={styles.coverLogo} />
+        <Text style={styles.coverEyebrow}>Personal Health Report</Text>
+        <Text style={styles.coverMemberName}>{displayName}</Text>
+        <Text style={styles.coverDate}>{formatDate(generatedAt)}</Text>
+
+        {/* Hero — mirrors the dashboard hero */}
+        <View style={styles.hero}>
+          <View style={styles.heroLeft}>
+            <Text style={styles.heroEyebrow}>Biological age</Text>
+            <Text style={styles.heroBig}>
+              {bioAge}
+              {chronAge != null ? ` / ${chronAge}` : ""}
+            </Text>
+            <Text style={styles.heroSub}>
+              {bioAgeText(bioAge, chronAge, delta)} · longevity score{" "}
+              {longevity}/100 ({engineOutput.longevity_label}) · confidence{" "}
+              {confidence.level} ({dataPoints}% of data captured)
+            </Text>
+          </View>
+          <View style={styles.heroRight}>
+            <Text style={styles.heroMiniValue}>{composite}</Text>
+            <Text style={styles.heroMiniLabel}>Composite{"\n"}risk</Text>
           </View>
         </View>
 
-        {/* Bio-age hero */}
-        {data.biologicalAge != null && (
-          <View style={styles.hero}>
-            <View style={styles.bioAgeBox}>
-              <Text style={styles.bioAgeNumber}>{Math.round(data.biologicalAge)}</Text>
-              <Text style={styles.bioAgeLabel}>Biological Age</Text>
-              {data.confidenceLevel && (
-                <View style={styles.confidenceBadge}>
-                  <Text style={styles.confidenceText}>{data.confidenceLevel} confidence</Text>
-                </View>
-              )}
-            </View>
-            <View style={styles.heroDivider} />
-            <View style={styles.heroText}>
-              <Text style={styles.heroTitle}>Your Health Story</Text>
-              {data.narrative && (
-                <Text style={styles.heroNarrative}>{data.narrative}</Text>
-              )}
-            </View>
+        {/* Three big numbers — like the dashboard's three-tile row */}
+        <View style={styles.numbersRow}>
+          <View style={styles.numberTile}>
+            <Text style={styles.numberLabel}>Top risk domain</Text>
+            <Text style={styles.numberValue}>{topRiskDomain}</Text>
+            <Text style={styles.numberSub}>
+              Score {topRisks[0]?.score ?? "—"}
+              {topRisks[0]?.optimal_range
+                ? ` · target ${topRisks[0].optimal_range}`
+                : ""}
+            </Text>
           </View>
-        )}
+          <View style={styles.numberTile}>
+            <Text style={styles.numberLabel}>6-month projection</Text>
+            <Text style={styles.numberValue}>
+              {Math.round(traj.projected_longevity_score)}
+            </Text>
+            <Text style={styles.numberSub}>
+              From {Math.round(traj.current_longevity_score)} today with full
+              adherence
+            </Text>
+          </View>
+          <View style={styles.numberTile}>
+            <Text style={styles.numberLabel}>Protocol size</Text>
+            <Text style={styles.numberValue}>{supplementItems.length}</Text>
+            <Text style={styles.numberSub}>
+              {supplementItems.length === 0 ? "Awaiting protocol" : "Targeted supplements"}
+            </Text>
+          </View>
+        </View>
 
-        {/* Risk domains */}
-        <View style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>Risk Domain Scores</Text>
-          <Text style={{ fontSize: 8, color: palette.muted, marginBottom: 10 }}>
-            0 = optimal · 100 = highest risk
-          </Text>
-          <View style={styles.domainsGrid}>
-            {domains.map(({ label, key }) => {
-              const value = data[key] as number | null;
-              if (value == null) return null;
-              return (
-                <View key={label} style={styles.domainCard}>
-                  <Text style={styles.domainLabel}>{label}</Text>
-                  <Text style={[styles.domainValue, { color: riskColor(value) }]}>
-                    {Math.round(value)}
+        <PageFooter generatedAt={generatedAt} />
+      </Page>
+
+      {/* ---------- Page 2 — Risk profile (tile grid) ---------- */}
+      <Page size="A4" style={styles.page}>
+        <PageHeader title="Risk profile" />
+        <Text style={styles.pageTitle}>Your five-domain risk profile</Text>
+        <Text style={styles.pageSubtitle}>
+          0 = optimal · 100 = highest risk · top drivers shown per domain
+        </Text>
+
+        <View style={styles.domainGrid}>
+          {DOMAIN_ORDER.map((key, i) => {
+            const d = engineOutput.domains[key];
+            if (!d) return null;
+            const factors = d.top_modifiable_risks.slice(0, 2);
+            // Last odd-numbered tile spans full width on a 5-tile grid.
+            const wide = i === 4;
+            return (
+              <View
+                key={key}
+                style={wide ? styles.domainTileWide : styles.domainTile}
+              >
+                <View style={styles.domainHead}>
+                  <Text style={styles.domainName}>{DOMAIN_LABEL[key]}</Text>
+                  <Pill level={d.risk_level} />
+                </View>
+                <View style={styles.domainScoreLine}>
+                  <Text style={styles.domainScoreBig}>{Math.round(d.score)}</Text>
+                </View>
+                {factors.length > 0 && (
+                  <Text style={styles.domainFactors}>
+                    {factors
+                      .map((f) =>
+                        f.optimal_range ? `${f.name} (${f.optimal_range})` : f.name,
+                      )
+                      .join(" · ")}
                   </Text>
-                  <View style={styles.domainBar}>
-                    <View
-                      style={[
-                        styles.domainBarFill,
-                        { width: `${value}%`, backgroundColor: riskColor(value) },
-                      ]}
-                    />
-                  </View>
-                </View>
-              );
-            })}
+                )}
+              </View>
+            );
+          })}
+        </View>
+        <PageFooter generatedAt={generatedAt} />
+      </Page>
+
+      {/* ---------- Page 3 — Top modifiable risks ---------- */}
+      <Page size="A4" style={styles.page}>
+        <PageHeader title="Top modifiable risks" />
+        <Text style={styles.pageTitle}>Where to focus first</Text>
+        <Text style={styles.pageSubtitle}>
+          Five highest-impact factors you can change
+        </Text>
+
+        {topRisks.map((r, i) => (
+          <View key={`${r.name}-${i}`} style={styles.numItem}>
+            <Text style={styles.numCircle}>{i + 1}</Text>
+            <View style={styles.numBody}>
+              <Text style={styles.numTitle}>{r.name}</Text>
+              <Text style={styles.numMeta}>
+                {r.domain} · score {Math.round(r.score)}
+                {r.optimal_range ? ` · optimal ${r.optimal_range}` : ""}
+              </Text>
+              <Text style={styles.numAction}>
+                Discuss with your coach to build a targeted plan.
+              </Text>
+            </View>
           </View>
+        ))}
+        <PageFooter generatedAt={generatedAt} />
+      </Page>
+
+      {/* ---------- Page 4 — Supplement protocol ---------- */}
+      <Page size="A4" style={styles.page}>
+        <PageHeader title="Supplement protocol" />
+        <Text style={styles.pageTitle}>Your personalised stack</Text>
+        <Text style={styles.pageSubtitle}>Prioritised by tier</Text>
+
+        <View style={styles.table}>
+          <View style={styles.tableHeader}>
+            <Text style={[styles.th, styles.colName]}>Name</Text>
+            <Text style={[styles.th, styles.colDose]}>Dose</Text>
+            <Text style={[styles.th, styles.colTiming]}>Timing</Text>
+            <Text style={[styles.th, styles.colTier]}>Tier</Text>
+          </View>
+
+          {supplementsToShow.map((s, i) => (
+            <View key={`${s.name}-${i}`} style={styles.tableRow}>
+              <Text style={[styles.td, styles.colName]}>{s.name}</Text>
+              <Text style={[styles.td, styles.colDose]}>{s.dose}</Text>
+              <Text style={[styles.td, styles.colTiming]}>{s.timing ?? "—"}</Text>
+              <Text
+                style={[
+                  styles.td,
+                  styles.colTier,
+                  { color: tierColor(s.tier), fontFamily: "Helvetica-Bold" },
+                ]}
+              >
+                {s.tier ?? "—"}
+              </Text>
+            </View>
+          ))}
         </View>
 
-        {/* Risk drivers & screenings */}
-        {(data.topRiskDrivers.length > 0 || data.recommendedScreenings.length > 0) && (
-          <View style={styles.twoCol}>
-            {data.topRiskDrivers.length > 0 && (
-              <View style={styles.halfCard}>
-                <Text style={styles.sectionTitle}>Top Risk Factors</Text>
-                {data.topRiskDrivers.map((d, i) => (
-                  <View key={i} style={styles.listItem}>
-                    <Text style={styles.bullet}>{i + 1}.</Text>
-                    <Text style={styles.listText}>{d}</Text>
-                  </View>
-                ))}
-              </View>
-            )}
-            {data.recommendedScreenings.length > 0 && (
-              <View style={styles.halfCard}>
-                <Text style={styles.sectionTitle}>Recommended Screenings</Text>
-                {data.recommendedScreenings.map((s, i) => (
-                  <View key={i} style={styles.listItem}>
-                    <Text style={styles.bullet}>•</Text>
-                    <Text style={styles.listText}>{s}</Text>
-                  </View>
-                ))}
-              </View>
-            )}
-          </View>
-        )}
-
-        {/* Supplement protocol */}
-        {data.supplements.length > 0 && (
-          <View style={styles.sectionCard}>
-            <Text style={styles.sectionTitle}>Personalised Supplement Protocol</Text>
-            {tiers.map((tier) => {
-              const items = data.supplements.filter((s) => s.priority === tier);
-              if (!items.length) return null;
-              return (
-                <View key={tier} style={styles.supplementTier}>
-                  <Text
-                    style={[
-                      styles.tierLabel,
-                      {
-                        backgroundColor: tierColor(tier),
-                        color: tierTextColor(tier),
-                      },
-                    ]}
-                  >
-                    {tierLabel(tier)}
-                  </Text>
-                  {items.map((s, i) => (
-                    <View key={i} style={styles.supplementItem}>
-                      <View style={styles.supplementHeader}>
-                        <Text style={styles.supplementName}>{s.name}</Text>
-                        <Text style={styles.supplementDosage}>
-                          {s.dosage} · {s.form}
-                        </Text>
-                      </View>
-                      <Text style={styles.supplementTiming}>{s.timing}</Text>
-                      <Text style={styles.supplementRationale}>{s.rationale}</Text>
-                      {s.note && (
-                        <Text style={styles.supplementNote}>⚠ {s.note}</Text>
-                      )}
-                    </View>
-                  ))}
-                </View>
-              );
-            })}
-          </View>
-        )}
-
-        {/* Footer */}
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>longevity-coach.io</Text>
-          <Text style={styles.disclaimer}>
-            This report is for informational purposes only and does not constitute medical advice.
-            Always consult a qualified healthcare practitioner before making changes to your
-            supplement regimen or health management plan.
+        {supplementOverflow > 0 && (
+          <Text style={[styles.footerText, { marginTop: 8 }]}>
+            +{supplementOverflow} more in your dashboard
           </Text>
+        )}
+        <PageFooter generatedAt={generatedAt} />
+      </Page>
+
+      {/* ---------- Page 5 — 6-month projection ---------- */}
+      <Page size="A4" style={styles.page}>
+        <PageHeader title="6-month projection" />
+        <Text style={styles.pageTitle}>Where you could be in six months</Text>
+        <Text style={styles.pageSubtitle}>
+          With full protocol adherence (assumed 70%)
+        </Text>
+
+        <View style={styles.projRow}>
+          <View style={styles.projBox}>
+            <Text style={styles.projLabel}>Today</Text>
+            <Text style={styles.projNumber}>
+              {Math.round(traj.current_longevity_score)}
+            </Text>
+          </View>
+          <View style={styles.projBoxProjected}>
+            <Text style={styles.projLabelProjected}>Projected</Text>
+            <Text style={styles.projNumberProjected}>
+              {Math.round(traj.projected_longevity_score)}
+            </Text>
+          </View>
         </View>
+
+        <Text
+          style={{
+            fontSize: 10.5,
+            fontFamily: "Helvetica-Bold",
+            color: palette.primary700,
+            marginBottom: 6,
+          }}
+        >
+          Top improvements driving your projection
+        </Text>
+
+        {improvements.map((imp, i) => (
+          <View key={`${imp.factor}-${i}`} style={styles.bullet}>
+            <Text style={styles.bulletDot}>•</Text>
+            <Text style={styles.bulletText}>
+              {imp.factor}: {Math.round(imp.current_score)} →{" "}
+              {Math.round(imp.projected_score)}
+            </Text>
+          </View>
+        ))}
+        <PageFooter generatedAt={generatedAt} />
       </Page>
     </Document>
   );

@@ -18,6 +18,19 @@ export function requiredMissing(
       if (field.step === 1 && !Number.isInteger(n)) return field.label;
     }
 
+    // cancer_history: even on an optional field, if the member said "yes" and
+    // selected "Other" they must describe it — otherwise the entry is noise.
+    if (field.type === "cancer_history" && v !== undefined && v !== null) {
+      const cv = v as { status?: string; entries?: Array<{ type?: string; otherText?: string }> };
+      if (cv.status === "yes" && Array.isArray(cv.entries)) {
+        for (const entry of cv.entries) {
+          if (entry?.type === "Other" && (!entry.otherText || !entry.otherText.trim())) {
+            return `${field.label} — describe "Other"`;
+          }
+        }
+      }
+    }
+
     if (field.optional) continue;
     if (field.type === "toggle") {
       if (v !== true) return field.label;

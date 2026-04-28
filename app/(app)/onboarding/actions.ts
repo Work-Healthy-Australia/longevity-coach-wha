@@ -3,11 +3,13 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type { ResponsesByStep } from "@/lib/questionnaire/schema";
 import { splitPii, type ProfilePatch } from "@/lib/profiles/pii-split";
 import { recordConsents } from "@/lib/consent/record";
 import type { PolicyId } from "@/lib/consent/policies";
 import { triggerPipeline } from "@/lib/ai/trigger";
+import { assemblePatientFromDB, scoreRisk } from "@/lib/risk";
 
 type SaveResult = { error?: string; ok?: boolean };
 
@@ -96,6 +98,60 @@ export async function submitAssessment(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { error } = await recordConsents(supabase as any, user.id, accepted);
     if (error) return { error };
+  }
+
+  // Run the deterministic risk engine and persist `risk_scores`. This is the
+  // synchronous, evidence-based scoring layer (Atlas adds the LLM narrative
+  // asynchronously after this). Wrapped in try/catch so onboarding never
+  // fails because of scorer errors.
+  try {
+    const admin = createAdminClient();
+    const patient = await assemblePatientFromDB(admin, user.id);
+    const output = scoreRisk(patient);
+    const todayIso = new Date().toISOString();
+    const today = todayIso.slice(0, 10);
+
+    const protectiveLevers: string[] = (Object.values(output.domains) as Array<typeof output.domains.cardiovascular>)
+      .flatMap((d) => d.factors.filter((f) => f.modifiable && f.score < 20))
+      .slice(0, 5)
+      .map((r) => r.name);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const row: any = {
+      user_uuid: user.id,
+      engine_output: output,
+      cv_risk: output.domains.cardiovascular.score,
+      metabolic_risk: output.domains.metabolic.score,
+      neuro_risk: output.domains.neurodegenerative.score,
+      onco_risk: output.domains.oncological.score,
+      msk_risk: output.domains.musculoskeletal.score,
+      biological_age: output.biological_age,
+      confidence_level: output.score_confidence.level,
+      data_completeness: output.data_completeness,
+      next_recommended_tests: output.next_recommended_tests,
+      top_risk_drivers: output.top_risks.map(
+        (r) => `${r.domain}: ${r.name} (score ${r.score})`,
+      ),
+      top_protective_levers: protectiveLevers,
+      longevity_score: output.longevity_score,
+      longevity_label: output.longevity_label,
+      composite_risk: output.composite_risk,
+      risk_level: output.risk_level,
+      cancer_risk: output.domains.oncological.score,
+      trajectory_6month: output.trajectory_6month,
+      domain_scores: output.domains,
+      assessment_date: today,
+      computed_at: todayIso,
+    };
+    const { error: upsertError } = await admin
+      .from("risk_scores")
+      .upsert(row, { onConflict: "user_uuid" });
+    if (upsertError) {
+      console.error("[risk-engine] risk_scores upsert failed:", upsertError);
+    }
+  } catch (err) {
+    // Non-fatal: onboarding continues even if scoring fails. Atlas pipeline
+    // will retry on its own schedule.
+    console.error("[risk-engine] deterministic scorer failed:", err);
   }
 
   // Fire async pipeline workers (non-blocking — each runs in its own function invocation)

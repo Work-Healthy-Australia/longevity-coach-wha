@@ -14,7 +14,8 @@ export type FieldType =
   | "multiselect"
   | "chips"   // multi-select with a selection limit, rendered as pill buttons
   | "toggle"
-  | "allergy_list"; // FHIR AllergyIntolerance — list of {substance, category, criticality, reaction}
+  | "allergy_list"  // FHIR AllergyIntolerance — list of {substance, category, criticality, reaction}
+  | "cancer_history"; // progressive Y/N → type chips → per-type relatives + onset
 
 // Shape of a single allergy entry in `allergy_list` field values.
 // Aligned with FHIR AllergyIntolerance.category + criticality value sets.
@@ -23,6 +24,22 @@ export type AllergyEntry = {
   category: "medication" | "food" | "environment" | "biologic" | "other";
   criticality: "low" | "high" | "unable-to-assess";
   reaction?: string;
+};
+
+// Shape of `cancer_history` field value. FHIR FamilyMemberHistory.condition[]-aligned.
+// `status === "yes"` is the only state that surfaces type detail; "no" / "unknown"
+// short-circuit the rest of the form.
+export type CancerHistoryEntry = {
+  type: string;          // canonical type (e.g. "Breast") or "Other"
+  otherText?: string;    // free text when type === "Other" or "Don't know specific type"
+  relatives?: string[];  // affected relatives (RELATIVES enum)
+  onsetAge?: number;     // earliest age of onset
+  onsetUnknown?: boolean; // member knows there was cancer but not the age
+};
+
+export type CancerHistoryValue = {
+  status: "yes" | "no" | "unknown";
+  entries?: CancerHistoryEntry[];
 };
 
 export type FieldDef = {

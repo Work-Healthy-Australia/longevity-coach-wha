@@ -1,0 +1,2509 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`scoreRisk (snapshots) > stable output for fixture: highCv 1`] = `
+"{
+  "longevity_score": 35,
+  "longevity_label": "Critical",
+  "composite_risk": 65,
+  "biological_age": 65.7,
+  "chronological_age": 58,
+  "age_delta": -7.7,
+  "risk_level": "high",
+  "trajectory_6month": {
+    "current_longevity_score": 35,
+    "projected_longevity_score": 38,
+    "projected_improvement": 3,
+    "improvements": [
+      {
+        "factor": "apoB",
+        "domain": "cardiovascular",
+        "current_score": 85,
+        "projected_score": 60,
+        "improvement": 25,
+        "confidence": "high",
+        "optimal_range": "< 80 mg/dL"
+      },
+      {
+        "factor": "smoking_onco",
+        "domain": "oncological",
+        "current_score": 90,
+        "projected_score": 55,
+        "improvement": 35,
+        "confidence": "high",
+        "optimal_range": "Never"
+      },
+      {
+        "factor": "hsCRP",
+        "domain": "cardiovascular",
+        "current_score": 80,
+        "projected_score": 69,
+        "improvement": 11,
+        "confidence": "moderate",
+        "optimal_range": "< 1.0 mg/L"
+      },
+      {
+        "factor": "homocysteine_neuro",
+        "domain": "neurodegenerative",
+        "current_score": 80,
+        "projected_score": 62,
+        "improvement": 18,
+        "confidence": "high",
+        "optimal_range": "< 10 μmol/L"
+      },
+      {
+        "factor": "hsCRP_onco",
+        "domain": "oncological",
+        "current_score": 80,
+        "projected_score": 69,
+        "improvement": 11,
+        "confidence": "moderate",
+        "optimal_range": "< 1.0 mg/L"
+      },
+      {
+        "factor": "resistance_training",
+        "domain": "musculoskeletal",
+        "current_score": 60,
+        "projected_score": 46,
+        "improvement": 14,
+        "confidence": "moderate",
+        "optimal_range": "≥ 2x resistance training/week"
+      },
+      {
+        "factor": "ldl",
+        "domain": "cardiovascular",
+        "current_score": 80,
+        "projected_score": 62,
+        "improvement": 18,
+        "confidence": "high",
+        "optimal_range": "< 100 mg/dL"
+      },
+      {
+        "factor": "tg_hdl_ratio",
+        "domain": "metabolic",
+        "current_score": 80,
+        "projected_score": 66,
+        "improvement": 14,
+        "confidence": "moderate",
+        "optimal_range": "< 1.5"
+      },
+      {
+        "factor": "hsCRP_neuro",
+        "domain": "neurodegenerative",
+        "current_score": 80,
+        "projected_score": 69,
+        "improvement": 11,
+        "confidence": "moderate",
+        "optimal_range": "< 1.0 mg/L"
+      },
+      {
+        "factor": "blood_pressure",
+        "domain": "cardiovascular",
+        "current_score": 50,
+        "projected_score": 36,
+        "improvement": 14,
+        "confidence": "moderate",
+        "optimal_range": "< 120/80 mmHg"
+      }
+    ],
+    "timeframe_months": 6,
+    "assumptions": "Based on 70% protocol adherence and evidence-based intervention effect sizes"
+  },
+  "domains": {
+    "cardiovascular": {
+      "domain": "cardiovascular",
+      "score": 77,
+      "risk_level": "very_high",
+      "factors": [
+        {
+          "name": "apoB",
+          "raw_value": 145,
+          "unit": "mg/dL",
+          "score": 85,
+          "weight": 0.12,
+          "modifiable": true,
+          "optimal_range": "< 80 mg/dL",
+          "standard_range": "< 130 mg/dL"
+        },
+        {
+          "name": "coronary_calcium_score",
+          "raw_value": 250,
+          "unit": "Agatston",
+          "score": 83,
+          "weight": 0.1,
+          "modifiable": false,
+          "optimal_range": "0"
+        },
+        {
+          "name": "lp_a",
+          "raw_value": 110,
+          "unit": "nmol/L",
+          "score": 81,
+          "weight": 0.08,
+          "modifiable": false,
+          "optimal_range": "< 30 nmol/L"
+        },
+        {
+          "name": "hsCRP",
+          "raw_value": 3.5,
+          "unit": "mg/L",
+          "score": 80,
+          "weight": 0.08,
+          "modifiable": true,
+          "optimal_range": "< 1.0 mg/L"
+        },
+        {
+          "name": "family_history_cvd",
+          "raw_value": {
+            "first_degree": true,
+            "age_onset": 52
+          },
+          "score": 75,
+          "weight": 0.08,
+          "modifiable": false
+        },
+        {
+          "name": "ldl",
+          "raw_value": 165,
+          "unit": "mg/dL",
+          "score": 80,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "< 100 mg/dL"
+        },
+        {
+          "name": "blood_pressure",
+          "raw_value": "hypertension",
+          "score": 50,
+          "weight": 0.08,
+          "modifiable": true,
+          "optimal_range": "< 120/80 mmHg"
+        },
+        {
+          "name": "triglycerides",
+          "raw_value": 220,
+          "unit": "mg/dL",
+          "score": 75,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "< 100 mg/dL"
+        },
+        {
+          "name": "homocysteine",
+          "raw_value": 16,
+          "unit": "μmol/L",
+          "score": 75,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "< 10 μmol/L"
+        },
+        {
+          "name": "smoking",
+          "raw_value": "current",
+          "score": 90,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "Never"
+        },
+        {
+          "name": "hdl",
+          "raw_value": 35,
+          "unit": "mg/dL",
+          "score": 70,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "> 60 mg/dL"
+        },
+        {
+          "name": "carotid_IMT",
+          "raw_value": 0.95,
+          "unit": "mm",
+          "score": 69,
+          "weight": 0.05,
+          "modifiable": false,
+          "optimal_range": "< 0.6 mm"
+        },
+        {
+          "name": "genetic_prs_cvd",
+          "raw_value": 88,
+          "unit": "percentile",
+          "score": 82,
+          "weight": 0.04,
+          "modifiable": false
+        }
+      ],
+      "top_modifiable_risks": [
+        {
+          "name": "apoB",
+          "raw_value": 145,
+          "unit": "mg/dL",
+          "score": 85,
+          "weight": 0.12,
+          "modifiable": true,
+          "optimal_range": "< 80 mg/dL",
+          "standard_range": "< 130 mg/dL"
+        },
+        {
+          "name": "hsCRP",
+          "raw_value": 3.5,
+          "unit": "mg/L",
+          "score": 80,
+          "weight": 0.08,
+          "modifiable": true,
+          "optimal_range": "< 1.0 mg/L"
+        },
+        {
+          "name": "ldl",
+          "raw_value": 165,
+          "unit": "mg/dL",
+          "score": 80,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "< 100 mg/dL"
+        }
+      ],
+      "data_completeness": 0.81
+    },
+    "metabolic": {
+      "domain": "metabolic",
+      "score": 64,
+      "risk_level": "high",
+      "factors": [
+        {
+          "name": "tg_hdl_ratio",
+          "raw_value": 6.3,
+          "score": 80,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "< 1.5"
+        },
+        {
+          "name": "exercise_volume",
+          "raw_value": 60,
+          "unit": "min/wk",
+          "score": 70,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "≥ 300 min/wk"
+        },
+        {
+          "name": "BMI",
+          "raw_value": 28.4,
+          "score": 47,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "18.5–24.9"
+        },
+        {
+          "name": "diet_quality",
+          "raw_value": "standard_western",
+          "score": 55,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "Mediterranean / whole food"
+        }
+      ],
+      "top_modifiable_risks": [
+        {
+          "name": "tg_hdl_ratio",
+          "raw_value": 6.3,
+          "score": 80,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "< 1.5"
+        },
+        {
+          "name": "exercise_volume",
+          "raw_value": 60,
+          "unit": "min/wk",
+          "score": 70,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "≥ 300 min/wk"
+        },
+        {
+          "name": "BMI",
+          "raw_value": 28.4,
+          "score": 47,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "18.5–24.9"
+        }
+      ],
+      "data_completeness": 0.24
+    },
+    "neurodegenerative": {
+      "domain": "neurodegenerative",
+      "score": 59,
+      "risk_level": "high",
+      "factors": [
+        {
+          "name": "homocysteine_neuro",
+          "raw_value": 16,
+          "unit": "μmol/L",
+          "score": 80,
+          "weight": 0.08,
+          "modifiable": true,
+          "optimal_range": "< 10 μmol/L"
+        },
+        {
+          "name": "hsCRP_neuro",
+          "raw_value": 3.5,
+          "unit": "mg/L",
+          "score": 80,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "< 1.0 mg/L"
+        },
+        {
+          "name": "aerobic_exercise",
+          "raw_value": 60,
+          "unit": "min/wk",
+          "score": 55,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "≥ 150 min/wk"
+        },
+        {
+          "name": "alcohol",
+          "raw_value": 16,
+          "unit": "units/wk",
+          "score": 50,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "0–7 units/wk"
+        },
+        {
+          "name": "stress_level",
+          "raw_value": "high",
+          "score": 45,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "Low"
+        },
+        {
+          "name": "sleep_duration",
+          "raw_value": 6,
+          "unit": "hours",
+          "score": 30,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "7–9 hours"
+        }
+      ],
+      "top_modifiable_risks": [
+        {
+          "name": "homocysteine_neuro",
+          "raw_value": 16,
+          "unit": "μmol/L",
+          "score": 80,
+          "weight": 0.08,
+          "modifiable": true,
+          "optimal_range": "< 10 μmol/L"
+        },
+        {
+          "name": "hsCRP_neuro",
+          "raw_value": 3.5,
+          "unit": "mg/L",
+          "score": 80,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "< 1.0 mg/L"
+        },
+        {
+          "name": "aerobic_exercise",
+          "raw_value": 60,
+          "unit": "min/wk",
+          "score": 55,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "≥ 150 min/wk"
+        }
+      ],
+      "data_completeness": 0.38
+    },
+    "oncological": {
+      "domain": "oncological",
+      "score": 68,
+      "risk_level": "high",
+      "factors": [
+        {
+          "name": "smoking_onco",
+          "raw_value": "current",
+          "score": 90,
+          "weight": 0.08,
+          "modifiable": true,
+          "optimal_range": "Never"
+        },
+        {
+          "name": "hsCRP_onco",
+          "raw_value": 3.5,
+          "unit": "mg/L",
+          "score": 80,
+          "weight": 0.08,
+          "modifiable": true,
+          "optimal_range": "< 1.0 mg/L"
+        },
+        {
+          "name": "alcohol_onco",
+          "raw_value": 16,
+          "unit": "units/wk",
+          "score": 75,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "≤ 7 units/wk"
+        },
+        {
+          "name": "diet_onco",
+          "raw_value": "standard_western",
+          "score": 60,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "Plant-rich, low ultra-processed"
+        },
+        {
+          "name": "exercise_onco",
+          "raw_value": 60,
+          "unit": "min/wk",
+          "score": 55,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "≥ 150 min/wk"
+        },
+        {
+          "name": "BMI_onco",
+          "raw_value": 28.4,
+          "score": 20,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "< 25"
+        }
+      ],
+      "top_modifiable_risks": [
+        {
+          "name": "smoking_onco",
+          "raw_value": "current",
+          "score": 90,
+          "weight": 0.08,
+          "modifiable": true,
+          "optimal_range": "Never"
+        },
+        {
+          "name": "hsCRP_onco",
+          "raw_value": 3.5,
+          "unit": "mg/L",
+          "score": 80,
+          "weight": 0.08,
+          "modifiable": true,
+          "optimal_range": "< 1.0 mg/L"
+        },
+        {
+          "name": "alcohol_onco",
+          "raw_value": 16,
+          "unit": "units/wk",
+          "score": 75,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "≤ 7 units/wk"
+        }
+      ],
+      "data_completeness": 0.38
+    },
+    "musculoskeletal": {
+      "domain": "musculoskeletal",
+      "score": 43,
+      "risk_level": "moderate",
+      "factors": [
+        {
+          "name": "resistance_training",
+          "raw_value": {
+            "type": "Cardio only",
+            "minutes": 60
+          },
+          "score": 60,
+          "weight": 0.1,
+          "modifiable": true,
+          "optimal_range": "≥ 2x resistance training/week"
+        },
+        {
+          "name": "inflammation_msk",
+          "raw_value": 3.5,
+          "unit": "mg/L",
+          "score": 65,
+          "weight": 0.02,
+          "modifiable": true,
+          "optimal_range": "< 1.0 mg/L"
+        },
+        {
+          "name": "age_sex_msk",
+          "raw_value": {
+            "age": 58,
+            "sex": "male"
+          },
+          "score": 15,
+          "weight": 0.08,
+          "modifiable": false
+        }
+      ],
+      "top_modifiable_risks": [
+        {
+          "name": "resistance_training",
+          "raw_value": {
+            "type": "Cardio only",
+            "minutes": 60
+          },
+          "score": 60,
+          "weight": 0.1,
+          "modifiable": true,
+          "optimal_range": "≥ 2x resistance training/week"
+        },
+        {
+          "name": "inflammation_msk",
+          "raw_value": 3.5,
+          "unit": "mg/L",
+          "score": 65,
+          "weight": 0.02,
+          "modifiable": true,
+          "optimal_range": "< 1.0 mg/L"
+        }
+      ],
+      "data_completeness": 0.21
+    }
+  },
+  "domain_weights": {
+    "cardiovascular": 0.33962264150943394,
+    "metabolic": 0.23584905660377356,
+    "neurodegenerative": 0.14150943396226415,
+    "oncological": 0.14150943396226415,
+    "musculoskeletal": 0.14150943396226415
+  },
+  "top_risks": [
+    {
+      "name": "apoB",
+      "raw_value": 145,
+      "unit": "mg/dL",
+      "score": 85,
+      "weight": 0.12,
+      "modifiable": true,
+      "optimal_range": "< 80 mg/dL",
+      "standard_range": "< 130 mg/dL",
+      "domain": "cardiovascular"
+    },
+    {
+      "name": "smoking_onco",
+      "raw_value": "current",
+      "score": 90,
+      "weight": 0.08,
+      "modifiable": true,
+      "optimal_range": "Never",
+      "domain": "oncological"
+    },
+    {
+      "name": "hsCRP",
+      "raw_value": 3.5,
+      "unit": "mg/L",
+      "score": 80,
+      "weight": 0.08,
+      "modifiable": true,
+      "optimal_range": "< 1.0 mg/L",
+      "domain": "cardiovascular"
+    },
+    {
+      "name": "homocysteine_neuro",
+      "raw_value": 16,
+      "unit": "μmol/L",
+      "score": 80,
+      "weight": 0.08,
+      "modifiable": true,
+      "optimal_range": "< 10 μmol/L",
+      "domain": "neurodegenerative"
+    },
+    {
+      "name": "hsCRP_onco",
+      "raw_value": 3.5,
+      "unit": "mg/L",
+      "score": 80,
+      "weight": 0.08,
+      "modifiable": true,
+      "optimal_range": "< 1.0 mg/L",
+      "domain": "oncological"
+    }
+  ],
+  "data_completeness": 0.4,
+  "score_confidence": {
+    "level": "low",
+    "note": "Limited data — scores are directional only"
+  },
+  "last_calculated": "1970-01-01T00:00:00.000Z",
+  "next_recommended_tests": "DEXA bone density, testosterone/estradiol, magnesium RBC; Fasting insulin, HOMA-IR, HbA1c, body composition DEXA"
+}"
+`;
+
+exports[`scoreRisk (snapshots) > stable output for fixture: lowData 1`] = `
+"{
+  "longevity_score": 90,
+  "longevity_label": "Optimal",
+  "composite_risk": 10,
+  "biological_age": 42,
+  "chronological_age": 42,
+  "age_delta": 0,
+  "risk_level": "very_low",
+  "trajectory_6month": {
+    "current_longevity_score": 90,
+    "projected_longevity_score": 90,
+    "projected_improvement": 0,
+    "improvements": [],
+    "timeframe_months": 6,
+    "assumptions": "Based on 70% protocol adherence and evidence-based intervention effect sizes"
+  },
+  "domains": {
+    "cardiovascular": {
+      "domain": "cardiovascular",
+      "score": 0,
+      "risk_level": "very_low",
+      "factors": [
+        {
+          "name": "blood_pressure",
+          "raw_value": "normal",
+          "score": 0,
+          "weight": 0.08,
+          "modifiable": true,
+          "optimal_range": "< 120/80 mmHg"
+        },
+        {
+          "name": "smoking",
+          "raw_value": "never",
+          "score": 0,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "Never"
+        }
+      ],
+      "top_modifiable_risks": [],
+      "data_completeness": 0.13
+    },
+    "metabolic": {
+      "domain": "metabolic",
+      "score": 0,
+      "risk_level": "very_low",
+      "factors": [
+        {
+          "name": "BMI",
+          "raw_value": 24.2,
+          "score": 0,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "18.5–24.9"
+        }
+      ],
+      "top_modifiable_risks": [],
+      "data_completeness": 0.06
+    },
+    "neurodegenerative": {
+      "domain": "neurodegenerative",
+      "score": 50,
+      "risk_level": "moderate",
+      "factors": [],
+      "top_modifiable_risks": [],
+      "data_completeness": 0
+    },
+    "oncological": {
+      "domain": "oncological",
+      "score": 0,
+      "risk_level": "very_low",
+      "factors": [
+        {
+          "name": "BMI_onco",
+          "raw_value": 24.2,
+          "score": 0,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "< 25"
+        },
+        {
+          "name": "smoking_onco",
+          "raw_value": "never",
+          "score": 0,
+          "weight": 0.08,
+          "modifiable": true,
+          "optimal_range": "Never"
+        }
+      ],
+      "top_modifiable_risks": [],
+      "data_completeness": 0.13
+    },
+    "musculoskeletal": {
+      "domain": "musculoskeletal",
+      "score": 15,
+      "risk_level": "very_low",
+      "factors": [
+        {
+          "name": "age_sex_msk",
+          "raw_value": {
+            "age": 42,
+            "sex": "female"
+          },
+          "score": 15,
+          "weight": 0.08,
+          "modifiable": false
+        }
+      ],
+      "top_modifiable_risks": [],
+      "data_completeness": 0.07
+    }
+  },
+  "domain_weights": {
+    "cardiovascular": 0.3,
+    "metabolic": 0.25,
+    "neurodegenerative": 0.15,
+    "oncological": 0.15,
+    "musculoskeletal": 0.15
+  },
+  "top_risks": [],
+  "data_completeness": 0.08,
+  "score_confidence": {
+    "level": "insufficient",
+    "note": "Insufficient data for reliable scoring — recommend baseline testing"
+  },
+  "last_calculated": "1970-01-01T00:00:00.000Z",
+  "next_recommended_tests": "APOE genotyping, omega-3 index, sleep study; Fasting insulin, HOMA-IR, HbA1c, body composition DEXA"
+}"
+`;
+
+exports[`scoreRisk (snapshots) > stable output for fixture: metabolicSyndrome 1`] = `
+"{
+  "longevity_score": 51,
+  "longevity_label": "Concerning",
+  "composite_risk": 49,
+  "biological_age": 54.5,
+  "chronological_age": 48,
+  "age_delta": -6.5,
+  "risk_level": "moderate",
+  "trajectory_6month": {
+    "current_longevity_score": 51,
+    "projected_longevity_score": 53,
+    "projected_improvement": 2,
+    "improvements": [
+      {
+        "factor": "hba1c",
+        "domain": "metabolic",
+        "current_score": 80,
+        "projected_score": 66,
+        "improvement": 14,
+        "confidence": "moderate",
+        "optimal_range": "< 5.4%"
+      },
+      {
+        "factor": "HOMA_IR",
+        "domain": "metabolic",
+        "current_score": 75,
+        "projected_score": 57,
+        "improvement": 18,
+        "confidence": "high",
+        "optimal_range": "< 1.5"
+      },
+      {
+        "factor": "fasting_insulin",
+        "domain": "metabolic",
+        "current_score": 70,
+        "projected_score": 56,
+        "improvement": 14,
+        "confidence": "moderate",
+        "optimal_range": "< 5 μIU/mL"
+      },
+      {
+        "factor": "resistance_training",
+        "domain": "musculoskeletal",
+        "current_score": 60,
+        "projected_score": 46,
+        "improvement": 14,
+        "confidence": "moderate",
+        "optimal_range": "≥ 2x resistance training/week"
+      },
+      {
+        "factor": "liver_fat_fraction",
+        "domain": "metabolic",
+        "current_score": 84,
+        "projected_score": 70,
+        "improvement": 14,
+        "confidence": "moderate",
+        "optimal_range": "< 5%"
+      },
+      {
+        "factor": "tg_hdl_ratio",
+        "domain": "metabolic",
+        "current_score": 80,
+        "projected_score": 66,
+        "improvement": 14,
+        "confidence": "moderate",
+        "optimal_range": "< 1.5"
+      },
+      {
+        "factor": "visceral_fat",
+        "domain": "metabolic",
+        "current_score": 80,
+        "projected_score": 66,
+        "improvement": 14,
+        "confidence": "moderate",
+        "optimal_range": "< 100 cm²"
+      },
+      {
+        "factor": "fasting_glucose",
+        "domain": "metabolic",
+        "current_score": 74,
+        "projected_score": 63,
+        "improvement": 11,
+        "confidence": "moderate",
+        "optimal_range": "< 90 mg/dL"
+      },
+      {
+        "factor": "BMI",
+        "domain": "metabolic",
+        "current_score": 79,
+        "projected_score": 68,
+        "improvement": 11,
+        "confidence": "moderate",
+        "optimal_range": "18.5–24.9"
+      },
+      {
+        "factor": "triglycerides",
+        "domain": "cardiovascular",
+        "current_score": 75,
+        "projected_score": 61,
+        "improvement": 14,
+        "confidence": "moderate",
+        "optimal_range": "< 100 mg/dL"
+      }
+    ],
+    "timeframe_months": 6,
+    "assumptions": "Based on 70% protocol adherence and evidence-based intervention effect sizes"
+  },
+  "domains": {
+    "cardiovascular": {
+      "domain": "cardiovascular",
+      "score": 38,
+      "risk_level": "moderate",
+      "factors": [
+        {
+          "name": "triglycerides",
+          "raw_value": 240,
+          "unit": "mg/dL",
+          "score": 75,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "< 100 mg/dL"
+        },
+        {
+          "name": "hdl",
+          "raw_value": 38,
+          "unit": "mg/dL",
+          "score": 70,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "> 60 mg/dL"
+        },
+        {
+          "name": "smoking",
+          "raw_value": "former",
+          "score": 25,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "Never"
+        },
+        {
+          "name": "blood_pressure",
+          "raw_value": "normal",
+          "score": 0,
+          "weight": 0.08,
+          "modifiable": true,
+          "optimal_range": "< 120/80 mmHg"
+        }
+      ],
+      "top_modifiable_risks": [
+        {
+          "name": "triglycerides",
+          "raw_value": 240,
+          "unit": "mg/dL",
+          "score": 75,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "< 100 mg/dL"
+        },
+        {
+          "name": "hdl",
+          "raw_value": 38,
+          "unit": "mg/dL",
+          "score": 70,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "> 60 mg/dL"
+        }
+      ],
+      "data_completeness": 0.25
+    },
+    "metabolic": {
+      "domain": "metabolic",
+      "score": 74,
+      "risk_level": "very_high",
+      "factors": [
+        {
+          "name": "hba1c",
+          "raw_value": 6.2,
+          "unit": "%",
+          "score": 80,
+          "weight": 0.12,
+          "modifiable": true,
+          "optimal_range": "< 5.4%"
+        },
+        {
+          "name": "HOMA_IR",
+          "raw_value": 3.5,
+          "score": 75,
+          "weight": 0.1,
+          "modifiable": true,
+          "optimal_range": "< 1.5"
+        },
+        {
+          "name": "fasting_insulin",
+          "raw_value": 14,
+          "unit": "μIU/mL",
+          "score": 70,
+          "weight": 0.1,
+          "modifiable": true,
+          "optimal_range": "< 5 μIU/mL"
+        },
+        {
+          "name": "liver_fat_fraction",
+          "raw_value": 18,
+          "unit": "%",
+          "score": 84,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "< 5%"
+        },
+        {
+          "name": "tg_hdl_ratio",
+          "raw_value": 6.3,
+          "score": 80,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "< 1.5"
+        },
+        {
+          "name": "visceral_fat",
+          "raw_value": 175,
+          "unit": "cm²",
+          "score": 80,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "< 100 cm²"
+        },
+        {
+          "name": "fasting_glucose",
+          "raw_value": 115,
+          "unit": "mg/dL",
+          "score": 74,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "< 90 mg/dL"
+        },
+        {
+          "name": "BMI",
+          "raw_value": 33.8,
+          "score": 79,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "18.5–24.9"
+        },
+        {
+          "name": "exercise_volume",
+          "raw_value": 40,
+          "unit": "min/wk",
+          "score": 70,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "≥ 300 min/wk"
+        },
+        {
+          "name": "GGT",
+          "raw_value": 60,
+          "unit": "U/L",
+          "score": 80,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "< 25 U/L"
+        },
+        {
+          "name": "ALT",
+          "raw_value": 55,
+          "unit": "U/L",
+          "score": 73,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "< 25 U/L"
+        },
+        {
+          "name": "uric_acid",
+          "raw_value": 6.2,
+          "unit": "mg/dL",
+          "score": 56,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "< 5.0 mg/dL"
+        },
+        {
+          "name": "microbiome_diversity",
+          "raw_value": 2.5,
+          "score": 70,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "> 4.0 (Shannon index)"
+        },
+        {
+          "name": "family_history_t2d",
+          "raw_value": {
+            "first_degree": true,
+            "multiple": true,
+            "age_onset": 45
+          },
+          "score": 65,
+          "weight": 0.04,
+          "modifiable": false
+        },
+        {
+          "name": "diet_quality",
+          "raw_value": "standard_western",
+          "score": 55,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "Mediterranean / whole food"
+        }
+      ],
+      "top_modifiable_risks": [
+        {
+          "name": "hba1c",
+          "raw_value": 6.2,
+          "unit": "%",
+          "score": 80,
+          "weight": 0.12,
+          "modifiable": true,
+          "optimal_range": "< 5.4%"
+        },
+        {
+          "name": "HOMA_IR",
+          "raw_value": 3.5,
+          "score": 75,
+          "weight": 0.1,
+          "modifiable": true,
+          "optimal_range": "< 1.5"
+        },
+        {
+          "name": "fasting_insulin",
+          "raw_value": 14,
+          "unit": "μIU/mL",
+          "score": 70,
+          "weight": 0.1,
+          "modifiable": true,
+          "optimal_range": "< 5 μIU/mL"
+        }
+      ],
+      "data_completeness": 0.88
+    },
+    "neurodegenerative": {
+      "domain": "neurodegenerative",
+      "score": 34,
+      "risk_level": "moderate",
+      "factors": [
+        {
+          "name": "aerobic_exercise",
+          "raw_value": 40,
+          "unit": "min/wk",
+          "score": 55,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "≥ 150 min/wk"
+        },
+        {
+          "name": "sleep_duration",
+          "raw_value": 6,
+          "unit": "hours",
+          "score": 30,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "7–9 hours"
+        },
+        {
+          "name": "alcohol",
+          "raw_value": 8,
+          "unit": "units/wk",
+          "score": 25,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "0–7 units/wk"
+        },
+        {
+          "name": "stress_level",
+          "raw_value": "moderate",
+          "score": 20,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "Low"
+        }
+      ],
+      "top_modifiable_risks": [
+        {
+          "name": "aerobic_exercise",
+          "raw_value": 40,
+          "unit": "min/wk",
+          "score": 55,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "≥ 150 min/wk"
+        }
+      ],
+      "data_completeness": 0.25
+    },
+    "oncological": {
+      "domain": "oncological",
+      "score": 46,
+      "risk_level": "moderate",
+      "factors": [
+        {
+          "name": "fasting_insulin_onco",
+          "raw_value": 14,
+          "unit": "μIU/mL",
+          "score": 65,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "< 5 μIU/mL"
+        },
+        {
+          "name": "smoking_onco",
+          "raw_value": "former",
+          "score": 30,
+          "weight": 0.08,
+          "modifiable": true,
+          "optimal_range": "Never"
+        },
+        {
+          "name": "diet_onco",
+          "raw_value": "standard_western",
+          "score": 60,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "Plant-rich, low ultra-processed"
+        },
+        {
+          "name": "BMI_onco",
+          "raw_value": 33.8,
+          "score": 45,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "< 25"
+        },
+        {
+          "name": "exercise_onco",
+          "raw_value": 40,
+          "unit": "min/wk",
+          "score": 55,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "≥ 150 min/wk"
+        },
+        {
+          "name": "visceral_fat_onco",
+          "raw_value": 175,
+          "unit": "cm²",
+          "score": 50,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "< 100 cm²"
+        },
+        {
+          "name": "alcohol_onco",
+          "raw_value": 8,
+          "unit": "units/wk",
+          "score": 35,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "≤ 7 units/wk"
+        }
+      ],
+      "top_modifiable_risks": [
+        {
+          "name": "fasting_insulin_onco",
+          "raw_value": 14,
+          "unit": "μIU/mL",
+          "score": 65,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "< 5 μIU/mL"
+        },
+        {
+          "name": "diet_onco",
+          "raw_value": "standard_western",
+          "score": 60,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "Plant-rich, low ultra-processed"
+        },
+        {
+          "name": "BMI_onco",
+          "raw_value": 33.8,
+          "score": 45,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "< 25"
+        }
+      ],
+      "data_completeness": 0.44
+    },
+    "musculoskeletal": {
+      "domain": "musculoskeletal",
+      "score": 40,
+      "risk_level": "moderate",
+      "factors": [
+        {
+          "name": "resistance_training",
+          "raw_value": {
+            "minutes": 40
+          },
+          "score": 60,
+          "weight": 0.1,
+          "modifiable": true,
+          "optimal_range": "≥ 2x resistance training/week"
+        },
+        {
+          "name": "age_sex_msk",
+          "raw_value": {
+            "age": 48,
+            "sex": "female"
+          },
+          "score": 15,
+          "weight": 0.08,
+          "modifiable": false
+        }
+      ],
+      "top_modifiable_risks": [
+        {
+          "name": "resistance_training",
+          "raw_value": {
+            "minutes": 40
+          },
+          "score": 60,
+          "weight": 0.1,
+          "modifiable": true,
+          "optimal_range": "≥ 2x resistance training/week"
+        }
+      ],
+      "data_completeness": 0.14
+    }
+  },
+  "domain_weights": {
+    "cardiovascular": 0.2857142857142857,
+    "metabolic": 0.2857142857142857,
+    "neurodegenerative": 0.14285714285714285,
+    "oncological": 0.14285714285714285,
+    "musculoskeletal": 0.14285714285714285
+  },
+  "top_risks": [
+    {
+      "name": "hba1c",
+      "raw_value": 6.2,
+      "unit": "%",
+      "score": 80,
+      "weight": 0.12,
+      "modifiable": true,
+      "optimal_range": "< 5.4%",
+      "domain": "metabolic"
+    },
+    {
+      "name": "HOMA_IR",
+      "raw_value": 3.5,
+      "score": 75,
+      "weight": 0.1,
+      "modifiable": true,
+      "optimal_range": "< 1.5",
+      "domain": "metabolic"
+    },
+    {
+      "name": "fasting_insulin",
+      "raw_value": 14,
+      "unit": "μIU/mL",
+      "score": 70,
+      "weight": 0.1,
+      "modifiable": true,
+      "optimal_range": "< 5 μIU/mL",
+      "domain": "metabolic"
+    },
+    {
+      "name": "resistance_training",
+      "raw_value": {
+        "minutes": 40
+      },
+      "score": 60,
+      "weight": 0.1,
+      "modifiable": true,
+      "optimal_range": "≥ 2x resistance training/week",
+      "domain": "musculoskeletal"
+    },
+    {
+      "name": "liver_fat_fraction",
+      "raw_value": 18,
+      "unit": "%",
+      "score": 84,
+      "weight": 0.06,
+      "modifiable": true,
+      "optimal_range": "< 5%",
+      "domain": "metabolic"
+    }
+  ],
+  "data_completeness": 0.39,
+  "score_confidence": {
+    "level": "low",
+    "note": "Limited data — scores are directional only"
+  },
+  "last_calculated": "1970-01-01T00:00:00.000Z",
+  "next_recommended_tests": "DEXA bone density, testosterone/estradiol, magnesium RBC; ApoB, Lp(a), coronary calcium score (CAC), carotid IMT"
+}"
+`;
+
+exports[`scoreRisk (snapshots) > stable output for fixture: pristine 1`] = `
+"{
+  "longevity_score": 100,
+  "longevity_label": "Optimal",
+  "composite_risk": 0,
+  "biological_age": 34.7,
+  "chronological_age": 35,
+  "age_delta": 0.3,
+  "risk_level": "very_low",
+  "trajectory_6month": {
+    "current_longevity_score": 100,
+    "projected_longevity_score": 100,
+    "projected_improvement": 0,
+    "improvements": [],
+    "timeframe_months": 6,
+    "assumptions": "Based on 70% protocol adherence and evidence-based intervention effect sizes"
+  },
+  "domains": {
+    "cardiovascular": {
+      "domain": "cardiovascular",
+      "score": 0,
+      "risk_level": "very_low",
+      "factors": [
+        {
+          "name": "apoB",
+          "raw_value": 70,
+          "unit": "mg/dL",
+          "score": 0,
+          "weight": 0.12,
+          "modifiable": true,
+          "optimal_range": "< 80 mg/dL",
+          "standard_range": "< 130 mg/dL"
+        },
+        {
+          "name": "lp_a",
+          "raw_value": 20,
+          "unit": "nmol/L",
+          "score": 0,
+          "weight": 0.08,
+          "modifiable": false,
+          "optimal_range": "< 30 nmol/L"
+        },
+        {
+          "name": "ldl",
+          "raw_value": 90,
+          "unit": "mg/dL",
+          "score": 0,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "< 100 mg/dL"
+        },
+        {
+          "name": "hdl",
+          "raw_value": 65,
+          "unit": "mg/dL",
+          "score": 0,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "> 60 mg/dL"
+        },
+        {
+          "name": "triglycerides",
+          "raw_value": 80,
+          "unit": "mg/dL",
+          "score": 0,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "< 100 mg/dL"
+        },
+        {
+          "name": "hsCRP",
+          "raw_value": 0.5,
+          "unit": "mg/L",
+          "score": 0,
+          "weight": 0.08,
+          "modifiable": true,
+          "optimal_range": "< 1.0 mg/L"
+        },
+        {
+          "name": "homocysteine",
+          "raw_value": 8,
+          "unit": "μmol/L",
+          "score": 0,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "< 10 μmol/L"
+        },
+        {
+          "name": "blood_pressure",
+          "raw_value": "normal",
+          "score": 0,
+          "weight": 0.08,
+          "modifiable": true,
+          "optimal_range": "< 120/80 mmHg"
+        },
+        {
+          "name": "coronary_calcium_score",
+          "raw_value": 0,
+          "unit": "Agatston",
+          "score": 0,
+          "weight": 0.1,
+          "modifiable": false,
+          "optimal_range": "0"
+        },
+        {
+          "name": "carotid_IMT",
+          "raw_value": 0.5,
+          "unit": "mm",
+          "score": 0,
+          "weight": 0.05,
+          "modifiable": false,
+          "optimal_range": "< 0.6 mm"
+        },
+        {
+          "name": "smoking",
+          "raw_value": "never",
+          "score": 0,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "Never"
+        }
+      ],
+      "top_modifiable_risks": [],
+      "data_completeness": 0.69
+    },
+    "metabolic": {
+      "domain": "metabolic",
+      "score": 0,
+      "risk_level": "very_low",
+      "factors": [
+        {
+          "name": "hba1c",
+          "raw_value": 5,
+          "unit": "%",
+          "score": 0,
+          "weight": 0.12,
+          "modifiable": true,
+          "optimal_range": "< 5.4%"
+        },
+        {
+          "name": "fasting_insulin",
+          "raw_value": 4,
+          "unit": "μIU/mL",
+          "score": 0,
+          "weight": 0.1,
+          "modifiable": true,
+          "optimal_range": "< 5 μIU/mL"
+        },
+        {
+          "name": "HOMA_IR",
+          "raw_value": 1,
+          "score": 0,
+          "weight": 0.1,
+          "modifiable": true,
+          "optimal_range": "< 1.5"
+        },
+        {
+          "name": "fasting_glucose",
+          "raw_value": 85,
+          "unit": "mg/dL",
+          "score": 0,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "< 90 mg/dL"
+        },
+        {
+          "name": "tg_hdl_ratio",
+          "raw_value": 1.2,
+          "score": 0,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "< 1.5"
+        },
+        {
+          "name": "uric_acid",
+          "raw_value": 5,
+          "unit": "mg/dL",
+          "score": 0,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "< 6.0 mg/dL"
+        },
+        {
+          "name": "ALT",
+          "raw_value": 20,
+          "unit": "U/L",
+          "score": 0,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "< 25 U/L"
+        },
+        {
+          "name": "GGT",
+          "raw_value": 18,
+          "unit": "U/L",
+          "score": 0,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "< 25 U/L"
+        },
+        {
+          "name": "liver_fat_fraction",
+          "raw_value": 2,
+          "unit": "%",
+          "score": 0,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "< 5%"
+        },
+        {
+          "name": "visceral_fat",
+          "raw_value": 60,
+          "unit": "cm²",
+          "score": 0,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "< 100 cm²"
+        },
+        {
+          "name": "BMI",
+          "raw_value": 23.1,
+          "score": 0,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "18.5–24.9"
+        },
+        {
+          "name": "microbiome_diversity",
+          "raw_value": 4.5,
+          "score": 0,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "> 4.0 (Shannon index)"
+        },
+        {
+          "name": "diet_quality",
+          "raw_value": "mediterranean",
+          "score": 0,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "Mediterranean / whole food"
+        },
+        {
+          "name": "exercise_volume",
+          "raw_value": 320,
+          "unit": "min/wk",
+          "score": 0,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "≥ 300 min/wk"
+        }
+      ],
+      "top_modifiable_risks": [],
+      "data_completeness": 0.82
+    },
+    "neurodegenerative": {
+      "domain": "neurodegenerative",
+      "score": 2,
+      "risk_level": "very_low",
+      "factors": [
+        {
+          "name": "APOE_genotype",
+          "raw_value": "e3/e3",
+          "score": 10,
+          "weight": 0.15,
+          "modifiable": false,
+          "note": null
+        },
+        {
+          "name": "sleep_duration",
+          "raw_value": 8,
+          "unit": "hours",
+          "score": 0,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "7–9 hours"
+        },
+        {
+          "name": "hsCRP_neuro",
+          "raw_value": 0.5,
+          "unit": "mg/L",
+          "score": 0,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "< 1.0 mg/L"
+        },
+        {
+          "name": "homocysteine_neuro",
+          "raw_value": 8,
+          "unit": "μmol/L",
+          "score": 0,
+          "weight": 0.08,
+          "modifiable": true,
+          "optimal_range": "< 10 μmol/L"
+        },
+        {
+          "name": "vitamin_B12",
+          "raw_value": 700,
+          "unit": "pg/mL",
+          "score": 0,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "> 600 pg/mL"
+        },
+        {
+          "name": "vitamin_D_neuro",
+          "raw_value": 55,
+          "unit": "ng/mL",
+          "score": 0,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "> 50 ng/mL"
+        },
+        {
+          "name": "omega3_index",
+          "raw_value": 9,
+          "unit": "%",
+          "score": 0,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "> 8%"
+        },
+        {
+          "name": "aerobic_exercise",
+          "raw_value": 320,
+          "unit": "min/wk",
+          "score": 0,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "≥ 150 min/wk"
+        },
+        {
+          "name": "alcohol",
+          "raw_value": 4,
+          "unit": "units/wk",
+          "score": 0,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "0–7 units/wk"
+        },
+        {
+          "name": "stress_level",
+          "raw_value": "low",
+          "score": 0,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "Low"
+        }
+      ],
+      "top_modifiable_risks": [],
+      "data_completeness": 0.63
+    },
+    "oncological": {
+      "domain": "oncological",
+      "score": 0,
+      "risk_level": "very_low",
+      "factors": [
+        {
+          "name": "hsCRP_onco",
+          "raw_value": 0.5,
+          "unit": "mg/L",
+          "score": 0,
+          "weight": 0.08,
+          "modifiable": true,
+          "optimal_range": "< 1.0 mg/L"
+        },
+        {
+          "name": "NLR",
+          "raw_value": 1.5,
+          "score": 0,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "< 2.0"
+        },
+        {
+          "name": "IGF1",
+          "raw_value": 180,
+          "unit": "ng/mL",
+          "score": 0,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "Age-appropriate range"
+        },
+        {
+          "name": "fasting_insulin_onco",
+          "raw_value": 4,
+          "unit": "μIU/mL",
+          "score": 0,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "< 5 μIU/mL"
+        },
+        {
+          "name": "BMI_onco",
+          "raw_value": 23.1,
+          "score": 0,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "< 25"
+        },
+        {
+          "name": "visceral_fat_onco",
+          "raw_value": 60,
+          "unit": "cm²",
+          "score": 0,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "< 100 cm²"
+        },
+        {
+          "name": "alcohol_onco",
+          "raw_value": 4,
+          "unit": "units/wk",
+          "score": 0,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "≤ 7 units/wk"
+        },
+        {
+          "name": "smoking_onco",
+          "raw_value": "never",
+          "score": 0,
+          "weight": 0.08,
+          "modifiable": true,
+          "optimal_range": "Never"
+        },
+        {
+          "name": "diet_onco",
+          "raw_value": "mediterranean",
+          "score": 0,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "Plant-rich, low ultra-processed"
+        },
+        {
+          "name": "exercise_onco",
+          "raw_value": 320,
+          "unit": "min/wk",
+          "score": 0,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "≥ 150 min/wk"
+        }
+      ],
+      "top_modifiable_risks": [],
+      "data_completeness": 0.63
+    },
+    "musculoskeletal": {
+      "domain": "musculoskeletal",
+      "score": 0,
+      "risk_level": "very_low",
+      "factors": [
+        {
+          "name": "DEXA_spine",
+          "raw_value": 0.5,
+          "score": 0,
+          "weight": 0.15,
+          "modifiable": true,
+          "optimal_range": "> -1.0"
+        },
+        {
+          "name": "DEXA_hip",
+          "raw_value": 0.3,
+          "score": 0,
+          "weight": 0.12,
+          "modifiable": true,
+          "optimal_range": "> -1.0"
+        },
+        {
+          "name": "vitamin_D_msk",
+          "raw_value": 55,
+          "unit": "ng/mL",
+          "score": 0,
+          "weight": 0.1,
+          "modifiable": true,
+          "optimal_range": "> 50 ng/mL"
+        },
+        {
+          "name": "testosterone_msk",
+          "raw_value": 600,
+          "unit": "ng/dL",
+          "score": 0,
+          "weight": 0.08,
+          "modifiable": true,
+          "optimal_range": "> 500 ng/dL"
+        },
+        {
+          "name": "resistance_training",
+          "raw_value": {
+            "type": "Mixed cardio + weights",
+            "minutes": 320
+          },
+          "score": 0,
+          "weight": 0.1,
+          "modifiable": true,
+          "optimal_range": "≥ 2x resistance training/week"
+        },
+        {
+          "name": "magnesium_rbc",
+          "raw_value": 6,
+          "unit": "mg/dL",
+          "score": 0,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "> 5.5 mg/dL"
+        },
+        {
+          "name": "age_sex_msk",
+          "raw_value": {
+            "age": 35,
+            "sex": "male"
+          },
+          "score": 0,
+          "weight": 0.08,
+          "modifiable": false
+        },
+        {
+          "name": "inflammation_msk",
+          "raw_value": 0.5,
+          "unit": "mg/L",
+          "score": 0,
+          "weight": 0.02,
+          "modifiable": true,
+          "optimal_range": "< 1.0 mg/L"
+        }
+      ],
+      "top_modifiable_risks": [],
+      "data_completeness": 0.57
+    }
+  },
+  "domain_weights": {
+    "cardiovascular": 0.3,
+    "metabolic": 0.25,
+    "neurodegenerative": 0.15,
+    "oncological": 0.15,
+    "musculoskeletal": 0.15
+  },
+  "top_risks": [],
+  "data_completeness": 0.67,
+  "score_confidence": {
+    "level": "moderate",
+    "note": "Core biomarkers present, some gaps"
+  },
+  "last_calculated": "1970-01-01T00:00:00.000Z",
+  "next_recommended_tests": "DEXA bone density, testosterone/estradiol, magnesium RBC; APOE genotyping, omega-3 index, sleep study"
+}"
+`;
+
+exports[`scoreRisk (snapshots) > stable output for fixture: pristineWithWearable 1`] = `
+"{
+  "longevity_score": 100,
+  "longevity_label": "Optimal",
+  "composite_risk": 0,
+  "biological_age": 33.4,
+  "chronological_age": 35,
+  "age_delta": 1.6,
+  "risk_level": "very_low",
+  "trajectory_6month": {
+    "current_longevity_score": 100,
+    "projected_longevity_score": 100,
+    "projected_improvement": 0,
+    "improvements": [],
+    "timeframe_months": 6,
+    "assumptions": "Based on 70% protocol adherence and evidence-based intervention effect sizes"
+  },
+  "domains": {
+    "cardiovascular": {
+      "domain": "cardiovascular",
+      "score": 0,
+      "risk_level": "very_low",
+      "factors": [
+        {
+          "name": "apoB",
+          "raw_value": 70,
+          "unit": "mg/dL",
+          "score": 0,
+          "weight": 0.12,
+          "modifiable": true,
+          "optimal_range": "< 80 mg/dL",
+          "standard_range": "< 130 mg/dL"
+        },
+        {
+          "name": "lp_a",
+          "raw_value": 20,
+          "unit": "nmol/L",
+          "score": 0,
+          "weight": 0.08,
+          "modifiable": false,
+          "optimal_range": "< 30 nmol/L"
+        },
+        {
+          "name": "ldl",
+          "raw_value": 90,
+          "unit": "mg/dL",
+          "score": 0,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "< 100 mg/dL"
+        },
+        {
+          "name": "hdl",
+          "raw_value": 65,
+          "unit": "mg/dL",
+          "score": 0,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "> 60 mg/dL"
+        },
+        {
+          "name": "triglycerides",
+          "raw_value": 80,
+          "unit": "mg/dL",
+          "score": 0,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "< 100 mg/dL"
+        },
+        {
+          "name": "hsCRP",
+          "raw_value": 0.5,
+          "unit": "mg/L",
+          "score": 0,
+          "weight": 0.08,
+          "modifiable": true,
+          "optimal_range": "< 1.0 mg/L"
+        },
+        {
+          "name": "homocysteine",
+          "raw_value": 8,
+          "unit": "μmol/L",
+          "score": 0,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "< 10 μmol/L"
+        },
+        {
+          "name": "blood_pressure",
+          "raw_value": "normal",
+          "score": 0,
+          "weight": 0.08,
+          "modifiable": true,
+          "optimal_range": "< 120/80 mmHg"
+        },
+        {
+          "name": "coronary_calcium_score",
+          "raw_value": 0,
+          "unit": "Agatston",
+          "score": 0,
+          "weight": 0.1,
+          "modifiable": false,
+          "optimal_range": "0"
+        },
+        {
+          "name": "carotid_IMT",
+          "raw_value": 0.5,
+          "unit": "mm",
+          "score": 0,
+          "weight": 0.05,
+          "modifiable": false,
+          "optimal_range": "< 0.6 mm"
+        },
+        {
+          "name": "resting_hr",
+          "raw_value": 52,
+          "unit": "bpm",
+          "score": 0,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "< 60 bpm"
+        },
+        {
+          "name": "hrv_rmssd",
+          "raw_value": 75,
+          "unit": "ms",
+          "score": 0,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "> 50 ms (age-adjusted)"
+        },
+        {
+          "name": "vo2max",
+          "raw_value": 55,
+          "unit": "mL/kg/min",
+          "score": 0,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "> 53 mL/kg/min (age-adjusted)"
+        },
+        {
+          "name": "smoking",
+          "raw_value": "never",
+          "score": 0,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "Never"
+        }
+      ],
+      "top_modifiable_risks": [],
+      "data_completeness": 0.88
+    },
+    "metabolic": {
+      "domain": "metabolic",
+      "score": 0,
+      "risk_level": "very_low",
+      "factors": [
+        {
+          "name": "hba1c",
+          "raw_value": 5,
+          "unit": "%",
+          "score": 0,
+          "weight": 0.12,
+          "modifiable": true,
+          "optimal_range": "< 5.4%"
+        },
+        {
+          "name": "fasting_insulin",
+          "raw_value": 4,
+          "unit": "μIU/mL",
+          "score": 0,
+          "weight": 0.1,
+          "modifiable": true,
+          "optimal_range": "< 5 μIU/mL"
+        },
+        {
+          "name": "HOMA_IR",
+          "raw_value": 1,
+          "score": 0,
+          "weight": 0.1,
+          "modifiable": true,
+          "optimal_range": "< 1.5"
+        },
+        {
+          "name": "fasting_glucose",
+          "raw_value": 85,
+          "unit": "mg/dL",
+          "score": 0,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "< 90 mg/dL"
+        },
+        {
+          "name": "tg_hdl_ratio",
+          "raw_value": 1.2,
+          "score": 0,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "< 1.5"
+        },
+        {
+          "name": "uric_acid",
+          "raw_value": 5,
+          "unit": "mg/dL",
+          "score": 0,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "< 6.0 mg/dL"
+        },
+        {
+          "name": "ALT",
+          "raw_value": 20,
+          "unit": "U/L",
+          "score": 0,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "< 25 U/L"
+        },
+        {
+          "name": "GGT",
+          "raw_value": 18,
+          "unit": "U/L",
+          "score": 0,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "< 25 U/L"
+        },
+        {
+          "name": "liver_fat_fraction",
+          "raw_value": 2,
+          "unit": "%",
+          "score": 0,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "< 5%"
+        },
+        {
+          "name": "visceral_fat",
+          "raw_value": 60,
+          "unit": "cm²",
+          "score": 0,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "< 100 cm²"
+        },
+        {
+          "name": "BMI",
+          "raw_value": 23.1,
+          "score": 0,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "18.5–24.9"
+        },
+        {
+          "name": "microbiome_diversity",
+          "raw_value": 4.5,
+          "score": 0,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "> 4.0 (Shannon index)"
+        },
+        {
+          "name": "diet_quality",
+          "raw_value": "mediterranean",
+          "score": 0,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "Mediterranean / whole food"
+        },
+        {
+          "name": "exercise_volume",
+          "raw_value": 320,
+          "unit": "min/wk",
+          "score": 0,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "≥ 300 min/wk"
+        }
+      ],
+      "top_modifiable_risks": [],
+      "data_completeness": 0.82
+    },
+    "neurodegenerative": {
+      "domain": "neurodegenerative",
+      "score": 2,
+      "risk_level": "very_low",
+      "factors": [
+        {
+          "name": "APOE_genotype",
+          "raw_value": "e3/e3",
+          "score": 10,
+          "weight": 0.15,
+          "modifiable": false,
+          "note": null
+        },
+        {
+          "name": "deep_sleep_pct",
+          "raw_value": 22,
+          "unit": "%",
+          "score": 0,
+          "weight": 0.1,
+          "modifiable": true,
+          "optimal_range": "> 20% deep sleep"
+        },
+        {
+          "name": "sleep_duration",
+          "raw_value": 8,
+          "unit": "hours",
+          "score": 0,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "7–9 hours"
+        },
+        {
+          "name": "hsCRP_neuro",
+          "raw_value": 0.5,
+          "unit": "mg/L",
+          "score": 0,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "< 1.0 mg/L"
+        },
+        {
+          "name": "homocysteine_neuro",
+          "raw_value": 8,
+          "unit": "μmol/L",
+          "score": 0,
+          "weight": 0.08,
+          "modifiable": true,
+          "optimal_range": "< 10 μmol/L"
+        },
+        {
+          "name": "vitamin_B12",
+          "raw_value": 700,
+          "unit": "pg/mL",
+          "score": 0,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "> 600 pg/mL"
+        },
+        {
+          "name": "vitamin_D_neuro",
+          "raw_value": 55,
+          "unit": "ng/mL",
+          "score": 0,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "> 50 ng/mL"
+        },
+        {
+          "name": "omega3_index",
+          "raw_value": 9,
+          "unit": "%",
+          "score": 0,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "> 8%"
+        },
+        {
+          "name": "aerobic_exercise",
+          "raw_value": 320,
+          "unit": "min/wk",
+          "score": 0,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "≥ 150 min/wk"
+        },
+        {
+          "name": "hrv_autonomic",
+          "raw_value": 75,
+          "unit": "ms",
+          "score": 0,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "> 50 ms (age-adjusted)"
+        },
+        {
+          "name": "alcohol",
+          "raw_value": 4,
+          "unit": "units/wk",
+          "score": 0,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "0–7 units/wk"
+        },
+        {
+          "name": "stress_level",
+          "raw_value": "low",
+          "score": 0,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "Low"
+        }
+      ],
+      "top_modifiable_risks": [],
+      "data_completeness": 0.75
+    },
+    "oncological": {
+      "domain": "oncological",
+      "score": 0,
+      "risk_level": "very_low",
+      "factors": [
+        {
+          "name": "hsCRP_onco",
+          "raw_value": 0.5,
+          "unit": "mg/L",
+          "score": 0,
+          "weight": 0.08,
+          "modifiable": true,
+          "optimal_range": "< 1.0 mg/L"
+        },
+        {
+          "name": "NLR",
+          "raw_value": 1.5,
+          "score": 0,
+          "weight": 0.06,
+          "modifiable": true,
+          "optimal_range": "< 2.0"
+        },
+        {
+          "name": "IGF1",
+          "raw_value": 180,
+          "unit": "ng/mL",
+          "score": 0,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "Age-appropriate range"
+        },
+        {
+          "name": "fasting_insulin_onco",
+          "raw_value": 4,
+          "unit": "μIU/mL",
+          "score": 0,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "< 5 μIU/mL"
+        },
+        {
+          "name": "BMI_onco",
+          "raw_value": 23.1,
+          "score": 0,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "< 25"
+        },
+        {
+          "name": "visceral_fat_onco",
+          "raw_value": 60,
+          "unit": "cm²",
+          "score": 0,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "< 100 cm²"
+        },
+        {
+          "name": "alcohol_onco",
+          "raw_value": 4,
+          "unit": "units/wk",
+          "score": 0,
+          "weight": 0.05,
+          "modifiable": true,
+          "optimal_range": "≤ 7 units/wk"
+        },
+        {
+          "name": "smoking_onco",
+          "raw_value": "never",
+          "score": 0,
+          "weight": 0.08,
+          "modifiable": true,
+          "optimal_range": "Never"
+        },
+        {
+          "name": "diet_onco",
+          "raw_value": "mediterranean",
+          "score": 0,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "Plant-rich, low ultra-processed"
+        },
+        {
+          "name": "exercise_onco",
+          "raw_value": 320,
+          "unit": "min/wk",
+          "score": 0,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "≥ 150 min/wk"
+        }
+      ],
+      "top_modifiable_risks": [],
+      "data_completeness": 0.63
+    },
+    "musculoskeletal": {
+      "domain": "musculoskeletal",
+      "score": 0,
+      "risk_level": "very_low",
+      "factors": [
+        {
+          "name": "DEXA_spine",
+          "raw_value": 0.5,
+          "score": 0,
+          "weight": 0.15,
+          "modifiable": true,
+          "optimal_range": "> -1.0"
+        },
+        {
+          "name": "DEXA_hip",
+          "raw_value": 0.3,
+          "score": 0,
+          "weight": 0.12,
+          "modifiable": true,
+          "optimal_range": "> -1.0"
+        },
+        {
+          "name": "vitamin_D_msk",
+          "raw_value": 55,
+          "unit": "ng/mL",
+          "score": 0,
+          "weight": 0.1,
+          "modifiable": true,
+          "optimal_range": "> 50 ng/mL"
+        },
+        {
+          "name": "testosterone_msk",
+          "raw_value": 600,
+          "unit": "ng/dL",
+          "score": 0,
+          "weight": 0.08,
+          "modifiable": true,
+          "optimal_range": "> 500 ng/dL"
+        },
+        {
+          "name": "resistance_training",
+          "raw_value": {
+            "type": "Mixed cardio + weights",
+            "minutes": 320
+          },
+          "score": 0,
+          "weight": 0.1,
+          "modifiable": true,
+          "optimal_range": "≥ 2x resistance training/week"
+        },
+        {
+          "name": "magnesium_rbc",
+          "raw_value": 6,
+          "unit": "mg/dL",
+          "score": 0,
+          "weight": 0.04,
+          "modifiable": true,
+          "optimal_range": "> 5.5 mg/dL"
+        },
+        {
+          "name": "age_sex_msk",
+          "raw_value": {
+            "age": 35,
+            "sex": "male"
+          },
+          "score": 0,
+          "weight": 0.08,
+          "modifiable": false
+        },
+        {
+          "name": "inflammation_msk",
+          "raw_value": 0.5,
+          "unit": "mg/L",
+          "score": 0,
+          "weight": 0.02,
+          "modifiable": true,
+          "optimal_range": "< 1.0 mg/L"
+        }
+      ],
+      "top_modifiable_risks": [],
+      "data_completeness": 0.57
+    }
+  },
+  "domain_weights": {
+    "cardiovascular": 0.3,
+    "metabolic": 0.25,
+    "neurodegenerative": 0.15,
+    "oncological": 0.15,
+    "musculoskeletal": 0.15
+  },
+  "top_risks": [],
+  "data_completeness": 0.73,
+  "score_confidence": {
+    "level": "moderate",
+    "note": "Core biomarkers present, some gaps"
+  },
+  "last_calculated": "1970-01-01T00:00:00.000Z",
+  "next_recommended_tests": "DEXA bone density, testosterone/estradiol, magnesium RBC; Cancer genetic panel (BRCA/Lynch), NLR, inflammatory markers"
+}"
+`;

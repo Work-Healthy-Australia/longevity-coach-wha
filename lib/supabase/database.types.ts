@@ -1016,6 +1016,36 @@ export type Database = {
         }
         Relationships: []
       }
+      export_log: {
+        Row: {
+          byte_size: number | null
+          created_at: string
+          exported_at: string
+          format: string
+          id: string
+          request_ip: string | null
+          user_uuid: string
+        }
+        Insert: {
+          byte_size?: number | null
+          created_at?: string
+          exported_at?: string
+          format: string
+          id?: string
+          request_ip?: string | null
+          user_uuid: string
+        }
+        Update: {
+          byte_size?: number | null
+          created_at?: string
+          exported_at?: string
+          format?: string
+          id?: string
+          request_ip?: string | null
+          user_uuid?: string
+        }
+        Relationships: []
+      }
       family_members: {
         Row: {
           age_at_death: number | null

@@ -43,6 +43,7 @@ export default async function AppLayout({
             { href: "/dashboard", label: "Dashboard" },
             { href: "/report", label: "My Report" },
             { href: "/uploads", label: "Documents" },
+            { href: "/account", label: "Account" },
           ].map(({ href, label }) => (
             <Link
               key={href}

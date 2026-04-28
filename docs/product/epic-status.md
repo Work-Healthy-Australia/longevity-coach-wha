@@ -22,22 +22,22 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 | # | Epic | Pipeline | Estimate | Open bugs | Closed bugs |
 |---|---|---|---:|---:|---:|
-| 1 | The Front Door | `●●●◐◐` | 90% | 2 (P2, P3) | 1 |
+| 1 | The Front Door | `●●●●◐` | 95% | 0 | 3 |
 | 2 | The Intake | `●●●◐○` | 85% | 0 | 0 |
 | 3 | The Number | `●●○○○` | 50% | 1 (P1) | 0 |
 | 4 | The Protocol | `●●○○○` | 50% | 0 | 0 |
 | 5 | The Report | `●◐○○○` | 35% | 1 (P3) | 0 |
 | 6 | The Coach | `●●○○○` | 60% | 1 (P2) | 0 |
-| 7 | The Daily Return | `●◐○○○` | 25% | 0 | 0 |
+| 7 | The Daily Return | `●●◐○○` | 65% | 0 | 0 |
 | 8 | The Living Record | `●○○○○` | 5% | 0 | 0 |
 | 9 | The Care Team | `●○○○○` | 5% | 0 | 0 |
 | 10 | The Knowledge Engine | `●○○○○` | 10% | 1 (P2) | 0 |
-| 11 | The Trust Layer | `●●◐○○` | 55% | 1 (P2) | 0 |
+| 11 | The Trust Layer | `●●◐○○` | 65% | 1 (P2) | 1 |
 | 12 | The Distribution | `●○○○○` | 5% | 0 | 0 |
 | 13 | The Business Model | `●○○○○` | 0% | 0 | 0 |
-| 14 | The Platform Foundation | `●◐○○○` | 40% | 0 | 0 |
+| 14 | The Platform Foundation | `●◐○○○` | 45% | 0 | 0 |
 
-**Bug totals:** 7 open, 1 closed. (Bug log: forthcoming `qa/QA-bugs.md`. The single closed bug is BUG-001, signup form clearing — fixed 2026-04-27.)
+**Bug totals:** 5 open, 4 closed. (Bug log: forthcoming `qa/QA-bugs.md`.)
 
 ---
 
@@ -45,29 +45,28 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 1: The Front Door
 
-`●●●◐◐` Planned · Feature Complete · Unit Tested · ◐ Regression Tested · ◐ User Reviewed
-**Estimate: 90%** — feature-complete enough for early members; missing the `/account` self-service page and a single Account link in the nav.
+`●●●●◐` Planned · Feature Complete · Unit Tested · Regression Tested · ◐ User Reviewed
+**Estimate: 95%** — full member-facing front door shipped end-to-end; only outstanding gate is sustained user review.
 
 **Shipped:**
 - Marketing pages: `/`, `/science`, `/team`, `/stories`, `/sample-report`, `/legal/collection-notice`.
 - Auth flows: signup, signin, password reset, email verification (OTP + PKCE).
-- Welcome email on activation (Resend).
+- Welcome email on activation (Resend) with DB-flag idempotency (`profiles.welcome_email_sent_at`).
 - Stripe checkout (monthly + annual) and webhook lifecycle handling.
-- Logged-in nav with Dashboard / Report / Documents links.
+- Logged-in nav with Dashboard / Report / Documents / Account links.
+- `/account` page — minimal cut shipped 2026-04-28 (identity card + "Download my data" button only). Full self-service surfaces (profile edit, address edit, subscription cancel, password change) deferred — see Epic 11 outstanding.
 - Live QA Playwright suite: 33/33 passing on public pages.
 - Vitest integration tests on auth + Stripe + onboarding actions.
 
 **Outstanding:**
-- `/account` page — profile edit, address edit, subscription cancel, password change, export-everything button.
-- Account link in the logged-in nav (currently no surface to reach `/account` even if it existed).
-- Welcome-email idempotency upgrade (currently a 60s time window, should be a `profiles.welcome_email_sent_at` flag).
+- Sustained user-review pass on `/account` flows with real members.
 
-**Open bugs:**
-- **BUG-002** (P2): Welcome email idempotency is a 60s window, not a DB flag. A double-click on the verification link inside a minute = two welcome emails.
-- **BUG-006** (P3): No Account link in the logged-in nav. The page does not exist yet, but the nav slot is also missing.
+**Open bugs:** none.
 
 **Closed bugs:**
 - **BUG-001** (FIXED 2026-04-27): Signup form cleared all fields after a server-side validation error. Fix: server actions echo `{ email, full_name }` back via `state.values`, form passes those to `defaultValue`. Verified by `tests/live-qa/qa_run.py::test_signup_short_password`.
+- **BUG-002** (CLOSED 2026-04-28): Welcome email idempotency was a 60s window, not a DB flag. A double-click on the verification link inside a minute = two welcome emails.
+- **BUG-006** (CLOSED 2026-04-28): No Account link in the logged-in nav. The page did not exist yet, and the nav slot was also missing.
 
 ---
 
@@ -201,19 +200,23 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 7: The Daily Return
 
-`●◐○○○` Planned · ◐ Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 25%** — drip-email cron + table shipped; check-in flow, habits, streaks, push reminders are all unbuilt.
+`●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 65%** — daily check-in UI shipped 2026-04-28, streak math shipped (UTC-safe, 10 unit tests), Mon-Sun dot strip shipped 2026-04-28, steps + water capture shipped 2026-04-28, dashboard wired with today-strip + streak hero + supplement adherence + action picker; remaining work is reminders, weekly digest, and journal.
 
 **Shipped:**
 - Drip-email cron at `app/api/cron/drip-emails/route.ts`.
 - `lib/email/drip.ts` template wrapper.
 - `drip_email_log` table (migration `0018_drip_tracking.sql`).
 - `daily_logs` table in `biomarkers` schema (`0010_biomarkers_daily_logs.sql`).
+- `/check-in` daily form at `app/(app)/check-in/` — mood, energy, sleep, exercise, **steps, water**, notes; upserts one row per UTC day (2026-04-28).
+- Streak math at `computeStreak()` in `app/(app)/dashboard/page.tsx` — UTC-consistent with the writer; locked in by 10 deterministic unit tests in `tests/unit/dashboard/streak.test.ts`.
+- **Mon-Sun streak dot strip** in dashboard hero — `streakDots()` pure helper, 7 dots oldest→newest, today distinct, 6 unit tests in `tests/unit/dashboard/streak-dots.test.ts` (2026-04-28).
+- **Steps + water capture in check-in** — `parseCheckInForm()` validates ranges (0–60000 steps, 0–20 glasses), 6 unit tests in `tests/unit/check-in/validation.test.ts`; dashboard Steps/Water tiles now populate from real data (2026-04-28).
+- New dashboard surface: streak hero, today-strip (sleep/energy/steps/water with progress bars), single-action picker, three big numbers (bio age, top risk, supplement adherence), what's-new row, quick links, coming-soon shelf.
+- Migration `0020_expose_schemas_to_postgrest.sql` + Supabase Cloud API config to expose `biomarkers` and `billing` schemas.
 
 **Outstanding:**
-- Daily check-in UI (mood, sleep, energy, weight) — 90-second target.
-- Personalised daily goals tied to risk profile.
-- Habit streak math + Mon-Sun dot UI.
+- Personalised daily goals tied to risk profile (currently goals are static defaults like 8 hours sleep, 8000 steps).
 - Rest-day mechanic for travel and grief.
 - Push / SMS / email reminder for the daily check-in.
 - Weekly insights digest from check-in patterns.
@@ -303,7 +306,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 11: The Trust Layer
 
 `●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 55%** — RLS + PII boundary + consent records shipped and verified at the schema level. The visible trust surfaces (export, deceased flow, ToS clause, pause/freeze) are not built. The pgTAP RLS suite is written but not yet executed in CI.
+**Estimate: 65%** — RLS + PII boundary + consent records shipped and verified at the schema level, with the pgTAP RLS suite now running in CI on every PR; **export-everything bundle shipped 2026-04-28**. Remaining trust surfaces (deceased flow, ToS clause, pause/freeze, right-to-erasure) are not built.
 
 **Shipped:**
 - RLS on every table across `public`, `biomarkers`, `clinical`, `programs`, `billing` schemas.
@@ -311,21 +314,20 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - AHPRA-compliant consent records (`consent_records`, append-only, migration `0004_consent_records.sql`).
 - Supabase key-naming convention (`SUPABASE_SECRET_KEY`, not `SUPABASE_SERVICE_ROLE_KEY`).
 - Service-role admin client used only in webhook routes, pipeline workers, and PDF generation.
-- pgTAP RLS test suite at `supabase/tests/rls.sql` with 20 assertions.
+- pgTAP RLS test suite at `supabase/tests/rls.sql` with 20 assertions, executed in CI via the `pgtap` job in `.github/workflows/ci.yml`.
+- **Export-everything bundle** at `GET /api/export` — ZIP with one JSON file per patient-facing table (profile, health_profiles, risk_scores, supplement_plans, lab_results, daily_logs, consent_records), latest PDF report, and `manifest.json`. Soft 10000-row cap per table with truncation flag. Audit row per export in `public.export_log` (migration `0026`, append-only, owner-select RLS, service-role-only insert). Surfaced via `/account` page (2026-04-28).
 
 **Outstanding:**
 - "We never train on your data" clause in ToS, surfaced in onboarding.
-- Export-everything button (downloadable JSON + PDF bundle).
 - Right-to-erasure flow (single-row scrub since PII is single-table).
 - Pause / freeze account flow.
 - Deceased-flag flow with warm copy path (not a checkbox).
-- Run the pgTAP suite in CI on every PR.
 - Quarterly trust audit cadence (logs scrub, signed-URL TTL check, deceased-flow walk-through).
 
-**Open bugs:**
-- **BUG-008** (P2): pgTAP RLS test file exists at `supabase/tests/rls.sql` with 20 owner/cross-user isolation assertions but is not run in CI. The recent RLS soft-delete bug pattern would not be caught automatically today.
+**Open bugs:** none.
 
-**Closed bugs:** 0.
+**Closed bugs:**
+- **BUG-008** (P2, closed 2026-04-28): pgTAP RLS test file at `supabase/tests/rls.sql` was not run in CI. Wired into `.github/workflows/ci.yml` `pgtap` job (Task C1) — Postgres 15 service container, migrations applied in order, RLS suite executed on every PR. Failures now block CI.
 
 ---
 
@@ -385,7 +387,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 14: The Platform Foundation
 
 `●◐○○○` Planned · ◐ Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 40%** — substantial pieces already shipped via the existing `.claude/rules/` discipline (RLS, PII boundary, secret-key naming, pipeline auth, migration hygiene). The visible operational layer (CI workflows, observability, cost monitoring, DR drill, pen-test cadence) is unbuilt.
+**Estimate: 45%** — substantial pieces already shipped via the existing `.claude/rules/` discipline (RLS, PII boundary, secret-key naming, pipeline auth, migration hygiene). CI Vitest+pgTAP and Gitleaks secret scanning shipped 2026-04-28. The remaining operational layer (Sentry, cost monitoring, DR drill, pen-test cadence) is unbuilt.
 
 **Shipped:**
 - RLS on every table across `public`, `biomarkers`, `clinical`, `programs`, `billing` schemas.
@@ -400,10 +402,10 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - `proxy.ts` route guard (no ad-hoc auth in pages).
 - Supabase Storage MIME whitelist + 50 MB cap on uploads.
 - Encryption at rest (Supabase default) + TLS in transit.
+- **Gitleaks secret-scan workflow** at `.github/workflows/secrets.yml` — runs on every PR and every push to `main`; fails the check on a hit. Default ruleset extended via `.gitleaks.toml` (2026-04-28).
 
 **Outstanding:**
-- CI workflow file in `.github/workflows/` — Vitest + pgTAP + Playwright + Lighthouse on every PR.
-- Gitleaks (or equivalent) secret-scan in CI.
+- CI workflow file extension — Playwright + Lighthouse on every PR (Vitest + pgTAP already running).
 - Sentry / Highlight / equivalent error monitoring + alert routing.
 - Anthropic API spend dashboard + 80%-of-budget alert.
 - Supabase storage quota alert.
@@ -417,7 +419,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - Data residency confirmation per region.
 - Architecture-level enforcement of "we never train on patient data" (no training endpoints, no model fine-tune jobs, no third-party data shares).
 
-**Open bugs:** none directly. (BUG-008 — pgTAP not wired into CI — is currently filed under Epic 11 and could be cross-listed here.)
+**Open bugs:** none directly.
 **Closed bugs:** 0.
 
 ---
