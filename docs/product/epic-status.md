@@ -29,7 +29,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 | 5 | The Report | `●◐○○○` | 35% | 1 (P3) | 0 |
 | 6 | The Coach | `●●◐○○` | 90% | 0 | 1 |
 | 7 | The Daily Return | `●●◐○○` | 70% | 0 | 0 |
-| 8 | The Living Record | `●●◐○○` | 25% | 0 | 0 |
+| 8 | The Living Record | `●●◐○○` | 45% | 0 | 0 |
 | 9 | The Care Team | `●○○○○` | 5% | 0 | 0 |
 | 10 | The Knowledge Engine | `●◐◐○○` | 60% | 0 | 1 |
 | 11 | The Trust Layer | `●●◐○○` | 65% | 0 | 1 |
@@ -241,7 +241,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 8: The Living Record
 
 `●●◐○○` Planned · Feature Complete (member labs surface) · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 25%** — first member-facing surface shipped 2026-04-28: `/labs` index + `/labs/[biomarker]` detail with Recharts time-series and reference-range bands. Recharts now in the dependency surface, unblocking B5 and B6.
+**Estimate: 45%** — three member-facing surfaces shipped 2026-04-28: `/labs` (Lab Results UI), `/trends` (Daily-log 30-day trends), and the alerts surface (`member_alerts` table + dashboard chip + repeat-test cron + upload-flow lab-alert hook). Lab-alert path is wired but defensive — fires automatically once a Janet → `lab_results` converter ships.
 
 **Shipped:**
 - `biomarkers` schema with `lab_results`, `wearable_summaries`, `daily_logs` tables (migrations `0009`, `0010`).
@@ -250,11 +250,17 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - **`/labs/[biomarker]` detail page** (2026-04-28) — Recharts time-series with reference-range band, header card, full history table; `notFound()` on zero-row biomarker; Next 16 async params.
 - **Pure helpers** at `lib/labs/` (`groupByBiomarker`, `formatRange`, `statusTone`, `categoryLabel`, `toChartData`) sourced off generated DB types — schema drift forces a compile error. 23 unit tests.
 - **Dashboard tile** replaced "Coming soon · Lab Results" with live `<QuickTile>` showing biomarker count + latest test date.
+- **`/trends` page** (2026-04-28) — 30-day sparklines for Sleep, Energy, Mood, Steps, Water from `biomarkers.daily_logs`. Empty-state CTA pointing to `/check-in`. `lib/trends/` pure helpers (`buildTrendSeries`, `summariseTrend`, `ML_PER_GLASS`) sourced off generated DB types. 10 unit tests. Dashboard quick-link tile.
+- **Member alerts surface** (2026-04-28) — `public.member_alerts` table (migration 0031, append-mostly, RLS owner-select + owner-update, service-role-only insert, unique partial index for idempotent re-runs). `lib/alerts/` pure evaluators (`evaluateLabAlerts`, `evaluateRepeatTests` with whole-token matching against a `SCREENING_KEYWORDS` map, `chipPayload`). Daily cron `/api/cron/repeat-tests` (Bearer-secret gated). Upload-flow lab-alert hook (defensive — no-op until Janet → `lab_results` writer lands). Dashboard hero chip with three severity tones (info/attention/urgent), `View →` link, dismiss server action. 20 unit tests.
 
 **Outstanding:**
-- B5 — daily-log charting (sleep/energy/mood/steps 30-day trends) — Recharts now available.
+- **Janet → `lab_results` structured writer.** Bottleneck for B7's lab-alert surface and for B4's data depth. Janet currently writes free-text JSONB into `patient_uploads.janet_findings`. A converter step is the single most impactful follow-up.
 - B6 — risk simulator ("if I lower my LDL to X, my CV risk drops to Y").
-- B7 — out-of-range alerts + repeat-test reminders.
+- `vercel.json` cron registration for `/api/cron/repeat-tests` (operator step).
+- Snooze / dismiss-suppression mechanism on alerts.
+- Auto-resolve when next reading is back in range.
+- `/alerts` index / triage page.
+- Push / SMS / email delivery of alerts.
 - Wearable OAuth integrations (Oura, Apple Watch, Garmin).
 - Manual metric entry UI.
 - Source-upload back-link from each lab row to its `patient_uploads` document.

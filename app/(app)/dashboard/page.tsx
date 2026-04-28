@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { dismissAlert } from "./_actions/dismiss-alert";
 import "./dashboard.css";
 
 export const metadata = { title: "Dashboard · Longevity Coach" };
@@ -108,6 +109,15 @@ export default async function DashboardPage() {
     .order("log_date", { ascending: false });
   const logs = (rawLogs ?? []) as unknown as DailyLog[];
 
+  const { data: latestAlert } = await supabase
+    .from("member_alerts")
+    .select("id, alert_type, severity, title, body, link_href, created_at")
+    .eq("user_uuid", user!.id)
+    .eq("status", "open")
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
   const { data: healthUpdate } = await supabase
     .from("health_updates")
     .select("title, content, category, source, posted_date")
@@ -199,6 +209,29 @@ export default async function DashboardPage() {
           {summaryLine({ assessmentState, todayLog, wellSleptCount, lastSevenLength: lastSeven.length })}
         </p>
       </header>
+
+      {/* Member alert chip — most recent open alert, dismissable */}
+      {latestAlert && (
+        <section className={`lc-alert-chip lc-alert-${latestAlert.severity}`}>
+          <div className="lc-alert-body">
+            <div className="lc-alert-title">{latestAlert.title}</div>
+            <div className="lc-alert-text">{latestAlert.body}</div>
+          </div>
+          <div className="lc-alert-actions">
+            {latestAlert.link_href && (
+              <Link href={latestAlert.link_href} className="lc-alert-view">
+                View →
+              </Link>
+            )}
+            <form action={dismissAlert}>
+              <input type="hidden" name="id" value={latestAlert.id} />
+              <button type="submit" className="lc-alert-dismiss" aria-label="Dismiss alert">
+                Dismiss
+              </button>
+            </form>
+          </div>
+        </section>
+      )}
 
       {/* Today strip */}
       <section className="lc-today">
@@ -356,6 +389,7 @@ export default async function DashboardPage() {
         />
         <QuickTile href="/report" label="Report" sub="Risk + supplements" icon="📊" />
         <QuickTile href="/check-in" label="Check-in" sub={todayLog ? "Today logged" : "Log today"} icon="✏️" />
+        <QuickTile href="/trends" label="Trends" sub="30-day patterns" icon="📈" />
         <QuickTile href="/onboarding" label="Update profile" sub="Refresh your answers" icon="👤" />
         <QuickTile href="/legal/collection-notice" label="Privacy" sub="What we store" icon="🔒" />
         <QuickTile href="mailto:hello@longevity-coach.io" label="Get help" sub="Reach support" icon="💬" />
