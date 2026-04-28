@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clinician Portal — Wireframes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  /* ── Design tokens (from app globals + dashboard.css) ──────────────────── */
+  :root {
+    --lc-primary:     #2F6F8F;
+    --lc-primary-700: #245672;
+    --lc-primary-800: #1B4258;
+    --lc-primary-100: #DDE8EE;
+    --lc-primary-50:  #EEF3F6;
+
+    --lc-accent:      #F28C38;
+    --lc-accent-600:  #D87422;
+    --lc-accent-100:  #FBE3CC;
+    --lc-accent-50:   #FDF1E4;
+
+    --lc-plum:        #6B5B8E;
+
+    --lc-success:     #3F8A5C;
+    --lc-success-bg:  #E8F4EE;
+    --lc-warning:     #B5722F;
+    --lc-warning-bg:  #FBE3CC;
+    --lc-danger:      #B5452F;
+    --lc-danger-bg:   #FDECEA;
+
+    --lc-ink:         #2B2B2B;
+    --lc-ink-soft:    #4B4B4B;
+    --lc-grey:        #8A9AA5;
+    --lc-grey-soft:   #B9C3CB;
+    --lc-line:        #E3E8EC;
+    --lc-line-soft:   #EDF1F4;
+    --lc-bg:          #F4F7F9;
+    --lc-surface:     #FFFFFF;
+
+    --lc-sans:  'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+    --lc-serif: 'Newsreader', 'Iowan Old Style', Georgia, serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: var(--lc-sans);
+    font-size: 14px;
+    color: var(--lc-ink);
+    background: #e8edf1;
+    margin: 0;
+    padding: 32px;
+    line-height: 1.5;
+  }
+
+  /* ── Page chrome ───────────────────────────────────────────────────────── */
+  .page-title {
+    font-family: var(--lc-serif);
+    font-size: 26px;
+    font-weight: 400;
+    color: var(--lc-ink);
+    margin: 0 0 4px;
+  }
+  .page-sub { font-size: 13px; color: var(--lc-grey); margin: 0 0 32px; }
+
+  /* ── Screen container ──────────────────────────────────────────────────── */
+  .screen {
+    background: var(--lc-surface);
+    border-radius: 16px;
+    border: 1px solid var(--lc-line);
+    max-width: 1100px;
+    margin: 0 auto 48px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  }
+  .screen-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--lc-grey);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    padding: 8px 16px;
+    background: var(--lc-bg);
+    border-bottom: 1px solid var(--lc-line);
+  }
+
+  /* ── Top navbar — mirrors app/(app)/layout.tsx ─────────────────────────── */
+  .app-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 24px;
+    background: var(--lc-surface);
+    border-bottom: 1px solid var(--lc-line);
+  }
+  .header-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+  }
+  .header-logo-mark {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: var(--lc-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .header-logo-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--lc-ink);
+    letter-spacing: -.01em;
+  }
+  .header-nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .nav-link {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--lc-primary);
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+  }
+  .nav-link.active { background: var(--lc-primary-50); font-weight: 600; }
+  .nav-link:hover:not(.active) { background: var(--lc-bg); }
+  .nav-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 999px;
+  }
+  .header-divider { width: 1px; height: 18px; background: var(--lc-line); margin: 0 6px; }
+  .header-user { display: flex; align-items: center; gap: 8px; }
+  .header-signout {
+    padding: 7px 14px;
+    background: transparent;
+    color: var(--lc-primary);
+    border: 1px solid var(--lc-primary-100);
+    border-radius: 8px;
+    font-family: var(--lc-sans);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-left: 4px;
+  }
+
+  /* ── Main content ──────────────────────────────────────────────────────── */
+  .main { padding: 24px; background: var(--lc-bg); }
+
+  /* ── Page header ───────────────────────────────────────────────────────── */
+  .page-header { margin-bottom: 22px; }
+  .page-header h2 {
+    font-family: var(--lc-serif);
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--lc-ink);
+    margin: 0 0 2px;
+  }
+  .page-header p { font-size: 13px; color: var(--lc-grey); margin: 0; }
+
+  /* ── Hero gradient header ──────────────────────────────────────────────── */
+  .hero-header {
+    background: linear-gradient(135deg, var(--lc-primary-800), var(--lc-primary));
+    padding: 22px 24px 18px;
+  }
+  .hero-back { font-size: 12px; color: rgba(255,255,255,.6); margin-bottom: 14px; cursor: pointer; }
+
+  /* ── Avatar ────────────────────────────────────────────────────────────── */
+  .avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--lc-primary);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 11px; font-weight: 700; flex-shrink: 0;
+  }
+  .avatar.sm  { width: 28px; height: 28px; font-size: 10px; }
+  .avatar.lg  { width: 40px; height: 40px; font-size: 13px; border-radius: 10px; }
+  .avatar.xl  { width: 48px; height: 48px; font-size: 15px; border-radius: 12px; }
+
+  /* ── KPI cards ─────────────────────────────────────────────────────────── */
+  .kpi-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 20px; }
+  .kpi-card {
+    background: var(--lc-surface);
+    border: 1px solid var(--lc-line);
+    border-radius: 14px;
+    padding: 14px 16px;
+  }
+  .kpi-value {
+    font-family: var(--lc-serif);
+    font-size: 28px;
+    font-weight: 400;
+    color: var(--lc-ink);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .kpi-label { font-size: 12px; color: var(--lc-grey); }
+  .kpi-note  { font-size: 11px; font-weight: 600; margin-top: 4px; }
+
+  /* ── Card ──────────────────────────────────────────────────────────────── */
+  .card {
+    background: var(--lc-surface);
+    border: 1px solid var(--lc-line);
+    border-radius: 14px;
+    padding: 16px 18px;
+  }
+  .section-title {
+    font-size: 11px; font-weight: 700; color: var(--lc-grey);
+    text-transform: uppercase; letter-spacing: .07em; margin-bottom: 12px;
+  }
+
+  /* ── Buttons ───────────────────────────────────────────────────────────── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 9px 18px; border-radius: 8px;
+    font-family: var(--lc-sans); font-size: 13px; font-weight: 600;
+    cursor: pointer; border: none; line-height: 1;
+  }
+  .btn-primary      { background: var(--lc-primary); color: white; }
+  .btn-secondary    { background: var(--lc-surface); color: var(--lc-ink-soft); border: 1px solid var(--lc-line); }
+  .btn-danger-soft  { background: var(--lc-danger-bg); color: var(--lc-danger); border: 1px solid #f5c6be; }
+  .btn-sm  { padding: 5px 11px; font-size: 12px; border-radius: 7px; }
+  .btn-xs  { padding: 3px 8px; font-size: 11px; border-radius: 6px; font-weight: 600; }
+
+  /* ── Risk pills ────────────────────────────────────────────────────────── */
+  .risk-pill { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
+  .risk-critical { background: var(--lc-danger-bg);  color: var(--lc-danger); }
+  .risk-high     { background: var(--lc-warning-bg); color: var(--lc-warning); }
+  .risk-moderate { background: var(--lc-primary-50); color: var(--lc-primary); }
+  .risk-low      { background: var(--lc-success-bg); color: var(--lc-success); }
+
+  /* ── Status pills ──────────────────────────────────────────────────────── */
+  .status-pill { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 999px; }
+  .status-pending   { background: var(--lc-accent-50);  color: var(--lc-accent-600); }
+  .status-sent      { background: var(--lc-success-bg); color: var(--lc-success); }
+  .status-review    { background: var(--lc-primary-50); color: var(--lc-primary); }
+  .status-confirmed { background: var(--lc-success-bg); color: var(--lc-success); }
+
+  /* ── Badge ─────────────────────────────────────────────────────────────── */
+  .badge { font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 999px; }
+
+  /* ── Alert banner ──────────────────────────────────────────────────────── */
+  .alert-banner {
+    background: var(--lc-danger-bg); border: 1px solid #f5c6be;
+    border-radius: 10px; padding: 10px 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .alert-banner-title { font-size: 13px; font-weight: 600; color: var(--lc-danger); }
+  .alert-banner-sub   { font-size: 12px; color: #c05b43; margin-top: 1px; }
+
+  /* ── Callouts ──────────────────────────────────────────────────────────── */
+  .callout { border-radius: 10px; padding: 10px 14px; }
+  .callout-teal   { background: var(--lc-primary-50); border: 1px solid var(--lc-primary-100); }
+  .callout-accent { background: var(--lc-accent-50);  border: 1px solid var(--lc-accent-100); }
+  .callout-indigo { background: #f3f1fa; border: 1px solid #d4ccf0; }
+
+  /* ── Tabs ──────────────────────────────────────────────────────────────── */
+  .tabs { display: flex; border-bottom: 1px solid var(--lc-line); background: white; padding: 0 16px; }
+  .tab {
+    padding: 10px 14px; font-size: 13px; font-weight: 500;
+    color: var(--lc-grey); cursor: pointer;
+    border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap;
+  }
+  .tab.active { color: var(--lc-primary); border-color: var(--lc-primary); font-weight: 600; }
+
+  /* ── Data table ────────────────────────────────────────────────────────── */
+  .data-table { width: 100%; border-collapse: collapse; }
+  .data-table thead tr { background: var(--lc-bg); border-bottom: 1px solid var(--lc-line); }
+  .data-table th {
+    text-align: left; padding: 10px 14px;
+    font-size: 11px; font-weight: 700; color: var(--lc-grey);
+    text-transform: uppercase; letter-spacing: .06em;
+  }
+  .data-table td { padding: 12px 14px; border-bottom: 1px solid var(--lc-line-soft); }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: var(--lc-bg); }
+
+  /* ── Queue card ────────────────────────────────────────────────────────── */
+  .queue-card {
+    background: var(--lc-surface); border: 1px solid var(--lc-line);
+    border-radius: 10px; padding: 10px 11px; margin-bottom: 8px; cursor: pointer;
+  }
+  .queue-card.selected {
+    border-color: var(--lc-primary); background: var(--lc-primary-50);
+    box-shadow: 0 0 0 2px rgba(47,111,143,.1);
+  }
+
+  /* ── Chat ──────────────────────────────────────────────────────────────── */
+  .chat-ai {
+    background: var(--lc-surface); border: 1px solid var(--lc-line);
+    border-radius: 12px 12px 12px 3px;
+    padding: 9px 12px; font-size: 12.5px; max-width: 88%; line-height: 1.55;
+  }
+  .chat-user {
+    background: var(--lc-primary); color: white;
+    border-radius: 12px 12px 3px 12px;
+    padding: 9px 12px; font-size: 12.5px; max-width: 88%; margin-left: auto; line-height: 1.55;
+  }
+  .chat-avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--lc-primary);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; flex-shrink: 0; margin-top: 2px;
+  }
+
+  /* ── Note card ─────────────────────────────────────────────────────────── */
+  .note-card {
+    border: 1px solid var(--lc-line); border-radius: 10px;
+    padding: 12px 14px; margin-bottom: 10px; background: var(--lc-surface);
+  }
+  .note-card.urgent { background: var(--lc-danger-bg);  border-color: #f5c6be; }
+  .note-card.ai     { background: var(--lc-primary-50); border-color: var(--lc-primary-100); }
+
+  /* ── Appointment row ───────────────────────────────────────────────────── */
+  .appt-row {
+    background: var(--lc-surface); border: 1px solid var(--lc-line);
+    border-radius: 10px; padding: 12px 14px; margin-bottom: 10px;
+  }
+
+  /* ── Form inputs ───────────────────────────────────────────────────────── */
+  input, select, textarea {
+    font-family: var(--lc-sans); font-size: 13px; color: var(--lc-ink);
+    border: 1px solid var(--lc-line); border-radius: 8px;
+    background: var(--lc-surface); padding: 8px 11px; outline: none;
+  }
+  textarea { resize: none; line-height: 1.55; }
+
+  /* ── Field label ───────────────────────────────────────────────────────── */
+  .field-label { font-size: 11px; color: var(--lc-grey); margin-bottom: 4px; font-weight: 600; }
+
+  /* ── Loading dots ──────────────────────────────────────────────────────── */
+  .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--lc-grey-soft); display: inline-block;
+    animation: bounce .6s infinite;
+  }
+  .dot:nth-child(2) { animation-delay: .15s; }
+  .dot:nth-child(3) { animation-delay: .3s; }
+  @keyframes bounce {
+    0%, 80%, 100% { transform: translateY(0); }
+    40%           { transform: translateY(-4px); }
+  }
+
+  /* ── Helpers ───────────────────────────────────────────────────────────── */
+  .flex             { display: flex; }
+  .items-center     { align-items: center; }
+  .justify-between  { justify-content: space-between; }
+  .gap-2            { gap: 8px; }
+  .gap-3            { gap: 12px; }
+  .grid-2           { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid-3           { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+  .col-span-2       { grid-column: span 2; }
+  .mt-2             { margin-top: 8px; }
+  .mb-4             { margin-bottom: 16px; }
+  .text-sm          { font-size: 13px; }
+  .text-xs          { font-size: 12px; }
+  .text-xxs         { font-size: 11px; }
+  .text-muted       { color: var(--lc-grey); }
+  .text-soft        { color: var(--lc-ink-soft); }
+  .text-danger      { color: var(--lc-danger); }
+  .text-warning     { color: var(--lc-warning); }
+  .text-success     { color: var(--lc-success); }
+  .text-primary     { color: var(--lc-primary); }
+  .font-semibold    { font-weight: 600; }
+  .serif            { font-family: var(--lc-serif); }
+  .truncate         { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .space-y > * + *  { margin-top: 8px; }
+  .divider          { border: none; border-top: 1px solid var(--lc-line-soft); margin: 12px 0; }
+</style>
+</head>
+<body>
+
+<div style="max-width:1180px; margin:0 auto;">
+  <h1 class="page-title">Clinician Portal — Wireframes</h1>
+  <p class="page-sub">Epic 9 — The Care Team · Phase 5 · longevity-coach-wha · 2026-04-28</p>
+
+  <!-- shared navbar macro — repeated per screen to show active state -->
+
+  <!-- ======================================================================
+       SCREEN 1: DASHBOARD
+       ====================================================================== -->
+  <div class="screen">
+    <div class="screen-label">Screen 1 — /clinician/dashboard</div>
+    <header class="app-header">
+      <a class="header-logo" href="#">
+        <div class="header-logo-mark">LC</div>
+        <span class="header-logo-name">Longevity Coach</span>
+      </a>
+      <nav class="header-nav">
+        <a class="nav-link active" href="#">Dashboard</a>
+        <a class="nav-link" href="#">My Patients <span class="nav-badge" style="background:var(--lc-primary);color:white;">12</span></a>
+        <a class="nav-link" href="#">Reviews <span class="nav-badge" style="background:var(--lc-accent);color:white;">3</span></a>
+        <a class="nav-link" href="#">Schedule</a>
+        <div class="header-divider"></div>
+        <div class="header-user">
+          <div class="avatar sm">SC</div>
+          <span style="font-size:13px;font-weight:500;color:var(--lc-ink-soft);">Dr. Sarah Chen</span>
+        </div>
+        <button class="header-signout">Sign out</button>
+      </nav>
+    </header>
+
+    <div class="main">
+      <div class="page-header">
+        <h2>Good morning, Dr. Chen</h2>
+        <p>Monday, 28 April 2026</p>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-value">12</div>
+          <div class="kpi-label">Patients assigned</div>
+        </div>
+        <div class="kpi-card" style="border-color:var(--lc-accent-100);">
+          <div class="kpi-value" style="color:var(--lc-warning);">3</div>
+          <div class="kpi-label">Pending reviews</div>
+          <div class="kpi-note" style="color:var(--lc-accent-600);">↑ Needs attention</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value">2</div>
+          <div class="kpi-label">Appointments today</div>
+        </div>
+        <div class="kpi-card" style="border-color:#f5c6be;">
+          <div class="kpi-value text-danger">1</div>
+          <div class="kpi-label">Urgent alerts</div>
+          <div class="kpi-note text-danger">⚠ CV risk flag</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="section-title">🚨 Urgent alerts</div>
+          <div class="alert-banner">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--lc-danger);flex-shrink:0;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <div style="flex:1;">
+              <div class="alert-banner-title">James M. — CV risk elevated</div>
+              <div class="alert-banner-sub">LDL 5.8 mmol/L · Detected from upload 2h ago</div>
+            </div>
+            <button class="btn btn-primary btn-sm">View</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="section-title">📅 Today's schedule</div>
+          <div class="appt-row" style="margin-bottom:10px;">
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="font-semibold text-sm">Sarah T.</div>
+                <div class="text-xxs text-muted">10:00 AM · 30 min · Video call</div>
+              </div>
+              <span class="status-pill status-confirmed">Confirmed</span>
+            </div>
+          </div>
+          <div class="appt-row" style="margin-bottom:0;">
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="font-semibold text-sm">Michael R.</div>
+                <div class="text-xxs text-muted">2:30 PM · 45 min · In person</div>
+              </div>
+              <span class="status-pill status-confirmed">Confirmed</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card col-span-2">
+          <div class="section-title">Recent activity</div>
+          <div class="flex items-center gap-3" style="padding:10px 0;border-bottom:1px solid var(--lc-line-soft);">
+            <span style="font-size:16px;width:22px;text-align:center;">📋</span>
+            <div style="flex:1;"><span class="font-semibold text-sm">Emma D.</span><span class="text-sm text-soft"> submitted April check-in · Sentiment: </span><span class="text-sm font-semibold text-warning">struggling</span></div>
+            <span class="text-xxs text-muted">2h ago</span>
+            <button class="btn btn-secondary btn-sm">Review</button>
+          </div>
+          <div class="flex items-center gap-3" style="padding:10px 0;border-bottom:1px solid var(--lc-line-soft);">
+            <span style="font-size:16px;width:22px;text-align:center;">✅</span>
+            <div style="flex:1;"><span class="font-semibold text-sm">Tom K.</span><span class="text-sm text-soft"> 30-day program sent to patient</span></div>
+            <span class="text-xxs text-muted">Yesterday</span>
+          </div>
+          <div class="flex items-center gap-3" style="padding:10px 0;">
+            <span style="font-size:16px;width:22px;text-align:center;">📁</span>
+            <div style="flex:1;"><span class="font-semibold text-sm">Sarah T.</span><span class="text-sm text-soft"> uploaded new blood panel — risk scores updated</span></div>
+            <span class="text-xxs text-muted">2 days ago</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       SCREEN 2: PATIENT LIST
+       ====================================================================== -->
+  <div class="screen">
+    <div class="screen-label">Screen 2 — /clinician/patients</div>
+    <header class="app-header">
+      <a class="header-logo" href="#"><div class="header-logo-mark">LC</div><span class="header-logo-name">Longevity Coach</span></a>
+      <nav class="header-nav">
+        <a class="nav-link" href="#">Dashboard</a>
+        <a class="nav-link active" href="#">My Patients <span class="nav-badge" style="background:var(--lc-primary);color:white;">12</span></a>
+        <a class="nav-link" href="#">Reviews <span class="nav-badge" style="background:var(--lc-accent);color:white;">3</span></a>
+        <a class="nav-link" href="#">Schedule</a>
+        <div class="header-divider"></div>
+        <div class="header-user"><div class="avatar sm">SC</div><span style="font-size:13px;font-weight:500;color:var(--lc-ink-soft);">Dr. Sarah Chen</span></div>
+        <button class="header-signout">Sign out</button>
+      </nav>
+    </header>
+
+    <div class="main">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h2 style="font-family:var(--lc-serif);font-size:22px;font-weight:400;margin:0 0 2px;">My Patients</h2>
+          <p class="text-xxs text-muted" style="margin:0;">12 active patients</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <input placeholder="Search patients…" style="width:200px;height:36px;">
+          <select style="height:36px;padding:0 10px;">
+            <option>All risk levels</option><option>Critical</option><option>High</option><option>Moderate</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="card" style="padding:0;overflow:hidden;">
+        <table class="data-table">
+          <thead>
+            <tr><th>Patient</th><th>Bio Age</th><th>Risk Level</th><th>Last Check-in</th><th>Last Review</th><th></th></tr>
+          </thead>
+          <tbody>
+            <tr style="background:#fdf8f8;">
+              <td>
+                <div class="flex items-center gap-3">
+                  <div class="avatar" style="background:#fdecea;color:var(--lc-danger);">JM</div>
+                  <div><div class="font-semibold text-sm">James Murray</div><div class="text-xxs text-muted">Age 52 · Assigned 3 months ago</div></div>
+                  <span class="badge" style="background:var(--lc-danger-bg);color:var(--lc-danger);font-size:9px;">🚨 Alert</span>
+                </div>
+              </td>
+              <td><span class="serif font-semibold text-danger" style="font-size:16px;">58</span> <span class="text-xxs text-muted">(+6)</span></td>
+              <td><span class="risk-pill risk-critical">Critical</span></td>
+              <td class="text-sm text-soft">5 days ago</td>
+              <td><span class="status-pill status-pending">Awaiting review</span></td>
+              <td><button class="btn btn-primary btn-sm">View</button></td>
+            </tr>
+            <tr>
+              <td>
+                <div class="flex items-center gap-3">
+                  <div class="avatar" style="background:var(--lc-accent-50);color:var(--lc-warning);">ED</div>
+                  <div><div class="font-semibold text-sm">Emma Davis</div><div class="text-xxs text-muted">Age 45 · Assigned 1 month ago</div></div>
+                </div>
+              </td>
+              <td><span class="serif font-semibold text-warning" style="font-size:16px;">47</span> <span class="text-xxs text-muted">(+2)</span></td>
+              <td><span class="risk-pill risk-high">High</span></td>
+              <td class="text-sm text-soft">2 days ago</td>
+              <td><span class="status-pill status-pending">Awaiting review</span></td>
+              <td><button class="btn btn-primary btn-sm">View</button></td>
+            </tr>
+            <tr>
+              <td>
+                <div class="flex items-center gap-3">
+                  <div class="avatar" style="background:var(--lc-primary-50);color:var(--lc-primary);">ST</div>
+                  <div><div class="font-semibold text-sm">Sarah Thompson</div><div class="text-xxs text-muted">Age 38 · Assigned 6 months ago</div></div>
+                </div>
+              </td>
+              <td><span class="serif font-semibold text-primary" style="font-size:16px;">36</span> <span class="text-xxs text-muted">(-2)</span></td>
+              <td><span class="risk-pill risk-moderate">Moderate</span></td>
+              <td class="text-sm text-soft">1 day ago</td>
+              <td><span class="status-pill status-sent">Sent</span></td>
+              <td><button class="btn btn-secondary btn-sm">View</button></td>
+            </tr>
+            <tr>
+              <td>
+                <div class="flex items-center gap-3">
+                  <div class="avatar" style="background:var(--lc-success-bg);color:var(--lc-success);">TK</div>
+                  <div><div class="font-semibold text-sm">Tom Kim</div><div class="text-xxs text-muted">Age 41 · Assigned 2 months ago</div></div>
+                </div>
+              </td>
+              <td><span class="serif font-semibold text-success" style="font-size:16px;">38</span> <span class="text-xxs text-muted">(-3)</span></td>
+              <td><span class="risk-pill risk-low">Low</span></td>
+              <td class="text-sm text-soft">Today</td>
+              <td><span class="status-pill status-sent">Sent</span></td>
+              <td><button class="btn btn-secondary btn-sm">View</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       SCREEN 3: PATIENT DETAIL — OVERVIEW TAB
+       ====================================================================== -->
+  <div class="screen">
+    <div class="screen-label">Screen 3 — /clinician/patients/[patientId] — Overview tab</div>
+    <header class="app-header">
+      <a class="header-logo" href="#"><div class="header-logo-mark">LC</div><span class="header-logo-name">Longevity Coach</span></a>
+      <nav class="header-nav">
+        <a class="nav-link" href="#">Dashboard</a>
+        <a class="nav-link active" href="#">My Patients</a>
+        <a class="nav-link" href="#">Reviews <span class="nav-badge" style="background:var(--lc-accent);color:white;">3</span></a>
+        <a class="nav-link" href="#">Schedule</a>
+        <div class="header-divider"></div>
+        <div class="header-user"><div class="avatar sm">SC</div><span style="font-size:13px;font-weight:500;color:var(--lc-ink-soft);">Dr. Sarah Chen</span></div>
+        <button class="header-signout">Sign out</button>
+      </nav>
+    </header>
+
+    <div style="background:var(--lc-bg);">
+      <div class="hero-header">
+        <div class="hero-back">← My Patients</div>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="avatar xl" style="background:rgba(255,255,255,.2);">JM</div>
+            <div>
+              <h2 style="font-family:var(--lc-serif);font-size:20px;font-weight:400;color:white;margin:0 0 2px;">James Murray</h2>
+              <div style="font-size:13px;color:rgba(255,255,255,.6);margin-bottom:6px;">Age 52 · Assigned 3 months ago</div>
+              <div class="flex gap-2">
+                <span class="risk-pill risk-critical">Critical risk</span>
+                <span class="badge" style="background:rgba(181,69,47,.9);color:white;font-size:10px;">🚨 Active alert</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button class="btn btn-secondary btn-sm">📋 Write note</button>
+            <button class="btn btn-primary btn-sm">🤖 Start Janet review</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active">Overview</div>
+        <div class="tab">Check-in History</div>
+        <div class="tab">Biomarkers</div>
+        <div class="tab">Care Notes <span class="badge" style="background:var(--lc-line);color:var(--lc-grey);margin-left:4px;">4</span></div>
+        <div class="tab">30-Day Program</div>
+      </div>
+
+      <div class="main">
+        <div class="alert-banner mb-4">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--lc-danger);flex-shrink:0;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <div style="flex:1;">
+            <div class="alert-banner-title">Urgent: LDL elevated — 5.8 mmol/L</div>
+            <div class="alert-banner-sub">Detected from uploaded blood panel · 2 hours ago · Reference range: &lt;5.0</div>
+          </div>
+          <button class="btn btn-danger-soft btn-sm">View biomarker</button>
+        </div>
+
+        <div class="grid-3 mb-4">
+          <div class="card" style="text-align:center;">
+            <div class="section-title">Biological Age</div>
+            <div class="serif" style="font-size:44px;font-weight:300;color:var(--lc-danger);line-height:1;">58</div>
+            <div class="text-sm text-soft" style="margin-top:4px;">Chronological: 52 <span class="font-semibold text-danger">(+6 yrs)</span></div>
+            <div class="text-xxs text-muted mt-2">Updated 5 days ago</div>
+          </div>
+          <div class="card col-span-2">
+            <div class="section-title">Domain Risks</div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+              <div style="text-align:center;"><div class="serif" style="font-size:24px;color:var(--lc-danger);">78</div><div class="text-xxs text-muted">Cardiovascular</div></div>
+              <div style="text-align:center;"><div class="serif" style="font-size:24px;color:var(--lc-warning);">65</div><div class="text-xxs text-muted">Metabolic</div></div>
+              <div style="text-align:center;"><div class="serif" style="font-size:24px;color:var(--lc-primary);">42</div><div class="text-xxs text-muted">Neurological</div></div>
+              <div style="text-align:center;"><div class="serif" style="font-size:24px;color:var(--lc-success);">30</div><div class="text-xxs text-muted">Oncological</div></div>
+              <div style="text-align:center;"><div class="serif" style="font-size:24px;color:var(--lc-plum);">45</div><div class="text-xxs text-muted">Musculoskeletal</div></div>
+              <div style="text-align:center;"><div class="text-sm font-semibold text-danger">High</div><div class="text-xxs text-muted">Composite level</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="section-title">Top Risk Drivers</div>
+            <div class="space-y">
+              <div class="flex items-center gap-2 text-sm"><span style="width:7px;height:7px;border-radius:50%;background:var(--lc-danger);flex-shrink:0;display:inline-block;"></span>LDL cholesterol 5.8 mmol/L (elevated)</div>
+              <div class="flex items-center gap-2 text-sm"><span style="width:7px;height:7px;border-radius:50%;background:var(--lc-danger);flex-shrink:0;display:inline-block;"></span>Sedentary lifestyle (4,200 steps/day avg)</div>
+              <div class="flex items-center gap-2 text-sm"><span style="width:7px;height:7px;border-radius:50%;background:var(--lc-warning);flex-shrink:0;display:inline-block;"></span>HbA1c 6.1% (pre-diabetic range)</div>
+              <div class="flex items-center gap-2 text-sm"><span style="width:7px;height:7px;border-radius:50%;background:var(--lc-warning);flex-shrink:0;display:inline-block;"></span>Sleep 5.5 h/night (below target)</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="section-title">Active Supplement Protocol</div>
+            <div class="space-y">
+              <div class="flex items-center justify-between text-sm"><span>Omega-3 (EPA/DHA) 2g/day</span><span class="badge" style="background:var(--lc-danger-bg);color:var(--lc-danger);">Critical</span></div>
+              <div class="flex items-center justify-between text-sm"><span>Magnesium Glycinate 400mg</span><span class="badge" style="background:var(--lc-danger-bg);color:var(--lc-danger);">Critical</span></div>
+              <div class="flex items-center justify-between text-sm"><span>Vitamin D3 5000 IU/day</span><span class="badge" style="background:var(--lc-warning-bg);color:var(--lc-warning);">High</span></div>
+              <div class="text-xxs text-muted" style="margin-top:6px;">+4 more · Generated by Sage 12 days ago</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       SCREEN 4: REVIEW WORKSPACE — JANET CHAT TAB
+       ====================================================================== -->
+  <div class="screen">
+    <div class="screen-label">Screen 4 — /clinician/reviews — Review Workspace (Janet Chat tab active)</div>
+    <header class="app-header">
+      <a class="header-logo" href="#"><div class="header-logo-mark">LC</div><span class="header-logo-name">Longevity Coach</span></a>
+      <nav class="header-nav">
+        <a class="nav-link" href="#">Dashboard</a>
+        <a class="nav-link" href="#">My Patients</a>
+        <a class="nav-link active" href="#">Reviews <span class="nav-badge" style="background:var(--lc-accent);color:white;">3</span></a>
+        <a class="nav-link" href="#">Schedule</a>
+        <div class="header-divider"></div>
+        <div class="header-user"><div class="avatar sm">SC</div><span style="font-size:13px;font-weight:500;color:var(--lc-ink-soft);">Dr. Sarah Chen</span></div>
+        <button class="header-signout">Sign out</button>
+      </nav>
+    </header>
+
+    <div style="background:var(--lc-bg);">
+      <div class="hero-header">
+        <h2 style="font-family:var(--lc-serif);font-size:18px;font-weight:400;color:white;margin:0 0 3px;">Check-in Review Workspace</h2>
+        <p style="color:rgba(255,255,255,.55);font-size:12px;margin:0 0 14px;">Tier 2 — Clinician + Janet in-the-loop</p>
+        <div class="flex gap-3">
+          <div style="background:rgba(255,255,255,.15);border-radius:10px;padding:10px 16px;text-align:center;"><div style="font-family:var(--lc-serif);font-size:20px;color:white;font-weight:400;">3</div><div style="font-size:10px;color:rgba(255,255,255,.55);">Awaiting</div></div>
+          <div style="background:rgba(255,255,255,.15);border-radius:10px;padding:10px 16px;text-align:center;"><div style="font-family:var(--lc-serif);font-size:20px;color:white;font-weight:400;">1</div><div style="font-size:10px;color:rgba(255,255,255,.55);">In Review</div></div>
+          <div style="background:rgba(255,255,255,.15);border-radius:10px;padding:10px 16px;text-align:center;"><div style="font-family:var(--lc-serif);font-size:20px;color:white;font-weight:400;">0</div><div style="font-size:10px;color:rgba(255,255,255,.55);">Program Ready</div></div>
+          <div style="background:rgba(255,255,255,.15);border-radius:10px;padding:10px 16px;text-align:center;"><div style="font-family:var(--lc-serif);font-size:20px;color:white;font-weight:400;">7</div><div style="font-size:10px;color:rgba(255,255,255,.55);">Sent</div></div>
+        </div>
+      </div>
+
+      <div class="flex" style="min-height:500px;">
+        <!-- Queue -->
+        <div style="width:230px;background:var(--lc-surface);border-right:1px solid var(--lc-line);padding:12px;overflow-y:auto;">
+          <div class="text-xxs font-semibold text-muted" style="letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px;padding:0 4px;">Awaiting Review</div>
+          <div class="queue-card selected">
+            <div class="flex items-center gap-2">
+              <div class="avatar sm" style="background:var(--lc-danger-bg);color:var(--lc-danger);border-radius:8px;">🚨</div>
+              <div style="flex:1;min-width:0;">
+                <div class="text-xs font-semibold truncate">James Murray</div>
+                <div class="text-xxs text-muted">April 2026</div>
+                <div class="flex gap-1 mt-2" style="flex-wrap:wrap;">
+                  <span class="status-pill status-pending" style="font-size:9px;">Awaiting</span>
+                  <span class="text-xxs text-danger">🚨 Needs attn</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="queue-card">
+            <div class="flex items-center gap-2">
+              <div class="avatar sm" style="background:var(--lc-warning-bg);color:var(--lc-warning);border-radius:8px;">⚠️</div>
+              <div style="flex:1;min-width:0;">
+                <div class="text-xs font-semibold truncate">Emma Davis</div>
+                <div class="text-xxs text-muted">April 2026</div>
+                <div class="flex gap-1 mt-2">
+                  <span class="status-pill status-pending" style="font-size:9px;">Awaiting</span>
+                  <span class="text-xxs text-warning">⚠️ Struggling</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="queue-card" style="margin-bottom:16px;">
+            <div class="flex items-center gap-2">
+              <div class="avatar sm" style="border-radius:8px;">ST</div>
+              <div style="flex:1;min-width:0;">
+                <div class="text-xs font-semibold truncate">Sarah Thompson</div>
+                <div class="text-xxs text-muted">April 2026</div>
+                <div class="flex gap-1 mt-2">
+                  <span class="status-pill status-pending" style="font-size:9px;">Awaiting</span>
+                  <span class="text-xxs text-success">✅ On track</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="text-xxs font-semibold text-muted" style="letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px;padding:0 4px;">In Review</div>
+          <div class="queue-card" style="margin-bottom:0;">
+            <div class="flex items-center gap-2">
+              <div class="avatar sm" style="background:var(--lc-primary-50);color:var(--lc-primary);border-radius:8px;">MR</div>
+              <div style="flex:1;min-width:0;">
+                <div class="text-xs font-semibold truncate">Michael Roberts</div>
+                <div class="text-xxs text-muted">April 2026</div>
+                <div class="flex gap-1 mt-2"><span class="status-pill status-review" style="font-size:9px;">In review</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detail panel -->
+        <div style="flex:1;display:flex;flex-direction:column;background:var(--lc-surface);">
+          <div style="padding:12px 16px;border-bottom:1px solid var(--lc-line-soft);" class="flex items-center justify-between">
+            <div><div class="font-semibold text-sm">James Murray</div><div class="text-xxs text-muted">April 2026 · CV Risk alert active</div></div>
+            <span class="risk-pill risk-critical">Critical</span>
+          </div>
+          <div class="tabs" style="padding:0 12px;">
+            <div class="tab">Patient Card</div>
+            <div class="tab active">🤖 Janet Chat</div>
+            <div class="tab">30-Day Program</div>
+          </div>
+
+          <div style="flex:1;overflow-y:auto;padding:14px;background:var(--lc-bg);display:flex;flex-direction:column;gap:12px;">
+            <div class="callout callout-teal">
+              <div class="text-xxs font-semibold text-primary" style="margin-bottom:5px;">🤖 Janet's Brief — James Murray, April 2026</div>
+              <div class="text-xs text-soft">James has had a concerning month. His LDL jumped to 5.8 mmol/L on his latest blood panel — up from 5.1 in January. He's reporting 7.5/10 stress (work deadline) and his adherence is 4/10. He maintained his supplement protocol for the first two weeks. Three wins: started meditation (3×/week), lost 1.2 kg, and reduced alcohol to weekends only.</div>
+            </div>
+
+            <div class="flex gap-2">
+              <div class="chat-avatar"><span style="font-size:12px;">🤖</span></div>
+              <div class="chat-ai">
+                <strong>Key clinical concerns this month:</strong><br>
+                1. LDL 5.8 → suggest re-check in 6 weeks + refer to GP if above 6.0 at next test<br>
+                2. Stress-adherence cycle — high workload is driving supplement non-compliance<br>
+                3. Sleep averaging 5.5 h — cortisol driver for LDL elevation<br><br>
+                Shall I draft the 30-day program focusing on CV risk management + stress protocol?
+              </div>
+            </div>
+
+            <div class="flex gap-2" style="justify-content:flex-end;">
+              <div class="chat-user">Yes — focus on CV reduction first. Also add a note about the sleep intervention.</div>
+            </div>
+
+            <div class="flex gap-2">
+              <div class="chat-avatar"><span style="font-size:12px;">🤖</span></div>
+              <div class="chat-ai">
+                Understood. I'll lead with CV risk management and build a sleep + stress protocol as the underlying lever. Generating the 30-day program now…
+                <div style="display:flex;gap:4px;margin-top:8px;">
+                  <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex gap-2" style="padding:12px 14px;border-top:1px solid var(--lc-line-soft);">
+            <input placeholder="Ask Janet or give instructions…" style="flex:1;height:36px;border-radius:18px;">
+            <button class="btn btn-primary" style="width:36px;height:36px;padding:0;border-radius:50%;justify-content:center;">→</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       SCREEN 5: 30-DAY PROGRAM TAB
+       ====================================================================== -->
+  <div class="screen">
+    <div class="screen-label">Screen 5 — /clinician/reviews — 30-Day Program tab (program ready)</div>
+    <header class="app-header">
+      <a class="header-logo" href="#"><div class="header-logo-mark">LC</div><span class="header-logo-name">Longevity Coach</span></a>
+      <nav class="header-nav">
+        <a class="nav-link" href="#">Dashboard</a>
+        <a class="nav-link" href="#">My Patients</a>
+        <a class="nav-link active" href="#">Reviews</a>
+        <a class="nav-link" href="#">Schedule</a>
+        <div class="header-divider"></div>
+        <div class="header-user"><div class="avatar sm">SC</div><span style="font-size:13px;font-weight:500;color:var(--lc-ink-soft);">Dr. Sarah Chen</span></div>
+        <button class="header-signout">Sign out</button>
+      </nav>
+    </header>
+
+    <div style="background:var(--lc-bg);">
+      <div style="background:var(--lc-surface);border-bottom:1px solid var(--lc-line);padding:12px 24px;" class="flex items-center justify-between">
+        <div><div class="font-semibold text-sm">James Murray</div><div class="text-xxs text-muted">April 2026</div></div>
+        <span class="status-pill status-sent">Program ready</span>
+      </div>
+      <div class="tabs" style="padding:0 20px;">
+        <div class="tab">Patient Card</div>
+        <div class="tab">🤖 Janet Chat</div>
+        <div class="tab active">✨ 30-Day Program</div>
+      </div>
+      <div class="main">
+        <div class="callout callout-indigo mb-4">
+          <div class="text-xxs font-semibold" style="color:var(--lc-plum);margin-bottom:8px;">Janet + Dr. Chen · April 2026 Program</div>
+          <div class="text-xs text-soft space-y">
+            <p><strong>Clinical summary:</strong> James presents with elevated LDL (5.8 mmol/L), pre-diabetic HbA1c (6.1%), and high workload stress driving sleep deprivation and supplement non-adherence. Priority this month is CV risk management through sleep optimisation and structured supplement compliance.</p>
+            <p><strong>Key focus areas:</strong></p>
+            <ul style="margin:.4em 0 0 1.2em;padding:0;">
+              <li>Reduce LDL through dietary modification + Omega-3 compliance</li>
+              <li>Restore 7 h sleep target via sleep hygiene protocol</li>
+              <li>Stress management to break the cortisol–LDL cycle</li>
+            </ul>
+          </div>
+        </div>
+        <div class="mb-4">
+          <div class="field-label">Edit before sending to patient</div>
+          <textarea rows="11" style="width:100%;border-radius:10px;margin-top:6px;padding:12px 14px;font-size:13px;border-color:var(--lc-line);line-height:1.6;">**Week 1 — Foundation**
+• Morning: 10-min HRV measurement + meditation (Insight Timer)
+• Omega-3 2 g with breakfast (non-negotiable — set phone alarm)
+• Remove processed carbs from lunch; replace with leafy greens + olive oil
+• Bedtime: phone off 60 min before bed; blackout blinds
+
+**Week 2 — Build**
+• Add 20-min walk after dinner (LDL-lowering effect begins ~Day 10)
+• Magnesium 400 mg before bed to support sleep architecture
+• Alcohol: zero Mon–Thu this month given elevated LDL
+
+**Week 3 — Reinforce**
+...
+
+**Follow-up triggers (prompt urgent review if):**
+• LDL > 6.0 at next blood test
+• Stress > 8/10 sustained for 7+ days
+• Sleep &lt; 5 h for 3 consecutive nights</textarea>
+        </div>
+        <div class="flex gap-3">
+          <button class="btn btn-primary" style="flex:1;justify-content:center;padding:11px;">✅ Approve &amp; send to patient</button>
+          <button class="btn btn-secondary" style="padding:11px 16px;">💬 Back to Janet</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       SCREEN 6: SCHEDULE
+       ====================================================================== -->
+  <div class="screen">
+    <div class="screen-label">Screen 6 — /clinician/schedule</div>
+    <header class="app-header">
+      <a class="header-logo" href="#"><div class="header-logo-mark">LC</div><span class="header-logo-name">Longevity Coach</span></a>
+      <nav class="header-nav">
+        <a class="nav-link" href="#">Dashboard</a>
+        <a class="nav-link" href="#">My Patients</a>
+        <a class="nav-link" href="#">Reviews</a>
+        <a class="nav-link active" href="#">Schedule</a>
+        <div class="header-divider"></div>
+        <div class="header-user"><div class="avatar sm">SC</div><span style="font-size:13px;font-weight:500;color:var(--lc-ink-soft);">Dr. Sarah Chen</span></div>
+        <button class="header-signout">Sign out</button>
+      </nav>
+    </header>
+
+    <div class="main">
+      <div class="hero-header" style="border-radius:14px;margin-bottom:20px;">
+        <h2 style="font-family:var(--lc-serif);font-size:20px;font-weight:400;color:white;margin:0 0 2px;">My Schedule</h2>
+        <p style="color:rgba(255,255,255,.55);font-size:12px;margin:0 0 16px;">Upcoming &amp; past patient sessions</p>
+        <div class="grid-3" style="margin-bottom:16px;">
+          <div style="background:rgba(255,255,255,.15);border-radius:10px;padding:12px;text-align:center;"><div style="font-family:var(--lc-serif);font-size:22px;color:white;font-weight:400;">2</div><div style="font-size:11px;color:rgba(255,255,255,.55);margin-top:2px;">Upcoming</div></div>
+          <div style="background:rgba(255,255,255,.15);border-radius:10px;padding:12px;text-align:center;"><div style="font-family:var(--lc-serif);font-size:22px;color:white;font-weight:400;">18</div><div style="font-size:11px;color:rgba(255,255,255,.55);margin-top:2px;">Completed</div></div>
+          <div style="background:rgba(255,255,255,.15);border-radius:10px;padding:12px;text-align:center;"><div style="font-family:var(--lc-serif);font-size:22px;color:white;font-weight:400;">21</div><div style="font-size:11px;color:rgba(255,255,255,.55);margin-top:2px;">Total</div></div>
+        </div>
+        <div class="flex gap-2">
+          <button style="padding:7px 16px;border-radius:8px;font-size:12px;font-weight:600;background:white;color:var(--lc-primary);border:none;cursor:pointer;">Upcoming</button>
+          <button style="padding:7px 16px;border-radius:8px;font-size:12px;font-weight:500;background:rgba(255,255,255,.2);color:white;border:none;cursor:pointer;">Past</button>
+          <button style="padding:7px 16px;border-radius:8px;font-size:12px;font-weight:500;background:rgba(255,255,255,.2);color:white;border:none;cursor:pointer;">My Profile</button>
+        </div>
+      </div>
+
+      <div class="appt-row">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="avatar lg">ST</div>
+            <div><div class="font-semibold text-sm">Sarah Thompson</div><div class="text-xs text-muted">28 Apr 2026 at 10:00 AM · 30 min · Video call</div></div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="status-pill status-confirmed">Confirmed</span>
+            <button class="btn btn-primary btn-sm">▶ Start session</button>
+          </div>
+        </div>
+        <hr class="divider">
+        <div style="background:var(--lc-bg);border-radius:8px;padding:10px 12px;margin-bottom:12px;">
+          <div class="field-label">Patient note</div>
+          <div class="text-xs text-soft">Looking to discuss my sleep results from the Oura ring and the new supplement protocol.</div>
+        </div>
+        <div class="flex gap-2" style="margin-bottom:12px;align-items:center;">
+          <a href="#" class="text-xs text-primary font-semibold">🎥 Open video call</a>
+        </div>
+        <div class="flex gap-2" style="margin-bottom:12px;flex-wrap:wrap;">
+          <button class="btn btn-secondary btn-sm">Mark completed</button>
+          <button class="btn btn-secondary btn-sm">Mark no-show</button>
+          <button class="btn btn-secondary btn-sm">Cancel</button>
+        </div>
+        <div>
+          <div class="field-label">Post-session notes</div>
+          <textarea rows="3" placeholder="Clinical observations, follow-ups…" style="width:100%;margin-top:4px;border-radius:8px;"></textarea>
+          <button class="btn btn-primary btn-xs" style="margin-top:8px;">✓ Save note</button>
+        </div>
+      </div>
+
+      <div class="appt-row" style="margin-bottom:0;">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="avatar lg">MR</div>
+            <div><div class="font-semibold text-sm">Michael Roberts</div><div class="text-xs text-muted">28 Apr 2026 at 2:30 PM · 45 min · In person</div></div>
+          </div>
+          <span class="status-pill status-confirmed">Confirmed</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       SCREEN 7: CARE NOTES TAB
+       ====================================================================== -->
+  <div class="screen">
+    <div class="screen-label">Screen 7 — /clinician/patients/[patientId] — Care Notes tab</div>
+    <header class="app-header">
+      <a class="header-logo" href="#"><div class="header-logo-mark">LC</div><span class="header-logo-name">Longevity Coach</span></a>
+      <nav class="header-nav">
+        <a class="nav-link" href="#">Dashboard</a>
+        <a class="nav-link active" href="#">My Patients</a>
+        <a class="nav-link" href="#">Reviews</a>
+        <a class="nav-link" href="#">Schedule</a>
+        <div class="header-divider"></div>
+        <div class="header-user"><div class="avatar sm">SC</div><span style="font-size:13px;font-weight:500;color:var(--lc-ink-soft);">Dr. Sarah Chen</span></div>
+        <button class="header-signout">Sign out</button>
+      </nav>
+    </header>
+
+    <div style="background:var(--lc-bg);">
+      <div class="hero-header">
+        <div class="hero-back">← James Murray</div>
+      </div>
+      <div class="tabs">
+        <div class="tab">Overview</div>
+        <div class="tab">Check-in History</div>
+        <div class="tab">Biomarkers</div>
+        <div class="tab active">Care Notes <span class="badge" style="background:var(--lc-primary-50);color:var(--lc-primary);margin-left:4px;">4</span></div>
+        <div class="tab">30-Day Program</div>
+      </div>
+      <div class="main">
+        <div class="card mb-4">
+          <div class="section-title">Write a new note</div>
+          <div class="grid-3" style="margin-bottom:12px;">
+            <div><div class="field-label">Note type</div><select style="width:100%;height:36px;"><option>Clinical</option><option>Review</option><option>Follow-up</option><option>Alert</option></select></div>
+            <div><div class="field-label">Priority</div><select style="width:100%;height:36px;"><option>Normal</option><option>High</option><option>Urgent</option></select></div>
+            <div><div class="field-label">Visible to patient?</div><select style="width:100%;height:36px;"><option>No (private)</option><option>Yes</option></select></div>
+          </div>
+          <textarea rows="3" placeholder="Clinical observations, follow-up plans, alerts…" style="width:100%;border-radius:8px;"></textarea>
+          <div style="display:flex;justify-content:flex-end;margin-top:10px;"><button class="btn btn-primary btn-sm">Save note</button></div>
+        </div>
+
+        <div class="note-card urgent">
+          <div class="flex items-center justify-between" style="margin-bottom:8px;">
+            <div class="flex items-center gap-2">
+              <span class="badge" style="background:var(--lc-danger-bg);color:var(--lc-danger);">🚨 Alert</span>
+              <span class="badge" style="background:var(--lc-danger);color:white;">Urgent</span>
+              <span class="text-xxs text-muted">Private</span>
+            </div>
+            <span class="text-xxs text-muted">2 hours ago · Dr. Sarah Chen</span>
+          </div>
+          <div class="text-sm text-soft">LDL elevated to 5.8 mmol/L on latest blood panel (uploaded by patient). Follow up with GP referral if remains above 6.0 at next test. Patient notified via review workspace.</div>
+        </div>
+
+        <div class="note-card">
+          <div class="flex items-center justify-between" style="margin-bottom:8px;">
+            <div class="flex items-center gap-2">
+              <span class="badge" style="background:var(--lc-primary-50);color:var(--lc-primary);">Review</span>
+              <span class="badge" style="background:var(--lc-line);color:var(--lc-grey);">Normal</span>
+              <span class="text-xxs text-muted">Visible to patient</span>
+            </div>
+            <span class="text-xxs text-muted">28 Mar 2026 · Dr. Sarah Chen</span>
+          </div>
+          <div class="text-sm text-soft">March review completed. Progress on sleep improving — averaging 6.5 h vs 5.5 h in February. Supplement adherence still patchy. Discussed stress management techniques. 30-day program sent.</div>
+        </div>
+
+        <div class="note-card ai" style="margin-bottom:0;">
+          <div class="flex items-center justify-between" style="margin-bottom:8px;">
+            <div class="flex items-center gap-2">
+              <span class="badge" style="background:var(--lc-primary-100);color:var(--lc-primary-700);">🤖 AI Review</span>
+              <span class="badge" style="background:var(--lc-line);color:var(--lc-grey);">Normal</span>
+              <span class="text-xxs text-muted">Private (AI-generated)</span>
+            </div>
+            <span class="text-xxs text-muted">1 Mar 2026 · Janet (AI)</span>
+          </div>
+          <div class="text-sm text-soft">Monthly clinical brief: Patient showing positive momentum in sleep and weight. Metabolic risk remains high. Recommend clinician review HbA1c trajectory and consider dietary consultation referral.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       SCREEN 8: PATIENT CONSENT MODAL
+       ====================================================================== -->
+  <div class="screen">
+    <div class="screen-label">Screen 8 — Patient-side: Grant care team access modal</div>
+    <div style="background:var(--lc-bg);padding:40px;display:flex;align-items:center;justify-content:center;min-height:420px;position:relative;">
+      <div style="position:absolute;inset:0;background:rgba(27,66,88,.4);border-radius:0 0 15px 15px;"></div>
+      <div style="background:var(--lc-surface);border-radius:16px;border:1px solid var(--lc-line);padding:28px;width:420px;position:relative;z-index:10;box-shadow:0 8px 32px rgba(0,0,0,.18);">
+        <h3 style="font-family:var(--lc-serif);font-size:19px;font-weight:400;color:var(--lc-ink);margin:0 0 6px;">Grant care team access</h3>
+        <p class="text-sm text-muted" style="margin:0 0 18px;">You are about to grant a clinician access to your health data on Longevity Coach.</p>
+
+        <div style="background:var(--lc-bg);border:1px solid var(--lc-line);border-radius:12px;padding:14px;margin-bottom:16px;">
+          <div class="flex items-center gap-3">
+            <div class="avatar lg" style="background:var(--lc-primary-100);color:var(--lc-primary);">SC</div>
+            <div>
+              <div class="font-semibold text-sm">Dr. Sarah Chen</div>
+              <div class="text-xs text-muted">MB BCh, MRCGP, Dip Longevity Medicine</div>
+              <div class="text-xs text-primary" style="margin-top:2px;">Longevity · Metabolic · Cardiovascular</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-accent" style="margin-bottom:14px;">
+          <div class="text-xs font-semibold text-warning" style="margin-bottom:6px;">⚠ What Dr. Chen will be able to access:</div>
+          <ul class="text-xs text-soft" style="margin:.3em 0 0 1.2em;padding:0;line-height:1.8;">
+            <li>Your biological age and domain risk scores</li>
+            <li>Your uploaded lab results and biomarker history</li>
+            <li>Your monthly check-in responses</li>
+            <li>Your supplement protocol</li>
+            <li>Notes Dr. Chen writes (private by default)</li>
+          </ul>
+        </div>
+
+        <div style="background:var(--lc-bg);border:1px solid var(--lc-line);border-radius:10px;padding:10px 14px;margin-bottom:20px;">
+          <div class="text-xs text-soft" style="line-height:1.6;">By clicking "Grant access", you consent to Dr. Sarah Chen accessing your health data as described above. You can revoke this access at any time from your Account settings. This consent will be recorded for clinical compliance (AHPRA).</div>
+        </div>
+
+        <div class="flex gap-3">
+          <button class="btn btn-secondary" style="flex:1;justify-content:center;padding:11px;">Cancel</button>
+          <button class="btn btn-primary" style="flex:1;justify-content:center;padding:11px;">✓ Grant access</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p style="text-align:center;font-size:12px;color:var(--lc-grey);padding:0 0 40px;">
+    Wireframes are design intent, not final pixel specs. Built for handoff to the implementation team. · longevity-coach-wha · Epic 9 — The Care Team
+  </p>
+</div>
+
+</body>
+</html>
