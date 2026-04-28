@@ -14,31 +14,43 @@ export default async function OnboardingPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const [{ data: draft }, { data: profile }] = await Promise.all([
-    supabase
-      .from("health_profiles")
-      .select("responses, completed_at")
-      .eq("user_uuid", user.id)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle(),
-    supabase
-      .from("profiles")
-      .select("full_name, date_of_birth, phone, address_postal")
-      .eq("id", user.id)
-      .maybeSingle(),
-  ]);
+  // Prefer an in-progress draft; fall back to the latest completed assessment
+  // (so the "Update responses" link from the dashboard hydrates the form
+  // with the user's current answers). Saving will create a new draft row;
+  // submitting will create a new completed row, preserving history.
+  const [{ data: latestDraft }, { data: latestCompleted }, { data: profile }] =
+    await Promise.all([
+      supabase
+        .from("health_profiles")
+        .select("responses")
+        .eq("user_uuid", user.id)
+        .is("completed_at", null)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+      supabase
+        .from("health_profiles")
+        .select("responses")
+        .eq("user_uuid", user.id)
+        .not("completed_at", "is", null)
+        .order("completed_at", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+      supabase
+        .from("profiles")
+        .select("full_name, date_of_birth, phone, address_postal")
+        .eq("id", user.id)
+        .maybeSingle(),
+    ]);
 
-  if (draft?.completed_at) redirect("/dashboard");
+  const sourceResponses =
+    (latestDraft?.responses ?? latestCompleted?.responses ?? {}) as ResponsesByStep;
+  const isEditing = !latestDraft && !!latestCompleted;
 
   // Hydrate basics fields from profiles (single source of truth for PII).
-  // Form state still keys them by their schema field id.
   // stripUnknownKeys drops any keys from older schema versions so a stale
   // draft can't reintroduce removed fields on the next save.
-  const persistedResponses = stripUnknownKeys(
-    (draft?.responses ?? {}) as ResponsesByStep,
-    onboardingQuestionnaire,
-  );
+  const persistedResponses = stripUnknownKeys(sourceResponses, onboardingQuestionnaire);
   const initialResponses: ResponsesByStep = {
     ...persistedResponses,
     basics: {
@@ -55,6 +67,10 @@ export default async function OnboardingPage() {
     null;
 
   return (
-    <OnboardingClient initialResponses={initialResponses} userFullName={userFullName} />
+    <OnboardingClient
+      initialResponses={initialResponses}
+      userFullName={userFullName}
+      isEditing={isEditing}
+    />
   );
 }

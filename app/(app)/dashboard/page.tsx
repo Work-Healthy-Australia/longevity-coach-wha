@@ -24,9 +24,9 @@ export default async function DashboardPage() {
   // Latest risk score, if the engine has run.
   const { data: risk } = await supabase
     .from("risk_scores")
-    .select("biological_age, cv_risk, metabolic_risk, neuro_risk, onco_risk, msk_risk")
+    .select("biological_age, cv_risk, metabolic_risk, neuro_risk, onco_risk, msk_risk, computed_at")
     .eq("user_uuid", user!.id)
-    .order("created_at", { ascending: false })
+    .order("computed_at", { ascending: false })
     .limit(1)
     .maybeSingle();
 
@@ -175,9 +175,12 @@ export default async function DashboardPage() {
       <div className="card">
         <div className="head">
           <h2>Your risk profile</h2>
-          {risk?.biological_age != null && (
-            <span className="badge primary">Bio-age {risk.biological_age}</span>
-          )}
+          <div className="head-badges">
+            {risk && <span className="badge muted" title="These scores are produced by an LLM and have not been clinically validated. Treat as preview pending the actuarial-table-backed engine.">Preview</span>}
+            {risk?.biological_age != null && (
+              <span className="badge primary">Bio-age {risk.biological_age}</span>
+            )}
+          </div>
         </div>
         {!risk && (
           <>

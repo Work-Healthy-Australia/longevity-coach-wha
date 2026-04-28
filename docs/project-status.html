@@ -1,0 +1,2475 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Longevity Coach · Project Status</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f9f4;
+    --bg-2: #fbfcf8;
+    --paper: #ffffff;
+    --ink: #182634;
+    --ink-soft: #4a586a;
+    --ink-mute: #7a8896;
+    --line: #e1e6dc;
+    --line-soft: #ecf0e8;
+    --sage: #5a8a6e;
+    --sage-soft: #dde9dc;
+    --amber: #b8893a;
+    --amber-soft: #f4e9c8;
+    --teal: #2a8a85;
+    --teal-soft: #cfe6e4;
+    --coral: #c25a4d;
+    --coral-soft: #f3d9d2;
+    --indigo: #2c5a87;
+    --plum: #7a3958;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.55;
+  }
+  a { color: var(--indigo); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    min-height: 100vh;
+  }
+
+  /* ===== Sidebar ===== */
+  aside {
+    background: var(--bg-2);
+    border-right: 1px solid var(--line);
+    padding: 32px 24px 48px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+  .brand-dot {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #c8e0c8, var(--sage));
+    box-shadow: 0 0 12px rgba(90, 138, 110, 0.35);
+  }
+  .brand h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 24px;
+    letter-spacing: -0.02em;
+    margin: 0;
+    color: var(--ink);
+  }
+  .subtitle {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    color: var(--ink-mute);
+    font-size: 15px;
+    margin: 4px 0 28px 24px;
+  }
+
+  .nav-group {
+    margin-bottom: 22px;
+  }
+  .nav-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin: 0 0 8px 12px;
+  }
+  .nav-item {
+    display: block;
+    padding: 8px 12px;
+    border-radius: 8px;
+    color: var(--ink-soft);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s;
+    border-left: 2px solid transparent;
+    margin-bottom: 1px;
+  }
+  .nav-item:hover {
+    background: rgba(90, 138, 110, 0.08);
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .nav-item.active {
+    background: var(--paper);
+    color: var(--sage);
+    border-left-color: var(--sage);
+    font-weight: 600;
+  }
+  .nav-item .filename {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    color: var(--ink-mute);
+    display: block;
+    margin-top: 1px;
+    font-weight: 400;
+  }
+  .nav-item.active .filename { color: var(--sage); opacity: 0.75; }
+
+  .toc {
+    margin: 8px 0 0 12px;
+    padding: 0;
+    list-style: none;
+    border-left: 1px solid var(--line);
+  }
+  .toc li { margin: 0; }
+  .toc a {
+    display: block;
+    padding: 4px 10px;
+    font-size: 12px;
+    color: var(--ink-mute);
+    text-decoration: none;
+    line-height: 1.4;
+  }
+  .toc a:hover { color: var(--sage); }
+  .toc .toc-h3 { padding-left: 22px; font-size: 11.5px; opacity: 0.85; }
+
+  .footer-note {
+    margin-top: 32px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    font-size: 11px;
+    color: var(--ink-mute);
+    line-height: 1.5;
+  }
+
+  /* ===== Main content ===== */
+  main {
+    padding: 56px 64px 96px;
+    max-width: 880px;
+  }
+  .doc-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--sage);
+    margin-bottom: 8px;
+  }
+  .doc-meta {
+    color: var(--ink-mute);
+    font-size: 13px;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--line);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  article {
+    font-family: 'Inter', sans-serif;
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+  article h1, article h2, article h3, article h4 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: -0.015em;
+    line-height: 1.25;
+    scroll-margin-top: 32px;
+  }
+  article h1 {
+    font-size: 38px;
+    margin: 0 0 24px;
+    letter-spacing: -0.025em;
+  }
+  article h2 {
+    font-size: 26px;
+    margin: 48px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  article h3 {
+    font-size: 20px;
+    margin: 36px 0 12px;
+  }
+  article h4 {
+    font-size: 16px;
+    margin: 24px 0 8px;
+    color: var(--ink-soft);
+  }
+  article p { margin: 0 0 16px; }
+  article strong { font-weight: 600; color: var(--ink); }
+  article em { font-style: italic; }
+
+  article ul, article ol { padding-left: 24px; margin: 0 0 18px; }
+  article li { margin-bottom: 6px; }
+  article li > ul, article li > ol { margin-top: 6px; }
+
+  article blockquote {
+    border-left: 3px solid var(--amber);
+    background: var(--amber-soft);
+    padding: 14px 20px;
+    margin: 18px 0;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 17px;
+    color: var(--ink);
+    border-radius: 0 6px 6px 0;
+  }
+  article blockquote p:last-child { margin-bottom: 0; }
+
+  article hr {
+    border: none;
+    border-top: 1px solid var(--line);
+    margin: 36px 0;
+  }
+
+  article code {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.88em;
+    background: var(--bg-2);
+    border: 1px solid var(--line-soft);
+    padding: 1px 6px;
+    border-radius: 4px;
+    color: var(--teal);
+  }
+  article pre {
+    background: #182634;
+    color: #e1e6dc;
+    padding: 18px 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 18px 0;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  article pre code {
+    background: transparent;
+    border: none;
+    color: inherit;
+    padding: 0;
+    font-size: inherit;
+  }
+
+  article table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 18px 0;
+    font-size: 14px;
+    background: var(--paper);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 0 var(--line);
+  }
+  article th, article td {
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line-soft);
+    vertical-align: top;
+  }
+  article th {
+    background: var(--sage-soft);
+    font-weight: 600;
+    color: var(--ink);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  article tr:last-child td { border-bottom: none; }
+  article tr:hover td { background: var(--bg-2); }
+
+  /* Status glyphs in epic-status — keep monospace */
+  article td code, article p code { white-space: nowrap; }
+
+  .menu-toggle {
+    display: none;
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 100;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    color: var(--ink);
+    font-family: inherit;
+    box-shadow: 0 2px 8px rgba(24, 38, 52, 0.08);
+  }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    aside {
+      position: fixed;
+      left: -340px;
+      top: 0;
+      width: 320px;
+      z-index: 50;
+      transition: left 0.2s;
+      box-shadow: 2px 0 16px rgba(24, 38, 52, 0.12);
+    }
+    aside.open { left: 0; }
+    main { padding: 64px 24px 64px; }
+    .menu-toggle { display: block; }
+  }
+</style>
+</head>
+<body>
+
+<button class="menu-toggle" id="menuToggle">☰ Docs</button>
+
+<div class="layout">
+  <aside id="sidebar">
+    <div class="brand">
+      <span class="brand-dot"></span>
+      <h1>Longevity Coach</h1>
+    </div>
+    <div class="subtitle">Project Status</div>
+
+    <div class="nav-group">
+      <div class="nav-label">Overview</div>
+      <a class="nav-item" data-doc="README">Project Index <span class="filename">README.md</span></a>
+      <a class="nav-item" data-doc="timeline">Phase Timeline <span class="filename">01-product-timeline.md</span></a>
+      <a class="nav-item" data-doc="state">Current State <span class="filename">2026-04-28-current-state.md</span></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">Strategy</div>
+      <a class="nav-item" data-doc="product">Product <span class="filename">product.md</span></a>
+      <a class="nav-item" data-doc="epics">Epics <span class="filename">epics.md</span></a>
+      <a class="nav-item" data-doc="epic-status">Epic Status <span class="filename">epic-status.md</span></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">Architecture</div>
+      <a class="nav-item" data-doc="ai-vision">AI Vision <span class="filename">ai-vision.md</span></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">Quality</div>
+      <a class="nav-item" data-doc="qa-plan">QA Plan <span class="filename">qa-plan.md</span></a>
+      <a class="nav-item" data-doc="qa-report">QA Report (2026-04-27) <span class="filename">2026-04-27-qa-report.md</span></a>
+    </div>
+
+    <div id="tocContainer"></div>
+
+    <div class="footer-note">
+      Source: <code style="background:transparent;border:none;padding:0;color:inherit;">docs/</code><br>
+      Single-file viewer · open from disk
+    </div>
+  </aside>
+
+  <main>
+    <div class="doc-eyebrow" id="docEyebrow">Overview</div>
+    <div class="doc-meta" id="docMeta">README.md</div>
+    <article id="content"></article>
+  </main>
+</div>
+
+<!-- Embedded markdown sources -->
+<script type="text/markdown" id="md-README"># Longevity Coach — Documentation Index
+
+**Project:** Longevity Coach (longevity-coach.io)
+**Stack:** Next.js 16 · TypeScript · Supabase · Stripe · Resend · Anthropic Claude API
+**Product owner:** James Murray
+**Last updated:** 2026-04-28
+
+---
+
+## Strategy (the Dan Shipper step-back docs)
+
+| Document | Contents |
+|---|---|
+| [Product](#product) | Step-back vision. Audiences, four ranked values, moat, business model, what's true today. |
+| [Epics](#epics) | Fourteen thematic epics. Each with thesis, bundle, mechanism, success criterion. |
+| [Epic Status](#epic-status) | At-a-glance dashboard. Pipeline glyphs, % estimate, open/closed bug counts per epic. |
+
+---
+
+## Product (legacy phased view)
+
+| Document | Contents |
+|---|---|
+| [Phase Timeline](#timeline) | Six-phase roadmap with goals and status per phase |
+| Phase 1 — Foundation | Marketing, account creation, questionnaire, payment, dashboard ✅ |
+| Phase 2 — Intelligence | Biological age, risk scoring, supplement protocol, PDF report 🔄 |
+| Phase 3 — Engagement | Daily check-in, habits, AI coaches, meal planning |
+| Phase 4 — Clinical Depth | Lab uploads, biomarker tracking, wearables, risk simulator |
+| Phase 5 — Care Network | Clinician portal, care team sharing, community |
+| Phase 6 — Scale | Corporate wellness, admin CRM, supplement marketplace |
+
+---
+
+## Architecture
+
+| Document | Contents |
+|---|---|
+| [AI Vision](#ai-vision) | High-level agentic system vision and patient workflow |
+| Agent System (`agent-system.md`) | AI agent and pipeline worker design, build order, component specs |
+| Database Schema (`database-schema.md`) | Full schema map, table purposes, migration history |
+
+---
+
+## Engineering
+
+| Document | Contents |
+|---|---|
+| [Current State](#state) | Snapshot of project state at 2026-04-28 |
+| Gap Analysis (2026-04-27) | Base44 vs new build comparison, missing features, database gaps |
+| Gap Closure Plan (2026-04-27) | Ordered plan to close identified gaps |
+| Agent System Handoff (2026-04-28) | What was built in the agent-system session |
+
+---
+
+## Quality
+
+| Document | Contents |
+|---|---|
+| [QA Plan](#qa-plan) | Forever QA plan (Dan Shipper × `webapp-testing` skill). Tier 1–8 testing pyramid, AI evals, manual practices. |
+| [QA Report (2026-04-27)](#qa-report) | Full regression report: 91 tests, 1 bug fixed, 1 external limitation |
+
+---
+
+## Brand
+
+| Asset | Description |
+|---|---|
+| `longevity-coach-logo.png` | Primary logo (stacked) |
+| `longevity-coach-horizontal-logo.png` | Horizontal logo (600×125, ~54KB) — used in nav and auth |
+| `WHA-LOGO_COLOURED_PNG.png` | WHA coloured logo |</script>
+
+<script type="text/markdown" id="md-timeline"># Longevity Coach — Product Timeline
+
+**Document type:** Phased delivery roadmap
+**Audience:** Product owners, investors, clinical advisors
+**Last updated:** 2026-04-27
+
+---
+
+## Roadmap at a Glance
+
+| Phase | Theme | Goal | Status |
+|---|---|---|---|
+| 1 | Foundation | A stranger can sign up, complete a health questionnaire, and pay | Complete |
+| 2 | Intelligence | A member receives a biological age score, risk report, and supplement protocol | In progress |
+| 3 | Engagement | Members return daily through habits, coaching, and meal planning | Planned |
+| 4 | Clinical Depth | Members can upload lab results and track biomarkers over time | Planned |
+| 5 | Care Network | Practitioners can manage patient care; members can join a community | Planned |
+| 6 | Scale | Corporate wellness programmes and a supplement marketplace are live | Planned |
+
+---
+
+## Phase 1 — Foundation: Identity, Onboarding & Payments
+
+**Status:** Complete as of 2026-04-24
+
+**Goal:** A stranger can discover the product, understand the offer, create an account, complete a health questionnaire, and pay for a subscription.
+
+**Key outcomes delivered:**
+- Public marketing site with Science, Team, Stories, and Sample Report pages
+- Full account creation, email verification, and password reset flows
+- Six-step health questionnaire with save-and-resume
+- Stripe subscription checkout and billing management
+- Signed-in dashboard showing assessment status and subscription state
+- Automated welcome email on account verification
+
+---
+
+## Phase 2 — Intelligence: Risk Scoring, Biological Age & Personalised Report
+
+**Status:** In progress
+
+**Goal:** A member who has completed their questionnaire automatically receives a biological age score, a five-domain health risk breakdown, and a personalised supplement protocol delivered as a branded downloadable report.
+
+**Key outcomes to deliver:**
+- Biological age score calculated from questionnaire responses
+- Five-domain risk breakdown: cardiovascular, metabolic, neurological, oncological, musculoskeletal
+- Personalised 30-day supplement protocol matched to the member's risk profile
+- Branded, downloadable PDF health report
+- In-app report screen accessible at any time
+
+---
+
+## Phase 3 — Engagement: Daily Habits, AI Coaching & Nutrition
+
+**Status:** Planned
+
+**Goal:** Members return daily. The platform becomes a routine companion — tracking habits, delivering coaching, and helping members make better food choices.
+
+**Key outcomes to deliver:**
+- Daily check-in capturing weight, mood, energy, and sleep
+- Personalised daily goals with habit streak tracking
+- AI coaching suite: nutrition coach, supplement advisor, fitness coach, general health coach
+- Weekly meal planning with auto-generated shopping lists and meal logging
+- Health journal and personalised insights feed
+
+---
+
+## Phase 4 — Clinical Depth: Biomarker Uploads & Advanced Tracking
+
+**Status:** Planned
+
+**Goal:** Members who want to go deeper can upload lab results, connect wearables, and track biomarkers over time — unlocking more precise risk scoring and clinical-grade insights.
+
+**Key outcomes to deliver:**
+- Upload and automatic parsing of blood tests, imaging, genetic, microbiome, and hormone reports
+- Longitudinal biomarker charts with trend analysis and out-of-range alerts
+- Wearable device connections (Oura, Apple Watch, Garmin) and manual metric entry
+- Interactive risk simulator showing the projected impact of lifestyle changes on biological age
+
+---
+
+## Phase 5 — Care Network: Clinical Portal & Community
+
+**Status:** Planned
+
+**Goal:** Extend the platform beyond the individual member — enabling practitioners to manage patient longevity care and members to participate in a wider community.
+
+**Key outcomes to deliver:**
+- Clinician portal with patient overview, clinical notes, and biomarker alerts
+- Care team invitation and permission management for members
+- In-platform appointment booking with care team members
+- Community challenges, leaderboard, achievement badges, and member feed
+
+---
+
+## Phase 6 — Scale: Corporate Wellness & Marketplace
+
+**Status:** Planned
+
+**Goal:** Open the platform to enterprise buyers and expand member value through supplement purchasing.
+
+**Key outcomes to deliver:**
+- Corporate account management with employee invitations, team challenges, and aggregate reporting
+- Admin CRM for the Longevity Coach team to manage members and monitor the business
+- In-platform supplement marketplace with auto-replenishment
+
+---
+
+## Platform-Wide Definition of Done
+
+The platform is considered complete when a member can:
+
+1. Discover the product online and understand the offer before signing up
+2. Create an account, complete a health questionnaire, and pay for a subscription
+3. Receive a biological age score and five-domain risk breakdown
+4. Download a branded health report and personalised supplement protocol
+5. Return daily to track habits, chat with coaches, and log meals
+6. Upload lab results and connect wearables to deepen their risk picture
+7. Share their data with a clinician and book appointments within the platform
+8. Participate in community challenges and earn recognition for their progress
+9. Purchase recommended supplements directly through the platform
+10. Access the platform through their employer as part of a corporate wellness programme</script>
+
+<script type="text/markdown" id="md-state"># Current State Assessment — 2026-04-28
+
+## Phase 1 (Foundation) — 90% complete
+
+### Done
+
+| Area | Status | Notes |
+|---|---|---|
+| Auth (signup, login, password reset, email verify) | ✅ Done | OTP + PKCE both handled in `/auth/callback` |
+| Marketing / public pages | ✅ Done | `/`, `/science`, `/team`, `/stories`, `/sample-report`, legal |
+| Onboarding questionnaire (6 steps) | ✅ Done | Schema-driven, save-and-resume, PII split at write time |
+| Stripe checkout + webhook | ✅ Done | Subscription lifecycle handled; RLS-correct upserts |
+| File uploads portal | ✅ Done | Supabase Storage bucket, 50 MB limit, MIME whitelist |
+| Janet document analyser | ✅ Done | `lib/uploads/janet.ts` — Claude Opus 4.7 + adaptive thinking |
+| Janet wired to upload action | ✅ Done | `uploads/actions.ts` calls `analyzeUpload()` synchronously |
+| Dashboard (basic) | ✅ Done | Assessment state, risk score placeholders, uploads count, subscription |
+| Welcome email on signup | ✅ Done | Resend; idempotent; silently no-ops without `RESEND_API_KEY` |
+| RLS on every table | ✅ Done | All 13 migrations enforce RLS |
+| Consent records | ✅ Done | Append-only `consent_records` table; written on assessment submit |
+
+### Gaps remaining in Phase 1
+
+| Gap | Impact | Notes |
+|---|---|---|
+| `/report` page does not exist | High | Users have no place to see their results |
+| `/account` page does not exist | Medium | No self-service profile/subscription management |
+| Logged-in nav has no links | Medium | Only logo + sign-out; no Dashboard/Report/Uploads links |
+| Admin CRM is a stub | Medium | James cannot see users or analytics |
+| Drip email sequences | Low | Welcome only; no Day 1/3/7 re-engagement |
+
+---
+
+## Phase 2 (Intelligence) — 0% complete
+
+The entire agent/pipeline layer is unbuilt. `lib/ai/` contains only `.gitkeep`.
+
+### What the user story needs next
+
+The patient has now:
+1. Signed up ✅
+2. Completed onboarding questionnaire ✅
+3. Uploaded blood test files ✅ (Janet analysed them)
+
+The platform has not yet:
+- Generated a biological age or domain risk scores
+- Written a human-readable risk narrative
+- Created a supplement protocol
+- Given the patient anywhere to see these results
+- Enabled the patient to talk to Janet
+
+---
+
+## Database state
+
+13 migrations applied. Key schema facts:
+
+| Table | Schema | State |
+|---|---|---|
+| `profiles` | public | ✅ Has: full_name, date_of_birth, phone, role |
+| `health_profiles` | public | ✅ Has: responses JSONB, completed_at |
+| `risk_scores` | public | ✅ Has: domain scores, bio-age, narrative-adjacent columns. Missing: `narrative` text, `engine_output` jsonb, `data_gaps` text[] |
+| `patient_uploads` | public | ✅ Complete with janet_* columns |
+| `supplement_plans` | public | ✅ Has: items JSONB, status, valid_from/to |
+| `coach_suggestions` | public | ✅ Complete |
+| `care_notes` | public | ✅ Complete |
+| `periodic_reviews` | public | ✅ Complete |
+| `patient_assignments` | public | ✅ Complete |
+| `agent_conversations` | — | ❌ Missing — needed for Janet chat |
+| `support_tickets` | — | ❌ Missing — needed for Alex |
+| `appointments` | — | ❌ Missing — needed for Janet booking |
+| `health_updates` | — | ❌ Missing — needed for Nova digest display |
+| `health_knowledge` | — | ❌ Missing — needed for Janet RAG |
+
+---
+
+## lib/ state
+
+| Path | State |
+|---|---|
+| `lib/uploads/janet.ts` | ✅ Complete — document analyser |
+| `lib/questionnaire/` | ✅ Complete |
+| `lib/profiles/` | ✅ Complete — PII split, name helpers |
+| `lib/supabase/` | ✅ Complete — all four clients |
+| `lib/email/` | ✅ Complete — welcome email |
+| `lib/consent/` | ✅ Complete |
+| `lib/stripe/` | ✅ Stripe client exists |
+| `lib/ai/` | ❌ Empty — PatientContext, pipelines, Janet all missing |
+| `lib/risk/` | ❌ Empty — deterministic risk engine not built |
+| `lib/pdf/` | ❌ Empty — PDF generation not built |
+
+---
+
+## Risk engine note
+
+The deterministic risk engine (`lib/risk/`) has not been built. The agent-system.md data flow shows it should run synchronously inside `submitAssessment()` before the redirect. For Phase 2, the Risk Narrative Pipeline will operate directly from questionnaire responses and upload findings, computing initial risk scores via LLM. When the deterministic engine is built, it will slot in before the LLM pipeline and supply structured `engine_output` for the narrative to annotate.
+
+---
+
+## Key invariants that must not change
+
+1. PII lives only on `profiles`. `health_profiles.responses` is de-identified.
+2. Supabase key naming: `SUPABASE_SECRET_KEY` (not `SUPABASE_SERVICE_ROLE_KEY`).
+3. `proxy.ts` is the route guard — no ad-hoc auth in pages.
+4. `useActionState` from `react` (not `react-dom`) — React 19 rename.
+5. Pipeline writes use the admin (service-role) client. Never the user client.</script>
+
+<script type="text/markdown" id="md-product"># Longevity Coach — Product
+
+Last updated **2026-04-28**. Drafted in the Dan Shipper school: AI-native, treats the product as a relationship not a SaaS, obsessed with the moment of truth.
+
+**Companion docs:**
+- epics.md — the twelve bodies of work.
+- epic-status.md — what's shipped, what's broken, what's next.
+- qa/qa-plan.md — how we know what we shipped is right.
+
+---
+
+## 0. The frame
+
+Most personal-health products optimise for "more data shown to the user." That's the wrong target for Longevity Coach. Longevity Coach is a **medical-grade second opinion** that produces a credible biological age, a defensible risk picture, and a 30-day plan a curious 45-year-old will actually follow.
+
+The thing we're really building is one moment: the patient finishes their questionnaire (and maybe uploads a recent blood panel) and lands on `/report`. There they see, for the first time, **their** number, **their** five-domain risk picture, and **their** supplement protocol — named for them, written for them, with the work shown.
+
+If that screen feels like medicine, we win. If it feels like a wellness quiz score, we lose. Every other surface — the dashboard, the daily check-in, Janet — exists to bring the patient back to that moment with new data.
+
+---
+
+## 1. What we are
+
+A personal health intelligence layer that turns a 30-minute questionnaire and any blood test you've ever had into:
+
+1. A **biological age** the patient trusts.
+2. A **five-domain risk picture** (cardiovascular, metabolic, neurological, oncological, musculoskeletal).
+3. A **30-day supplement protocol** with timing, dose, and rationale per item.
+4. A **branded PDF report** the patient can hand to a GP or keep in a drawer.
+5. An **AI coach** (Janet) that knows their history and never forgets.
+6. A **path to a clinician** when the patient wants a human second opinion.
+
+We are not a wellness blog. We are not a generic supplement upsell. We are not a calculator. The closest thing to us in spirit is a really good private GP who took an extra hour to read your chart — except they remember everything, they're available at 2am, and they don't forget what your liver enzymes did last quarter.
+
+---
+
+## 2. Who we serve
+
+Three audiences, three distinct asks:
+
+| Audience | Who they are | The frame they bring | What we sell them |
+|---|---|---|---|
+| **Individual member** | 35–65, professional, has just realised their 50s won't be like their 40s | "Longevity," not "wellness" | A number, a plan, and a coach |
+| **Corporate wellness buyer** | HR / People Ops at a 100–5,000-person company | "ROI per seat" | Aggregate dashboards, team challenges, employee licences |
+| **Clinical practitioner** | Longevity-focused GP, integrative medicine doctor, concierge clinic | "Fewer hours per patient, better outcomes" | A structured patient view + AI-assisted summaries between visits |
+
+The individual member is the wedge. Phase 1–3 is built around them. Corporate and clinical layers come on top of a working consumer product. We do not chase B2B before the consumer product holds.
+
+---
+
+## 3. The four values we ship
+
+Everything we build has to land on at least one of these. If a feature doesn't, we don't build it. They are ranked.
+
+### 3.1 A number you trust
+
+A biological age and risk profile that a curious 45-year-old will accept as credible — and that a GP will accept as defensible. Trust comes from showing the work: which questionnaire answers drove which scores, which uploads moved which numbers, what's still missing. Without this, nothing else matters because the user leaves on day one.
+
+### 3.2 A plan you can act on tomorrow
+
+A 30-day supplement protocol with rationale per item, and a daily target you don't have to think about. Concrete beats clever. "Take 2g of EPA at breakfast because your hs-CRP is elevated" beats "improve cardiovascular health."
+
+### 3.3 A coach who remembers
+
+Janet reads the patient's full context before every conversation. The patient never has to re-explain. The coaching gets sharper the longer they stay. Atlas (risk narrative) and Sage (supplement protocol) are sub-agents Janet calls when a specialist answer is needed in real time.
+
+### 3.4 A trust layer your doctor accepts
+
+RLS at the database, PII separated from clinical data, AHPRA-compliant consent records, "we never train on your data" in writing **and in the architecture**. This is what differentiates us from every consumer wellness app — and what unlocks the clinician channel.
+
+---
+
+## 4. What makes us different
+
+Most consumer health platforms show you a dashboard and walk away. We close the loop in three places competitors don't:
+
+| Gap | Competitors | Longevity Coach |
+|---|---|---|
+| The protocol | Show a risk score, link to the supplements aisle | Specific 30-day plan with timing, dose, rationale per item |
+| The coach | Generic chatbot that doesn't know you | Claude Sonnet 4.6 with 50ms parallel context loading + RAG over a research knowledge base + sub-agents for risk and supplement specialty |
+| The clinician path | Either don't have it, or charge $400/mo for it | Real practitioner can be added to the care team and see the same data |
+
+---
+
+## 5. The competitive moat is AI quality
+
+Anyone can build a questionnaire. Anyone can hire a doctor to write supplement rules. The defensible thing is:
+
+- The narrative **Atlas** writes for each domain, indistinguishable from a thoughtful GP letter.
+- The protocol **Sage** assembles, indistinguishable from what an integrative medicine clinic would prescribe at $600 a visit.
+- **Janet's** ability to pick up a conversation three weeks later as if she had been waiting all along.
+
+The eval suite (qa-plan.md §2) is the system that lets us hold that bar — and notice the day a model upgrade quietly breaks it. Without evals, "AI quality" is theatre.
+
+---
+
+## 6. The architecture in one sentence
+
+A patient identity and questionnaire layer (Supabase, RLS-enforced, PII-isolated) feeds two pipelines (Atlas and Sage) that run async on assessment submit and on every upload, writing structured narratives and protocols back to the patient's row, which Janet reads in parallel via `PatientContext.load()` before every conversation.
+
+Specifics in `docs/architecture/agent-system.md`. The data rules live in `.claude/rules/data-management.md`. The AI rules live in `.claude/rules/ai-agents.md`.
+
+---
+
+## 7. Business model
+
+| Revenue line | Why now | Status |
+|---|---|---|
+| **Individual subscriptions** (monthly + annual) | The wedge. Pays for the unit economics of the AI layer. | Live |
+| **Clinical tier** (practitioner subscription) | Activates the care-team feature. Drives word-of-mouth into the consumer base. | Phase 5 |
+| **Corporate wellness** (per-seat enterprise) | Sales cycle is long. Build only after the consumer product holds. | Phase 6 |
+| **Supplement marketplace** | The protocol page is the natural surface. We sell only what we'd recommend. | Phase 6 |
+
+---
+
+## 8. Market sizing (rough)
+
+- **TAM (consumer)**: 200M adults globally aged 35–65 with disposable income for a £20–60/mo health subscription.
+- **SAM (English-speaking, AU/UK/US)**: ~80M.
+- **SOM (year 1)**: 5,000 paying members across founding-pilot AU + UK markets.
+- **Clinical SAM (AU)**: ~12,000 longevity-aware GPs and integrative medicine practitioners. SOM (year 1): 50.
+- **Corporate (AU)**: ~6,000 mid-market employers (100–5,000 staff) with active wellness budgets. SOM (year 2): 20.
+
+These are starting numbers, not commitments. The point is the consumer wedge is real and the upstream channels exist.
+
+---
+
+## 9. What's true today (2026-04-28)
+
+We are mid-Phase-2.
+
+**Shipped:**
+- Marketing presence (`/`, `/science`, `/team`, `/stories`, `/sample-report`, `/legal/collection-notice`).
+- Auth, signup, password reset, welcome email.
+- Six-step health questionnaire with save-and-resume.
+- Stripe subscription checkout + webhook.
+- Patient uploads portal + Janet document analyser (Claude Opus 4.7).
+- Atlas + Sage pipelines (risk narrative + supplement protocol).
+- Janet streaming chat agent (Claude Sonnet 4.6).
+- `/report` page combining narrative, scores, protocol, and Janet chat.
+- Drip-email cron, basic admin pages, consent records.
+- 13 RLS-enforced migrations, full TypeScript schema types regenerated.
+
+**Not shipped:**
+- Deterministic risk engine port from Base44 (Atlas currently derives all scores via LLM at `confidence_level = 'moderate'`).
+- Branded PDF export (skeleton only).
+- Patient `/account` self-service page.
+- pgvector / RAG (migration written, extension not enabled).
+- Daily check-in, habits, streaks, AI coach suite beyond Janet.
+- Clinician portal, care-team sharing, appointment booking.
+- Wearable connections, biomarker tracking, risk simulator.
+- Corporate accounts, supplement marketplace.
+
+Detail in epic-status.md.
+
+---
+
+## 10. The principle to remember
+
+**Patients don't come back for features. They come back because last time it told them something they didn't know about themselves, and it was right.**
+
+That's the bar. Everything in product, engineering, AI, and QA serves that one sentence.
+
+Everything else is theatre.</script>
+
+<script type="text/markdown" id="md-epics"># Longevity Coach — Epics
+
+Last updated **2026-04-28**. Drafted in the Dan Shipper school: bundled by thesis, not by phase number.
+
+**Companion docs:**
+- product.md — who we serve, the four values, what makes us different.
+- epic-status.md — at-a-glance status of each epic.
+- qa/qa-plan.md — how we test what we ship.
+
+---
+
+## 0. The frame
+
+The legacy `phase-XX-` documents are a delivery sequence. This document is the **thesis layer**: fourteen epics, each with a one-sentence claim, a bundle of features, the mechanism that makes it work, and the criterion that says we got it right.
+
+An epic earns shipping when **the success criterion is true** — not when every feature in the bundle is feature-complete.
+
+---
+
+## Epic 1 — The Front Door
+
+**Thesis:** A stranger arrives, understands the offer, creates an account, and pays — without ever leaving the product.
+
+**Bundle:**
+- Public marketing pages (`/`, `/science`, `/team`, `/stories`, `/sample-report`).
+- Sign-up, sign-in, email verification (OTP + PKCE), password reset.
+- Welcome email on activation (idempotent).
+- Stripe checkout (monthly + annual) and webhook lifecycle handling.
+- Logged-in nav with Dashboard / Report / Documents / Account links.
+- `/account` self-service profile and subscription management.
+
+**Mechanism:** Marketing pages live in `app/(public)/`. Auth flows live in `app/(auth)/` and route through `proxy.ts` (Next.js 16's renamed `middleware.ts`). Stripe integration lives at `app/api/stripe/`, reads the raw body for signature verification.
+
+**Success criterion:** A new visitor can land on `/`, finish onboarding (questionnaire + payment), and be sitting on `/dashboard` within 12 minutes. Median time-to-first-report under 24 hours.
+
+---
+
+## Epic 2 — The Intake
+
+**Thesis:** A member shares their health background once. Forever after, every component of the platform reads from that one source of truth.
+
+**Bundle:**
+- Six-step questionnaire (basics, medical, family, lifestyle, goals, consent) with save-and-resume.
+- PII-vs-questionnaire split at write time (`lib/profiles/pii-split.ts`).
+- AHPRA-compliant consent record on submit (append-only `consent_records`).
+- Patient uploads portal (50 MB cap, MIME whitelist, Supabase Storage).
+- Janet document analyser (Claude Opus 4.7 + adaptive thinking) parses every upload and stores extracted biomarkers.
+
+**Mechanism:** Questionnaire schema lives in `lib/questionnaire/`. Server actions in `app/(app)/onboarding/actions.ts` split PII to `profiles` and de-identified questionnaire data to `health_profiles.responses`. Uploads write to `patient_uploads` with `janet_*` columns populated by `lib/uploads/janet.ts`.
+
+**Success criterion:** A member completes the questionnaire in under 10 minutes (median), every PII field lands in the correct table, and any blood panel they upload is parsed within 30 seconds with the extracted values displayed.
+
+---
+
+## Epic 3 — The Number
+
+**Thesis:** Every member walks away with a biological age and a five-domain risk picture they trust enough to share with their GP.
+
+**Bundle:**
+- Deterministic risk engine ported from Base44 (`lib/risk/`) — five scoring functions plus bio-age estimator.
+- Risk engine runs synchronously inside `submitAssessment()` and writes `risk_scores.engine_output`.
+- Atlas pipeline (risk narrative LLM) reads `engine_output` and writes a per-domain narrative + top drivers + recommended screenings + data gaps.
+- Confidence label on every score (`high` when biomarkers present, `moderate` when questionnaire-only).
+- Risk scores recomputed on every new upload.
+
+**Mechanism:** Two-step pipeline: deterministic arithmetic for the score, LLM for the explanation. Atlas is a pipeline worker (async, idempotent upsert keyed on `user_uuid`). Triggered by the `health_profiles.completed_at` write and by `patient_uploads.janet_status = 'complete'` events.
+
+**Success criterion:** A member who completes the questionnaire receives a bio-age and risk picture within 60 seconds of submission. The narrative names which questionnaire answers and which uploaded biomarkers drove each score. A panel of three GPs reviewing 10 sample reports rate them ≥ 4/5 on "would I send this to a patient."
+
+---
+
+## Epic 4 — The Protocol
+
+**Thesis:** Every member walks away with a 30-day supplement plan they can buy at the chemist tonight.
+
+**Bundle:**
+- Sage pipeline (supplement protocol LLM) reads risk + uploads + questionnaire and writes `supplement_plans.items`.
+- Per-item rationale linked to the specific risk driver it addresses.
+- Tier label per item (`critical` / `high` / `recommended` / `performance`).
+- Auto-replanning when risk scores change.
+- Janet (Supplement Advisor mode) can answer questions about any item.
+- Hand-curated supplement catalog (~40 evidence-backed items) for deterministic Phase 1 generation; LLM-enhanced generation in Phase 2.
+
+**Mechanism:** Sage is a pipeline worker. Triggered by Atlas completion. Writes to `supplement_plans` (one active row per patient, status check constraint). Janet reads `supplement_plans.items` via `PatientContext`.
+
+**Success criterion:** Every protocol contains at least three tier-`critical` items with rationale text under 200 characters that names the patient's specific driver. A panel of three integrative-medicine doctors reviewing 10 sample protocols rate them ≥ 4/5 on "would I prescribe this."
+
+---
+
+## Epic 5 — The Report
+
+**Thesis:** Members have one place — in the app and in PDF — to see everything the platform knows about them.
+
+**Bundle:**
+- `/report` in-app page combining bio-age, domain scores, narrative, supplement protocol, Janet chat panel.
+- Last-updated timestamp prominent.
+- Branded PDF export at `/api/report/pdf` (logo, domain colours, narrative, supplement table, footer disclaimer).
+- Regenerate-on-demand button.
+- "What changed since last report" diff when run twice.
+
+**Mechanism:** `/report` is a server component that reads `risk_scores`, `supplement_plans`, `agent_conversations`. PDF generated server-side via `lib/pdf/report-doc.tsx` (React-PDF), piped to Supabase Storage with a one-hour signed URL.
+
+**Success criterion:** A member can download a PDF that prints cleanly and looks like a clinical document, not a marketing brochure. A non-technical member shown the in-app report can verbally summarise their bio-age, top risk, and top supplement within 60 seconds.
+
+---
+
+## Epic 6 — The Coach
+
+**Thesis:** Janet is the patient's coach who remembers everything, available 24/7, who never makes them re-explain.
+
+**Bundle:**
+- Janet streaming chat agent (Claude Sonnet 4.6).
+- `PatientContext.load()` runs all DB reads in parallel via `Promise.all` (target < 50ms).
+- 20-turn conversation window per patient with older turns summarised to one sentence per session.
+- Sub-agent tool calls: Atlas (risk narrative), Sage (supplement protocol), PT Coach (live exercise).
+- Hybrid RAG over `health_knowledge` (pgvector HNSW + BM25 + RRF fusion) — populated by Nova.
+- Stale-data nudges (e.g. "your risk scores are 30 days old — let me refresh that").
+- Persona-aware support agent (Alex) for platform questions.
+
+**Mechanism:** Janet runs at `app/api/chat/route.ts`, streams via Anthropic SDK. PatientContext lives at `lib/ai/patient-context.ts`. Sub-agents are real-time `tool_use` (the user waits ~3s when a specialist is needed). Janet → sub-agent only one layer deep — never sub-agent → sub-agent.
+
+**Success criterion:** A member returning after two weeks gets a Janet response that references their last conversation by name. Median first-token latency under 800ms. Hallucination rate (claims unsupported by PatientContext) under 1% on a 100-conversation sample.
+
+---
+
+## Epic 7 — The Daily Return
+
+**Thesis:** Members come back daily because the platform makes the next 24 hours of their health concrete.
+
+**Bundle:**
+- Daily check-in (mood, sleep, energy, weight) — under 90 seconds.
+- Personalised daily goals (steps, water, sleep target, meditation) tied to risk profile.
+- Habit streak with rest-day mechanic (protects streaks across travel and grief).
+- Drip email sequence (Day 1, 3, 7, 14, 30 re-engagement).
+- Push / SMS / email reminder for the daily check-in.
+- Weekly insights digest ("your energy is consistently low on Mondays").
+- Health journal for free-form notes.
+
+**Mechanism:** Check-ins write to `daily_checkins` (already in schema). Streak math lives in `lib/streaks/` (to be built). Drip emails run via Vercel Cron (`app/api/cron/drip-emails/route.ts`, already shipped). Janet reads the last 7 days of check-ins via `PatientContext`.
+
+**Success criterion:** Day-7 retention > 40%. Day-30 retention > 25%. Median check-in completion under 90 seconds. Drip emails open-rate > 35%.
+
+---
+
+## Epic 8 — The Living Record
+
+**Thesis:** Members go deeper over time — uploading lab results, connecting wearables, watching their bio-age trend across years.
+
+**Bundle:**
+- Longitudinal biomarker charts (HbA1c, hs-CRP, vitamin D, etc.) per patient.
+- Out-of-range alerts.
+- Wearable integrations (Oura, Apple Watch, Garmin) via OAuth.
+- Manual metric entry for members without wearables.
+- Risk simulator: "if I lower my LDL to X, my CV risk drops to Y."
+- "Repeat this test in 6 months" reminders driven by the recommended-screenings narrative.
+
+**Mechanism:** Biomarkers stored in the `biomarkers` schema (`biomarkers.lab_results`, `biomarkers.wearable_summaries`, `biomarkers.daily_logs` — schemas exist). Charts via Recharts in client components. Wearable OAuth tokens stored encrypted in `wearable_devices`.
+
+**Success criterion:** A member two years in can see their bio-age trend across 24 monthly snapshots and the three biomarkers that moved the most. The risk simulator agrees with the deterministic risk engine within 2 points on every domain.
+
+---
+
+## Epic 9 — The Care Team
+
+**Thesis:** Members hand the keys to a clinician when they want a human second opinion. The clinician walks in already informed.
+
+**Bundle:**
+- Clinician portal with patient list, patient detail, alerts.
+- Care-team invitation and per-patient permission management.
+- Janet-Clinician brief pipeline: monthly auto-generated clinical brief + 30-day plan suggestion.
+- In-platform appointment booking (calendar integration, Stripe payment).
+- Clinical notes (private to care team).
+- Periodic review record (`periodic_reviews` table — schema exists).
+- Community feed and challenges (deferred sub-epic).
+
+**Mechanism:** Clinician role gated via `profiles.role = 'clinician'` and `patient_assignments` rows. Clinician-side reads use the user client (RLS enforces patient consent), pipeline-side writes use the admin client. Janet-Clinician runs on a 1st-of-month cron per assignment.
+
+**Success criterion:** A clinician opening a patient for the first time can summarise the patient's risk picture in under 3 minutes. Patient consent for care-team access is captured via the consent-record flow (AHPRA audit).
+
+---
+
+## Epic 10 — The Knowledge Engine
+
+**Thesis:** Janet always knows the latest research, and her answers are grounded in cited evidence.
+
+**Bundle:**
+- Nova research digest pipeline (weekly cron, ~200s runtime).
+- Six-category parallel literature scan (PubMed, Nature, Cell, medRxiv, Cochrane, plus one rotating).
+- LLM synthesis per category, embedded into `health_knowledge` (pgvector HNSW + GIN hybrid index).
+- Embedding model: `perplexity/pplx-embed-v1-4b` via OpenRouter (2560 dims, 32K context, INT8, MRL).
+- `health_updates` structured digest table for the in-app research feed.
+- Hybrid RAG search function `hybrid_search_health()` called by Janet at session start (~30ms overhead).
+- Citations surfaced in Janet's responses ("a 2026 Cell paper on rapamycin in mice…").
+
+**Mechanism:** Nova runs at `app/api/cron/nova/route.ts` (to be built). Migration `0016_knowledge_base_pgvector.sql` is written but blocked on enabling the `vector` extension in Supabase. Nova is independent of every other component — it only writes; nothing reads from it synchronously.
+
+**Success criterion:** Janet's responses cite a research source in > 30% of substantive answers. Citation accuracy (does the cited paper actually say what Janet claims) > 95% on a quarterly audit. Nova runtime stays under 250s.
+
+---
+
+## Epic 11 — The Trust Layer
+
+**Thesis:** A patient (or their GP, or the AHPRA auditor) can ask "where is my data and what are you doing with it" and get a clear answer.
+
+**Bundle:**
+- RLS on every table (already enforced).
+- PII boundary: identifiers on `profiles`, de-identified questionnaire on `health_profiles.responses`.
+- AHPRA-compliant consent records (append-only, captures user UUID + policy version + timestamp + channel).
+- "We never train on your data" clause in ToS, surfaced in onboarding.
+- Export-everything button (downloadable JSON + PDF bundle).
+- Right-to-erasure flow (single-row scrub since PII is single-table).
+- Pause / freeze account option.
+- Deceased-flag flow handled with a warm copy path, not a checkbox.
+- pgTAP RLS test suite executed in CI (currently written but not run).
+- Quarterly trust audit (read deploy logs for PII, rotate signed-URL TTLs, walk the deceased flow with someone who has lost a parent).
+
+**Mechanism:** Existing RLS via Supabase plus the new key-naming convention (`SUPABASE_SECRET_KEY`, not `SUPABASE_SERVICE_ROLE_KEY`). Service-role admin client used only in webhook routes, pipeline workers, and PDF generation. PII handling rules in `.claude/rules/data-management.md` and `.claude/rules/security.md`.
+
+**Success criterion:** Zero PII leaks in production logs. RLS test suite green in CI. Export-everything completes in under 30 seconds. Every consent change has a corresponding `consent_records` row.
+
+---
+
+## Epic 12 — The Distribution
+
+**Thesis:** The product reaches members through three channels — direct consumer, employer-paid, and clinician-referred — without forking the codebase.
+
+**Bundle:**
+- Corporate account management (employee invitations, team challenges, aggregate reporting, no individual PII visible to admins).
+- Admin CRM for the Longevity Coach team (members, subscriptions, support, agent definitions, prompt library).
+- Supplement marketplace integration (auto-replenishment via supplier API, in-app purchase from the protocol page).
+- Sign-in-with-Vercel for clinician partners (Phase 6).
+- Pricing tiers (individual / family / clinical / corporate) wired to entitlements.
+
+**Mechanism:** Corporate accounts modelled in the `billing` schema (already exists, will be extracted as a standalone billing platform in Phase 6). Admin pages live in `app/(admin)/` (currently stubbed). Marketplace integration via the existing `suppliers` and `products` tables in the `billing` schema.
+
+**Success criterion:** A corporate buyer can upload a 200-employee CSV and have invitations sent within 5 minutes. The admin CRM lets James see a single-screen view of MRR, active members, churn, and pipeline runs in the last 24 hours. Marketplace conversion (member viewing protocol → completed supplement order) > 15%.
+
+---
+
+## Epic 13 — The Business Model
+
+**Thesis:** Longevity Coach makes money three ways — direct subscriptions, employer licences, and a curated provider ecosystem where Janet's recommendations route patients to wholesale partners (pathology, imaging, fitness, nutrition, supplements). The platform earns a margin on every booking; the patient gets one place to act on what they've just learned.
+
+**Bundle:**
+- **B2C subscriptions** (already live via Epic 1) — monthly and annual individual plans.
+- **B2B corporate licences** (Phase 6 via Epic 12) — per-seat enterprise plans with aggregate dashboards.
+- **B2B clinical subscriptions** (Phase 5 via Epic 9) — practitioner subscriptions activating the care-team feature.
+- **Provider ecosystem (the new revenue stream):**
+  - Admin panel for wholesale provider onboarding (contract terms, margin splits, fulfilment SLA, regional coverage).
+  - Third-party catalog: blood work, DEXA scans, PT sessions, gym memberships, meal-kit fulfilment, supplement fulfilment, genetic tests, hormone panels.
+  - Janet-driven surfacing — when she suggests a member needs X, the relevant offering appears inline with a one-tap CTA.
+  - Patient-facing booking and checkout in-platform; Stripe Connect for split payments.
+  - Per-recommendation audit trail: which Janet suggestion → which offering surfaced → did it convert → did the outcome change the next risk score.
+  - Provider performance dashboard (orders fulfilled, NPS, refunds, regional performance).
+  - Wholesale margin captured per transaction; transparent to the patient ("this booking is provided by Acme Labs; we receive a referral fee").
+  - Curated catalog discipline — every offering must be evidence-aligned with the supplement/risk catalog. No pay-to-play placements.
+
+**Mechanism:**
+- New tables in the `billing` schema:
+  - `provider_partners` — admin-managed; contract terms, margin %, region, status.
+  - `provider_offerings` — one row per bookable thing; SKU, price, modality (in-clinic / at-home / digital), evidence tag, recommended-when criteria.
+  - `provider_orders` — patient transactions; FK to `provider_partners` and to the originating Janet suggestion.
+- Janet uses `tool_use` (`search_offerings(category, region, evidence_tag)`) when a recommendation matches a catalog category.
+- Stripe Connect for split payments — patient pays Longevity Coach; we forward the provider's share automatically.
+- Admin pages under `app/(admin)/providers/` for onboarding, catalog editing, order monitoring.
+- Provider-side pages (deferred to Phase 6) so providers can manage their own listings.
+- Replaces and broadens the supplement-marketplace bullet currently inside Epic 12.
+
+**Success criterion:**
+- 5 partner integrations live within 6 months of GA (one in each of: pathology, imaging, fitness, nutrition, supplements).
+- ≥ 25% of Janet recommendations that surface a relevant offering convert to a booking.
+- Provider-ecosystem revenue contributes ≥ 20% of total platform revenue within 12 months of GA.
+- Zero pay-to-play violations on quarterly catalog audit (every offering traceable to an evidence-backed protocol element).
+- Patient-side disclosure ("we receive a referral fee") visible on every offering.
+
+---
+
+## Epic 14 — The Platform Foundation
+
+**Thesis:** The engineering substrate that makes Longevity Coach defensible as a healthcare-grade product — security, observability, cost discipline, disaster recovery, dependency hygiene. The work that's invisible when it's right and existential when it's wrong.
+
+**Why this is its own epic:** Epic 11 (The Trust Layer) is what we *promise* the patient and the regulator (consent records, export-everything, never-train clause). Epic 14 is the engineering discipline that lets us *keep* those promises. They are paired — neither stands without the other — but they live at different abstraction layers and they're tracked separately so the substrate work doesn't disappear inside feature roadmaps.
+
+**Bundle:**
+- **RLS + service-role discipline** — every table has RLS; the admin client is used only in webhook routes, pipeline workers, PDF generation. Documented in `.claude/rules/security.md`; enforced by the pgTAP suite (Epic 11) and integration tests (qa-plan §1.2b).
+- **Encryption** — Supabase TLS in transit, AES-256 at rest. Verified quarterly.
+- **Secret management** — Vercel env vars only; `.env` files git-ignored; no secrets logged. Gitleaks (or equivalent) secret-scan on every PR.
+- **Pipeline auth** — internal HTTP routes require `x-pipeline-secret`; secret rotated quarterly.
+- **Observability** — structured logging with no PII; error monitoring (Sentry / Highlight / equivalent); performance metrics; alert routing.
+- **CI/CD quality gates** — Vitest + pgTAP + Playwright + Lighthouse must pass before merge to main. Workflow files under `.github/workflows/`.
+- **Database migration discipline** — numbered, idempotent (`IF NOT EXISTS`, `ON CONFLICT DO NOTHING`); `supabase db diff` clean before commit; types regenerated after every schema change.
+- **Dependency hygiene** — `pnpm audit` weekly; dependabot enabled; new dependency requires written justification in the PR description.
+- **Cost controls** — Anthropic API spend dashboard with 80%-of-budget alert; Supabase storage quota alert; Vercel function execution-time monitoring.
+- **Disaster recovery** — Supabase point-in-time restore tested quarterly (actually restored to a fresh project, smoke-tested); runbook in `docs/operations/dr-runbook.md`.
+- **Healthcare-readiness posture** — AHPRA breach-notification protocol; data residency (Sydney for AU members; UK region when needed); GDPR posture; documented stance on training data with architecture-level enforcement.
+- **Security cadence** — quarterly penetration test on a staging mirror; monthly dependency CVE scan; weekly log scrub for PII regressions.
+- **Production-readiness checklist** — every new route or pipeline ships against a checklist before going live (auth ✓, RLS ✓, idempotent ✓, observable ✓, has tests ✓, doc updated ✓).
+
+**Mechanism:**
+- Engineering rules canonical in `.claude/rules/` (`data-management.md`, `security.md`, `nextjs-conventions.md`, `database.md`, `ai-agents.md`).
+- CI workflows under `.github/workflows/` (none exist yet — gap).
+- Supabase project: RLS enforced; daily backups; point-in-time recovery on Pro tier.
+- Vercel project: env vars per environment (preview / production); Fluid Compute defaults; observability integration.
+- Production-readiness checklist lives in `docs/operations/checklist.md` (to be created).
+
+**Success criterion:**
+- Zero secrets in git history (gitleaks green on every PR).
+- Zero PII in production logs (weekly regex sweep green).
+- 100% of migrations idempotent and re-runnable on a clean DB.
+- p99 latency budgets in qa-plan §1.7 met.
+- Anthropic API spend per active member per month tracked and within budget.
+- Quarterly penetration test produces a written report; remediation tracked.
+- Backup restoration drill executed quarterly; runbook current.
+- Dependency CVE backlog ≤ 5 high-severity at any time.
+- Every new route ships against the production-readiness checklist (no exceptions).
+
+---
+
+## How epics relate to phases
+
+The legacy `phase-XX-` documents map to epics like this:
+
+| Phase | Epics shipped or in progress |
+|---|---|
+| Phase 1 — Foundation | Epic 1 (Front Door), Epic 2 (Intake), early Epic 11 (Trust Layer), early Epic 14 (Platform Foundation: RLS, PII boundary, migration discipline) |
+| Phase 2 — Intelligence | Epic 3 (Number), Epic 4 (Protocol), Epic 5 (Report), early Epic 6 (Coach), continuing Epic 14 (pipeline auth, secret discipline) |
+| Phase 3 — Engagement | Epic 6 (Coach: full coach suite + RAG), Epic 7 (Daily Return), continuing Epic 14 (CI workflows, observability) |
+| Phase 4 — Clinical Depth | Epic 8 (Living Record), Epic 10 (Knowledge Engine: Nova), early Epic 13 (Business Model: pathology + imaging partners) |
+| Phase 5 — Care Network | Epic 9 (Care Team), continuing Epic 13 (PT, gym, meals partners) |
+| Phase 6 — Scale | Epic 12 (Distribution), late Epic 11 (Trust Layer audit cadence), full Epic 13 (Business Model: provider catalog + Stripe Connect), late Epic 14 (DR drills, pen-test cadence, production-readiness enforcement) |
+
+Phases describe **when**. Epics describe **why**. The two views are complementary; neither replaces the other.</script>
+
+<script type="text/markdown" id="md-epic-status"># Longevity Coach — Epic Status Dashboard
+
+Last updated **2026-04-28**.
+
+Companion to epics.md (strategy, stable) and product.md (vision). This file is the **at-a-glance status** of each epic: how far through the build pipeline, what's still outstanding, what's broken right now.
+
+## Pipeline stages
+
+Every epic moves through five stages. Each stage is a discrete "is it true?" gate, not a percentage. The progress bar shows which stages are passed.
+
+| Stage | Means |
+|---|---|
+| **Planned** | Spec exists in epics.md with bundled features, mechanism, success criterion. |
+| **Feature Complete** | Every bundled feature is shipped to production. |
+| **Unit Tested** | Direct unit tests cover the core logic of the bundled features. |
+| **Regression Tested** | Bundled features exercised end-to-end via an automated regression pass before each release. |
+| **User Reviewed** | A real user (Dave + James in pilot, real members in beta) has used it long enough to surface real-world friction. |
+
+Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (was passed, broken now).
+
+## Summary
+
+| # | Epic | Pipeline | Estimate | Open bugs | Closed bugs |
+|---|---|---|---:|---:|---:|
+| 1 | The Front Door | `●●●◐◐` | 90% | 2 (P2, P3) | 1 |
+| 2 | The Intake | `●●●◐○` | 85% | 0 | 0 |
+| 3 | The Number | `●●○○○` | 50% | 1 (P1) | 0 |
+| 4 | The Protocol | `●●○○○` | 50% | 0 | 0 |
+| 5 | The Report | `●◐○○○` | 35% | 1 (P3) | 0 |
+| 6 | The Coach | `●●○○○` | 60% | 1 (P2) | 0 |
+| 7 | The Daily Return | `●◐○○○` | 25% | 0 | 0 |
+| 8 | The Living Record | `●○○○○` | 5% | 0 | 0 |
+| 9 | The Care Team | `●○○○○` | 5% | 0 | 0 |
+| 10 | The Knowledge Engine | `●○○○○` | 5% | 1 (P2) | 0 |
+| 11 | The Trust Layer | `●●◐○○` | 55% | 1 (P2) | 0 |
+| 12 | The Distribution | `●○○○○` | 5% | 0 | 0 |
+| 13 | The Business Model | `●○○○○` | 0% | 0 | 0 |
+| 14 | The Platform Foundation | `●◐○○○` | 40% | 0 | 0 |
+
+**Bug totals:** 7 open, 1 closed. (Bug log: forthcoming `qa/QA-bugs.md`. The single closed bug is BUG-001, signup form clearing — fixed 2026-04-27.)
+
+---
+
+## Per-epic detail
+
+### Epic 1: The Front Door
+
+`●●●◐◐` Planned · Feature Complete · Unit Tested · ◐ Regression Tested · ◐ User Reviewed
+**Estimate: 90%** — feature-complete enough for early members; missing the `/account` self-service page and a single Account link in the nav.
+
+**Shipped:**
+- Marketing pages: `/`, `/science`, `/team`, `/stories`, `/sample-report`, `/legal/collection-notice`.
+- Auth flows: signup, signin, password reset, email verification (OTP + PKCE).
+- Welcome email on activation (Resend).
+- Stripe checkout (monthly + annual) and webhook lifecycle handling.
+- Logged-in nav with Dashboard / Report / Documents links.
+- Live QA Playwright suite: 33/33 passing on public pages.
+- Vitest integration tests on auth + Stripe + onboarding actions.
+
+**Outstanding:**
+- `/account` page — profile edit, address edit, subscription cancel, password change, export-everything button.
+- Account link in the logged-in nav (currently no surface to reach `/account` even if it existed).
+- Welcome-email idempotency upgrade (currently a 60s time window, should be a `profiles.welcome_email_sent_at` flag).
+
+**Open bugs:**
+- **BUG-002** (P2): Welcome email idempotency is a 60s window, not a DB flag. A double-click on the verification link inside a minute = two welcome emails.
+- **BUG-006** (P3): No Account link in the logged-in nav. The page does not exist yet, but the nav slot is also missing.
+
+**Closed bugs:**
+- **BUG-001** (FIXED 2026-04-27): Signup form cleared all fields after a server-side validation error. Fix: server actions echo `{ email, full_name }` back via `state.values`, form passes those to `defaultValue`. Verified by `tests/live-qa/qa_run.py::test_signup_short_password`.
+
+---
+
+### Epic 2: The Intake
+
+`●●●◐○` Planned · Feature Complete · Unit Tested · ◐ Regression Tested · ○ User Reviewed
+**Estimate: 85%** — questionnaire + uploads + Janet document analyser all live; no real member has yet completed an intake with a real blood panel.
+
+**Shipped:**
+- Six-step questionnaire (basics, medical, family, lifestyle, goals, consent) with save-and-resume.
+- PII-vs-questionnaire split at write time (`lib/profiles/pii-split.ts`).
+- AHPRA-compliant consent record on submit (append-only `consent_records`).
+- Patient uploads portal (50 MB cap, MIME whitelist, Supabase Storage).
+- Janet document analyser (Claude Opus 4.7 + adaptive thinking) at `lib/uploads/janet.ts`.
+- 14 questionnaire schema unit tests passing.
+- 7 onboarding-action integration tests passing (Vitest with mocked Supabase).
+
+**Outstanding:**
+- A real member completing the intake with a real blood panel and uploading it (pilot prerequisite).
+- Family-history sub-fields (age of onset, cancer types) — blocked on James.
+- E2E Playwright test of the full onboarding flow with a seeded test user fixture.
+
+**Open bugs:** none.
+**Closed bugs:** 0.
+
+---
+
+### Epic 3: The Number
+
+`●●○○○` Planned · Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 50%** — Atlas pipeline shipped 2026-04-28 and writes risk + bio-age + narrative end-to-end, but the deterministic risk engine has not been ported. Every score is currently labelled `confidence_level = 'moderate'`.
+
+**Shipped:**
+- Atlas pipeline at `lib/ai/pipelines/risk-narrative.ts`.
+- Pipeline endpoint at `app/api/pipelines/risk-narrative/route.ts` (secured with `x-pipeline-secret`).
+- Pipeline triggered by `submitAssessment()` and by every successful upload.
+- `risk_scores` table extended with `narrative`, `engine_output`, `data_gaps` columns (migration `0014_agent_tables.sql`).
+- Idempotent upsert keyed on `(user_uuid, computed_at_date)`.
+
+**Outstanding:**
+- Port deterministic risk engine from Base44 (`base44/functions/riskEngine/entry.ts`, 1231 lines) to `lib/risk/`.
+- Wire deterministic engine into `submitAssessment()` before the LLM pipeline.
+- Atlas reads `engine_output` and writes narrative only (faster, higher confidence).
+- Per-domain unit tests on the deterministic scoring functions.
+- GP-panel review of 10 sample narratives.
+
+**Open bugs:**
+- **BUG-003** (P1): Atlas writes `confidence_level = 'moderate'` for every patient because the deterministic engine has not been ported. The narrative is honest but the score is not yet defensible to a clinician. Blocks the GP-panel review and any clinician-channel pilot.
+
+**Closed bugs:** 0.
+
+---
+
+### Epic 4: The Protocol
+
+`●●○○○` Planned · Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 50%** — Sage pipeline shipped 2026-04-28; writes a 30-day protocol after every Atlas run. No deterministic catalog yet — items are LLM-derived.
+
+**Shipped:**
+- Sage pipeline at `lib/ai/pipelines/supplement-protocol.ts`.
+- Pipeline endpoint at `app/api/pipelines/supplement-protocol/route.ts` (secured with `x-pipeline-secret`).
+- Triggered after Atlas completion and after every Janet document analysis.
+- `supplement_plans` table with `items JSONB`, `status` check constraint, `valid_from`/`valid_to`.
+- Per-item rationale tied to the patient's specific risk drivers.
+- Tier label per item (`critical` / `high` / `recommended` / `performance`).
+
+**Outstanding:**
+- Hand-curated supplement catalog (~40 evidence-backed items) for deterministic Phase 1 generation.
+- Janet (Supplement Advisor mode) tool surface for "tell me more about this item."
+- Integrative-medicine doctor panel review of 10 sample protocols.
+- Sage eval suite (rationale specificity, item-to-driver linkage, no-overclaim).
+- Supplement-marketplace integration so a tap on an item adds it to a basket (Epic 12).
+
+**Open bugs:** none directly.
+**Closed bugs:** 0.
+
+---
+
+### Epic 5: The Report
+
+`●◐○○○` Planned · ◐ Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 35%** — `/report` page shipped with all in-app surfaces; the branded PDF route exists but renders an unstyled skeleton.
+
+**Shipped:**
+- `/report` page (`app/(app)/report/page.tsx`) showing risk narrative, domain scores, supplement protocol, Janet chat panel.
+- `app/(app)/report/report.css` styling.
+- `app/(app)/report/_components/janet-chat.tsx` streaming chat client component.
+- PDF endpoint scaffold at `app/api/report/pdf/route.tsx`.
+- `lib/pdf/report-doc.tsx` skeleton.
+
+**Outstanding:**
+- Branded PDF: logo header, domain colour swatches, narrative typography, supplement table, footer disclaimer.
+- Last-updated timestamp prominent on `/report`.
+- Regenerate-on-demand button.
+- "What changed since last report" diff when run twice.
+- Visual regression coverage (Chromatic) on `/report` and the PDF.
+
+**Open bugs:**
+- **BUG-005** (P3): Branded PDF route at `/api/report/pdf` returns an unstyled skeleton — no logo, no domain colours, no supplement table. Members cannot share a credible PDF with their GP yet.
+
+**Closed bugs:** 0.
+
+---
+
+### Epic 6: The Coach
+
+`●●○○○` Planned · Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 60%** — Janet streaming chat shipped end-to-end; sub-agents wired as background pipelines, not as real-time `tool_use` yet; RAG layer deferred (pgvector not enabled).
+
+**Shipped:**
+- Janet agent at `lib/ai/agents/janet.ts` (Claude Sonnet 4.6, streaming).
+- `PatientContext.load()` at `lib/ai/patient-context.ts` with parallel `Promise.all` reads.
+- Janet API route at `app/api/chat/route.ts` (Supabase session auth).
+- 20-turn conversation window, persisted to `agent_conversations` (table created in migration `0014`).
+- Janet chat panel embedded in `/report`.
+
+**Outstanding:**
+- Atlas + Sage as real-time `tool_use` sub-agents (currently they're background pipelines that write to DB; Janet reads the result).
+- pgvector / RAG over `health_knowledge` (migration `0016` written, extension not enabled, Janet has no knowledge base).
+- Stale-data nudge ("your risk scores are 30 days old — let me refresh that").
+- Conversation-summary compression for older turns.
+- Janet eval suite (turn-by-turn quality, hallucination rate, context utilisation).
+- Alex support-agent persona switch.
+
+**Open bugs:**
+- **BUG-004** (P2): Janet has no knowledge base because the `vector` extension is not enabled in the Supabase project. She answers from `PatientContext` only. Migration `0016_knowledge_base_pgvector.sql` is written and ready to apply once the extension is enabled in the dashboard.
+
+**Closed bugs:** 0.
+
+---
+
+### Epic 7: The Daily Return
+
+`●◐○○○` Planned · ◐ Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 25%** — drip-email cron + table shipped; check-in flow, habits, streaks, push reminders are all unbuilt.
+
+**Shipped:**
+- Drip-email cron at `app/api/cron/drip-emails/route.ts`.
+- `lib/email/drip.ts` template wrapper.
+- `drip_email_log` table (migration `0018_drip_tracking.sql`).
+- `daily_logs` table in `biomarkers` schema (`0010_biomarkers_daily_logs.sql`).
+
+**Outstanding:**
+- Daily check-in UI (mood, sleep, energy, weight) — 90-second target.
+- Personalised daily goals tied to risk profile.
+- Habit streak math + Mon-Sun dot UI.
+- Rest-day mechanic for travel and grief.
+- Push / SMS / email reminder for the daily check-in.
+- Weekly insights digest from check-in patterns.
+- Health journal for free-form notes.
+
+**Open bugs:** none.
+**Closed bugs:** 0.
+
+---
+
+### Epic 8: The Living Record
+
+`●○○○○` Planned · ○ Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 5%** — schema shipped, no UI.
+
+**Shipped:**
+- `biomarkers` schema with `lab_results`, `wearable_summaries`, `daily_logs` tables (migrations `0009`, `0010`).
+- Patient uploads parsed by Janet feed into `biomarkers.lab_results`.
+
+**Outstanding:**
+- Longitudinal biomarker charts per patient.
+- Out-of-range alerts.
+- Wearable OAuth integrations (Oura, Apple Watch, Garmin).
+- Manual metric entry UI.
+- Risk simulator ("if I lower my LDL to X, my CV risk drops to Y").
+- Repeat-test reminders driven by Atlas's `recommended_screenings`.
+
+**Open bugs:** none.
+**Closed bugs:** 0.
+
+---
+
+### Epic 9: The Care Team
+
+`●○○○○` Planned · ○ Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 5%** — schema shipped (clinical and program tables), no UI, no clinician role assignment flow.
+
+**Shipped:**
+- `clinical` schema (migrations `0011_clinical_schema.sql`).
+- `programs` schema (`0012_programs_schema.sql`).
+- `care_notes`, `periodic_reviews`, `patient_assignments`, `coach_suggestions` tables.
+
+**Outstanding:**
+- Clinician portal pages.
+- Care-team invitation + per-patient permission management.
+- Janet-Clinician brief pipeline (monthly cron).
+- In-platform appointment booking (calendar + Stripe).
+- Clinical notes UI (private to care team).
+- Periodic-review record UI.
+- Community feed and challenges (deferred sub-epic).
+
+**Open bugs:** none.
+**Closed bugs:** 0.
+
+---
+
+### Epic 10: The Knowledge Engine
+
+`●○○○○` Planned · ○ Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 5%** — Nova designed, not built. Migration ready but blocked.
+
+**Shipped:**
+- `health_updates` table for the structured digest display (`0015_health_updates.sql`).
+- pgvector migration `0016_knowledge_base_pgvector.sql` written.
+
+**Outstanding:**
+- Enable the `vector` extension in Supabase (dashboard action).
+- Apply migration `0016`.
+- Nova pipeline (`app/api/cron/nova/route.ts`).
+- Six-category parallel literature scan (PubMed, Nature, Cell, medRxiv, Cochrane, plus one rotating).
+- LLM synthesis per category, embed via OpenRouter `perplexity/pplx-embed-v1-4b`.
+- Hybrid RAG `hybrid_search_health()` SQL function.
+- In-app research feed page reading `health_updates`.
+
+**Open bugs:**
+- **BUG-007** (P2): pgvector migration `0016_knowledge_base_pgvector.sql` is written but blocked on enabling the `vector` extension in the Supabase dashboard. Until the extension is enabled, Janet has no knowledge base (also surfaces under Epic 6 as BUG-004).
+
+**Closed bugs:** 0.
+
+---
+
+### Epic 11: The Trust Layer
+
+`●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 55%** — RLS + PII boundary + consent records shipped and verified at the schema level. The visible trust surfaces (export, deceased flow, ToS clause, pause/freeze) are not built. The pgTAP RLS suite is written but not yet executed in CI.
+
+**Shipped:**
+- RLS on every table across `public`, `biomarkers`, `clinical`, `programs`, `billing` schemas.
+- PII boundary: `profiles` holds identifiers only; `health_profiles.responses` is de-identified.
+- AHPRA-compliant consent records (`consent_records`, append-only, migration `0004_consent_records.sql`).
+- Supabase key-naming convention (`SUPABASE_SECRET_KEY`, not `SUPABASE_SERVICE_ROLE_KEY`).
+- Service-role admin client used only in webhook routes, pipeline workers, and PDF generation.
+- pgTAP RLS test suite at `supabase/tests/rls.sql` with 20 assertions.
+
+**Outstanding:**
+- "We never train on your data" clause in ToS, surfaced in onboarding.
+- Export-everything button (downloadable JSON + PDF bundle).
+- Right-to-erasure flow (single-row scrub since PII is single-table).
+- Pause / freeze account flow.
+- Deceased-flag flow with warm copy path (not a checkbox).
+- Run the pgTAP suite in CI on every PR.
+- Quarterly trust audit cadence (logs scrub, signed-URL TTL check, deceased-flow walk-through).
+
+**Open bugs:**
+- **BUG-008** (P2): pgTAP RLS test file exists at `supabase/tests/rls.sql` with 20 owner/cross-user isolation assertions but is not run in CI. The recent RLS soft-delete bug pattern would not be caught automatically today.
+
+**Closed bugs:** 0.
+
+---
+
+### Epic 12: The Distribution
+
+`●○○○○` Planned · ○ Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 5%** — admin pages stubbed, corporate and marketplace not built.
+
+**Shipped:**
+- `app/(admin)/admin.css` styling.
+- Admin user-list page at `app/(admin)/admin/users/page.tsx`.
+- Admin user-detail page at `app/(admin)/admin/users/[id]/page.tsx`.
+- `is_admin` flag on profiles (migration `0017_admin_flag.sql`).
+- Agent definitions table (`0019_agent_definitions.sql`).
+- `billing` schema with `suppliers`, `products`, `plans`, `add_ons`, `organisations` tables (`0013_billing_schema.sql`).
+
+**Outstanding:**
+- Admin CRM: MRR, active members, churn, pipeline runs in last 24h.
+- Corporate account management (employee CSV upload, invitations, team challenges, aggregate reporting).
+- Supplement marketplace integration (auto-replenishment, in-app purchase from protocol page).
+- Pricing tiers (individual / family / clinical / corporate) wired to entitlements.
+- Sign-in-with-Vercel for clinician partners.
+
+**Open bugs:** none.
+**Closed bugs:** 0.
+
+---
+
+### Epic 13: The Business Model
+
+`●○○○○` Planned · ○ Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 0%** — designed 2026-04-28; no provider-ecosystem code yet. The B2C revenue stream is shipped via Epic 1 (Stripe checkout). The adjacent `billing` schema (`suppliers`, `products`, `plans`, `add_ons`, `organisations`) already exists from Epic 12 work.
+
+**Shipped:**
+- B2C subscription rail (Stripe checkout + webhook lifecycle) — see Epic 1.
+- `billing` schema scaffolding (`suppliers`, `products`, `plans`, `add_ons`, `organisations`) — migration `0013_billing_schema.sql`.
+
+**Outstanding:**
+- `provider_partners` table — admin-managed; contract terms, margin %, region, status.
+- `provider_offerings` table — one row per bookable thing; SKU, price, modality, evidence tag, recommended-when criteria.
+- `provider_orders` table — patient transactions, FK to `provider_partners` and originating Janet suggestion.
+- Admin pages under `app/(admin)/providers/` for onboarding, catalog editing, order monitoring.
+- Janet `tool_use` for `search_offerings(category, region, evidence_tag)`.
+- Stripe Connect integration for split payments to providers.
+- Per-recommendation audit trail (Janet suggestion → offering surfaced → conversion → outcome).
+- Provider-facing dashboard (Phase 6 — providers manage their own listings).
+- Catalog evidence-discipline review process (no pay-to-play; every offering traceable to a risk driver).
+- Patient-side disclosure copy ("we receive a referral fee").
+- B2B corporate revenue stream (lives in Epic 12).
+- B2B clinical revenue stream (lives in Epic 9 + Epic 12).
+
+**Open bugs:** none.
+**Closed bugs:** 0.
+
+---
+
+### Epic 14: The Platform Foundation
+
+`●◐○○○` Planned · ◐ Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 40%** — substantial pieces already shipped via the existing `.claude/rules/` discipline (RLS, PII boundary, secret-key naming, pipeline auth, migration hygiene). The visible operational layer (CI workflows, observability, cost monitoring, DR drill, pen-test cadence) is unbuilt.
+
+**Shipped:**
+- RLS on every table across `public`, `biomarkers`, `clinical`, `programs`, `billing` schemas.
+- Supabase secret-key naming (`SUPABASE_SECRET_KEY`, not `SUPABASE_SERVICE_ROLE_KEY`).
+- PII boundary enforced at write time (`lib/profiles/pii-split.ts`).
+- Service-role admin client confined to webhook routes, pipeline workers, PDF generation.
+- Pipeline routes secured with `x-pipeline-secret` header.
+- 19 numbered idempotent migrations with `IF NOT EXISTS` / `ON CONFLICT DO NOTHING`.
+- Engineering rules canonical in `.claude/rules/` (data-management, security, nextjs-conventions, database, ai-agents).
+- `.env` files git-ignored; never committed.
+- TypeScript schema types regenerated after every migration (`lib/supabase/database.types.ts`).
+- `proxy.ts` route guard (no ad-hoc auth in pages).
+- Supabase Storage MIME whitelist + 50 MB cap on uploads.
+- Encryption at rest (Supabase default) + TLS in transit.
+
+**Outstanding:**
+- CI workflow file in `.github/workflows/` — Vitest + pgTAP + Playwright + Lighthouse on every PR.
+- Gitleaks (or equivalent) secret-scan in CI.
+- Sentry / Highlight / equivalent error monitoring + alert routing.
+- Anthropic API spend dashboard + 80%-of-budget alert.
+- Supabase storage quota alert.
+- Vercel function execution-time monitoring.
+- Supabase point-in-time restore drill executed and runbook in `docs/operations/dr-runbook.md`.
+- Quarterly penetration test cadence on a staging mirror.
+- Monthly dependency CVE scan (dependabot + `pnpm audit`).
+- Weekly log scrub for PII regressions.
+- Production-readiness checklist (`docs/operations/checklist.md`) and enforcement in PR template.
+- AHPRA breach-notification protocol document.
+- Data residency confirmation per region.
+- Architecture-level enforcement of "we never train on patient data" (no training endpoints, no model fine-tune jobs, no third-party data shares).
+
+**Open bugs:** none directly. (BUG-008 — pgTAP not wired into CI — is currently filed under Epic 11 and could be cross-listed here.)
+**Closed bugs:** 0.
+
+---
+
+## How this file gets updated
+
+After each ship that touches an epic:
+1. Move the line from "Outstanding" to "Shipped" in the epic block.
+2. Update the pipeline glyphs and the % estimate in the summary table.
+3. If the ship closed a bug, mark it in the bug log and decrement "Open bugs" / increment "Closed bugs" here.
+
+After each new bug logged:
+1. Decide which epic it belongs to (a bug can sit under two if it's a true overlap, e.g. BUG-004 / BUG-007).
+2. Add the bug ID + one-line summary + severity under the epic's "Open bugs" list.
+3. Update the summary table counts.
+
+When an epic moves a stage:
+- **Feature Complete** the moment the last bundled feature ships.
+- **Unit Tested** when there is a test file and a CI step that runs it.
+- **Regression Tested** when there is an automated end-to-end pass that exercises the bundled features pre-release.
+- **User Reviewed** after a real member (or pilot clinician for Epic 9) has used it for at least a week of real sessions and logged feedback.</script>
+
+<script type="text/markdown" id="md-ai-vision"># Longevity Coach — Agentic System Vision
+
+> For full component specs, build order, and implementation detail see `agent-system.md`.
+
+---
+
+## What we're building
+
+A multi-component AI layer on top of the existing patient data foundation. Patients complete onboarding → risk scores are generated → they can upload medical test results. The agentic layer makes that data useful in real time.
+
+Two execution models:
+
+- **Agents** — real-time conversational, stateful, streaming. One or two LLM calls per user message (the second only when a specialist sub-agent is needed).
+- **Pipeline workers** — async, event or schedule triggered. Write structured output to DB so agents can read it at session start.
+
+---
+
+## Core pattern
+
+```
+User message
+  │
+  ▼
+Janet Agent
+  │
+  ▼
+PatientContext.load()       ← Promise.all — all needed DB reads in parallel + RAG query (~50 ms)
+  │
+  ▼
+Build system prompt + window (last 20 turns)
+  │
+  ▼
+Anthropic API (streaming)
+  │
+  ├── tool_use if specialist needed → Sub-agent (Atlas · Sage · PT Coach live)
+  │                                           │
+  │                                           ▼
+  │                                       tool_result
+  │                                           │
+  ▼                                           ▼
+Stream response back to user           Janet synthesizes
+```
+
+- `PatientContext.load()` runs all DB reads and the RAG query in parallel — ~50 ms total.
+- Sub-agent calls (Atlas, Sage, PT Coach) are real-time `tool_use` — the user waits; Janet synthesizes the result before streaming.
+- Pipeline workers (Nova, PT monthly, Meal Plan, Janet-Clinician) run async in the background and write to DB. Janet reads their output at the next session start.
+
+---
+
+## System overview
+
+**Real-time Agents:**
+- **Janet** — Health coaching · Risk · Supplements · Appointments
+- **Alex** — Platform support: Patient · Clinician · B2B
+- **PT Coach (live)** — Real-time session coaching via Janet `tool_use`
+- **Risk Narrative (Atlas)** — Sub-agent via Janet `tool_use`
+- **Supplement Protocol (Sage)** — Sub-agent via Janet `tool_use`
+
+**Async Pipeline Workers:**
+- **PT Coach Monthly Plan** — Periodized 4-week program; 1st-of-month cron
+- **Meal Plan Pipeline (Marco)** — Weekly plan + shopping list
+- **Research Digest (Nova)** — Weekly literature scan; writes structured digest + vector chunks
+- **Janet-Clinician Pipeline** — Clinical brief + 30-day program; clinician-gated
+- **Onboarding Flow** — Drop-off nudges (deferred)
+
+**Data Layer:**
+- Supabase — patient + platform data
+- pgvector `health_knowledge` — HNSW + GIN hybrid index
+
+Nova writes structured digests to DB and embedded chunks (perplexity/pplx-embed-v1-4b via OpenRouter) to pgvector. PT/Marco/JC write to their own DB tables. Janet/Alex/PT-live read from DB. Janet hits pgvector via hybrid RAG (~30ms). Janet uses `tool_use` to call Atlas, Sage, and PT Coach live.
+
+---
+
+## Research Agent (Nova) design
+
+Nova runs separately from Janet. Its job is to maintain the knowledge base that Janet reads. It does not interact with users.
+
+```
+⏰ Weekly Cron
+   │
+   ▼
+Nova Research Agent
+   │
+   ▼
+web_search × 6 categories (PubMed · Nature · Cell · medRxiv · Cochrane)
+   │  All in parallel — ~10 s
+   ▼
+Fetch + extract articles (parallel batches — ~25 s)
+   │
+   ▼
+Synthesize per category (LLM × 6 calls, 3 parallel — ~40 s)
+   │  ┐
+   │  └─→ health_updates table (structured digest display) → Admin / Clinician dashboard
+   ▼
+Chunk digests (400 tokens, 80 overlap)
+   │
+   ▼
+Batch embed (voyage-3-large 1024 dims, single Voyage API call — ~20 s)
+   │
+   ▼
+health_knowledge (pgvector — HNSW + GIN) → Janet reads RAG chunks at session start
+```
+
+Target runtime: **< 200 s** — well within Vercel Pro's 300 s function limit.
+
+---
+
+## Design principles
+
+| Principle | How |
+|---|---|
+| **Single cortex** | Every component uses the Anthropic Claude API. Context and tools wrap around it. |
+| **Context at query time** | PatientContext loads fresh on every message via `Promise.all`. Never stale. |
+| **Hybrid RAG for knowledge** | pgvector HNSW + BM25 full-text + RRF fusion. ~30 ms overhead. `perplexity/pplx-embed-v1-4b` via OpenRouter (2560 dims, 32K context, INT8, MRL) — same API key as all LLM calls. Janet always has current research. |
+| **Real-time sub-agents** | Atlas, Sage, PT Coach live are invoked synchronously via `tool_use` when the user needs a specialist answer right now. |
+| **Async pre-computation** | Monthly plans, meal plans, research digests, and clinical briefs run in the background. Agents read results at session start. |
+| **One job per component** | Each pipeline or agent owns exactly one write target. No cross-component table writes. |
+| **Persona-aware support** | Alex reads `profiles.role` at session start and switches mode — patient, clinician, or B2B. |
+
+---
+
+## Build order (P1 → P7)
+
+```
+P1  Supplement Protocol (Sage)    ← needs uploads infra + pgvector
+P2  Risk Narrative (Atlas)
+P3  Janet Agent                   ← needs P1 + P2 as real-time sub-agents
+P4  Janet-Clinician Pipeline      ← needs clinician CRM portal
+P5  PT Coach (live + monthly)  ┐
+P5  Alex Support Agent         ┘  both need WhatsApp channels
+P6  Meal Plan Pipeline
+P7  Research Digest (Nova)        ← independent; feeds Janet RAG via pgvector
+
+Deferred: Onboarding Flow (build when drop-off rate justifies it)
+```</script>
+
+<script type="text/markdown" id="md-qa-plan"># Longevity Coach — Forever QA Plan
+
+Last updated **2026-04-28**. Drafted by: QA, in the Dan Shipper school. AI-native, pragmatic, fast feedback over perfect coverage, obsessed with the vibe of the product. Built around the official `webapp-testing` skill (Python Playwright + the `with_server.py` lifecycle helper) we already use for live QA.
+
+**Companion docs:**
+- product.md — who we serve, the four values, what makes us different.
+- epics.md — the twelve bodies of work.
+- epic-status.md — the dashboard.
+- 2026-04-27-qa-report.md — most recent regression report (91 tests, 90 pass, 1 external).
+- This file: how we know what we shipped is right.
+
+---
+
+## 0. The frame
+
+Most QA plans optimise for "no bugs." That's the wrong target for Longevity Coach. Longevity Coach is a **medical-grade second opinion** that produces a credible biological age, a defensible risk picture, and a 30-day plan a member will actually follow. The thing we're really testing is whether **the loop holds**: signup → questionnaire → upload → bio-age → narrative → protocol → report → return tomorrow. If that loop breaks for one member, we've broken something irreplaceable: trust in the very thing they came here to build.
+
+So the QA hierarchy is:
+
+1. **Trust integrity** (RLS, PII boundary, consent records, signed URL TTL, never-train clause). Existential.
+2. **Loop integrity** (questionnaire submits → Atlas writes narrative → Sage writes protocol → `/report` renders → Janet replies). The product.
+3. **AI quality** (Atlas narrative, Sage protocol, Janet coaching, Janet document analyser). The moat.
+4. **Vibe** (does `/report` feel like medicine; does Janet feel like a coach who remembers). The brand.
+5. **Everything else** (perf, polish, accessibility). Important but ranked.
+
+We test in that order. We invest in tests in that order.
+
+---
+
+## 1. Automated test routines
+
+### Tier 1: Unit tests (Vitest)
+
+Pure functions only. Fast, run on every save, must stay under 5 seconds total.
+
+| Target | Why test it |
+|---|---|
+| Questionnaire validation (`requiredMissing`, toggle strictness, multiselect minima) | Already 14 tests passing. The intake is the data spine. |
+| `splitFullName()` (PII helper) | Single source of truth for derived first/last name. Off-by-one breaks reports. |
+| `pii-split.ts` (PII vs questionnaire splitter) | If this drifts, PII leaks into `health_profiles.responses` — vault migration impossible. |
+| Deterministic risk engine scoring functions (when ported) | One test per domain (CV, metabolic, neuro, onco, MSK), one per bio-age estimator. Ported from Base44. |
+| Supplement-tier mapper (when added) | Tier label assignment is rules-based; easy to regress. |
+| Streak math (M-T-W-T-F-S-S dots, day boundaries, timezones) | Streaks are emotional. Off-by-one across midnight kills retention. |
+| Date-of-birth → age helper | Computed at read time, never stored. Wrong age corrupts every score. |
+| Drip email day-N selector | Sending Day-3 to a member on Day-7 is worse than no email. |
+
+**Goal:** every file in `lib/profiles/`, `lib/risk/`, `lib/supplements/`, `lib/streaks/` has a sibling `.test.ts`. Coverage isn't the metric; *every branch in critical helpers* is the metric.
+
+### Tier 2: Integration tests (Vitest + Supabase)
+
+Two flavours: mocked Supabase (fast, used for server actions) and real Supabase (slower, used for RLS and trigger behaviour).
+
+#### 2a. Mocked-Supabase integration (fast)
+
+Already shipped: 29 tests across `tests/integration/auth/`, `tests/integration/onboarding/`, `tests/integration/stripe/`. Run on every PR. No network. Mocks lie about RLS — those are covered in 2b.
+
+| Suite | What it covers |
+|---|---|
+| `tests/integration/auth/actions.test.ts` | All 13 paths through `signIn`, `signUp`, `requestPasswordReset`, `updatePassword`. |
+| `tests/integration/onboarding/actions.test.ts` | `saveDraft` and `submitAssessment` happy paths plus the no-user error path. |
+| `tests/integration/stripe/webhook.test.ts` | All 8 lifecycle event types plus signature failure plus missing user metadata. |
+| **(new) Atlas pipeline** | Trigger Atlas with a fixture `health_profiles.responses`. Assert `risk_scores.narrative` is populated, scores are present, idempotent on second run. |
+| **(new) Sage pipeline** | Trigger Sage with a fixture `risk_scores`. Assert `supplement_plans.items` has ≥ 3 critical-tier items with rationale strings under 200 chars. |
+| **(new) Janet streaming response** | Mock Anthropic SDK. Assert `PatientContext.load()` is called once, the system prompt includes the patient summary, and turns persist to `agent_conversations`. |
+
+#### 2b. Real-Supabase integration (RLS + trigger truth)
+
+Spin up a separate Supabase project named `longevity-coach-test` (mirrors the prod region, Sydney). Reset between runs via `supabase db reset`. Do not mock RLS. Mocks lie; this is how the soft-delete-bug class slips through in similar projects.
+
+| Suite | What it covers |
+|---|---|
+| **RLS isolation (patient-owned)** | Create user A and user B. For every patient-owned table (`profiles`, `health_profiles`, `risk_scores`, `subscriptions`, `patient_uploads`, `supplement_plans`, `consent_records`, `agent_conversations`), assert B cannot SELECT, UPDATE, or DELETE A's rows. Run on every PR. Non-negotiable. |
+| **RLS isolation (clinician-gated)** | Create patient A, clinician C with a `patient_assignments` row, clinician D without one. Assert C can read A's `risk_scores` and `care_notes`, D cannot. |
+| **RLS isolation (admin-only)** | Assert non-admin users cannot read `agent_definitions`, `suppliers`, `plans`, `add_ons`. |
+| **Service-role bypass scope** | Confirm service-role can write to `risk_scores`, `supplement_plans`, `subscriptions`. Confirm service-role does NOT bypass FK constraints. |
+| **Auth trigger** | New `auth.users` row → `handle_new_user` populates `profiles.id` and `profiles.full_name`. |
+| **Consent append-only** | Insert one consent record, attempt UPDATE → policy denies. Attempt DELETE → policy denies. |
+| **Pipeline idempotency** | Run Atlas twice on the same `(user_uuid, computed_at_date)`. Assert no duplicate row, second run updates the first. |
+| **Migration safety** | After every new migration: run all prior tests against the new schema. Migrations that break tests get rolled back, not patched. |
+
+The pgTAP file at `supabase/tests/rls.sql` (20 assertions, written 2026-04-27) is the starting point. **Wire it into CI on every PR via `supabase db test`.** This is the single highest-value QA investment we are not yet making.
+
+### Tier 3: End-to-end browser tests (Playwright TS)
+
+Headless on every push to main. Already exist at `tests/e2e/` for auth and the public landing.
+
+**The Critical Path test** (always green or we don't ship):
+
+```
+1. Sign up with a fresh @longevity-coach-test.com address (use service-role to pre-confirm)
+2. Land on /onboarding (no health profile yet)
+3. Complete the 6-step questionnaire with fixture answers
+4. Submit, land on /dashboard?onboarding=complete
+5. Wait for Atlas pipeline (poll risk_scores until narrative is present, max 60s)
+6. Wait for Sage pipeline (poll supplement_plans until items present, max 30s)
+7. Open /report — assert bio-age, all 5 domain scores, narrative paragraph, supplement table render
+8. Open Janet chat panel, send "what is my biggest risk", assert a streaming response that names the patient's actual top driver
+9. Upload a fixture blood-panel PDF
+10. Wait for Janet document analyser (poll patient_uploads.janet_status until 'complete')
+11. Wait for Sage re-run (poll supplement_plans for new row newer than original)
+12. Sign out, /login renders
+13. Sign back in, /report still shows the same narrative + protocol
+```
+
+This is the golden path. If this breaks, everything stops.
+
+**Additional Tier 3 suites already in place** (`tests/e2e/auth/` and `tests/e2e/public/`):
+- Public marketing pages render with correct headings, logos, CTAs.
+- Auth-guard redirects work for `/dashboard`, `/onboarding`, `/admin`.
+- `/auth/callback` handles both `token_hash + type` and `code` paths.
+- Empty submit triggers HTML5 validation; wrong creds show inline error.
+
+### Tier 4: Live QA via the `webapp-testing` skill (Python Playwright)
+
+This tier is what we already ship under `tests/live-qa/`. It exists because Vitest mocks lie and the TS Playwright suite needs a seeded user fixture we haven't built yet. Live QA hits a real running server.
+
+**The skill's three rules** (from `.claude/skills/webapp-testing/SKILL.md`):
+
+1. **Use `scripts/with_server.py`** to manage server lifecycle so the test script doesn't have to know about `pnpm dev`. Run `--help` first; never read the source.
+2. **Reconnaissance-then-action**: navigate, wait for `networkidle`, take a screenshot, identify selectors from rendered state, *then* execute actions.
+3. **Always wait for `networkidle`** before any DOM inspection on dynamic apps. Skipping this is the #1 cause of flaky live-QA tests.
+
+**Existing live-QA scripts:**
+
+| Script | Coverage | Status |
+|---|---|---|
+| `tests/live-qa/qa_public.py` | 33 tests across `/`, `/science`, `/team`, `/stories`, `/sample-report`. Heading checks, logo checks, CTA href checks, console error sniff, network-failure sniff. | 33/33 passing 2026-04-27. |
+| `tests/live-qa/qa_run.py` | Full auth + flows — signup, signin, password reset, validation echo, redirect-after-error. | 10/11 passing; 1 skipped on Supabase email rate limit. |
+
+**New live-QA scripts to add:**
+
+| Script | Coverage |
+|---|---|
+| `tests/live-qa/qa_report.py` | Sign in as a seeded test user with completed assessment, open `/report`, screenshot, assert the four sections render (bio-age card, domain scores grid, narrative, supplement table), open Janet chat, send a message, screenshot the streaming response. |
+| `tests/live-qa/qa_uploads.py` | Sign in, upload a fixture blood panel, wait for Janet analysis, screenshot the upload list with status badge, assert the protocol page picks up the new biomarkers. |
+| `tests/live-qa/qa_account.py` (when `/account` ships) | Sign in, navigate to `/account`, edit profile, screenshot, assert change persists across reload. |
+| `tests/live-qa/qa_visual_vibe.py` | Take full-page screenshots of the four "vibe" surfaces (`/`, `/dashboard`, `/report`, `/report` with Janet chat open) at desktop + mobile widths, save to `tests/live-qa/screenshots/{date}/`. Diff against committed baseline. |
+
+**Sample script skeleton (matches the webapp-testing pattern):**
+
+```python
+# tests/live-qa/qa_report.py
+from playwright.sync_api import sync_playwright
+
+# Run via:
+#   python scripts/with_server.py --server "pnpm dev" --port 3000 -- python tests/live-qa/qa_report.py
+
+with sync_playwright() as p:
+    browser = p.chromium.launch(headless=True)
+    page = browser.new_page()
+    page.goto('http://localhost:3000/login')
+    page.wait_for_load_state('networkidle')
+
+    # Sign in as the seeded test member
+    page.fill('input[name="email"]', 'qa-seeded-member@longevity-coach-test.com')
+    page.fill('input[name="password"]', os.environ['QA_SEED_PASSWORD'])
+    page.click('button:has-text("Sign in")')
+    page.wait_for_url('**/dashboard*')
+    page.wait_for_load_state('networkidle')
+
+    # Open the report
+    page.goto('http://localhost:3000/report')
+    page.wait_for_load_state('networkidle')
+    page.screenshot(path='tests/live-qa/screenshots/report.png', full_page=True)
+
+    # Assert the four sections render
+    assert page.locator('text=Biological age').is_visible()
+    assert page.locator('text=Cardiovascular').is_visible()
+    assert page.locator('[data-testid="narrative"]').is_visible()
+    assert page.locator('[data-testid="supplement-table"]').is_visible()
+
+    browser.close()
+```
+
+**Quality gate:** `tests/live-qa/qa_public.py` runs in CI on every push to main; the rest run nightly and pre-release.
+
+### Tier 5: Mobile Safari real-device tests (BrowserStack)
+
+Members are on iPhones. Headless Chromium will not catch the things that bite us. Run before every pilot invite, weekly otherwise.
+
+| Test | Why |
+|---|---|
+| Questionnaire on iPhone Safari (full 6 steps, all field types) | Touch targets, virtual keyboard behaviour, iOS chip rendering. |
+| File upload from iPhone (HEIC, 5 MB blood-panel PDF) | EXIF stripping, iOS photo-picker, network-throttled upload retry. |
+| Janet chat on iPhone (long response with code blocks and lists) | Streaming SSE behaviour on iOS Safari, auto-scroll, copy-paste. |
+| `/report` PDF download on iPhone Mail handoff | The PDF must open cleanly in Files / Mail, not break the share sheet. |
+| Magic-link tap from Mail.app to Safari | The handoff from Mail to Safari breaks in subtle ways. |
+
+### Tier 6: Visual regression (Chromatic)
+
+Run on every PR. The `/report` page, the Janet chat panel, the supplement table, the dashboard — these are the brand. A 2px shift on the bio-age headline is a real regression.
+
+Snapshot targets:
+- `/` (landing — desktop + mobile)
+- `/dashboard` (no risk, mid-pipeline, complete)
+- `/report` (loading, complete, with Janet chat open, after re-upload)
+- `/onboarding` (each of the 6 steps with one filled and one unfilled state)
+- Branded PDF first page (when shipped)
+
+### Tier 7: Performance budgets (Lighthouse CI)
+
+Members are on home Wi-Fi and middle-aged iPhones. Budgets:
+- LCP `< 2.5s` on `/dashboard` and `/report`
+- TTI `< 3.5s` on every signed-in route
+- Atlas pipeline p95 latency `< 45s` end-to-end
+- Sage pipeline p95 latency `< 25s` end-to-end
+- Janet first-token latency `< 800ms`
+- Janet full-response p95 `< 12s` for a 200-token reply
+- No bundle larger than 250 KB gzipped per route
+
+Alerts on email the moment a budget regresses by > 10%.
+
+### Tier 8: Synthetic monitoring (one cron-driven script in production)
+
+A scheduled Python Playwright script every 30 minutes:
+1. Sign in as a dedicated synthetic patient account.
+2. Open `/dashboard`, assert it loads under 2.5s.
+3. Open `/report`, assert narrative + protocol present.
+4. Send a Janet message ("how am I doing this week"), assert streaming starts within 1s.
+5. Page if any step fails twice in a row.
+
+This catches Anthropic API outages, Supabase regional flakes, and Stripe webhook silent failures *before* a real member hits them.
+
+---
+
+## 2. AI evaluation suite (the Dan Shipper part)
+
+Longevity Coach's moat is AI quality. Evals get their own pipeline, separate from CI, run on a schedule and after every prompt or model change.
+
+### 2a. Atlas (risk narrative) evals
+
+**Golden dataset:** 30 anonymised completed assessments. Diverse:
+- Lifestyle-only (no biomarker uploads)
+- One blood panel uploaded
+- Five panels uploaded over 12 months
+- Edge profiles (very low CV risk + very high metabolic; severe family history; missing key answers)
+- Members in their 30s, 50s, 70s
+
+**Metrics tracked over time:**
+- **Specificity**: does the narrative cite at least 3 specific questionnaire answers or biomarker values? (LLM-as-judge with rubric, 1–5)
+- **Plain-English score**: Flesch-Kincaid grade target 8–10. (Programmatic.)
+- **No-overclaim**: zero sentences that recommend or contraindicate a prescription medication. (Regex sweep + LLM judge.)
+- **Driver-to-score linkage**: does each domain score have a driver in the narrative? (Programmatic.)
+- **GP-readability**: would a GP send this to a patient? (Quarterly human panel of 3 GPs reading 10 random narratives, scored 1–5.)
+- **Latency p50 / p95 / p99**.
+
+**Pass bar:** specificity mean ≥ 4.0, no-overclaim 100%, driver-to-score linkage 100%, GP-readability mean ≥ 4.0. If a model upgrade regresses any dimension by `> 0.5`, we don't ship it.
+
+### 2b. Sage (supplement protocol) evals
+
+**Golden dataset:** the same 30 assessments above, paired with the protocol Sage produces for each.
+
+**Metrics:**
+- **Item-to-driver linkage**: every item has a rationale that names the patient's specific risk driver.
+- **Rationale length**: each rationale 80–200 chars (long enough to justify, short enough to read).
+- **Tier distribution**: at least 3 `critical`, no more than 12 total items per protocol.
+- **Catalog discipline** (when the curated catalog ships): every item appears in `lib/supplements/catalog.ts`. Zero hallucinated names.
+- **Doctor-acceptability**: would an integrative-medicine doctor prescribe this? (Quarterly human panel of 3 doctors reading 10 random protocols, scored 1–5.)
+
+**Pass bar:** item-to-driver linkage 100%, rationale length 100% in range, doctor-acceptability mean ≥ 4.0.
+
+### 2c. Janet (real-time coach) evals
+
+**Dataset:** 50 anonymised conversations with at least 5 turns each. Mixed: greeting, follow-up question, supplement clarification, risk-narrative challenge, off-topic question.
+
+**Judge dimensions (LLM-as-judge with rubric, 1–5 each):**
+- **Context utilisation**: does the response reference the patient's actual data (top driver, recent upload, supplement on the protocol)?
+- **Accuracy**: every factual claim traces to PatientContext or the RAG corpus. Hallucination rate < 1%.
+- **Warmth**: would a 50-year-old feel coached, not lectured?
+- **Boundary discipline**: refuses to diagnose, refuses to interpret medication dosage, escalates to "talk to your GP" appropriately.
+- **Brevity**: median response under 200 tokens; only goes long when explicitly asked.
+
+**Pass bar:** mean ≥ 4.0 across all dimensions, hallucination < 1%. Friday human-judge audit on 10 random conversations; if judge-vs-human agreement drops below 80%, re-tune the rubric.
+
+### 2d. Janet document analyser evals (already shipped)
+
+**Golden dataset:** 20 anonymised blood panels (PDF + scanned image + Apple Health export). Hand-extracted ground-truth biomarker values.
+
+**Metrics:**
+- **Extraction accuracy** per biomarker (TC, LDL, HDL, TG, HbA1c, fasting glucose, hs-CRP, vitamin D, ferritin, ALT, AST, GGT, creatinine, eGFR, TSH).
+- **Unit normalisation** (mmol/L vs mg/dL, ng/mL vs nmol/L).
+- **Reference-range parsing**.
+- **Confidence calibration**: when Janet says "high confidence," is the value actually correct?
+- **Latency p95 < 30s** for a single panel.
+
+**Pass bar:** extraction accuracy ≥ 95% per biomarker, unit normalisation 100%, reference-range parsing ≥ 90%, latency p95 under 30s. If any biomarker drops below 90%, ship a regression fix before any other AI work.
+
+### 2e. Eval infrastructure
+
+One repo or one folder, separate from website code. Stack:
+- `evals/` directory at the project root with one folder per eval suite.
+- Datasets versioned in DVC or git-LFS (PII-stripped, fixture-only).
+- Runs nightly via Vercel Cron (`app/api/cron/evals/route.ts`).
+- Results push to a Supabase `evals` table with `(suite, metric, value, model_id, run_at)` shape.
+- Dashboard page at `/admin/evals` (admin-only) showing rolling 7-day trend per metric.
+- Email alert on regression > 5% from rolling mean.
+
+The eval board is the room we walk into when someone says "Janet feels off lately." Without it, that complaint is unanswerable.
+
+---
+
+## 3. Manual testing best practices
+
+Automated tests catch the things you can name. Manual testing catches the things you can only feel. Both are required.
+
+### 3a. The "test on your dad" rule
+
+Every engineer, before they ship anything that touches the assessment loop, completes the questionnaire using **a real 60+ relative's data** (with consent, on a test account, with throwaway email). Not a synthetic profile. Not a colleague. An actual parent, aunt, uncle, or family friend who is a plausible target member.
+
+Then they walk through the artifact end to end on their own iPhone.
+
+This is the single highest-leverage QA practice we have. 80% of the bugs we ship are bugs that look fine when you fill the questionnaire as a 30-year-old developer reading scripted text in a quiet office and look broken when your aunt is squinting at the family-history section trying to remember whether her father had high blood pressure.
+
+### 3b. The pre-pilot-invite checklist
+
+Before any new pilot member is invited, one engineer plus one non-engineer run this on a brand-new Apple ID, fresh phone, throttled to LTE:
+
+- [ ] Land on `/` cold. Hero "Get my bio-age" CTA is visible above the fold.
+- [ ] Tap CTA → land on `/signup` with form fields visible.
+- [ ] Sign up with a real-looking email (not `test+1@`). Receive verification email.
+- [ ] Tap link in Apple Mail → land in Safari signed in → land on `/onboarding`.
+- [ ] Complete all 6 questionnaire steps. The "what does this mean" copy is present on every section.
+- [ ] Family-history section accepts "I don't know" gracefully.
+- [ ] Submit → land on `/dashboard?onboarding=complete`.
+- [ ] Within 60 seconds, dashboard refreshes to show bio-age + domain scores.
+- [ ] Open `/report`. Narrative paragraph reads like a GP letter, not a quiz score.
+- [ ] Supplement protocol shows ≥ 3 items with rationale visible.
+- [ ] Open Janet chat. Send "what is my biggest risk?" — first token within 1 second; full response references the actual top driver.
+- [ ] Upload a fixture blood-panel PDF. Within 30 seconds, the upload list shows "complete" with extracted values.
+- [ ] Within another 60 seconds, `/report` updates with new biomarkers reflected in the narrative and protocol.
+- [ ] Download PDF. Open in Files. Looks like a clinical document.
+- [ ] Sign out. Sign back in via password. Everything is still there.
+- [ ] Try to access another account's `/report` directly via URL manipulation. Get redirected to `/login` or `/dashboard`.
+
+If any line fails, no invite ships that day.
+
+### 3c. Bug-bash before every phase boundary
+
+Half a day, whole team, free-form. Rules:
+- Use the staging account, not your dev account.
+- Try to break it on purpose. Tap things twice. Backgrounded tabs. Airplane-mode mid-upload. Kill Safari mid-Janet-stream.
+- Log every paper cut, even visual ones, in `docs/qa/QA-bugs.md` with a screenshot and a severity (P1 / P2 / P3).
+- Triage same day. Fix or defer with a written reason.
+
+### 3d. The vibe check (the GP test)
+
+Once a sprint, one person who is **not on the engineering team** (founder, designer, a friendly GP) walks through the report cold. They are asked one question per section: "Would you put this in your patient's hand?"
+
+Longevity Coach fails not when it crashes; it fails when `/report` feels like a calculator output instead of a clinical document. The four vibes that have to land:
+- The bio-age card (the headline number).
+- The five-domain narrative (the per-domain explanation).
+- The supplement protocol table (the actionable plan).
+- The Janet chat panel (the coach in the corner).
+
+If a vibe checker says "huh, this is weird" or "I wouldn't show this to my mum," that is a P1.
+
+### 3e. Trust audits (Epic 11)
+
+Quarterly:
+- Pull a random member's account in Supabase. Confirm RLS denies access from any other authenticated user.
+- Confirm signed URLs for upload artefacts (`patient_uploads` storage bucket) expire in 1 hour.
+- Read the deploy logs from the last 7 days. Confirm no PII landed in `console.log`. Use a regex sweep for `@`, `+61`, `19[0-9]{2}`, etc.
+- Walk the deceased-flag flow (when shipped) with someone who has lost a parent. Adjust copy if it lands wrong.
+- Verify `consent_records` is append-only at the database (attempt UPDATE / DELETE as service-role; should be denied by policy).
+- Confirm "we never train on your data" copy in ToS matches the architecture (no training endpoints in `lib/ai/`, no model fine-tune jobs, no third-party data shares).
+
+### 3f. Member interviews (the post-bug postmortem)
+
+When a real pilot member hits a bug, we do not just fix it. Within a week of the fix, we get on a 15-minute call and ask:
+- What did you think was happening?
+- What did you do next?
+- Did you tell anyone (your GP, your partner)?
+- What would have been the perfect outcome?
+
+Their words go in a file (`docs/research/member-bug-postmortems.md`). Three of them in a row that mention the same theme is a roadmap input.
+
+---
+
+## 4. Quality gates and CI
+
+What blocks a deploy:
+- Tier 1 unit tests fail.
+- Tier 2 RLS or pipeline-idempotency tests fail.
+- Tier 3 critical-path E2E fails.
+- Tier 4 `qa_public.py` fails.
+- Lighthouse budget regression > 10%.
+- Eval suite 2a (Atlas) regression > 0.5 on any dimension.
+- Eval suite 2d (Janet document analyser) regression > 5% on any biomarker.
+- Visual regression on the four "vibe" surfaces (`/`, `/dashboard`, `/report`, Janet chat panel).
+
+What does *not* block a deploy:
+- Visual regressions on non-vibe screens (review next sprint).
+- Eval regressions in suites that haven't shipped yet (track, don't gate).
+- Tier 5 mobile real-device suite (gates pilot invites, not main).
+- Tier 8 synthetic monitor warning (alerts; doesn't block existing deployments).
+
+### Tooling stack
+
+| Layer | Tool |
+|---|---|
+| Unit + mocked-Supabase integration | Vitest 4 |
+| RLS + trigger truth | pgTAP via `supabase db test` against `longevity-coach-test` project |
+| E2E (TS) | Playwright (Node) — `pnpm test:e2e` |
+| Live QA (Python) | The `webapp-testing` skill — `python scripts/with_server.py --server "pnpm dev" --port 3000 -- python tests/live-qa/<script>.py` |
+| Mobile real-device | BrowserStack |
+| Visual regression | Chromatic |
+| Performance | Lighthouse CI (Vercel-native) |
+| Evals | Standalone `evals/` folder, Vercel Cron runner, Supabase `evals` table, `/admin/evals` board |
+| Synthetic monitor | Vercel Cron + a single Python Playwright script |
+| Bug log | `docs/qa/QA-bugs.md` (to be created), one row per bug with ID, severity, epic, repro, status |
+
+---
+
+## 5. Sequencing the QA build
+
+The agent layer just landed (2026-04-28). Phase 2 isn't user-reviewed yet. We can't build everything before the next pilot; we sequence the way the product sequences.
+
+| Week | QA build |
+|---|---|
+| 1 | Wire `pgTAP` RLS suite into CI. Atlas + Sage integration tests in 2a. Pre-pilot-invite checklist run for the first time on the new Phase 2 surfaces. |
+| 2 | Critical-path E2E in Playwright TS, including a seeded test-user fixture. Live-QA `qa_report.py` and `qa_uploads.py` under the `webapp-testing` skill. |
+| 3 | Atlas eval suite (2a) live with first golden dataset of 10 fixture assessments; Sage eval (2b) the same. Synthetic monitor in production. |
+| 4 | Janet eval suite (2c) live with first 20 fixture conversations. Doctor panel scheduled for Atlas + Sage. |
+| 5 | Visual regression (Chromatic) on the four vibe surfaces. Lighthouse budgets enforced. |
+| 6 | Mobile Safari runs on BrowserStack. Bug-bash before pilot invites. |
+| 7 | Trust audit. Pre-pilot-invite checklist run on every new test phone. |
+| 8 | Vibe check round with a friendly GP. Member interview protocol locked in. First member-bug postmortem template in `docs/research/`. |
+
+Post-pilot, build evals 2c (richer Janet rubric) and 2d (extended biomarker coverage) in parallel with the daily-engagement and clinician-portal epics, *before* those features ship to users.
+
+---
+
+## 6. The principle to remember
+
+**A test is only worth writing if a real member would notice when it catches the bug.**
+
+That's the bar. Not coverage. Not test count. The thing the member would have noticed, captured before they noticed it.
+
+Everything else is theatre.</script>
+
+<script type="text/markdown" id="md-qa-report"># QA Report — Longevity Coach
+
+**Date:** 2026-04-27
+**Branch:** `claude/stoic-hopper-c620f9`
+**Scope:** Full regression of every feature integrated and not mocked, plus DB schema and RLS verification.
+**Tooling:** Vitest 4 (unit + integration), Playwright (Python — official Anthropic `webapp-testing` skill from `anthropics/skills`), pgTAP (RLS policy tests, written), Supabase MCP (schema verification).
+
+---
+
+## TL;DR
+
+| Suite | Tests | Pass | Fail | Skipped |
+|---|---:|---:|---:|---:|
+| Vitest unit | 18 | 18 | 0 | 0 |
+| Vitest integration | 29 | 29 | 0 | 0 |
+| Live QA (Playwright, non-auth) | 33 | 33 | 0 | 0 |
+| Live QA auth flow (manual + scripted) | 11 | 10 | 0 | 1 |
+| pgTAP RLS (written, not yet executed against DB) | 20 | — | — | — |
+| **Total executed** | **91** | **90** | **0** | **1** |
+
+**BUG-1 fixed (2026-04-27); one external limitation remains.** Everything else is healthy.
+
+---
+
+## Findings
+
+### ✅ BUG-1 — Signup form clears all fields after a server-side validation error — FIXED 2026-04-27
+
+- **Severity:** Medium (UX)
+- **Status:** Fixed
+- **File:** `app/(auth)/signup/signup-form.tsx`
+- **Original symptom:** after a server validation error (e.g. server-side password rejection when HTML5 was bypassed), `full_name`, `email`, and `password` inputs all came back empty, forcing users to retype everything.
+- **Root cause:** the form used uncontrolled inputs with no `defaultValue`, so React re-rendered empty after the action returned.
+- **Fix:** the `signUp` / `signIn` actions in `app/(auth)/actions.ts` now echo `{ email, full_name }` back on every error path via `state.values`, and the form passes those into `defaultValue` on the `full_name` and `email` inputs. Password is deliberately NOT echoed back (kept off the wire).
+- **Verification:** `tests/live-qa/qa_run.py::test_signup_short_password` ("REGRESSION: form values preserved after server error") now passes.
+
+### ⚠️ EXT-1 — Supabase email rate limit blocks repeated signup tests
+
+- **Severity:** External (not an app bug, but affects test repeatability)
+- **Observed in dev server log:** `ƒ signUp({"error":"email rate limit exceeded"})`
+- **Cause:** Supabase free tier limits transactional emails to ~3/hour per IP.
+- **Mitigation for CI:** use a dedicated Supabase test project with bumped limits, or stub out the `signUp` call to return without sending email.
+
+### Bugs we deliberately did NOT chase
+
+Per gap analysis: the upload portal, family-history depth, risk engine, patient tier system and clinician dashboard are not yet built. Their absence is not a bug — it's planned work.
+
+---
+
+## What was tested
+
+### Auth pages (rendering only — submission tests skipped per scope)
+
+| Test | Status |
+|---|---|
+| `/login` renders heading "Welcome back" | ✅ |
+| `/signup` renders heading "Create your account" | ✅ |
+| `/forgot-password` renders heading "Reset your password" | ✅ |
+| `/login` shows email/password inputs, "Sign in" button, "Forgot password" + "Create one" links | ✅ |
+| `/signup` shows full_name + email + password inputs and "Create account" button | ✅ |
+| Empty submit on login triggers HTML5 `valueMissing` validation on email | ✅ |
+| Wrong credentials show "Invalid login credentials" inline error | ✅ |
+| Short password blocked client-side via `minLength=8` (defence in depth) | ✅ |
+| Short password rejected by server when HTML5 bypassed | ✅ |
+| `/forgot-password` returns non-enumerable success ("If an account exists…") | ✅ |
+| Form fields preserve values after server error | ✅ (BUG-1 fixed) |
+| Valid signup → `/verify-email` with email shown | ⚠️ rate-limited (EXT-1) |
+
+### Auth guard (proxy.ts)
+
+| Test | Status |
+|---|---|
+| `/dashboard` (no session) → `/login?redirect=/dashboard` | ✅ |
+| `/onboarding` (no session) → `/login?redirect=/onboarding` | ✅ |
+| `/auth/callback` (no token) → `/login?error=auth_callback_failed` | ✅ |
+| `/auth/callback?token_hash=garbage&type=signup` → safe error redirect | ✅ |
+
+The proxy preserves the original destination via `?redirect=` — better UX than a bare `/login`.
+
+### Public marketing pages
+
+| Page | HTTP | Heading | Logo |
+|---|---|---|---|
+| `/` (landing) | ✅ | ✅ | ✅ |
+| `/science` | 200 | ✅ | ✅ |
+| `/team` | 200 | ✅ | ✅ |
+| `/stories` | 200 | ✅ | ✅ |
+| `/sample-report` | 200 | ✅ | ✅ |
+
+Landing page extras:
+- Headline "Live longer" visible ✅
+- Both CTAs ("Get my bio-age", "See a sample report") visible and href to right routes ✅
+- Trust lines ("No credit card to start", "GMC-registered clinicians") visible ✅
+- Logo links home ✅
+- `<title>` is `Longevity Coach - Live longer, on purpose.` ✅
+- `/favicon.ico` returns 200 ✅
+- Navigation: hero CTA actually navigates to `/signup` ✅
+- No JS console errors across landing + all 4 public pages ✅
+- No failed network requests across landing + all 4 public pages ✅
+
+### Onboarding questionnaire (logic, via Vitest)
+
+The schema + validation layer is fully unit-tested without needing a browser. 14 tests, all passing.
+
+### Onboarding server actions (Vitest integration with mocked Supabase)
+
+7 tests covering `saveDraft` (insert, update, no-user error) and `submitAssessment` (insert, update, redirect-on-success).
+
+### Auth server actions (Vitest integration)
+
+13 tests covering `signIn`, `signUp`, `requestPasswordReset`, `updatePassword`. Includes minimum-password-length guards, whitespace trimming, error surfacing, success redirects.
+
+### Stripe webhook (Vitest integration with mocked Stripe + Supabase admin)
+
+8 tests covering signature verification, lifecycle events (`subscription.updated`, `checkout.session.completed`, `subscription.deleted`), missing-metadata warnings, unrelated event types.
+
+### Database (verified live against new Supabase project `raomphjkuypigdhytbzn`)
+
+| Table | RLS | Status |
+|---|---|---|
+| `profiles` | ✅ | Migrated |
+| `health_profiles` | ✅ | Migrated |
+| `risk_scores` | ✅ | Migrated |
+| `subscriptions` | ✅ | Migrated |
+
+### RLS policies (pgTAP — written, ready to run via `supabase db test`)
+
+20 assertions covering owner/cross-user isolation across all four tables, plus anonymous role lockout. Written but not yet executed locally — needs Supabase CLI + a separate test project to run.
+
+---
+
+## Test Suite Inventory (delivered)
+
+```
+tests/
+├── unit/
+│   └── questionnaire/
+│       ├── validation.test.ts      (10 tests)
+│       └── schema.test.ts          (8 tests)
+├── integration/
+│   ├── auth/actions.test.ts        (13 tests)
+│   ├── onboarding/actions.test.ts  (7 tests)
+│   └── stripe/webhook.test.ts      (8 tests)
+├── e2e/                            (Playwright spec files — Node)
+│   ├── auth/{login,signup,forgot-password,auth-guard}.spec.ts
+│   └── public/landing.spec.ts
+├── live-qa/                        (Python Playwright via webapp-testing skill)
+│   ├── qa_run.py                   (full auth + flows — rate-limited)
+│   ├── qa_public.py                (non-auth, 33/33 passing)
+│   └── qa_*_results.json
+└── (none in tests/db — pgTAP file lives at supabase/tests/rls.sql)
+```
+
+`package.json` scripts:
+- `pnpm test` — Vitest run
+- `pnpm test:watch` — Vitest watch
+- `pnpm test:e2e` — Playwright (Node)
+- `pnpm test:all` — both
+
+Live QA via skill:
+- `python3 tests/live-qa/qa_public.py` (no auth; reliable in CI)
+- `python3 tests/live-qa/qa_run.py` (full; will hit Supabase rate limits)
+
+---
+
+## Coverage gaps and what they cost
+
+| Gap | Why it's not covered today | What it would cost to add |
+|---|---|---|
+| Authenticated dashboard, onboarding flow E2E | Needs a seeded test user that bypasses email confirmation, or use `auth.admin` to pre-confirm | ~2 hrs: write a Playwright fixture that creates a user via `service_role` and signs in with `setSession` |
+| Real Stripe webhook delivery | Requires Stripe CLI in CI | Already have unit-level coverage; live test only needed before launch |
+| pgTAP execution | Needs Supabase CLI installed + running locally | ~30 min once CLI is installed: `supabase db test` |
+| Visual regression | Out of scope this pass | Add Playwright `toHaveScreenshot()` once design is locked |
+| Upload portal, risk engine, clinician dashboard, family-history depth | Features not yet built | Tests written when the features ship |
+
+---
+
+## Recommendations
+
+1. ~~**Fix BUG-1** (signup form clearing).~~ ✅ Done 2026-04-27.
+2. **Add a seeded test user fixture** so authenticated E2E tests can run in CI without hitting email rate limits.
+3. **Run `pnpm test` in CI on every PR** — already configured, just needs a workflow file.
+4. **Consider rotating the Supabase secret key** that was committed to `.env.example`.
+5. **Add the upload portal next** — it's the gating dependency for the rest of the gap analysis (Janet parsing, risk calculator, end-to-end tests with sample data).</script>
+
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script>
+  const docs = {
+    'README':      { eyebrow: 'Overview',     filename: 'README.md' },
+    'timeline':    { eyebrow: 'Overview',     filename: '01-product-timeline.md' },
+    'state':       { eyebrow: 'Overview',     filename: '2026-04-28-current-state.md' },
+    'product':     { eyebrow: 'Strategy',     filename: 'product.md' },
+    'epics':       { eyebrow: 'Strategy',     filename: 'epics.md' },
+    'epic-status': { eyebrow: 'Strategy',     filename: 'epic-status.md' },
+    'ai-vision':   { eyebrow: 'Architecture', filename: 'ai-vision.md' },
+    'qa-plan':     { eyebrow: 'Quality',      filename: 'qa-plan.md' },
+    'qa-report':   { eyebrow: 'Quality',      filename: '2026-04-27-qa-report.md' },
+  };
+
+  marked.setOptions({ gfm: true, breaks: false, headerIds: true, mangle: false });
+
+  const slugify = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+
+  function loadDoc(key) {
+    const meta = docs[key];
+    if (!meta) return;
+    const md = document.getElementById('md-' + key).textContent;
+    const html = marked.parse(md);
+    const article = document.getElementById('content');
+    article.innerHTML = html;
+
+    article.querySelectorAll('h1, h2, h3').forEach((h) => {
+      if (!h.id) h.id = slugify(h.textContent);
+    });
+
+    document.getElementById('docEyebrow').textContent = meta.eyebrow;
+    document.getElementById('docMeta').textContent = meta.filename;
+    document.title = 'Longevity Coach · ' + meta.filename;
+
+    document.querySelectorAll('.nav-item').forEach((n) => {
+      n.classList.toggle('active', n.dataset.doc === key);
+    });
+
+    buildToc(article, key);
+    window.scrollTo(0, 0);
+
+    if (location.hash !== '#' + key) {
+      history.replaceState(null, '', '#' + key);
+    }
+
+    document.getElementById('sidebar').classList.remove('open');
+  }
+
+  function buildToc(article, key) {
+    const container = document.getElementById('tocContainer');
+    container.innerHTML = '';
+    const headings = article.querySelectorAll('h2, h3');
+    if (headings.length < 2) return;
+
+    const wrap = document.createElement('div');
+    wrap.className = 'nav-group';
+    wrap.innerHTML = '<div class="nav-label">On this page</div>';
+    const ul = document.createElement('ul');
+    ul.className = 'toc';
+
+    headings.forEach((h) => {
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.href = '#' + key + '/' + h.id;
+      a.textContent = h.textContent;
+      if (h.tagName === 'H3') a.className = 'toc-h3';
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        h.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        history.replaceState(null, '', '#' + key + '/' + h.id);
+      });
+      li.appendChild(a);
+      ul.appendChild(li);
+    });
+    wrap.appendChild(ul);
+    container.appendChild(wrap);
+  }
+
+  document.querySelectorAll('.nav-item').forEach((n) => {
+    n.addEventListener('click', (e) => {
+      e.preventDefault();
+      loadDoc(n.dataset.doc);
+    });
+  });
+
+  document.getElementById('menuToggle').addEventListener('click', () => {
+    document.getElementById('sidebar').classList.toggle('open');
+  });
+
+  const initialKey = (location.hash || '#README').slice(1).split('/')[0];
+  loadDoc(docs[initialKey] ? initialKey : 'README');
+</script>
+
+</body>
+</html>

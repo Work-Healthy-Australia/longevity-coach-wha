@@ -201,7 +201,7 @@ export const onboardingQuestionnaire: QuestionnaireDef = {
     },
     {
       id: "family_deaths",
-      label: "Deaths in family",
+      label: "Deaths in the family",
       description:
         "If known, record cause of death and age for parents and grandparents. This is the strongest single signal for inherited longevity — the actuarial models depend on it. Skip any you don't know.",
       fields: [
@@ -272,6 +272,9 @@ export const onboardingQuestionnaire: QuestionnaireDef = {
           type: "number",
           placeholder: "7",
           suffix: "hrs/night",
+          min: 1,
+          max: 12,
+          step: 1,
         },
         {
           id: "sleep_quality",
