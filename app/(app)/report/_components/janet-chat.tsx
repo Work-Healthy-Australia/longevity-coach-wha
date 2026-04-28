@@ -1,13 +1,17 @@
 'use client';
+// ai-elements: @vercel/ai-elements not published; using react-markdown via shared AssistantBubble.
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { useState } from 'react';
+import { AssistantBubble } from '@/app/(app)/_components/chat-message';
 
 export function JanetChat() {
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({ api: '/api/chat' }),
   });
   const [input, setInput] = useState('');
+
+  const lastIdx = messages.length - 1;
 
   return (
     <div className="chat-container">
@@ -34,20 +38,35 @@ export function JanetChat() {
           </div>
         )}
 
-        {messages.map((msg) => (
+        {messages.map((msg, idx) => (
           <div key={msg.id} className={`chat-message chat-message-${msg.role}`}>
             {msg.role === 'assistant' && <div className="chat-avatar">J</div>}
             <div className="chat-bubble">
               {msg.parts.map((part, i) =>
-                part.type === 'text' ? <span key={i}>{part.text}</span> : null,
+                part.type === 'text' ? (
+                  msg.role === 'assistant' ? (
+                    <AssistantBubble
+                      key={i}
+                      text={part.text}
+                      isStreaming={status === 'streaming' && idx === lastIdx}
+                    />
+                  ) : (
+                    <span key={i}>{part.text}</span>
+                  )
+                ) : null,
               )}
-              {status === 'streaming' &&
-                msg === messages[messages.length - 1] &&
-                msg.role === 'assistant' &&
-                '▋'}
             </div>
           </div>
         ))}
+
+        {status === 'submitted' && (
+          <div className="chat-message chat-message-assistant">
+            <div className="chat-avatar">J</div>
+            <div className="chat-bubble chat-bubble-typing">
+              <span /><span /><span />
+            </div>
+          </div>
+        )}
       </div>
 
       <form

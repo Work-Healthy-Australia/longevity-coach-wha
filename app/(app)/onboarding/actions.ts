@@ -155,7 +155,7 @@ export async function submitAssessment(
   }
 
   // Fire async pipeline workers (non-blocking — each runs in its own function invocation)
-  triggerPipeline("risk-narrative", user.id);
+  // Atlas (risk-narrative) is intentionally NOT triggered here — it runs on daily check-in only.
   triggerPipeline("supplement-protocol", user.id);
 
   revalidatePath("/dashboard");

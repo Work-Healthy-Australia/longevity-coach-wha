@@ -22,7 +22,7 @@ const SupplementOutputSchema = z.object({
 
 type SupplementOutput = z.infer<typeof SupplementOutputSchema>;
 
-function buildPrompt(params: {
+export function buildSagePrompt(params: {
   ageYears: number | null;
   responses: Record<string, unknown>;
   riskSummary: string | null;
@@ -137,7 +137,7 @@ export async function runSupplementProtocolPipeline(userId: string): Promise<voi
 
   let output: SupplementOutput;
   try {
-    output = await agent.run(SupplementOutputSchema, buildPrompt({ ageYears, responses, riskSummary, uploadSummaries, supplementStandardsContext, drugInteractionContext }));
+    output = await agent.run(SupplementOutputSchema, buildSagePrompt({ ageYears, responses, riskSummary, uploadSummaries, supplementStandardsContext, drugInteractionContext }));
   } catch (err) {
     console.error(`[Sage] Supplement protocol pipeline failed for user ${userId}:`, err);
     return;

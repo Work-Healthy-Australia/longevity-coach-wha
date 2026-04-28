@@ -66,6 +66,7 @@ export interface PatientContext {
   } | null;
   recentConversation: ConversationTurn[];
   knowledgeChunks: string[];
+  conversationSummary: string | null;
 }
 
 /**
@@ -79,7 +80,7 @@ export async function loadPatientContext(
 ): Promise<PatientContext> {
   const admin = createAdminClient();
 
-  const [profileResult, riskResult, healthResult, uploadsResult, supplementResult, conversationResult, knowledgeChunks, recentDigestsResult] =
+  const [profileResult, riskResult, healthResult, uploadsResult, supplementResult, conversationResult, knowledgeChunks, recentDigestsResult, conversationSummaryResult] =
     await Promise.all([
       // Profile (PII layer — demographics only, no clinical data)
       admin
@@ -151,6 +152,18 @@ export async function loadPatientContext(
         .limit(3)
         .then((r: { data: unknown[] | null }) => r)
         .catch(() => ({ data: [] })),
+
+      // Pre-compressed summary of turns outside the 20-turn window
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (admin as any)
+        .schema('agents')
+        .from('conversation_summaries')
+        .select('summary')
+        .eq('user_uuid', userId)
+        .eq('agent', options.agent ?? 'janet')
+        .maybeSingle()
+        .then((r: { data: { summary: string } | null }) => r)
+        .catch(() => ({ data: null })),
     ]);
 
   const profile = profileResult.data;
@@ -220,6 +233,8 @@ export async function loadPatientContext(
     recentConversation: [...conversation].reverse() as ConversationTurn[],
 
     knowledgeChunks,
+
+    conversationSummary: (conversationSummaryResult as { data: { summary: string } | null }).data?.summary ?? null,
   };
 }
 
@@ -256,6 +271,16 @@ export function summariseContext(ctx: PatientContext): string {
     lines.push(`Risk assessment: not yet completed`);
   }
 
+  if (ctx.riskScores?.createdAt) {
+    const daysSince = Math.floor(
+      (Date.now() - new Date(ctx.riskScores.createdAt).getTime()) / (1000 * 60 * 60 * 24),
+    );
+    if (daysSince > 30)
+      lines.push(
+        `⚠ Risk scores are ${daysSince} days old — recommend patient refresh their assessment`,
+      );
+  }
+
   if (ctx.uploads.length) {
     lines.push(`Uploaded documents (${ctx.uploads.length}):`);
     ctx.uploads.slice(0, 5).forEach((u) => {
@@ -275,9 +300,28 @@ export function summariseContext(ctx: PatientContext): string {
     lines.push(`Supplement protocol: not yet generated`);
   }
 
+  if (ctx.conversationSummary) {
+    lines.push(`\n## Prior session summary`);
+    lines.push(ctx.conversationSummary);
+  }
+
+  if (ctx.recentConversation.length) {
+    lines.push(`\n## Previous session history`);
+    ctx.recentConversation.slice(-6).forEach((t) =>
+      lines.push(`${t.role === "user" ? "Patient" : "Janet"}: ${t.content.slice(0, 300)}`),
+    );
+  }
+
   if (ctx.knowledgeChunks.length) {
     lines.push(`\n## Relevant health knowledge`);
     ctx.knowledgeChunks.forEach((chunk) => lines.push(chunk));
+  }
+
+  if (ctx.recentDigests.length) {
+    lines.push(`\n## Latest research digests`);
+    ctx.recentDigests.forEach((d) =>
+      lines.push(`[${d.category} · ${d.evidence_level}] ${d.title}`),
+    );
   }
 
   return lines.join("\n");

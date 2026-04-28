@@ -89,6 +89,33 @@ export type Database = {
         }
         Relationships: []
       }
+      conversation_summaries: {
+        Row: {
+          agent: string
+          id: string
+          last_compressed_turn_id: string | null
+          summary: string
+          updated_at: string
+          user_uuid: string
+        }
+        Insert: {
+          agent: string
+          id?: string
+          last_compressed_turn_id?: string | null
+          summary: string
+          updated_at?: string
+          user_uuid: string
+        }
+        Update: {
+          agent?: string
+          id?: string
+          last_compressed_turn_id?: string | null
+          summary?: string
+          updated_at?: string
+          user_uuid?: string
+        }
+        Relationships: []
+      }
       health_knowledge: {
         Row: {
           content: string

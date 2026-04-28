@@ -2,3 +2,52 @@
 
 html, body { margin: 0; padding: 0; }
 body { background: #F4F7F9; color: #2B2B2B; }
+
+/* ── Shared chat message rendering ──────────────────────────────────────── */
+
+.chat-chunk {
+  animation: chat-unfold 0.08s ease-out both;
+}
+@keyframes chat-unfold {
+  from { opacity: 0; filter: blur(3px); }
+  to   { opacity: 1; filter: blur(0);   }
+}
+
+.md-body { display: contents; }
+
+.md-p         { margin: 0; line-height: 1.55; }
+.md-p + .md-p { margin-top: 0.45em; }
+
+.md-ul, .md-ol { margin: 0.4em 0 0.4em 1.2em; padding: 0; }
+.md-li          { margin: 0.2em 0; line-height: 1.5; }
+
+.md-heading { margin: 0.5em 0 0.25em; font-weight: 700; font-size: 0.95em; }
+
+.md-code {
+  background: rgba(0,0,0,0.08);
+  border-radius: 3px;
+  padding: 1px 5px;
+  font-family: ui-monospace, monospace;
+  font-size: 0.85em;
+}
+
+.md-pre {
+  background: rgba(0,0,0,0.06);
+  border-radius: 6px;
+  padding: 10px 12px;
+  overflow-x: auto;
+  font-size: 0.82em;
+  line-height: 1.5;
+  margin: 0.5em 0;
+}
+.md-pre .md-code { background: none; padding: 0; }
+
+.md-a { color: inherit; text-decoration: underline; opacity: 0.85; }
+.md-a:hover { opacity: 1; }
+
+.md-blockquote {
+  border-left: 3px solid currentColor;
+  opacity: 0.7;
+  margin: 0.4em 0;
+  padding-left: 0.75em;
+}
