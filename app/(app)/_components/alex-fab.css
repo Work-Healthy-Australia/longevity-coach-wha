@@ -1,0 +1,167 @@
+.alex-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 200;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #2F6F8F;
+  color: #fff;
+  font-size: 22px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.alex-fab:hover {
+  background: #235872;
+}
+
+.alex-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: #e03e3e;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 10px;
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+
+.alex-panel {
+  position: fixed;
+  bottom: 88px;
+  right: 24px;
+  z-index: 200;
+  width: 400px;
+  height: 520px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.14);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.alex-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: #2F6F8F;
+  color: #fff;
+}
+
+.alex-panel-title {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.alex-panel-close {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 2px 6px;
+  line-height: 1;
+}
+
+.alex-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.alex-msg {
+  display: flex;
+}
+
+.alex-msg-user {
+  justify-content: flex-end;
+}
+
+.alex-msg-assistant {
+  justify-content: flex-start;
+}
+
+.alex-bubble {
+  max-width: 80%;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.alex-msg-user .alex-bubble {
+  background: #2F6F8F;
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+.alex-msg-assistant .alex-bubble {
+  background: #F0F4F8;
+  color: #1a2a35;
+  border-bottom-left-radius: 4px;
+}
+
+.alex-form {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  border-top: 1px solid #E3E8EC;
+}
+
+.alex-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #DDE8EE;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+}
+
+.alex-input:focus {
+  border-color: #2F6F8F;
+}
+
+.alex-send {
+  padding: 8px 14px;
+  background: #2F6F8F;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.alex-send:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+  .alex-panel {
+    width: calc(100vw - 32px);
+    right: 16px;
+    bottom: 80px;
+  }
+}

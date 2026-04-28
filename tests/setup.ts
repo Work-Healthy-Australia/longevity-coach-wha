@@ -4,6 +4,9 @@ import { vi } from "vitest";
 vi.mock("next/cache", () => ({
   revalidatePath: vi.fn(),
   revalidateTag: vi.fn(),
+  // pass-through so loadAgentDef (wrapped in unstable_cache) behaves like a plain async fn in tests
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  unstable_cache: vi.fn((fn: (...args: unknown[]) => unknown) => fn),
 }));
 
 vi.mock("next/navigation", () => ({

@@ -1,6 +1,6 @@
 # Phase 3 — Engagement: Daily Habits, AI Coaching & Nutrition
 
-**Status:** Planned  
+**Status:** In progress  
 **Goal:** Members return daily. The platform becomes a routine companion — tracking habits, delivering coaching, and helping members make better food choices.
 
 ← [Back to Product Timeline](./01-product-timeline.md)
@@ -39,11 +39,11 @@ Members need on-demand, personalised guidance — not generic advice.
 
 | # | User Story |
 |---|---|
-| 3.3.1 | As a member, I can chat with an AI health coach that understands my personal health history and goals. |
+| 3.3.1 | ✅ As a member, I can chat with an AI health coach that understands my personal health history and goals. |
 | 3.3.2 | As a member, I can ask the nutrition coach for meal ideas, recipe suggestions, and food choices that support my bloodwork results. |
 | 3.3.3 | As a member, I can ask the supplement advisor for clarity on any recommendation in my protocol. |
 | 3.3.4 | As a member, I can ask the fitness coach to suggest an exercise session based on my current energy level and goals. |
-| 3.3.5 | As a member, conversations with coaches are saved so I do not have to repeat context each time. |
+| 3.3.5 | ✅ As a member, conversations with coaches are saved so I do not have to repeat context each time. |
 
 ---
 

@@ -1,76 +1,13 @@
-"use client";
-
-import { useRef, useState, useTransition } from "react";
-
-interface Message {
-  role: "user" | "assistant";
-  content: string;
-}
+'use client';
+import { useChat } from '@ai-sdk/react';
+import { DefaultChatTransport } from 'ai';
+import { useState } from 'react';
 
 export function JanetChat() {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState("");
-  const [streaming, setStreaming] = useState(false);
-  const [, startTransition] = useTransition();
-  const bottomRef = useRef<HTMLDivElement>(null);
-
-  async function sendMessage(e: React.FormEvent) {
-    e.preventDefault();
-    const text = input.trim();
-    if (!text || streaming) return;
-
-    setInput("");
-    const userMsg: Message = { role: "user", content: text };
-    setMessages((prev) => [...prev, userMsg]);
-
-    setStreaming(true);
-    const assistantMsg: Message = { role: "assistant", content: "" };
-    setMessages((prev) => [...prev, assistantMsg]);
-
-    try {
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text }),
-      });
-
-      if (!res.ok || !res.body) {
-        throw new Error(`HTTP ${res.status}`);
-      }
-
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        const chunk = decoder.decode(value, { stream: true });
-        startTransition(() => {
-          setMessages((prev) => {
-            const updated = [...prev];
-            updated[updated.length - 1] = {
-              role: "assistant",
-              content: updated[updated.length - 1].content + chunk,
-            };
-            return updated;
-          });
-        });
-        bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-      }
-    } catch {
-      setMessages((prev) => {
-        const updated = [...prev];
-        updated[updated.length - 1] = {
-          role: "assistant",
-          content: "Sorry, something went wrong. Please try again.",
-        };
-        return updated;
-      });
-    } finally {
-      setStreaming(false);
-      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-    }
-  }
+  const { messages, sendMessage, status } = useChat({
+    transport: new DefaultChatTransport({ api: '/api/chat' }),
+  });
+  const [input, setInput] = useState('');
 
   return (
     <div className="chat-container">
@@ -80,8 +17,8 @@ export function JanetChat() {
             <p>Janet is ready to help. Ask anything about your health results.</p>
             <div className="chat-starters">
               {[
-                "What does my biological age mean?",
-                "Which supplement should I prioritise first?",
+                'What does my biological age mean?',
+                'Which supplement should I prioritise first?',
                 "What's my biggest modifiable risk factor?",
               ].map((q) => (
                 <button
@@ -97,35 +34,46 @@ export function JanetChat() {
           </div>
         )}
 
-        {messages.map((msg, i) => (
-          <div key={i} className={`chat-message chat-message-${msg.role}`}>
-            {msg.role === "assistant" && (
-              <div className="chat-avatar">J</div>
-            )}
+        {messages.map((msg) => (
+          <div key={msg.id} className={`chat-message chat-message-${msg.role}`}>
+            {msg.role === 'assistant' && <div className="chat-avatar">J</div>}
             <div className="chat-bubble">
-              {msg.content || (streaming && i === messages.length - 1 ? "▋" : "")}
+              {msg.parts.map((part, i) =>
+                part.type === 'text' ? <span key={i}>{part.text}</span> : null,
+              )}
+              {status === 'streaming' &&
+                msg === messages[messages.length - 1] &&
+                msg.role === 'assistant' &&
+                '▋'}
             </div>
           </div>
         ))}
-        <div ref={bottomRef} />
       </div>
 
-      <form onSubmit={sendMessage} className="chat-form">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (!input.trim() || status !== 'ready') return;
+          sendMessage({ text: input });
+          setInput('');
+        }}
+        className="chat-form"
+      >
         <input
           type="text"
           className="chat-input"
           placeholder="Ask Janet anything…"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          disabled={streaming}
+          disabled={status !== 'ready'}
           autoComplete="off"
         />
         <button
           type="submit"
           className="chat-send"
-          disabled={streaming || !input.trim()}
+          disabled={status !== 'ready' || !input.trim()}
         >
-          {streaming ? "…" : "Send"}
+          {status !== 'ready' ? '…' : 'Send'}
         </button>
       </form>
     </div>
