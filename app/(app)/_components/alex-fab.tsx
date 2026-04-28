@@ -2,9 +2,37 @@
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useChatStore } from '@/lib/stores/chat-store';
 import './alex-fab.css';
+
+function StreamingBubble({ text, isStreaming }: { text: string; isStreaming: boolean }) {
+  const [chunks, setChunks] = useState<string[]>([]);
+  const prevRef = useRef('');
+
+  useEffect(() => {
+    if (!isStreaming) {
+      setChunks([]);
+      prevRef.current = '';
+      return;
+    }
+    const next = text.slice(prevRef.current.length);
+    if (next) {
+      prevRef.current = text;
+      setChunks((c) => [...c, next]);
+    }
+  }, [text, isStreaming]);
+
+  if (!isStreaming) return <span>{text}</span>;
+
+  return (
+    <>
+      {chunks.map((chunk, i) => (
+        <span key={i} className="alex-chunk">{chunk}</span>
+      ))}
+    </>
+  );
+}
 
 export function AlexFAB() {
   const { alex, toggleAlex, closeAlex } = useChatStore();
@@ -25,6 +53,8 @@ export function AlexFAB() {
     }),
   });
 
+  const lastIdx = messages.length - 1;
+
   return (
     <>
       {alex.isOpen && (
@@ -37,26 +67,28 @@ export function AlexFAB() {
           </div>
 
           <div className="alex-messages">
-            {messages.map((msg) => (
+            {messages.map((msg, idx) => (
               <div key={msg.id} className={`alex-msg alex-msg-${msg.role}`}>
                 <div className="alex-bubble">
                   {msg.parts.map((part, i) =>
-                    part.type === 'text' ? <span key={i}>{part.text}</span> : null,
+                    part.type === 'text' ? (
+                      <StreamingBubble
+                        key={i}
+                        text={part.text}
+                        isStreaming={status === 'streaming' && idx === lastIdx && msg.role === 'assistant'}
+                      />
+                    ) : null,
                   )}
-                  {status === 'streaming' &&
-                    msg === messages[messages.length - 1] &&
-                    msg.role === 'assistant' &&
-                    '▋'}
                 </div>
               </div>
             ))}
             {status === 'submitted' && (
-                <div className="alex-msg alex-msg-assistant">
-                  <div className="alex-bubble alex-typing">
-                    <span /><span /><span />
-                  </div>
+              <div className="alex-msg alex-msg-assistant">
+                <div className="alex-bubble alex-typing">
+                  <span /><span /><span />
                 </div>
-              )}
+              </div>
+            )}
           </div>
 
           <form
