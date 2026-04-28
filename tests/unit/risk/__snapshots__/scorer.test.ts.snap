@@ -6,8 +6,6 @@ exports[`scoreRisk (snapshots) > stable output for fixture: highCv 1`] = `
   "longevity_label": "Critical",
   "composite_risk": 65,
   "biological_age": 65.7,
-  "chronological_age": 58,
-  "age_delta": -7.7,
   "risk_level": "high",
   "trajectory_6month": {
     "current_longevity_score": 35,
@@ -629,12 +627,17 @@ exports[`scoreRisk (snapshots) > stable output for fixture: highCv 1`] = `
     }
   ],
   "data_completeness": 0.4,
-  "score_confidence": {
-    "level": "low",
-    "note": "Limited data — scores are directional only"
-  },
+  "score_confidence": "low",
   "last_calculated": "1970-01-01T00:00:00.000Z",
-  "next_recommended_tests": "DEXA bone density, testosterone/estradiol, magnesium RBC; Fasting insulin, HOMA-IR, HbA1c, body composition DEXA"
+  "next_recommended_tests": [
+    "DEXA bone density",
+    "testosterone/estradiol",
+    "magnesium RBC",
+    "Fasting insulin",
+    "HOMA-IR",
+    "HbA1c",
+    "body composition DEXA"
+  ]
 }"
 `;
 
@@ -644,8 +647,6 @@ exports[`scoreRisk (snapshots) > stable output for fixture: lowData 1`] = `
   "longevity_label": "Optimal",
   "composite_risk": 10,
   "biological_age": 42,
-  "chronological_age": 42,
-  "age_delta": 0,
   "risk_level": "very_low",
   "trajectory_6month": {
     "current_longevity_score": 90,
@@ -760,12 +761,17 @@ exports[`scoreRisk (snapshots) > stable output for fixture: lowData 1`] = `
   },
   "top_risks": [],
   "data_completeness": 0.08,
-  "score_confidence": {
-    "level": "insufficient",
-    "note": "Insufficient data for reliable scoring — recommend baseline testing"
-  },
+  "score_confidence": "insufficient",
   "last_calculated": "1970-01-01T00:00:00.000Z",
-  "next_recommended_tests": "APOE genotyping, omega-3 index, sleep study; Fasting insulin, HOMA-IR, HbA1c, body composition DEXA"
+  "next_recommended_tests": [
+    "APOE genotyping",
+    "omega-3 index",
+    "sleep study",
+    "Fasting insulin",
+    "HOMA-IR",
+    "HbA1c",
+    "body composition DEXA"
+  ]
 }"
 `;
 
@@ -775,8 +781,6 @@ exports[`scoreRisk (snapshots) > stable output for fixture: metabolicSyndrome 1`
   "longevity_label": "Concerning",
   "composite_risk": 49,
   "biological_age": 54.5,
-  "chronological_age": 48,
-  "age_delta": -6.5,
   "risk_level": "moderate",
   "trajectory_6month": {
     "current_longevity_score": 51,
@@ -1358,12 +1362,17 @@ exports[`scoreRisk (snapshots) > stable output for fixture: metabolicSyndrome 1`
     }
   ],
   "data_completeness": 0.39,
-  "score_confidence": {
-    "level": "low",
-    "note": "Limited data — scores are directional only"
-  },
+  "score_confidence": "low",
   "last_calculated": "1970-01-01T00:00:00.000Z",
-  "next_recommended_tests": "DEXA bone density, testosterone/estradiol, magnesium RBC; ApoB, Lp(a), coronary calcium score (CAC), carotid IMT"
+  "next_recommended_tests": [
+    "DEXA bone density",
+    "testosterone/estradiol",
+    "magnesium RBC",
+    "ApoB",
+    "Lp(a)",
+    "coronary calcium score (CAC)",
+    "carotid IMT"
+  ]
 }"
 `;
 
@@ -1373,8 +1382,6 @@ exports[`scoreRisk (snapshots) > stable output for fixture: pristine 1`] = `
   "longevity_label": "Optimal",
   "composite_risk": 0,
   "biological_age": 34.7,
-  "chronological_age": 35,
-  "age_delta": 0.3,
   "risk_level": "very_low",
   "trajectory_6month": {
     "current_longevity_score": 100,
@@ -1906,12 +1913,16 @@ exports[`scoreRisk (snapshots) > stable output for fixture: pristine 1`] = `
   },
   "top_risks": [],
   "data_completeness": 0.67,
-  "score_confidence": {
-    "level": "moderate",
-    "note": "Core biomarkers present, some gaps"
-  },
+  "score_confidence": "moderate",
   "last_calculated": "1970-01-01T00:00:00.000Z",
-  "next_recommended_tests": "DEXA bone density, testosterone/estradiol, magnesium RBC; APOE genotyping, omega-3 index, sleep study"
+  "next_recommended_tests": [
+    "DEXA bone density",
+    "testosterone/estradiol",
+    "magnesium RBC",
+    "APOE genotyping",
+    "omega-3 index",
+    "sleep study"
+  ]
 }"
 `;
 
@@ -1921,8 +1932,6 @@ exports[`scoreRisk (snapshots) > stable output for fixture: pristineWithWearable
   "longevity_label": "Optimal",
   "composite_risk": 0,
   "biological_age": 33.4,
-  "chronological_age": 35,
-  "age_delta": 1.6,
   "risk_level": "very_low",
   "trajectory_6month": {
     "current_longevity_score": 100,
@@ -2499,11 +2508,15 @@ exports[`scoreRisk (snapshots) > stable output for fixture: pristineWithWearable
   },
   "top_risks": [],
   "data_completeness": 0.73,
-  "score_confidence": {
-    "level": "moderate",
-    "note": "Core biomarkers present, some gaps"
-  },
+  "score_confidence": "moderate",
   "last_calculated": "1970-01-01T00:00:00.000Z",
-  "next_recommended_tests": "DEXA bone density, testosterone/estradiol, magnesium RBC; Cancer genetic panel (BRCA/Lynch), NLR, inflammatory markers"
+  "next_recommended_tests": [
+    "DEXA bone density",
+    "testosterone/estradiol",
+    "magnesium RBC",
+    "Cancer genetic panel (BRCA/Lynch)",
+    "NLR",
+    "inflammatory markers"
+  ]
 }"
 `;

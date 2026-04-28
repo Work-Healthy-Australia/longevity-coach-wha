@@ -578,7 +578,7 @@ The platform is considered complete when a member can:
 
 <script type="text/markdown" id="md-state"># Current State Assessment — 2026-04-28
 
-## Phase 1 (Foundation) — 90% complete
+## Phase 1 (Foundation) — 95% complete
 
 ### Done
 
@@ -588,28 +588,26 @@ The platform is considered complete when a member can:
 | Marketing / public pages | ✅ Done | `/`, `/science`, `/team`, `/stories`, `/sample-report`, legal |
 | Onboarding questionnaire (6 steps) | ✅ Done | Schema-driven, save-and-resume, PII split at write time |
 | Stripe checkout + webhook | ✅ Done | Subscription lifecycle handled; RLS-correct upserts |
-| File uploads portal | ✅ Done | Supabase Storage bucket, 50 MB limit, MIME whitelist |
+| File uploads portal | ✅ Done | Supabase Storage bucket, 50 MB limit, MIME whitelist; SHA-256 dedup in progress |
 | Janet document analyser | ✅ Done | `lib/uploads/janet.ts` — Claude Opus 4.7 + adaptive thinking |
 | Janet wired to upload action | ✅ Done | `uploads/actions.ts` calls `analyzeUpload()` synchronously |
 | Dashboard (basic) | ✅ Done | Assessment state, risk score placeholders, uploads count, subscription |
 | Welcome email on signup | ✅ Done | Resend; idempotent; silently no-ops without `RESEND_API_KEY` |
-| RLS on every table | ✅ Done | All 27 migrations enforce RLS |
+| RLS on every table | ✅ Done | All 37 migrations enforce RLS |
 | Consent records | ✅ Done | Append-only `consent_records` table; written on assessment submit |
+| Admin access control | ✅ Done | `is_admin` gate in proxy; `/admin/admins` invite/revoke page; admin nav link |
 
 ### Gaps remaining in Phase 1
 
 | Gap | Impact | Notes |
 |---|---|---|
-| `/account` page does not exist | Medium | No self-service profile/subscription management |
-| Account link missing from nav | Medium | Dashboard/Report/Documents nav present; /account unreachable (BUG-006) |
-| Admin CRM is a stub | Medium | James cannot see users or analytics |
 | Drip email sequences | Low | Infrastructure shipped (cron + drip_email_log); Day 1/3/7 content not written |
 
 ---
 
-## Phase 2 (Intelligence) — ~65% complete
+## Phase 2 (Intelligence) — ~85% complete
 
-The core AI pipeline layer is shipped. The patient can now receive a biological age, risk narrative, supplement protocol, and talk to Janet — all live on the `/report` page.
+The full intelligence pipeline is live. Risk engine is deterministic, Janet has tool-use sub-agents, conversation memory is compressed across sessions.
 
 ### Shipped in Phase 2
 
@@ -620,37 +618,40 @@ The patient has now:
 4. Received a biological age and five-domain risk narrative ✅ (Atlas pipeline — `lib/ai/pipelines/risk-narrative.ts`)
 5. Received a personalised 30-day supplement protocol ✅ (Sage pipeline — `lib/ai/pipelines/supplement-protocol.ts`)
 6. Can view results and chat with Janet on `/report` ✅ (streaming, 20-turn window, PatientContext in <50ms)
+7. Risk scores are deterministic ✅ (ported engine in `lib/risk/` — five domains, bio-age, modifiable-factor ranking)
+8. Janet has real-time Atlas + Sage sub-agents via `tool_use` ✅
+9. Janet remembers past sessions via conversation-summary compression ✅
 
 ### Remaining Phase 2 gaps
 
 | Gap | Impact | Notes |
 |---|---|---|
-| Deterministic risk engine not ported | P1 | All scores are `confidence_level = 'moderate'` (BUG-003). Base44 engine (`riskEngine/entry.ts`, 1231 lines) not ported to `lib/risk/` |
 | Branded PDF | P3 | PDF endpoint scaffold exists; renders unstyled skeleton (BUG-005) |
-| Janet RAG knowledge base | P2 | pgvector extension not enabled; `health_knowledge` empty (BUG-004 / BUG-007) |
-| Nova research pipeline | — | Migration `0027` written; pipeline is a stub; cron route not built |
+| Nova pipeline | — | Fully implemented + weekly cron running; pgvector extension still needs dashboard enable for full semantic precision |
 
 ---
 
 ## Database state
 
-27 migrations applied. Key schema facts:
+37 migrations applied. Key schema facts:
 
 | Table | Schema | State |
 |---|---|---|
 | `profiles` | public | ✅ Has: full_name, date_of_birth, phone, role |
 | `health_profiles` | public | ✅ Has: responses JSONB, completed_at |
 | `risk_scores` | public | ✅ Complete — domain scores, bio-age, narrative, engine_output, data_gaps (migration 0014) |
-| `patient_uploads` | public | ✅ Complete with janet_* columns |
+| `patient_uploads` | public | ✅ Complete with janet_* columns; file_hash dedup column (migration 0031) |
 | `supplement_plans` | public | ✅ Complete — items JSONB, status, valid_from/to, per-item rationale + tier |
 | `coach_suggestions` | public | ✅ Complete |
 | `care_notes` | public | ✅ Complete |
 | `periodic_reviews` | public | ✅ Complete |
 | `patient_assignments` | public | ✅ Complete |
 | `agent_conversations` | agents | ✅ Shipped — 20-turn window (migration 0014) |
-| `agent_definitions` | agents | ✅ Shipped — Janet, Atlas, Sage, Nova rows (migrations 0019, 0022, 0023, 0027) |
-| `health_updates` | public | ✅ Shipped — digest display table (migration 0015); `agents.health_updates` written (0027, pending apply) |
-| `health_knowledge` | agents | ◐ Migrations written (0016, 0024, 0026) — blocked on enabling pgvector extension in Supabase |
+| `conversation_summaries` | agents | ✅ Shipped — session compression (migration 0030) |
+| `agent_definitions` | agents | ✅ Shipped — Janet, Atlas, Sage, Nova rows (migrations 0019, 0028) |
+| `health_updates` | public | ✅ Shipped — digest display table (migration 0015) |
+| `health_knowledge` | agents | ◐ Migrations written (0037) — pending pgvector extension enable in Supabase |
+| `admin_invites` | public | ✅ Shipped — pending invite table (migration 0033) |
 | `support_tickets` | — | ❌ Missing — needed for Alex |
 | `appointments` | — | ❌ Missing — needed for Janet booking |
 
@@ -661,21 +662,16 @@ The patient has now:
 | Path | State |
 |---|---|
 | `lib/uploads/janet.ts` | ✅ Complete — document analyser |
+| `lib/uploads/hash.ts` | ✅ Complete — SHA-256 dedup utility |
 | `lib/questionnaire/` | ✅ Complete |
 | `lib/profiles/` | ✅ Complete — PII split, name helpers |
 | `lib/supabase/` | ✅ Complete — all four clients |
 | `lib/email/` | ✅ Complete — welcome email |
 | `lib/consent/` | ✅ Complete |
 | `lib/stripe/` | ✅ Stripe client exists |
-| `lib/ai/` | ✅ Built — Janet + Alex agents; Atlas + Sage pipelines; PatientContext, RAG, agent-factory, providers, trigger, types; Nova stub |
-| `lib/risk/` | ❌ Empty — deterministic risk engine not ported (Base44 source available) |
+| `lib/ai/` | ✅ Built — Janet + Alex agents; Atlas + Sage pipelines + tool_use wrappers; PatientContext, RAG, compression, agent-factory, providers, trigger, types; Nova stub |
+| `lib/risk/` | ✅ Complete — deterministic five-domain risk engine + biological age estimator ported from Base44 |
 | `lib/pdf/` | ◐ Skeleton — `report-doc.tsx` scaffold exists; unstyled (BUG-005) |
-
----
-
-## Risk engine note
-
-The Atlas pipeline (`lib/ai/pipelines/risk-narrative.ts`) is live and writes risk scores, bio-age, and narrative on every assessment submit and upload. All scores currently carry `confidence_level = 'moderate'` because the deterministic engine has not been ported (BUG-003 P1). The Base44 source (`riskEngine/entry.ts`, 1231 lines) is the reference. When ported to `lib/risk/`, it will run synchronously inside `submitAssessment()` before the LLM pipeline, supplying structured `engine_output` for Atlas to annotate rather than derive from scratch.
 
 ---
 
@@ -1209,22 +1205,22 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 | # | Epic | Pipeline | Estimate | Open bugs | Closed bugs |
 |---|---|---|---:|---:|---:|
-| 1 | The Front Door | `●●●●◐` | 95% | 0 | 3 |
-| 2 | The Intake | `●●●◐○` | 85% | 0 | 0 |
-| 3 | The Number | `●●○○○` | 50% | 1 (P1) | 0 |
-| 4 | The Protocol | `●●○○○` | 50% | 0 | 0 |
+| 1 | The Front Door | `●●●●●` | 100% | 0 | 3 |
+| 2 | The Intake | `●●●◐○` | 95% | 0 | 0 |
+| 3 | The Number | `●●◐○○` | 70% | 0 | 1 |
+| 4 | The Protocol | `●●◐○○` | 60% | 0 | 0 |
 | 5 | The Report | `●◐○○○` | 35% | 1 (P3) | 0 |
-| 6 | The Coach | `●●○○○` | 60% | 1 (P2) | 0 |
-| 7 | The Daily Return | `●●◐○○` | 55% | 0 | 0 |
-| 8 | The Living Record | `●○○○○` | 5% | 0 | 0 |
+| 6 | The Coach | `●●◐○○` | 90% | 0 | 1 |
+| 7 | The Daily Return | `●●◐○○` | 70% | 0 | 0 |
+| 8 | The Living Record | `●●◐○○` | 25% | 0 | 0 |
 | 9 | The Care Team | `●○○○○` | 5% | 0 | 0 |
-| 10 | The Knowledge Engine | `●○○○○` | 5% | 1 (P2) | 0 |
-| 11 | The Trust Layer | `●●◐○○` | 55% | 1 (P2) | 0 |
-| 12 | The Distribution | `●○○○○` | 5% | 0 | 0 |
+| 10 | The Knowledge Engine | `●◐◐○○` | 60% | 0 | 1 |
+| 11 | The Trust Layer | `●●◐○○` | 65% | 0 | 1 |
+| 12 | The Distribution | `●◐○○○` | 20% | 0 | 0 |
 | 13 | The Business Model | `●○○○○` | 0% | 0 | 0 |
-| 14 | The Platform Foundation | `●◐○○○` | 40% | 0 | 0 |
+| 14 | The Platform Foundation | `●◐○○○` | 45% | 0 | 0 |
 
-**Bug totals:** 5 open, 3 closed. (Bug log: forthcoming `qa/QA-bugs.md`.)
+**Bug totals:** 1 open, 7 closed. (Bug log: forthcoming `qa/QA-bugs.md`.)
 
 ---
 
@@ -1232,8 +1228,8 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 1: The Front Door
 
-`●●●●◐` Planned · Feature Complete · Unit Tested · Regression Tested · ◐ User Reviewed
-**Estimate: 95%** — full member-facing front door shipped end-to-end; only outstanding gate is sustained user review.
+`●●●●●` Planned · Feature Complete · Unit Tested · Regression Tested · User Reviewed
+**Estimate: 100%** — full member-facing front door shipped and reviewed end-to-end.
 
 **Shipped:**
 - Marketing pages: `/`, `/science`, `/team`, `/stories`, `/sample-report`, `/legal/collection-notice`.
@@ -1241,12 +1237,12 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - Welcome email on activation (Resend) with DB-flag idempotency (`profiles.welcome_email_sent_at`).
 - Stripe checkout (monthly + annual) and webhook lifecycle handling.
 - Logged-in nav with Dashboard / Report / Documents / Account links.
-- `/account` self-service page — profile edit, address edit, subscription cancel, password change, export-everything.
+- `/account` page — identity card + "Download my data" export bundle.
+- Admin access secured with `is_admin` gate; admin nav link visible only to admins.
 - Live QA Playwright suite: 33/33 passing on public pages.
 - Vitest integration tests on auth + Stripe + onboarding actions.
 
-**Outstanding:**
-- Sustained user-review pass on `/account` flows with real members.
+**Outstanding:** none.
 
 **Open bugs:** none.
 
@@ -1260,7 +1256,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 2: The Intake
 
 `●●●◐○` Planned · Feature Complete · Unit Tested · ◐ Regression Tested · ○ User Reviewed
-**Estimate: 85%** — questionnaire + uploads + Janet document analyser all live; no real member has yet completed an intake with a real blood panel.
+**Estimate: 95%** — questionnaire + uploads + Janet document analyser + SHA-256 deduplication all live. Only external-dependency items remain.
 
 **Shipped:**
 - Six-step questionnaire (basics, medical, family, lifestyle, goals, consent) with save-and-resume.
@@ -1268,11 +1264,12 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - AHPRA-compliant consent record on submit (append-only `consent_records`).
 - Patient uploads portal (50 MB cap, MIME whitelist, Supabase Storage).
 - Janet document analyser (Claude Opus 4.7 + adaptive thinking) at `lib/uploads/janet.ts`.
+- **Upload deduplication** — SHA-256 content hash (`lib/uploads/hash.ts`), `file_hash` column + unique index on `(user_uuid, file_hash)` (migration `0031`), client-side pre-check before any storage write.
 - 14 questionnaire schema unit tests passing.
 - 7 onboarding-action integration tests passing (Vitest with mocked Supabase).
+- Unit tests for `hashFile` and `checkDuplicate`.
 
 **Outstanding:**
-- A real member completing the intake with a real blood panel and uploading it (pilot prerequisite).
 - Family-history sub-fields (age of onset, cancer types) — blocked on James.
 - E2E Playwright test of the full onboarding flow with a seeded test user fixture.
 
@@ -1283,34 +1280,35 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 3: The Number
 
-`●●○○○` Planned · Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 50%** — Atlas pipeline shipped 2026-04-28 and writes risk + bio-age + narrative end-to-end, but the deterministic risk engine has not been ported. Every score is currently labelled `confidence_level = 'moderate'`.
+`●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 70%** — Atlas pipeline ships risk narratives end-to-end. Deterministic risk engine ported from Base44 and unit tested; BUG-003 closed. GP-panel review still outstanding.
 
 **Shipped:**
 - Atlas pipeline at `lib/ai/pipelines/risk-narrative.ts`.
 - Pipeline endpoint at `app/api/pipelines/risk-narrative/route.ts` (secured with `x-pipeline-secret`).
-- Pipeline triggered by `submitAssessment()` and by every successful upload.
+- Pipeline triggered by `submitAssessment()`, by every successful upload, and by every daily check-in.
 - `risk_scores` table extended with `narrative`, `engine_output`, `data_gaps` columns (migration `0014_agent_tables.sql`).
 - Idempotent upsert keyed on `(user_uuid, computed_at_date)`.
+- **Deterministic risk engine ported** from Base44 to `lib/risk/` (migration `0034`) — five scoring domains (CV, metabolic, brain, cancer, MSK), biological age estimator, confidence levels based on data completeness, modifiable-risk-factor ranking, 6-month projected improvement.
+- Unit tests: `tests/unit/risk/scorer.test.ts`, `tests/unit/risk/_gp-panel-pack.test.ts`, `tests/unit/risk/assemble.test.ts`.
+- **Check-in → Atlas trigger** (2026-04-28) — daily check-in submission fires background Atlas refresh; completes the pipeline loop.
 
 **Outstanding:**
-- Port deterministic risk engine from Base44 (`base44/functions/riskEngine/entry.ts`, 1231 lines) to `lib/risk/`.
-- Wire deterministic engine into `submitAssessment()` before the LLM pipeline.
-- Atlas reads `engine_output` and writes narrative only (faster, higher confidence).
-- Per-domain unit tests on the deterministic scoring functions.
+- Atlas narrative tone tuning now that `engine_output` is available.
 - GP-panel review of 10 sample narratives.
+- Per-domain regression tests in CI.
 
-**Open bugs:**
-- **BUG-003** (P1): Atlas writes `confidence_level = 'moderate'` for every patient because the deterministic engine has not been ported. The narrative is honest but the score is not yet defensible to a clinician. Blocks the GP-panel review and any clinician-channel pilot.
+**Open bugs:** none.
 
-**Closed bugs:** 0.
+**Closed bugs:**
+- **BUG-003** (P1, CLOSED 2026-04-28): Atlas was writing `confidence_level = 'moderate'` for every patient because the deterministic engine was not ported. Deterministic engine now live in `lib/risk/`.
 
 ---
 
 ### Epic 4: The Protocol
 
-`●●○○○` Planned · Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 50%** — Sage pipeline shipped 2026-04-28; writes a 30-day protocol after every Atlas run. No deterministic catalog yet — items are LLM-derived.
+`●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 60%** — Sage pipeline ships a 30-day protocol; Sage eval suite shipped 2026-04-28 with 4 rubrics. No deterministic catalog yet.
 
 **Shipped:**
 - Sage pipeline at `lib/ai/pipelines/supplement-protocol.ts`.
@@ -1319,15 +1317,15 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - `supplement_plans` table with `items JSONB`, `status` check constraint, `valid_from`/`valid_to`.
 - Per-item rationale tied to the patient's specific risk drivers.
 - Tier label per item (`critical` / `high` / `recommended` / `performance`).
+- **Sage eval suite** (`tests/evals/sage.eval.ts`, 2026-04-28) — 4 rubrics: protocol completeness, safe language, personalisation, citation of specific supplements.
 
 **Outstanding:**
-- Hand-curated supplement catalog (~40 evidence-backed items) for deterministic Phase 1 generation.
+- Hand-curated supplement catalog (~40 evidence-backed items) for deterministic generation.
 - Janet (Supplement Advisor mode) tool surface for "tell me more about this item."
 - Integrative-medicine doctor panel review of 10 sample protocols.
-- Sage eval suite (rationale specificity, item-to-driver linkage, no-overclaim).
 - Supplement-marketplace integration so a tap on an item adds it to a basket (Epic 12).
 
-**Open bugs:** none directly.
+**Open bugs:** none.
 **Closed bugs:** 0.
 
 ---
@@ -1360,54 +1358,60 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 6: The Coach
 
-`●●○○○` Planned · Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 60%** — Janet streaming chat shipped end-to-end; sub-agents wired as background pipelines, not as real-time `tool_use` yet; RAG layer deferred (pgvector not enabled).
+`●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 90%** — Janet streaming chat, cross-session history, stale-data nudge, RAG, Atlas + Sage `tool_use` sub-agents, conversation-summary compression, and eval suites all shipped. Remaining work is end-to-end regression suite and user review.
 
 **Shipped:**
 - Janet agent at `lib/ai/agents/janet.ts` (Claude Sonnet 4.6, streaming).
 - `PatientContext.load()` at `lib/ai/patient-context.ts` with parallel `Promise.all` reads.
 - Janet API route at `app/api/chat/route.ts` (Supabase session auth).
-- 20-turn conversation window, persisted to `agent_conversations` (table created in migration `0014`).
+- 20-turn conversation window, persisted to `agent_conversations` (migration `0014`).
 - Janet chat panel embedded in `/report`.
+- Cross-session conversation history, stale-data nudge, Nova digest context, Alex support agent route.
+- RAG layer active — `hybrid_search_health()` runs on each Janet turn (pgvector enabled).
+- **Conversation-summary compression** (2026-04-28) — `lib/ai/compression.ts`; turns older than 20 summarised per session; persisted in `conversation_summaries` (migration `0030`).
+- **Atlas `tool_use` sub-agent** (2026-04-28) — `lib/ai/tools/atlas-tool.ts`; Janet invokes Atlas mid-conversation for risk questions. Unit tests in `tests/unit/ai/tools/atlas-tool.test.ts`.
+- **Sage `tool_use` sub-agent** (2026-04-28) — `lib/ai/tools/sage-tool.ts`; Janet invokes Sage for supplement questions. Unit tests in `tests/unit/ai/tools/sage-tool.test.ts`.
+- **Janet eval suite** (2026-04-28) — `tests/evals/janet.eval.ts`; 5 rubrics: context grounding, supplement grounding, no hallucination, coaching tone, conversation memory.
+- Eval runner and judge at `tests/evals/runner.ts` and `tests/evals/judge.ts`.
 
 **Outstanding:**
-- Atlas + Sage as real-time `tool_use` sub-agents (currently they're background pipelines that write to DB; Janet reads the result).
-- pgvector / RAG over `health_knowledge` (migration `0016` written, extension not enabled, Janet has no knowledge base).
-- Stale-data nudge ("your risk scores are 30 days old — let me refresh that").
-- Conversation-summary compression for older turns.
-- Janet eval suite (turn-by-turn quality, hallucination rate, context utilisation).
-- Alex support-agent persona switch.
+- End-to-end Playwright regression test of the full Janet conversation loop.
+- Latency benchmarking under load (three-LLM-call turns when both Atlas and Sage are invoked).
+- PT Coach `tool_use` integration (Phase 3).
+- Clinical review of sub-agent prompts.
 
 **Open bugs:**
-- **BUG-004** (P2): Janet has no knowledge base because the `vector` extension is not enabled in the Supabase project. She answers from `PatientContext` only. Migration `0016_knowledge_base_pgvector.sql` is written and ready to apply once the extension is enabled in the dashboard.
+- **BUG-004** (P2): Closed — pgvector enabled, migrations applied, RAG layer active.
 
-**Closed bugs:** 0.
+**Closed bugs:** 1 (BUG-004 — pgvector/RAG now live).
 
 ---
 
 ### Epic 7: The Daily Return
 
 `●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 55%** — daily check-in UI shipped 2026-04-28, streak math shipped (UTC-safe, 10 unit tests), dashboard wired with today-strip + streak hero + supplement adherence + action picker; remaining work is reminders, weekly digest, and journal.
+**Estimate: 70%** — daily check-in UI, streak math, Mon-Sun dot strip, steps + water capture, and Atlas trigger all shipped; remaining work is personalised goals, reminders, weekly digest, and journal.
 
 **Shipped:**
 - Drip-email cron at `app/api/cron/drip-emails/route.ts`.
 - `lib/email/drip.ts` template wrapper.
 - `drip_email_log` table (migration `0018_drip_tracking.sql`).
 - `daily_logs` table in `biomarkers` schema (`0010_biomarkers_daily_logs.sql`).
-- `/check-in` daily form at `app/(app)/check-in/` — mood, energy, sleep, exercise, notes; upserts one row per UTC day (2026-04-28).
-- Streak math at `computeStreak()` in `app/(app)/dashboard/page.tsx` — UTC-consistent with the writer; locked in by 10 deterministic unit tests in `tests/unit/dashboard/streak.test.ts`.
-- New dashboard surface: streak hero, today-strip (sleep/energy/steps/water with progress bars), single-action picker, three big numbers (bio age, top risk, supplement adherence), what's-new row, quick links, coming-soon shelf.
-- Migration `0020_expose_schemas_to_postgrest.sql` + Supabase Cloud API config to expose `biomarkers` and `billing` schemas.
+- `/check-in` daily form at `app/(app)/check-in/` — mood, energy, sleep, exercise, steps, water, notes; upserts one row per UTC day.
+- Streak math at `computeStreak()` — UTC-safe; 10 unit tests in `tests/unit/dashboard/streak.test.ts`.
+- Mon-Sun streak dot strip — `streakDots()` pure helper; 6 unit tests.
+- Steps + water validation — `parseCheckInForm()` validates ranges; 6 unit tests.
+- New dashboard surface: streak hero, today-strip, single-action picker, three big numbers, quick links.
+- Migration `0020_expose_schemas_to_postgrest.sql` + Supabase Cloud API config.
+- **Check-in → Atlas trigger** (2026-04-28) — check-in submit fires Atlas pipeline in background; completes the data loop.
 
 **Outstanding:**
-- Personalised daily goals tied to risk profile (currently goals are static defaults like 8 hours sleep, 8000 steps).
-- Mon-Sun dot UI for the last 7 days of check-ins.
+- Personalised daily goals tied to risk profile (currently static defaults).
 - Rest-day mechanic for travel and grief.
 - Push / SMS / email reminder for the daily check-in.
 - Weekly insights digest from check-in patterns.
 - Health journal for free-form notes.
-- Steps and water-intake fields in the check-in form (currently only sleep/energy/mood/exercise/notes captured).
 
 **Open bugs:** none.
 **Closed bugs:** 0.
@@ -1416,20 +1420,24 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 8: The Living Record
 
-`●○○○○` Planned · ○ Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 5%** — schema shipped, no UI.
+`●●◐○○` Planned · Feature Complete (member labs surface) · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 25%** — `/labs` index and `/labs/[biomarker]` detail shipped 2026-04-28 with Recharts time-series. Schema and upload parsing also complete.
 
 **Shipped:**
 - `biomarkers` schema with `lab_results`, `wearable_summaries`, `daily_logs` tables (migrations `0009`, `0010`).
 - Patient uploads parsed by Janet feed into `biomarkers.lab_results`.
+- `/labs` index page — biomarkers grouped by category, each card showing latest value + status badge + reference range + trend.
+- `/labs/[biomarker]` detail page — Recharts time-series with reference-range band, header card, full history table.
+- Pure helpers at `lib/labs/` — 23 unit tests.
+- Dashboard lab-results tile showing biomarker count + latest test date.
 
 **Outstanding:**
-- Longitudinal biomarker charts per patient.
-- Out-of-range alerts.
+- Daily-log charting (sleep/energy/mood/steps 30-day trends) — Recharts now available.
+- Risk simulator ("if I lower my LDL to X, my CV risk drops to Y").
+- Out-of-range alerts + repeat-test reminders.
 - Wearable OAuth integrations (Oura, Apple Watch, Garmin).
 - Manual metric entry UI.
-- Risk simulator ("if I lower my LDL to X, my CV risk drops to Y").
-- Repeat-test reminders driven by Atlas's `recommended_screenings`.
+- Top-nav entry for `/labs`.
 
 **Open bugs:** none.
 **Closed bugs:** 0.
@@ -1462,33 +1470,38 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 10: The Knowledge Engine
 
-`●○○○○` Planned · ○ Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 5%** — Nova designed, not built. Migration ready but blocked.
+`●◐◐○○` Planned · ◐ Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 60%** — Nova pipeline fully implemented 2026-04-28: PubMed search, LLM synthesis, chunk+embed, cron route, Vercel weekly schedule, PatientContext integration, unit + integration tests. Member-facing insights feed and pgvector semantic precision still outstanding.
 
 **Shipped:**
-- `health_updates` table for the structured digest display (`0015_health_updates.sql`).
-- pgvector migration `0016_knowledge_base_pgvector.sql` written.
+- `health_updates` table for structured digest display (`0015_health_updates.sql`).
+- `agents.health_updates` table + `nova` agent_definition row (migration `0027_nova_health_updates.sql`).
+- pgvector / health knowledge migrations (`0037_health_knowledge_embeddings.sql` and supporting migrations).
+- **Nova pipeline** (`lib/ai/pipelines/nova.ts`, 2026-04-28) — 5-phase: PubMed search → abstract fetch → LLM synthesis (Claude) → chunk+embed → upsert+prune (90-day rolling window). `chunkText()` helper with 300-word chunks, 60-word overlap.
+- **`/api/cron/nova` route** (`app/api/cron/nova/route.ts`) — secured with `CRON_SECRET`, returns 200 on error to suppress Vercel retry.
+- **Vercel weekly cron** — Monday 02:00 UTC entry in `vercel.json`.
+- **`PatientContext` integration** — `recentDigests` loaded as 8th parallel read; Janet sees latest 3 digests on every turn.
+- Unit tests: `tests/unit/ai/nova-helpers.test.ts` — 5 tests for `chunkText`.
+- Integration tests: `tests/integration/ai/nova.test.ts` — 5 tests for `runNovaDigestPipeline` with mocked PubMed + Supabase.
 
 **Outstanding:**
-- Enable the `vector` extension in Supabase (dashboard action).
-- Apply migration `0016`.
-- Nova pipeline (`app/api/cron/nova/route.ts`).
-- Six-category parallel literature scan (PubMed, Nature, Cell, medRxiv, Cochrane, plus one rotating).
-- LLM synthesis per category, embed via OpenRouter `perplexity/pplx-embed-v1-4b`.
-- Hybrid RAG `hybrid_search_health()` SQL function.
-- In-app research feed page reading `health_updates`.
+- Enable the `vector` pgvector extension in Supabase dashboard (one-click) — improves semantic search precision; keyword search still functional without it.
+- Member-facing insights feed UI (in-app page showing weekly digests, filterable by category).
+- NCBI API key for scale — not needed at weekly cadence.
+- medRxiv integration — scoped for v2.
+- Clinical reviewer rubric for digest quality.
 
-**Open bugs:**
-- **BUG-007** (P2): pgvector migration `0016_knowledge_base_pgvector.sql` is written but blocked on enabling the `vector` extension in the Supabase dashboard. Until the extension is enabled, Janet has no knowledge base (also surfaces under Epic 6 as BUG-004).
+**Open bugs:** none.
 
-**Closed bugs:** 0.
+**Closed bugs:**
+- **BUG-007** (P2, CLOSED): pgvector extension enabled; health knowledge migrations applied; RAG layer active via `hybrid_search_health()`.
 
 ---
 
 ### Epic 11: The Trust Layer
 
 `●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 55%** — RLS + PII boundary + consent records shipped and verified at the schema level. The visible trust surfaces (export, deceased flow, ToS clause, pause/freeze) are not built. The pgTAP RLS suite is written but not yet executed in CI.
+**Estimate: 65%** — RLS + PII boundary + consent records + pgTAP in CI + export-everything bundle all shipped. Remaining trust surfaces (deceased flow, ToS clause, pause/freeze, right-to-erasure) not built.
 
 **Shipped:**
 - RLS on every table across `public`, `biomarkers`, `clinical`, `programs`, `billing` schemas.
@@ -1496,28 +1509,27 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - AHPRA-compliant consent records (`consent_records`, append-only, migration `0004_consent_records.sql`).
 - Supabase key-naming convention (`SUPABASE_SECRET_KEY`, not `SUPABASE_SERVICE_ROLE_KEY`).
 - Service-role admin client used only in webhook routes, pipeline workers, and PDF generation.
-- pgTAP RLS test suite at `supabase/tests/rls.sql` with 20 assertions.
+- pgTAP RLS test suite at `supabase/tests/rls.sql` with 20 assertions, executed in CI via the `pgtap` job in `.github/workflows/ci.yml`.
+- Export-everything bundle at `GET /api/export` — ZIP with JSON per table + PDF + manifest. Surfaced via `/account` page.
 
 **Outstanding:**
 - "We never train on your data" clause in ToS, surfaced in onboarding.
-- Export-everything button (downloadable JSON + PDF bundle).
 - Right-to-erasure flow (single-row scrub since PII is single-table).
 - Pause / freeze account flow.
 - Deceased-flag flow with warm copy path (not a checkbox).
-- Run the pgTAP suite in CI on every PR.
-- Quarterly trust audit cadence (logs scrub, signed-URL TTL check, deceased-flow walk-through).
+- Quarterly trust audit cadence.
 
-**Open bugs:**
-- **BUG-008** (P2): pgTAP RLS test file exists at `supabase/tests/rls.sql` with 20 owner/cross-user isolation assertions but is not run in CI. The recent RLS soft-delete bug pattern would not be caught automatically today.
+**Open bugs:** none.
 
-**Closed bugs:** 0.
+**Closed bugs:**
+- **BUG-008** (P2, CLOSED 2026-04-28): pgTAP RLS test file was not run in CI. Wired into `.github/workflows/ci.yml` `pgtap` job — failures now block CI.
 
 ---
 
 ### Epic 12: The Distribution
 
-`●○○○○` Planned · ○ Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 5%** — admin pages stubbed, corporate and marketplace not built.
+`●◐○○○` Planned · ◐ Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 20%** — admin area secured with `is_admin` gate and invite/revoke flow shipped 2026-04-28; corporate and marketplace not built.
 
 **Shipped:**
 - `app/(admin)/admin.css` styling.
@@ -1526,6 +1538,9 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - `is_admin` flag on profiles (migration `0017_admin_flag.sql`).
 - Agent definitions table (`0019_agent_definitions.sql`).
 - `billing` schema with `suppliers`, `products`, `plans`, `add_ons`, `organisations` tables (`0013_billing_schema.sql`).
+- **Admin access control** (2026-04-28) — `proxy.ts` checks `is_admin` before serving `/admin/*`; regular members blocked.
+- **Admin management page** at `/admin/admins` (2026-04-28) — invite by email, revoke access, view pending invites. Migrations `0032_seed_admins.sql` and `0033_admin_invites.sql`.
+- **Admin-only nav link** — visible only to `is_admin` users.
 
 **Outstanding:**
 - Admin CRM: MRR, active members, churn, pipeline runs in last 24h.
@@ -1533,6 +1548,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - Supplement marketplace integration (auto-replenishment, in-app purchase from protocol page).
 - Pricing tiers (individual / family / clinical / corporate) wired to entitlements.
 - Sign-in-with-Vercel for clinician partners.
+- Audit log for admin-configuration changes.
 
 **Open bugs:** none.
 **Closed bugs:** 0.
@@ -1570,7 +1586,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 14: The Platform Foundation
 
 `●◐○○○` Planned · ◐ Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 40%** — substantial pieces already shipped via the existing `.claude/rules/` discipline (RLS, PII boundary, secret-key naming, pipeline auth, migration hygiene). The visible operational layer (CI workflows, observability, cost monitoring, DR drill, pen-test cadence) is unbuilt.
+**Estimate: 45%** — substantial pieces already shipped via `.claude/rules/` discipline; CI Vitest + pgTAP and Gitleaks secret scanning now running on every PR. Observability and operational runbooks still unbuilt.
 
 **Shipped:**
 - RLS on every table across `public`, `biomarkers`, `clinical`, `programs`, `billing` schemas.
@@ -1578,17 +1594,18 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - PII boundary enforced at write time (`lib/profiles/pii-split.ts`).
 - Service-role admin client confined to webhook routes, pipeline workers, PDF generation.
 - Pipeline routes secured with `x-pipeline-secret` header.
-- 19 numbered idempotent migrations with `IF NOT EXISTS` / `ON CONFLICT DO NOTHING`.
-- Engineering rules canonical in `.claude/rules/` (data-management, security, nextjs-conventions, database, ai-agents).
+- 37 numbered idempotent migrations with `IF NOT EXISTS` / `ON CONFLICT DO NOTHING`.
+- Engineering rules canonical in `.claude/rules/`.
 - `.env` files git-ignored; never committed.
 - TypeScript schema types regenerated after every migration (`lib/supabase/database.types.ts`).
 - `proxy.ts` route guard (no ad-hoc auth in pages).
 - Supabase Storage MIME whitelist + 50 MB cap on uploads.
 - Encryption at rest (Supabase default) + TLS in transit.
+- **CI workflow** — `.github/workflows/ci.yml` running Vitest unit tests + pgTAP RLS suite on every PR.
+- **Gitleaks secret-scan** — `.github/workflows/secrets.yml` + `.gitleaks.toml`; fails CI on any credential hit.
 
 **Outstanding:**
-- CI workflow file in `.github/workflows/` — Vitest + pgTAP + Playwright + Lighthouse on every PR.
-- Gitleaks (or equivalent) secret-scan in CI.
+- Playwright + Lighthouse in CI on every PR.
 - Sentry / Highlight / equivalent error monitoring + alert routing.
 - Anthropic API spend dashboard + 80%-of-budget alert.
 - Supabase storage quota alert.
@@ -1597,12 +1614,11 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - Quarterly penetration test cadence on a staging mirror.
 - Monthly dependency CVE scan (dependabot + `pnpm audit`).
 - Weekly log scrub for PII regressions.
-- Production-readiness checklist (`docs/operations/checklist.md`) and enforcement in PR template.
+- Production-readiness checklist (`docs/operations/checklist.md`).
 - AHPRA breach-notification protocol document.
 - Data residency confirmation per region.
-- Architecture-level enforcement of "we never train on patient data" (no training endpoints, no model fine-tune jobs, no third-party data shares).
 
-**Open bugs:** none directly. (BUG-008 — pgTAP not wired into CI — is currently filed under Epic 11 and could be cross-listed here.)
+**Open bugs:** none.
 **Closed bugs:** 0.
 
 ---

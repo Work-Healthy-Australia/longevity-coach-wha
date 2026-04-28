@@ -100,18 +100,18 @@ export function getScoreConfidence(domains: DomainResult[]): ScoreConfidence {
   return { level: "insufficient", note: "Insufficient data for reliable scoring — recommend baseline testing" };
 }
 
-export function getNextRecommendedTest(domains: DomainResult[]): string {
-  const testMap: Record<DomainName, string> = {
-    cardiovascular: "ApoB, Lp(a), coronary calcium score (CAC), carotid IMT",
-    metabolic: "Fasting insulin, HOMA-IR, HbA1c, body composition DEXA",
-    neurodegenerative: "APOE genotyping, omega-3 index, sleep study",
-    oncological: "Cancer genetic panel (BRCA/Lynch), NLR, inflammatory markers",
-    musculoskeletal: "DEXA bone density, testosterone/estradiol, magnesium RBC",
+export function getNextRecommendedTest(domains: DomainResult[]): string[] {
+  const testMap: Record<DomainName, string[]> = {
+    cardiovascular: ["ApoB", "Lp(a)", "coronary calcium score (CAC)", "carotid IMT"],
+    metabolic: ["Fasting insulin", "HOMA-IR", "HbA1c", "body composition DEXA"],
+    neurodegenerative: ["APOE genotyping", "omega-3 index", "sleep study"],
+    oncological: ["Cancer genetic panel (BRCA/Lynch)", "NLR", "inflammatory markers"],
+    musculoskeletal: ["DEXA bone density", "testosterone/estradiol", "magnesium RBC"],
   };
   const sorted = [...domains].sort(
     (a, b) => (a.data_completeness || 0) - (b.data_completeness || 0),
   );
-  return sorted.slice(0, 2).map((d) => testMap[d.domain]).join("; ");
+  return sorted.slice(0, 2).flatMap((d) => testMap[d.domain]);
 }
 
 export function getCurrentCompositeRisk(
@@ -215,28 +215,24 @@ export function scoreRisk(patient: PatientInput): EngineOutput {
   const trajectory = projectTrajectory(patient, domains, weights);
   const domainsArray = [cvd, meta, neuro, onco, msk];
 
-  const chronAge = patient.demographics?.age;
-  const ageDelta = chronAge != null ? Math.round((chronAge - biologicalAge) * 10) / 10 : null;
-
   const confidence: ScoreConfidence = getScoreConfidence(domainsArray);
   const completeness = getOverallCompleteness(domainsArray);
 
   // Use a deterministic timestamp string only — `last_calculated` is the
   // engine's stamp; storage layer overrides as needed for snapshot stability.
+  // NOTE: chronological_age and age_delta are derived at read time, not stored.
   return {
     longevity_score: longevityScore,
     longevity_label: longevityLabel(longevityScore),
     composite_risk: compositeRisk,
     biological_age: biologicalAge,
-    chronological_age: chronAge,
-    age_delta: ageDelta,
     risk_level: getRiskLevel(compositeRisk),
     trajectory_6month: trajectory,
     domains,
     domain_weights: weights,
     top_risks: getTopModifiableRisks(domainsArray, 5),
     data_completeness: completeness,
-    score_confidence: confidence,
+    score_confidence: confidence.level,
     last_calculated: new Date(0).toISOString(), // deterministic for snapshots; caller may override
     next_recommended_tests: getNextRecommendedTest(domainsArray),
   };

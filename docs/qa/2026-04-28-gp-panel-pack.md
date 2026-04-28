@@ -35,7 +35,7 @@ Each domain is scored 0–100 by combining ~10–20 weighted factors (e.g., apoB
 - **Biological age:** 34.7 (0.3 years younger than chronological)
 - **Composite risk:** 0 → `very_low`
 - **Longevity score:** 100 (Optimal)
-- **Confidence:** `moderate` — Core biomarkers present, some gaps
+- **Confidence:** `moderate`
 - **Data completeness:** 67%
 
 ### Domain scores
@@ -50,7 +50,7 @@ Each domain is scored 0–100 by combining ~10–20 weighted factors (e.g., apoB
 
 ### Engine-recommended next tests
 
-DEXA bone density, testosterone/estradiol, magnesium RBC; APOE genotyping, omega-3 index, sleep study
+DEXA bone density; testosterone/estradiol; magnesium RBC; APOE genotyping; omega-3 index; sleep study
 
 ### GP-panel notes
 
@@ -75,7 +75,7 @@ DEXA bone density, testosterone/estradiol, magnesium RBC; APOE genotyping, omega
 - **Biological age:** 33.4 (1.6 years younger than chronological)
 - **Composite risk:** 0 → `very_low`
 - **Longevity score:** 100 (Optimal)
-- **Confidence:** `moderate` — Core biomarkers present, some gaps
+- **Confidence:** `moderate`
 - **Data completeness:** 73%
 
 ### Domain scores
@@ -90,7 +90,7 @@ DEXA bone density, testosterone/estradiol, magnesium RBC; APOE genotyping, omega
 
 ### Engine-recommended next tests
 
-DEXA bone density, testosterone/estradiol, magnesium RBC; Cancer genetic panel (BRCA/Lynch), NLR, inflammatory markers
+DEXA bone density; testosterone/estradiol; magnesium RBC; Cancer genetic panel (BRCA/Lynch); NLR; inflammatory markers
 
 ### GP-panel notes
 
@@ -117,7 +117,7 @@ DEXA bone density, testosterone/estradiol, magnesium RBC; Cancer genetic panel (
 - **Biological age:** 65.7 (7.7 years older than chronological)
 - **Composite risk:** 65 → `high`
 - **Longevity score:** 35 (Critical)
-- **Confidence:** `low` — Limited data — scores are directional only
+- **Confidence:** `low`
 - **Data completeness:** 40%
 
 ### Domain scores
@@ -140,7 +140,7 @@ DEXA bone density, testosterone/estradiol, magnesium RBC; Cancer genetic panel (
 
 ### Engine-recommended next tests
 
-DEXA bone density, testosterone/estradiol, magnesium RBC; Fasting insulin, HOMA-IR, HbA1c, body composition DEXA
+DEXA bone density; testosterone/estradiol; magnesium RBC; Fasting insulin; HOMA-IR; HbA1c; body composition DEXA
 
 ### GP-panel notes
 
@@ -166,7 +166,7 @@ DEXA bone density, testosterone/estradiol, magnesium RBC; Fasting insulin, HOMA-
 - **Biological age:** 54.5 (6.5 years older than chronological)
 - **Composite risk:** 49 → `moderate`
 - **Longevity score:** 51 (Concerning)
-- **Confidence:** `low` — Limited data — scores are directional only
+- **Confidence:** `low`
 - **Data completeness:** 39%
 
 ### Domain scores
@@ -189,7 +189,7 @@ DEXA bone density, testosterone/estradiol, magnesium RBC; Fasting insulin, HOMA-
 
 ### Engine-recommended next tests
 
-DEXA bone density, testosterone/estradiol, magnesium RBC; ApoB, Lp(a), coronary calcium score (CAC), carotid IMT
+DEXA bone density; testosterone/estradiol; magnesium RBC; ApoB; Lp(a); coronary calcium score (CAC); carotid IMT
 
 ### GP-panel notes
 
@@ -214,7 +214,7 @@ DEXA bone density, testosterone/estradiol, magnesium RBC; ApoB, Lp(a), coronary 
 - **Biological age:** 42 (matches chronological)
 - **Composite risk:** 10 → `very_low`
 - **Longevity score:** 90 (Optimal)
-- **Confidence:** `insufficient` — Insufficient data for reliable scoring — recommend baseline testing
+- **Confidence:** `insufficient`
 - **Data completeness:** 8%
 
 ### Domain scores
@@ -229,7 +229,7 @@ DEXA bone density, testosterone/estradiol, magnesium RBC; ApoB, Lp(a), coronary 
 
 ### Engine-recommended next tests
 
-APOE genotyping, omega-3 index, sleep study; Fasting insulin, HOMA-IR, HbA1c, body composition DEXA
+APOE genotyping; omega-3 index; sleep study; Fasting insulin; HOMA-IR; HbA1c; body composition DEXA
 
 ### GP-panel notes
 
@@ -256,7 +256,7 @@ APOE genotyping, omega-3 index, sleep study; Fasting insulin, HOMA-IR, HbA1c, bo
 - **Biological age:** 67.5 (3.5 years older than chronological)
 - **Composite risk:** 29 → `low`
 - **Longevity score:** 71 (Good)
-- **Confidence:** `low` — Limited data — scores are directional only
+- **Confidence:** `low`
 - **Data completeness:** 44%
 
 ### Domain scores
@@ -279,7 +279,7 @@ APOE genotyping, omega-3 index, sleep study; Fasting insulin, HOMA-IR, HbA1c, bo
 
 ### Engine-recommended next tests
 
-Fasting insulin, HOMA-IR, HbA1c, body composition DEXA; APOE genotyping, omega-3 index, sleep study
+Fasting insulin; HOMA-IR; HbA1c; body composition DEXA; APOE genotyping; omega-3 index; sleep study
 
 ### GP-panel notes
 
@@ -304,7 +304,7 @@ Fasting insulin, HOMA-IR, HbA1c, body composition DEXA; APOE genotyping, omega-3
 - **Biological age:** 60.4 (4.4 years older than chronological)
 - **Composite risk:** 53 → `moderate`
 - **Longevity score:** 47 (Concerning)
-- **Confidence:** `insufficient` — Insufficient data for reliable scoring — recommend baseline testing
+- **Confidence:** `insufficient`
 - **Data completeness:** 35%
 
 ### Domain scores
@@ -327,7 +327,7 @@ Fasting insulin, HOMA-IR, HbA1c, body composition DEXA; APOE genotyping, omega-3
 
 ### Engine-recommended next tests
 
-DEXA bone density, testosterone/estradiol, magnesium RBC; Fasting insulin, HOMA-IR, HbA1c, body composition DEXA
+DEXA bone density; testosterone/estradiol; magnesium RBC; Fasting insulin; HOMA-IR; HbA1c; body composition DEXA
 
 ### GP-panel notes
 
@@ -350,9 +350,9 @@ DEXA bone density, testosterone/estradiol, magnesium RBC; Fasting insulin, HOMA-
 ### Engine output
 
 - **Biological age:** 53.6 (1.6 years older than chronological)
-- **Composite risk:** 12 → `very_low`
-- **Longevity score:** 88 (Optimal)
-- **Confidence:** `low` — Limited data — scores are directional only
+- **Composite risk:** 13 → `very_low`
+- **Longevity score:** 87 (Optimal)
+- **Confidence:** `low`
 - **Data completeness:** 38%
 
 ### Domain scores
@@ -361,7 +361,7 @@ DEXA bone density, testosterone/estradiol, magnesium RBC; Fasting insulin, HOMA-
 |---|---:|---|---|
 | cardiovascular | 14 | `very_low` | homocysteine (45) |
 | metabolic | 7 | `very_low` | exercise_volume (35) |
-| neurodegenerative | 23 | `low` | homocysteine_neuro (50) |
+| neurodegenerative | 32 | `moderate` | homocysteine_neuro (50) |
 | oncological | 0 | `very_low` | — |
 | musculoskeletal | 14 | `very_low` | — |
 
@@ -375,7 +375,7 @@ DEXA bone density, testosterone/estradiol, magnesium RBC; Fasting insulin, HOMA-
 
 ### Engine-recommended next tests
 
-DEXA bone density, testosterone/estradiol, magnesium RBC; Fasting insulin, HOMA-IR, HbA1c, body composition DEXA
+DEXA bone density; testosterone/estradiol; magnesium RBC; Fasting insulin; HOMA-IR; HbA1c; body composition DEXA
 
 ### GP-panel notes
 
@@ -398,9 +398,9 @@ DEXA bone density, testosterone/estradiol, magnesium RBC; Fasting insulin, HOMA-
 ### Engine output
 
 - **Biological age:** 37.8 (0.2 years younger than chronological)
-- **Composite risk:** 12 → `very_low`
-- **Longevity score:** 88 (Optimal)
-- **Confidence:** `low` — Limited data — scores are directional only
+- **Composite risk:** 10 → `very_low`
+- **Longevity score:** 90 (Optimal)
+- **Confidence:** `low`
 - **Data completeness:** 44%
 
 ### Domain scores
@@ -408,9 +408,9 @@ DEXA bone density, testosterone/estradiol, magnesium RBC; Fasting insulin, HOMA-
 | Domain | Score | Risk | Top driver |
 |---|---:|---|---|
 | cardiovascular | 34 | `moderate` | apoB (95) |
-| metabolic | 4 | `very_low` | — |
+| metabolic | 1 | `very_low` | — |
 | neurodegenerative | 0 | `very_low` | — |
-| oncological | 3 | `very_low` | — |
+| oncological | 0 | `very_low` | — |
 | musculoskeletal | 0 | `very_low` | — |
 
 ### Top modifiable risks (panel-level)
@@ -420,7 +420,7 @@ DEXA bone density, testosterone/estradiol, magnesium RBC; Fasting insulin, HOMA-
 
 ### Engine-recommended next tests
 
-DEXA bone density, testosterone/estradiol, magnesium RBC; Fasting insulin, HOMA-IR, HbA1c, body composition DEXA
+DEXA bone density; testosterone/estradiol; magnesium RBC; Fasting insulin; HOMA-IR; HbA1c; body composition DEXA
 
 ### GP-panel notes
 
@@ -447,7 +447,7 @@ DEXA bone density, testosterone/estradiol, magnesium RBC; Fasting insulin, HOMA-
 - **Biological age:** 67.3 (6.3 years older than chronological)
 - **Composite risk:** 54 → `moderate`
 - **Longevity score:** 46 (Concerning)
-- **Confidence:** `low` — Limited data — scores are directional only
+- **Confidence:** `low`
 - **Data completeness:** 47%
 
 ### Domain scores
@@ -470,7 +470,7 @@ DEXA bone density, testosterone/estradiol, magnesium RBC; Fasting insulin, HOMA-
 
 ### Engine-recommended next tests
 
-DEXA bone density, testosterone/estradiol, magnesium RBC; APOE genotyping, omega-3 index, sleep study
+DEXA bone density; testosterone/estradiol; magnesium RBC; APOE genotyping; omega-3 index; sleep study
 
 ### GP-panel notes
 

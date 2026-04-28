@@ -227,15 +227,40 @@ export interface EngineOutput {
   longevity_label: "Optimal" | "Good" | "Needs Attention" | "Concerning" | "Critical";
   composite_risk: number;
   biological_age: number;
-  chronological_age: number | undefined;
-  age_delta: number | null;
+  // NOTE: chronological_age and age_delta are NOT included — they are derived at read time
   risk_level: RiskLevel;
   trajectory_6month: TrajectoryResult;
   domains: DomainsRecord;
   domain_weights: DomainWeights;
   top_risks: ModifiableRisk[];
   data_completeness: number;
-  score_confidence: ScoreConfidence;
+  score_confidence: ConfidenceLevel;
   last_calculated: string;
-  next_recommended_tests: string;
+  next_recommended_tests: string[];
+}
+
+// ------------------------------------------------------------
+// Spec-alias types (consumed by questionnaire adapter and Atlas)
+// ------------------------------------------------------------
+
+/** Alias for Demographics — age is computed at call time, never stored */
+export type PatientDemographics = Required<Pick<Demographics, "age" | "sex" | "height_cm" | "weight_kg">>;
+
+/** Alias for Factor — used by questionnaire adapter and downstream consumers */
+export type FactorResult = Factor;
+
+/** Alias for DomainsRecord */
+export type DomainScores = DomainsRecord;
+
+/** Trajectory projection shape expected by downstream consumers */
+export interface TrajectoryProjection {
+  current_longevity_score: number;
+  projected_longevity_score: number;
+  projected_improvement: number;
+  improvement_factors: Array<{
+    name: string;
+    current_score: number;
+    projected_score: number;
+    improvement: number;
+  }>;
 }

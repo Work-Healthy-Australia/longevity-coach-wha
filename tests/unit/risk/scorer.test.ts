@@ -12,11 +12,11 @@ describe("scoreRisk (snapshots)", () => {
 
   it("lowData fixture yields confidence_level === 'insufficient'", () => {
     const out = scoreRisk(allFixtures.lowData);
-    expect(out.score_confidence.level).toBe("insufficient");
+    expect(out.score_confidence).toBe("insufficient");
   });
 
   it("pristine fixture yields high or moderate confidence", () => {
     const out = scoreRisk(allFixtures.pristine);
-    expect(["high", "moderate"]).toContain(out.score_confidence.level);
+    expect(["high", "moderate"]).toContain(out.score_confidence);
   });
 });

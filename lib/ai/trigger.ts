@@ -23,6 +23,6 @@ export function triggerPipeline(
     },
     body: JSON.stringify({ userId }),
   }).catch((err) => {
-    console.error(`[trigger] Failed to fire pipeline ${pipeline} for user ${userId}:`, err);
+    console.error(`[trigger] Failed to fire pipeline ${pipeline}:`, err);
   });
 }

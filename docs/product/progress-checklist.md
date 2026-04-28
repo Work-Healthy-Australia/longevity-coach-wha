@@ -1,6 +1,6 @@
 # Longevity Coach — Progress Checklist
 
-**Last updated:** 2026-04-28 (upload portal delivered)  
+**Last updated:** 2026-04-28 (risk engine port complete)  
 **Legend:** ✅ Done · 🔄 Partial · ❌ Not built
 
 ---
@@ -48,16 +48,16 @@
 
 ---
 
-## Phase 2 — Intelligence `~10% complete`
+## Phase 2 — Intelligence `~20% complete`
 
 ### Epic 2.1 — Biological Age Assessment
-- [ ] ❌ 2.1.1 — Auto-generate bio-age from questionnaire on submit
-- [ ] ❌ 2.1.2 — Bio-age vs chronological age visual comparison
-- [ ] ❌ 2.1.3 — Top contributing factors shown to member
-- [ ] ❌ 2.1.4 — Projected score change from recommended actions
+- [x] ✅ 2.1.1 — Auto-generate bio-age from questionnaire on submit
+- [ ] ❌ 2.1.2 — Bio-age vs chronological age visual comparison (data ready, needs UI)
+- [ ] ❌ 2.1.3 — Top contributing factors shown to member (data ready, needs UI)
+- [ ] ❌ 2.1.4 — Projected score change from recommended actions (data ready, needs UI)
 
 ### Epic 2.2 — Five-Domain Risk Breakdown
-- [ ] ❌ 2.2.1 — Risk scores across 5 domains (CV, Metabolic, Neuro, Onco, MSK)
+- [x] ✅ 2.2.1 — Risk scores across 5 domains (CV, Metabolic, Neuro, Onco, MSK) — data layer complete
 - [ ] ❌ 2.2.2 — Plain-language domain explanations
 - [ ] ❌ 2.2.3 — Highest-opportunity domain highlighted
 - [ ] ❌ 2.2.4 — Scores auto-updated when new data arrives
@@ -89,7 +89,7 @@
 - [x] 🔄 `lib/pdf/report-doc.tsx` — skeleton exists, not wired to data
 - [ ] ❌ Atlas pipeline (risk narrative AI) — schema and types ready; pipeline logic not yet built
 - [ ] ❌ Sage pipeline (supplement protocol AI) — schema and types ready; pipeline logic not yet built
-- [ ] ❌ Risk engine triggered on questionnaire submit — not wired
+- [x] ✅ Risk engine triggered on questionnaire submit — wired, all 5 domains, bio-age, trajectory
 - [ ] ❌ Janet chat agent — not built
 
 ---
