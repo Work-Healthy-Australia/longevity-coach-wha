@@ -5,8 +5,20 @@ export function requiredMissing(
   values: Record<string, unknown>,
 ): string | null {
   for (const field of step.fields) {
-    if (field.optional) continue;
     const v = values[field.id];
+
+    // Range / integer constraints apply to ANY number value (even on
+    // optional fields) — once a user has entered something, it must be
+    // valid. HTML5 attrs are advisory; this is the real gate.
+    if (field.type === "number" && v !== undefined && v !== null && v !== "") {
+      const n = typeof v === "number" ? v : Number(v);
+      if (!Number.isFinite(n)) return field.label;
+      if (field.min !== undefined && n < field.min) return field.label;
+      if (field.max !== undefined && n > field.max) return field.label;
+      if (field.step === 1 && !Number.isInteger(n)) return field.label;
+    }
+
+    if (field.optional) continue;
     if (field.type === "toggle") {
       if (v !== true) return field.label;
       continue;

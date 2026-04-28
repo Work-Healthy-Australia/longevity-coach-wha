@@ -80,6 +80,7 @@
   margin-bottom: 12px;
 }
 .lc-dash .card .head h2 { margin: 0; }
+.lc-dash .card .head-badges { display: inline-flex; gap: 8px; align-items: center; }
 
 .lc-dash .btn {
   display: inline-block;
@@ -100,7 +101,7 @@
 
 .lc-dash .empty-scores {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 12px;
 }
 .lc-dash .empty-score {
@@ -108,6 +109,7 @@
   border-radius: 10px;
   padding: 16px 12px;
   text-align: center;
+  min-width: 0;
 }
 .lc-dash .empty-score .label {
   font-family: var(--font-lc-mono), ui-monospace, monospace;
@@ -116,9 +118,15 @@
   color: var(--lc-grey);
   text-transform: uppercase;
   margin-bottom: 8px;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  line-height: 1.25;
 }
 .lc-dash .empty-score .value { font-size: 22px; color: var(--lc-grey-soft, #B9C3CB); font-weight: 300; }
 
+@media (max-width: 900px) {
+  .lc-dash .empty-scores { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
 @media (max-width: 600px) {
-  .lc-dash .empty-scores { grid-template-columns: repeat(2, 1fr); }
+  .lc-dash .empty-scores { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }

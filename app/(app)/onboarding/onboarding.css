@@ -86,6 +86,17 @@
 }
 .lc-onboarding .card .step-callout a { color: var(--lc-accent); font-weight: 500; }
 
+.lc-onboarding .edit-banner {
+  background: #fff8ec;
+  border: 1px solid #f0d699;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  margin: 0 0 16px;
+  color: #5a4400;
+}
+.lc-onboarding .edit-banner strong { color: #3a2c00; }
+
 .lc-onboarding .fields { display: flex; flex-direction: column; gap: 16px; }
 .lc-onboarding .field { display: flex; flex-direction: column; gap: 6px; }
 .lc-onboarding .field-help { color: var(--lc-ink-soft); font-size: 13px; margin: 0; }

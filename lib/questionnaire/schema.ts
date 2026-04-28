@@ -35,6 +35,11 @@ export type FieldDef = {
   options?: string[];    // for select / multiselect / chips
   maxSelect?: number;    // for chips (limit number of choices)
   helpText?: string;
+  // Numeric constraints. Applied as HTML5 attributes on number inputs and
+  // enforced server-side in validation. `step: 1` => whole numbers only.
+  min?: number;
+  max?: number;
+  step?: number;
 };
 
 export type StepDef = {
