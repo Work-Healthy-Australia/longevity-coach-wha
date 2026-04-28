@@ -14,7 +14,7 @@ High-level product vision, twelve thematic epics, status dashboard, and the lega
 | Document | Contents |
 |---|---|
 | [Product](./product/product.md) | **Step-back vision (Dan Shipper frame).** Audiences, four ranked values, moat, business model. |
-| [Epics](./product/epics.md) | **Twelve thematic epics.** Each with thesis, bundle, mechanism, success criterion. |
+| [Epics](./product/epics.md) | **Fourteen thematic epics.** Each with thesis, bundle, mechanism, success criterion. |
 | [Epic Status](./product/epic-status.md) | **At-a-glance dashboard.** Pipeline glyphs, % estimate, open/closed bug counts per epic. |
 | [Product Overview](./product/00-product-overview.md) | Original executive brief — vision, audiences, value proposition, business model |
 | [Product Timeline](./product/01-product-timeline.md) | Six-phase roadmap with goals and status per phase |

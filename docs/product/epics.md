@@ -11,7 +11,7 @@ Last updated **2026-04-28**. Drafted in the Dan Shipper school: bundled by thesi
 
 ## 0. The frame
 
-The legacy `phase-XX-` documents are a delivery sequence. This document is the **thesis layer**: twelve epics, each with a one-sentence claim, a bundle of features, the mechanism that makes it work, and the criterion that says we got it right.
+The legacy `phase-XX-` documents are a delivery sequence. This document is the **thesis layer**: fourteen epics, each with a one-sentence claim, a bundle of features, the mechanism that makes it work, and the criterion that says we got it right.
 
 An epic earns shipping when **the success criterion is true** — not when every feature in the bundle is feature-complete.
 
@@ -237,17 +237,96 @@ An epic earns shipping when **the success criterion is true** — not when every
 
 ---
 
+## Epic 13 — The Business Model
+
+**Thesis:** Longevity Coach makes money three ways — direct subscriptions, employer licences, and a curated provider ecosystem where Janet's recommendations route patients to wholesale partners (pathology, imaging, fitness, nutrition, supplements). The platform earns a margin on every booking; the patient gets one place to act on what they've just learned.
+
+**Bundle:**
+- **B2C subscriptions** (already live via Epic 1) — monthly and annual individual plans.
+- **B2B corporate licences** (Phase 6 via Epic 12) — per-seat enterprise plans with aggregate dashboards.
+- **B2B clinical subscriptions** (Phase 5 via Epic 9) — practitioner subscriptions activating the care-team feature.
+- **Provider ecosystem (the new revenue stream):**
+  - Admin panel for wholesale provider onboarding (contract terms, margin splits, fulfilment SLA, regional coverage).
+  - Third-party catalog: blood work, DEXA scans, PT sessions, gym memberships, meal-kit fulfilment, supplement fulfilment, genetic tests, hormone panels.
+  - Janet-driven surfacing — when she suggests a member needs X, the relevant offering appears inline with a one-tap CTA.
+  - Patient-facing booking and checkout in-platform; Stripe Connect for split payments.
+  - Per-recommendation audit trail: which Janet suggestion → which offering surfaced → did it convert → did the outcome change the next risk score.
+  - Provider performance dashboard (orders fulfilled, NPS, refunds, regional performance).
+  - Wholesale margin captured per transaction; transparent to the patient ("this booking is provided by Acme Labs; we receive a referral fee").
+  - Curated catalog discipline — every offering must be evidence-aligned with the supplement/risk catalog. No pay-to-play placements.
+
+**Mechanism:**
+- New tables in the `billing` schema:
+  - `provider_partners` — admin-managed; contract terms, margin %, region, status.
+  - `provider_offerings` — one row per bookable thing; SKU, price, modality (in-clinic / at-home / digital), evidence tag, recommended-when criteria.
+  - `provider_orders` — patient transactions; FK to `provider_partners` and to the originating Janet suggestion.
+- Janet uses `tool_use` (`search_offerings(category, region, evidence_tag)`) when a recommendation matches a catalog category.
+- Stripe Connect for split payments — patient pays Longevity Coach; we forward the provider's share automatically.
+- Admin pages under `app/(admin)/providers/` for onboarding, catalog editing, order monitoring.
+- Provider-side pages (deferred to Phase 6) so providers can manage their own listings.
+- Replaces and broadens the supplement-marketplace bullet currently inside Epic 12.
+
+**Success criterion:**
+- 5 partner integrations live within 6 months of GA (one in each of: pathology, imaging, fitness, nutrition, supplements).
+- ≥ 25% of Janet recommendations that surface a relevant offering convert to a booking.
+- Provider-ecosystem revenue contributes ≥ 20% of total platform revenue within 12 months of GA.
+- Zero pay-to-play violations on quarterly catalog audit (every offering traceable to an evidence-backed protocol element).
+- Patient-side disclosure ("we receive a referral fee") visible on every offering.
+
+---
+
+## Epic 14 — The Platform Foundation
+
+**Thesis:** The engineering substrate that makes Longevity Coach defensible as a healthcare-grade product — security, observability, cost discipline, disaster recovery, dependency hygiene. The work that's invisible when it's right and existential when it's wrong.
+
+**Why this is its own epic:** Epic 11 (The Trust Layer) is what we *promise* the patient and the regulator (consent records, export-everything, never-train clause). Epic 14 is the engineering discipline that lets us *keep* those promises. They are paired — neither stands without the other — but they live at different abstraction layers and they're tracked separately so the substrate work doesn't disappear inside feature roadmaps.
+
+**Bundle:**
+- **RLS + service-role discipline** — every table has RLS; the admin client is used only in webhook routes, pipeline workers, PDF generation. Documented in `.claude/rules/security.md`; enforced by the pgTAP suite (Epic 11) and integration tests (qa-plan §1.2b).
+- **Encryption** — Supabase TLS in transit, AES-256 at rest. Verified quarterly.
+- **Secret management** — Vercel env vars only; `.env` files git-ignored; no secrets logged. Gitleaks (or equivalent) secret-scan on every PR.
+- **Pipeline auth** — internal HTTP routes require `x-pipeline-secret`; secret rotated quarterly.
+- **Observability** — structured logging with no PII; error monitoring (Sentry / Highlight / equivalent); performance metrics; alert routing.
+- **CI/CD quality gates** — Vitest + pgTAP + Playwright + Lighthouse must pass before merge to main. Workflow files under `.github/workflows/`.
+- **Database migration discipline** — numbered, idempotent (`IF NOT EXISTS`, `ON CONFLICT DO NOTHING`); `supabase db diff` clean before commit; types regenerated after every schema change.
+- **Dependency hygiene** — `pnpm audit` weekly; dependabot enabled; new dependency requires written justification in the PR description.
+- **Cost controls** — Anthropic API spend dashboard with 80%-of-budget alert; Supabase storage quota alert; Vercel function execution-time monitoring.
+- **Disaster recovery** — Supabase point-in-time restore tested quarterly (actually restored to a fresh project, smoke-tested); runbook in `docs/operations/dr-runbook.md`.
+- **Healthcare-readiness posture** — AHPRA breach-notification protocol; data residency (Sydney for AU members; UK region when needed); GDPR posture; documented stance on training data with architecture-level enforcement.
+- **Security cadence** — quarterly penetration test on a staging mirror; monthly dependency CVE scan; weekly log scrub for PII regressions.
+- **Production-readiness checklist** — every new route or pipeline ships against a checklist before going live (auth ✓, RLS ✓, idempotent ✓, observable ✓, has tests ✓, doc updated ✓).
+
+**Mechanism:**
+- Engineering rules canonical in `.claude/rules/` (`data-management.md`, `security.md`, `nextjs-conventions.md`, `database.md`, `ai-agents.md`).
+- CI workflows under `.github/workflows/` (none exist yet — gap).
+- Supabase project: RLS enforced; daily backups; point-in-time recovery on Pro tier.
+- Vercel project: env vars per environment (preview / production); Fluid Compute defaults; observability integration.
+- Production-readiness checklist lives in `docs/operations/checklist.md` (to be created).
+
+**Success criterion:**
+- Zero secrets in git history (gitleaks green on every PR).
+- Zero PII in production logs (weekly regex sweep green).
+- 100% of migrations idempotent and re-runnable on a clean DB.
+- p99 latency budgets in qa-plan §1.7 met.
+- Anthropic API spend per active member per month tracked and within budget.
+- Quarterly penetration test produces a written report; remediation tracked.
+- Backup restoration drill executed quarterly; runbook current.
+- Dependency CVE backlog ≤ 5 high-severity at any time.
+- Every new route ships against the production-readiness checklist (no exceptions).
+
+---
+
 ## How epics relate to phases
 
 The legacy `phase-XX-` documents map to epics like this:
 
 | Phase | Epics shipped or in progress |
 |---|---|
-| Phase 1 — Foundation | Epic 1 (Front Door), Epic 2 (Intake), early Epic 11 (Trust Layer) |
-| Phase 2 — Intelligence | Epic 3 (Number), Epic 4 (Protocol), Epic 5 (Report), early Epic 6 (Coach) |
-| Phase 3 — Engagement | Epic 6 (Coach: full coach suite + RAG), Epic 7 (Daily Return) |
-| Phase 4 — Clinical Depth | Epic 8 (Living Record), Epic 10 (Knowledge Engine: Nova) |
-| Phase 5 — Care Network | Epic 9 (Care Team) |
-| Phase 6 — Scale | Epic 12 (Distribution), late Epic 11 (Trust Layer audit cadence) |
+| Phase 1 — Foundation | Epic 1 (Front Door), Epic 2 (Intake), early Epic 11 (Trust Layer), early Epic 14 (Platform Foundation: RLS, PII boundary, migration discipline) |
+| Phase 2 — Intelligence | Epic 3 (Number), Epic 4 (Protocol), Epic 5 (Report), early Epic 6 (Coach), continuing Epic 14 (pipeline auth, secret discipline) |
+| Phase 3 — Engagement | Epic 6 (Coach: full coach suite + RAG), Epic 7 (Daily Return), continuing Epic 14 (CI workflows, observability) |
+| Phase 4 — Clinical Depth | Epic 8 (Living Record), Epic 10 (Knowledge Engine: Nova), early Epic 13 (Business Model: pathology + imaging partners) |
+| Phase 5 — Care Network | Epic 9 (Care Team), continuing Epic 13 (PT, gym, meals partners) |
+| Phase 6 — Scale | Epic 12 (Distribution), late Epic 11 (Trust Layer audit cadence), full Epic 13 (Business Model: provider catalog + Stripe Connect), late Epic 14 (DR drills, pen-test cadence, production-readiness enforcement) |
 
 Phases describe **when**. Epics describe **why**. The two views are complementary; neither replaces the other.

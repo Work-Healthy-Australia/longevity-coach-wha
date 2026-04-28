@@ -34,6 +34,8 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 | 10 | The Knowledge Engine | `●○○○○` | 5% | 1 (P2) | 0 |
 | 11 | The Trust Layer | `●●◐○○` | 55% | 1 (P2) | 0 |
 | 12 | The Distribution | `●○○○○` | 5% | 0 | 0 |
+| 13 | The Business Model | `●○○○○` | 0% | 0 | 0 |
+| 14 | The Platform Foundation | `●◐○○○` | 40% | 0 | 0 |
 
 **Bug totals:** 7 open, 1 closed. (Bug log: forthcoming `qa/QA-bugs.md`. The single closed bug is BUG-001, signup form clearing — fixed 2026-04-27.)
 
@@ -343,6 +345,74 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - Sign-in-with-Vercel for clinician partners.
 
 **Open bugs:** none.
+**Closed bugs:** 0.
+
+---
+
+### Epic 13: The Business Model
+
+`●○○○○` Planned · ○ Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 0%** — designed 2026-04-28; no provider-ecosystem code yet. The B2C revenue stream is shipped via Epic 1 (Stripe checkout). The adjacent `billing` schema (`suppliers`, `products`, `plans`, `add_ons`, `organisations`) already exists from Epic 12 work.
+
+**Shipped:**
+- B2C subscription rail (Stripe checkout + webhook lifecycle) — see Epic 1.
+- `billing` schema scaffolding (`suppliers`, `products`, `plans`, `add_ons`, `organisations`) — migration `0013_billing_schema.sql`.
+
+**Outstanding:**
+- `provider_partners` table — admin-managed; contract terms, margin %, region, status.
+- `provider_offerings` table — one row per bookable thing; SKU, price, modality, evidence tag, recommended-when criteria.
+- `provider_orders` table — patient transactions, FK to `provider_partners` and originating Janet suggestion.
+- Admin pages under `app/(admin)/providers/` for onboarding, catalog editing, order monitoring.
+- Janet `tool_use` for `search_offerings(category, region, evidence_tag)`.
+- Stripe Connect integration for split payments to providers.
+- Per-recommendation audit trail (Janet suggestion → offering surfaced → conversion → outcome).
+- Provider-facing dashboard (Phase 6 — providers manage their own listings).
+- Catalog evidence-discipline review process (no pay-to-play; every offering traceable to a risk driver).
+- Patient-side disclosure copy ("we receive a referral fee").
+- B2B corporate revenue stream (lives in Epic 12).
+- B2B clinical revenue stream (lives in Epic 9 + Epic 12).
+
+**Open bugs:** none.
+**Closed bugs:** 0.
+
+---
+
+### Epic 14: The Platform Foundation
+
+`●◐○○○` Planned · ◐ Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 40%** — substantial pieces already shipped via the existing `.claude/rules/` discipline (RLS, PII boundary, secret-key naming, pipeline auth, migration hygiene). The visible operational layer (CI workflows, observability, cost monitoring, DR drill, pen-test cadence) is unbuilt.
+
+**Shipped:**
+- RLS on every table across `public`, `biomarkers`, `clinical`, `programs`, `billing` schemas.
+- Supabase secret-key naming (`SUPABASE_SECRET_KEY`, not `SUPABASE_SERVICE_ROLE_KEY`).
+- PII boundary enforced at write time (`lib/profiles/pii-split.ts`).
+- Service-role admin client confined to webhook routes, pipeline workers, PDF generation.
+- Pipeline routes secured with `x-pipeline-secret` header.
+- 19 numbered idempotent migrations with `IF NOT EXISTS` / `ON CONFLICT DO NOTHING`.
+- Engineering rules canonical in `.claude/rules/` (data-management, security, nextjs-conventions, database, ai-agents).
+- `.env` files git-ignored; never committed.
+- TypeScript schema types regenerated after every migration (`lib/supabase/database.types.ts`).
+- `proxy.ts` route guard (no ad-hoc auth in pages).
+- Supabase Storage MIME whitelist + 50 MB cap on uploads.
+- Encryption at rest (Supabase default) + TLS in transit.
+
+**Outstanding:**
+- CI workflow file in `.github/workflows/` — Vitest + pgTAP + Playwright + Lighthouse on every PR.
+- Gitleaks (or equivalent) secret-scan in CI.
+- Sentry / Highlight / equivalent error monitoring + alert routing.
+- Anthropic API spend dashboard + 80%-of-budget alert.
+- Supabase storage quota alert.
+- Vercel function execution-time monitoring.
+- Supabase point-in-time restore drill executed and runbook in `docs/operations/dr-runbook.md`.
+- Quarterly penetration test cadence on a staging mirror.
+- Monthly dependency CVE scan (dependabot + `pnpm audit`).
+- Weekly log scrub for PII regressions.
+- Production-readiness checklist (`docs/operations/checklist.md`) and enforcement in PR template.
+- AHPRA breach-notification protocol document.
+- Data residency confirmation per region.
+- Architecture-level enforcement of "we never train on patient data" (no training endpoints, no model fine-tune jobs, no third-party data shares).
+
+**Open bugs:** none directly. (BUG-008 — pgTAP not wired into CI — is currently filed under Epic 11 and could be cross-listed here.)
 **Closed bugs:** 0.
 
 ---
