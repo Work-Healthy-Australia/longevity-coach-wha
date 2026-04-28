@@ -43,13 +43,20 @@ export function AlexFAB() {
                   {msg.parts.map((part, i) =>
                     part.type === 'text' ? <span key={i}>{part.text}</span> : null,
                   )}
-                  {status !== 'ready' &&
+                  {status === 'streaming' &&
                     msg === messages[messages.length - 1] &&
                     msg.role === 'assistant' &&
                     '▋'}
                 </div>
               </div>
             ))}
+            {status === 'submitted' && (
+                <div className="alex-msg alex-msg-assistant">
+                  <div className="alex-bubble alex-typing">
+                    <span /><span /><span />
+                  </div>
+                </div>
+              )}
           </div>
 
           <form
