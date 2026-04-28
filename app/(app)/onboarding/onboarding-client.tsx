@@ -8,9 +8,17 @@ import { splitFullName } from "@/lib/profiles/name";
 import { saveDraft, submitAssessment } from "./actions";
 import "./onboarding.css";
 
-type Props = { initialResponses: ResponsesByStep; userFullName: string | null };
+type Props = {
+  initialResponses: ResponsesByStep;
+  userFullName: string | null;
+  isEditing?: boolean;
+};
 
-export function OnboardingClient({ initialResponses, userFullName }: Props) {
+export function OnboardingClient({
+  initialResponses,
+  userFullName,
+  isEditing = false,
+}: Props) {
   const { firstName } = splitFullName(userFullName);
   const steps = onboardingQuestionnaire.steps;
   const [stepIdx, setStepIdx] = useState(0);
@@ -78,6 +86,13 @@ export function OnboardingClient({ initialResponses, userFullName }: Props) {
 
   return (
     <div className="lc-onboarding">
+      {isEditing && (
+        <div className="edit-banner" role="status">
+          <strong>Editing your previous responses.</strong> Any changes you submit
+          will replace the most recent answers; your earlier submission stays in your
+          record for audit.
+        </div>
+      )}
       <div className="progress">
         {steps.map((s, i) => (
           <div
@@ -139,7 +154,11 @@ export function OnboardingClient({ initialResponses, userFullName }: Props) {
               onClick={onSubmit}
               disabled={pending}
             >
-              {pending ? "Submitting…" : "Submit assessment"}
+              {pending
+                ? "Submitting…"
+                : isEditing
+                  ? "Save updated responses"
+                  : "Submit assessment"}
             </button>
           ) : (
             <button
@@ -208,6 +227,9 @@ function FieldRenderer({
               id={field.id}
               type="number"
               placeholder={field.placeholder}
+              min={field.min}
+              max={field.max}
+              step={field.step}
               value={(value as string | number | undefined) ?? ""}
               onChange={(e) =>
                 onChange(e.target.value === "" ? "" : Number(e.target.value))
