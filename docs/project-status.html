@@ -593,61 +593,66 @@ The platform is considered complete when a member can:
 | Janet wired to upload action | ✅ Done | `uploads/actions.ts` calls `analyzeUpload()` synchronously |
 | Dashboard (basic) | ✅ Done | Assessment state, risk score placeholders, uploads count, subscription |
 | Welcome email on signup | ✅ Done | Resend; idempotent; silently no-ops without `RESEND_API_KEY` |
-| RLS on every table | ✅ Done | All 13 migrations enforce RLS |
+| RLS on every table | ✅ Done | All 27 migrations enforce RLS |
 | Consent records | ✅ Done | Append-only `consent_records` table; written on assessment submit |
 
 ### Gaps remaining in Phase 1
 
 | Gap | Impact | Notes |
 |---|---|---|
-| `/report` page does not exist | High | Users have no place to see their results |
 | `/account` page does not exist | Medium | No self-service profile/subscription management |
-| Logged-in nav has no links | Medium | Only logo + sign-out; no Dashboard/Report/Uploads links |
+| Account link missing from nav | Medium | Dashboard/Report/Documents nav present; /account unreachable (BUG-006) |
 | Admin CRM is a stub | Medium | James cannot see users or analytics |
-| Drip email sequences | Low | Welcome only; no Day 1/3/7 re-engagement |
+| Drip email sequences | Low | Infrastructure shipped (cron + drip_email_log); Day 1/3/7 content not written |
 
 ---
 
-## Phase 2 (Intelligence) — 0% complete
+## Phase 2 (Intelligence) — ~65% complete
 
-The entire agent/pipeline layer is unbuilt. `lib/ai/` contains only `.gitkeep`.
+The core AI pipeline layer is shipped. The patient can now receive a biological age, risk narrative, supplement protocol, and talk to Janet — all live on the `/report` page.
 
-### What the user story needs next
+### Shipped in Phase 2
 
 The patient has now:
 1. Signed up ✅
 2. Completed onboarding questionnaire ✅
 3. Uploaded blood test files ✅ (Janet analysed them)
+4. Received a biological age and five-domain risk narrative ✅ (Atlas pipeline — `lib/ai/pipelines/risk-narrative.ts`)
+5. Received a personalised 30-day supplement protocol ✅ (Sage pipeline — `lib/ai/pipelines/supplement-protocol.ts`)
+6. Can view results and chat with Janet on `/report` ✅ (streaming, 20-turn window, PatientContext in <50ms)
 
-The platform has not yet:
-- Generated a biological age or domain risk scores
-- Written a human-readable risk narrative
-- Created a supplement protocol
-- Given the patient anywhere to see these results
-- Enabled the patient to talk to Janet
+### Remaining Phase 2 gaps
+
+| Gap | Impact | Notes |
+|---|---|---|
+| Deterministic risk engine not ported | P1 | All scores are `confidence_level = 'moderate'` (BUG-003). Base44 engine (`riskEngine/entry.ts`, 1231 lines) not ported to `lib/risk/` |
+| Branded PDF | P3 | PDF endpoint scaffold exists; renders unstyled skeleton (BUG-005) |
+| Janet RAG knowledge base | P2 | pgvector extension not enabled; `health_knowledge` empty (BUG-004 / BUG-007) |
+| Nova research pipeline | — | Migration `0027` written; pipeline is a stub; cron route not built |
 
 ---
 
 ## Database state
 
-13 migrations applied. Key schema facts:
+27 migrations applied. Key schema facts:
 
 | Table | Schema | State |
 |---|---|---|
 | `profiles` | public | ✅ Has: full_name, date_of_birth, phone, role |
 | `health_profiles` | public | ✅ Has: responses JSONB, completed_at |
-| `risk_scores` | public | ✅ Has: domain scores, bio-age, narrative-adjacent columns. Missing: `narrative` text, `engine_output` jsonb, `data_gaps` text[] |
+| `risk_scores` | public | ✅ Complete — domain scores, bio-age, narrative, engine_output, data_gaps (migration 0014) |
 | `patient_uploads` | public | ✅ Complete with janet_* columns |
-| `supplement_plans` | public | ✅ Has: items JSONB, status, valid_from/to |
+| `supplement_plans` | public | ✅ Complete — items JSONB, status, valid_from/to, per-item rationale + tier |
 | `coach_suggestions` | public | ✅ Complete |
 | `care_notes` | public | ✅ Complete |
 | `periodic_reviews` | public | ✅ Complete |
 | `patient_assignments` | public | ✅ Complete |
-| `agent_conversations` | — | ❌ Missing — needed for Janet chat |
+| `agent_conversations` | agents | ✅ Shipped — 20-turn window (migration 0014) |
+| `agent_definitions` | agents | ✅ Shipped — Janet, Atlas, Sage, Nova rows (migrations 0019, 0022, 0023, 0027) |
+| `health_updates` | public | ✅ Shipped — digest display table (migration 0015); `agents.health_updates` written (0027, pending apply) |
+| `health_knowledge` | agents | ◐ Migrations written (0016, 0024, 0026) — blocked on enabling pgvector extension in Supabase |
 | `support_tickets` | — | ❌ Missing — needed for Alex |
 | `appointments` | — | ❌ Missing — needed for Janet booking |
-| `health_updates` | — | ❌ Missing — needed for Nova digest display |
-| `health_knowledge` | — | ❌ Missing — needed for Janet RAG |
 
 ---
 
@@ -662,15 +667,15 @@ The platform has not yet:
 | `lib/email/` | ✅ Complete — welcome email |
 | `lib/consent/` | ✅ Complete |
 | `lib/stripe/` | ✅ Stripe client exists |
-| `lib/ai/` | ❌ Empty — PatientContext, pipelines, Janet all missing |
-| `lib/risk/` | ❌ Empty — deterministic risk engine not built |
-| `lib/pdf/` | ❌ Empty — PDF generation not built |
+| `lib/ai/` | ✅ Built — Janet + Alex agents; Atlas + Sage pipelines; PatientContext, RAG, agent-factory, providers, trigger, types; Nova stub |
+| `lib/risk/` | ❌ Empty — deterministic risk engine not ported (Base44 source available) |
+| `lib/pdf/` | ◐ Skeleton — `report-doc.tsx` scaffold exists; unstyled (BUG-005) |
 
 ---
 
 ## Risk engine note
 
-The deterministic risk engine (`lib/risk/`) has not been built. The agent-system.md data flow shows it should run synchronously inside `submitAssessment()` before the redirect. For Phase 2, the Risk Narrative Pipeline will operate directly from questionnaire responses and upload findings, computing initial risk scores via LLM. When the deterministic engine is built, it will slot in before the LLM pipeline and supply structured `engine_output` for the narrative to annotate.
+The Atlas pipeline (`lib/ai/pipelines/risk-narrative.ts`) is live and writes risk scores, bio-age, and narrative on every assessment submit and upload. All scores currently carry `confidence_level = 'moderate'` because the deterministic engine has not been ported (BUG-003 P1). The Base44 source (`riskEngine/entry.ts`, 1231 lines) is the reference. When ported to `lib/risk/`, it will run synchronously inside `submitAssessment()` before the LLM pipeline, supplying structured `engine_output` for Atlas to annotate rather than derive from scratch.
 
 ---
 

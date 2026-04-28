@@ -31,7 +31,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 | 7 | The Daily Return | `●◐○○○` | 25% | 0 | 0 |
 | 8 | The Living Record | `●○○○○` | 5% | 0 | 0 |
 | 9 | The Care Team | `●○○○○` | 5% | 0 | 0 |
-| 10 | The Knowledge Engine | `●○○○○` | 5% | 1 (P2) | 0 |
+| 10 | The Knowledge Engine | `●○○○○` | 10% | 1 (P2) | 0 |
 | 11 | The Trust Layer | `●●◐○○` | 55% | 1 (P2) | 0 |
 | 12 | The Distribution | `●○○○○` | 5% | 0 | 0 |
 | 13 | The Business Model | `●○○○○` | 0% | 0 | 0 |
@@ -273,18 +273,23 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 10: The Knowledge Engine
 
 `●○○○○` Planned · ○ Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 5%** — Nova designed, not built. Migration ready but blocked.
+**Estimate: 10%** — Nova pipeline PLAN.md approved 2026-04-28. DB migrations written; pipeline implementation is a stub; cron route not built.
 
 **Shipped:**
 - `health_updates` table for the structured digest display (`0015_health_updates.sql`).
-- pgvector migration `0016_knowledge_base_pgvector.sql` written.
+- pgvector migrations written: `0016_knowledge_base_pgvector.sql`, `0024_health_knowledge_seed.sql`, `0026_health_knowledge_embeddings.sql`.
+- `agents` schema created (`0025_agents_schema.sql`).
+- `agents.health_updates` table + `nova` agent_definition row written in `0027_nova_health_updates.sql` (pending apply to remote).
+- Nova pipeline PLAN.md approved — PubMed 6-category search, LLM synthesis, chunk+embed, 90-day prune fully specced.
 
 **Outstanding:**
-- Enable the `vector` extension in Supabase (dashboard action).
-- Apply migration `0016`.
-- Nova pipeline (`app/api/cron/nova/route.ts`).
-- Six-category parallel literature scan (PubMed, Nature, Cell, medRxiv, Cochrane, plus one rotating).
-- LLM synthesis per category, embed via OpenRouter `perplexity/pplx-embed-v1-4b`.
+- Enable the `vector` extension in Supabase (dashboard action) — blocks `0016` apply.
+- Apply migrations `0016` and `0027` to remote DB.
+- Full Nova pipeline implementation (`lib/ai/pipelines/nova.ts` — currently a stub that throws).
+- `app/api/cron/nova/route.ts` GET handler with `CRON_SECRET` auth.
+- `vercel.json` weekly cron entry (`0 2 * * 1`).
+- `lib/ai/patient-context.ts` — add 8th Promise.all item loading latest 3 `health_updates`.
+- Nova unit tests (`chunkText`) and integration tests (mocked PubMed + Supabase).
 - Hybrid RAG `hybrid_search_health()` SQL function.
 - In-app research feed page reading `health_updates`.
 

@@ -26,6 +26,13 @@ export interface PatientContext {
     phone: string | null;
     role: string;
   };
+  recentDigests: Array<{
+    title: string;
+    content: string;
+    category: string;
+    evidence_level: string;
+    created_at: string;
+  }>;
   riskScores: {
     biologicalAge: number | null;
     cvRisk: number | null;
@@ -72,7 +79,7 @@ export async function loadPatientContext(
 ): Promise<PatientContext> {
   const admin = createAdminClient();
 
-  const [profileResult, riskResult, healthResult, uploadsResult, supplementResult, conversationResult, knowledgeChunks] =
+  const [profileResult, riskResult, healthResult, uploadsResult, supplementResult, conversationResult, knowledgeChunks, recentDigestsResult] =
     await Promise.all([
       // Profile (PII layer — demographics only, no clinical data)
       admin
@@ -133,6 +140,17 @@ export async function loadPatientContext(
 
       // RAG knowledge chunks — hybrid BM25 + vector search (vector falls back to BM25-only when unavailable)
       retrieveKnowledge("longevity health risk prevention assessment", 4).catch((): string[] => []),
+
+      // Recent Nova research digests (last 3)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (admin as any)
+        .schema('agents')
+        .from('health_updates')
+        .select('title, content, category, evidence_level, created_at')
+        .order('created_at', { ascending: false })
+        .limit(3)
+        .then((r: { data: unknown[] | null }) => r)
+        .catch(() => ({ data: [] })),
     ]);
 
   const profile = profileResult.data;
@@ -144,6 +162,11 @@ export async function loadPatientContext(
 
   return {
     userId,
+
+    recentDigests: ((recentDigestsResult as { data: unknown[] | null }).data ?? []) as Array<{
+      title: string; content: string; category: string;
+      evidence_level: string; created_at: string;
+    }>,
 
     profile: {
       fullName: profile?.full_name ?? null,
