@@ -356,6 +356,7 @@ export default async function DashboardPage() {
         />
         <QuickTile href="/report" label="Report" sub="Risk + supplements" icon="📊" />
         <QuickTile href="/check-in" label="Check-in" sub={todayLog ? "Today logged" : "Log today"} icon="✏️" />
+        <QuickTile href="/trends" label="Trends" sub="30-day patterns" icon="📈" />
         <QuickTile href="/onboarding" label="Update profile" sub="Refresh your answers" icon="👤" />
         <QuickTile href="/legal/collection-notice" label="Privacy" sub="What we store" icon="🔒" />
         <QuickTile href="mailto:hello@longevity-coach.io" label="Get help" sub="Reach support" icon="💬" />

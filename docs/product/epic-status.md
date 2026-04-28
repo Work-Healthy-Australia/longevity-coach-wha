@@ -29,7 +29,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 | 5 | The Report | `●◐○○○` | 35% | 1 (P3) | 0 |
 | 6 | The Coach | `●●○○○` | 75% | 0 | 1 |
 | 7 | The Daily Return | `●●◐○○` | 65% | 0 | 0 |
-| 8 | The Living Record | `●●◐○○` | 25% | 0 | 0 |
+| 8 | The Living Record | `●●◐○○` | 35% | 0 | 0 |
 | 9 | The Care Team | `●○○○○` | 5% | 0 | 0 |
 | 10 | The Knowledge Engine | `●○○○○` | 10% | 1 (P2) | 0 |
 | 11 | The Trust Layer | `●●◐○○` | 65% | 1 (P2) | 1 |
@@ -232,7 +232,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 8: The Living Record
 
 `●●◐○○` Planned · Feature Complete (member labs surface) · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 25%** — first member-facing surface shipped 2026-04-28: `/labs` index + `/labs/[biomarker]` detail with Recharts time-series and reference-range bands. Recharts now in the dependency surface, unblocking B5 and B6.
+**Estimate: 35%** — two member-facing surfaces shipped 2026-04-28: `/labs` (Lab Results UI) and `/trends` (Daily-log 30-day trends). Recharts in the dependency surface, unblocking B6 and B7.
 
 **Shipped:**
 - `biomarkers` schema with `lab_results`, `wearable_summaries`, `daily_logs` tables (migrations `0009`, `0010`).
@@ -241,9 +241,9 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - **`/labs/[biomarker]` detail page** (2026-04-28) — Recharts time-series with reference-range band, header card, full history table; `notFound()` on zero-row biomarker; Next 16 async params.
 - **Pure helpers** at `lib/labs/` (`groupByBiomarker`, `formatRange`, `statusTone`, `categoryLabel`, `toChartData`) sourced off generated DB types — schema drift forces a compile error. 23 unit tests.
 - **Dashboard tile** replaced "Coming soon · Lab Results" with live `<QuickTile>` showing biomarker count + latest test date.
+- **`/trends` page** (2026-04-28) — 30-day sparklines for Sleep, Energy, Mood, Steps, Water from `biomarkers.daily_logs`. Empty-state CTA pointing to `/check-in`. `lib/trends/` pure helpers (`buildTrendSeries`, `summariseTrend`, `ML_PER_GLASS`) sourced off generated DB types. 10 unit tests. Dashboard quick-link tile.
 
 **Outstanding:**
-- B5 — daily-log charting (sleep/energy/mood/steps 30-day trends) — Recharts now available.
 - B6 — risk simulator ("if I lower my LDL to X, my CV risk drops to Y").
 - B7 — out-of-range alerts + repeat-test reminders.
 - Wearable OAuth integrations (Oura, Apple Watch, Garmin).

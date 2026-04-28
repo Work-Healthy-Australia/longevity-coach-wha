@@ -112,7 +112,7 @@ Visible work members will feel. Each item is independently shippable.
 - Recharts dependency check: already in package.json? If not, add.
 - Add to the proxy `PROTECTED_PREFIXES` and the dashboard quick-links tile.
 
-### B5 — Daily-log charting **(S, ~1 day)** — *Epic 8*
+### B5 — Daily-log charting **(S, ~1 day)** — *Epic 8* — ✅ **DONE 2026-04-28**
 - New section on `/check-in` (or new page `/trends`): 30-day line charts for sleep_hours, energy_level, mood, steps.
 - Reuse Recharts setup from B4.
 
