@@ -66,6 +66,54 @@ export type Database = {
         }
         Relationships: []
       }
+      agent_definitions: {
+        Row: {
+          created_at: string
+          description: string | null
+          display_name: string
+          enabled: boolean
+          id: string
+          max_tokens: number
+          mcp_servers: Json
+          model: string
+          provider: string
+          slug: string
+          system_prompt: string
+          temperature: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          display_name: string
+          enabled?: boolean
+          id?: string
+          max_tokens?: number
+          mcp_servers?: Json
+          model?: string
+          provider?: string
+          slug: string
+          system_prompt: string
+          temperature?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          display_name?: string
+          enabled?: boolean
+          id?: string
+          max_tokens?: number
+          mcp_servers?: Json
+          model?: string
+          provider?: string
+          slug?: string
+          system_prompt?: string
+          temperature?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       appointments: {
         Row: {
           appointment_type: string

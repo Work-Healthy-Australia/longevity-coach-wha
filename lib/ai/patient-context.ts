@@ -57,6 +57,7 @@ export interface PatientContext {
     createdAt: string;
   } | null;
   recentConversation: ConversationTurn[];
+  knowledgeChunks: string[];
 }
 
 /**
@@ -188,6 +189,9 @@ export async function loadPatientContext(
 
     // Conversation is returned in chronological order (reversed from query)
     recentConversation: [...conversation].reverse() as ConversationTurn[],
+
+    // RAG chunks populated by Nova pipeline — empty until pgvector is seeded
+    knowledgeChunks: [],
   };
 }
 
@@ -241,6 +245,11 @@ export function summariseContext(ctx: PatientContext): string {
     );
   } else {
     lines.push(`Supplement protocol: not yet generated`);
+  }
+
+  if (ctx.knowledgeChunks.length) {
+    lines.push(`\n## Relevant health knowledge`);
+    ctx.knowledgeChunks.forEach((chunk) => lines.push(chunk));
   }
 
   return lines.join("\n");

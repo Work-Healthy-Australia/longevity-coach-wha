@@ -28,6 +28,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <div className="admin-nav-links">
           <a href="/admin/users">Users</a>
           <a href="/admin/analytics">Analytics</a>
+          <a href="/admin/agents">Agents</a>
           <a href="/dashboard" className="muted">Exit admin</a>
         </div>
         <div className="admin-nav-user">{profile.full_name ?? user.email}</div>

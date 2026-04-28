@@ -13,7 +13,7 @@ Members need a single, meaningful number that summarises their current health st
 
 | # | User Story |
 |---|---|
-| 2.1.1 | As a member who has completed the health questionnaire, I automatically receive a biological age score based on my responses. |
+| 2.1.1 | ✅ As a member who has completed the health questionnaire, I automatically receive a biological age score based on my responses. |
 | 2.1.2 | As a member, I can see how my biological age compares to my chronological age in a clear, visual format. |
 | 2.1.3 | As a member, I understand what factors contributed most to my biological age score. |
 | 2.1.4 | As a member, I can see how my score is expected to change if I adopt the recommended actions. |
@@ -26,7 +26,7 @@ Members need to understand their health risks across multiple dimensions, not ju
 
 | # | User Story |
 |---|---|
-| 2.2.1 | As a member, I can see my risk level across five health domains: cardiovascular, metabolic, neurological, oncological, and musculoskeletal. |
+| 2.2.1 | ✅ As a member, I can see my risk level across five health domains: cardiovascular, metabolic, neurological, oncological, and musculoskeletal. |
 | 2.2.2 | As a member, each domain is explained in plain language so I understand what it means for my daily life. |
 | 2.2.3 | As a member, I can see which domains have the greatest opportunity for improvement. |
 | 2.2.4 | As a member, my domain risk scores are automatically updated when I provide new health data. |
@@ -39,7 +39,7 @@ Members need a concrete, evidence-backed starting point for improving their heal
 
 | # | User Story |
 |---|---|
-| 2.3.1 | As a member with a completed risk assessment, I receive a personalised 30-day supplement protocol matched to my specific risk profile. |
+| 2.3.1 | ✅ As a member with a completed risk assessment, I receive a personalised 30-day supplement protocol matched to my specific risk profile. |
 | 2.3.2 | As a member, each supplement recommendation is explained with a plain-language rationale linked to my specific health drivers. |
 | 2.3.3 | As a member, my supplement protocol is updated when my risk scores change. |
 | 2.3.4 | As a member, I can ask the AI Supplement Advisor questions about any recommendation in my protocol. |

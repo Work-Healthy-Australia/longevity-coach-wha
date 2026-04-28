@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState, useTransition } from "react";
+import { useCallback, useRef, useState } from "react";
 import { createBrowserClient } from "@supabase/ssr";
 import { recordUpload, deleteUpload } from "./actions";
 import type { Database } from "@/lib/supabase/database.types";
@@ -8,7 +8,16 @@ import "./uploads.css";
 
 type UploadRow = Database["public"]["Tables"]["patient_uploads"]["Row"];
 
-const ACCEPTED_TYPES = ["application/pdf", "image/jpeg", "image/png", "image/gif", "image/webp", "image/tiff", "image/heic", "image/heif"];
+const ACCEPTED_TYPES = [
+  "application/pdf",
+  "image/jpeg",
+  "image/png",
+  "image/gif",
+  "image/webp",
+  "image/tiff",
+  "image/heic",
+  "image/heif",
+];
 const MAX_BYTES = 52_428_800; // 50 MB
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -37,11 +46,13 @@ function formatBytes(n: number) {
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString(undefined, {
-    year: "numeric", month: "short", day: "numeric",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
   });
 }
 
-interface UploadingFile {
+interface InFlightFile {
   name: string;
   phase: "uploading" | "analysing";
 }
@@ -52,11 +63,11 @@ interface Props {
 
 export function UploadClient({ initialUploads }: Props) {
   const [uploads, setUploads] = useState<UploadRow[]>(initialUploads);
-  const [uploading, setUploading] = useState<UploadingFile | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  // Per-file progress keyed by a local UUID generated at drop/select time.
+  const [inFlight, setInFlight] = useState<Map<string, InFlightFile>>(new Map());
+  const [errors, setErrors] = useState<string[]>([]);
   const [dragOver, setDragOver] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [, startTransition] = useTransition();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const supabase = createBrowserClient<Database>(
@@ -64,20 +75,22 @@ export function UploadClient({ initialUploads }: Props) {
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
   );
 
+  // Handles a single file — runs fully independently; never awaited by siblings.
   const processFile = useCallback(
-    async (file: File) => {
-      setError(null);
+    async (localId: string, file: File) => {
+      const addError = (msg: string) =>
+        setErrors((prev) => [...prev, msg]);
 
       if (!ACCEPTED_TYPES.includes(file.type)) {
-        setError("Only PDF and image files (JPEG, PNG, GIF, WebP, TIFF, HEIC) are accepted.");
+        addError(`${file.name}: only PDF and images (JPEG, PNG, GIF, WebP, TIFF, HEIC) are accepted`);
+        setInFlight((prev) => { const m = new Map(prev); m.delete(localId); return m; });
         return;
       }
       if (file.size > MAX_BYTES) {
-        setError("File exceeds the 50 MB limit.");
+        addError(`${file.name}: exceeds the 50 MB limit`);
+        setInFlight((prev) => { const m = new Map(prev); m.delete(localId); return m; });
         return;
       }
-
-      setUploading({ name: file.name, phase: "uploading" });
 
       try {
         const { data: userData } = await supabase.auth.getUser();
@@ -89,67 +102,89 @@ export function UploadClient({ initialUploads }: Props) {
 
         const { error: storageError } = await supabase.storage
           .from("patient-uploads")
-          .upload(storagePath, file, {
-            upsert: false,
-            duplex: "half",
-          });
+          .upload(storagePath, file, { upsert: false, duplex: "half" });
 
         if (storageError) throw new Error(storageError.message);
 
-        setUploading({ name: file.name, phase: "analysing" });
-
-        startTransition(async () => {
-          const result = await recordUpload({
-            storagePath,
-            originalFilename: file.name,
-            mimeType: file.type,
-            fileSizeBytes: file.size,
-          });
-
-          if (result.error) {
-            setError(result.error);
-          }
-          // Server action calls revalidatePath; re-fetch to show updated rows
-          const { data: fresh } = await supabase
-            .from("patient_uploads")
-            .select("*")
-            .order("created_at", { ascending: false });
-          if (fresh) setUploads(fresh);
-          setUploading(null);
+        // Transition this file's progress tile to the Janet phase.
+        setInFlight((prev) => {
+          const m = new Map(prev);
+          m.set(localId, { name: file.name, phase: "analysing" });
+          return m;
         });
+
+        const result = await recordUpload({
+          storagePath,
+          originalFilename: file.name,
+          mimeType: file.type,
+          fileSizeBytes: file.size,
+        });
+
+        if (result.error) addError(`${file.name}: ${result.error}`);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Upload failed");
-        setUploading(null);
+        addError(`${file.name}: ${err instanceof Error ? err.message : "Upload failed"}`);
+      } finally {
+        // Remove this file's progress tile regardless of outcome.
+        setInFlight((prev) => { const m = new Map(prev); m.delete(localId); return m; });
+        // Refetch independently per file — each completion shows its result immediately.
+        const { data: fresh } = await supabase
+          .from("patient_uploads")
+          .select("*")
+          .order("created_at", { ascending: false });
+        if (fresh) setUploads(fresh);
       }
     },
-    [supabase, startTransition],
+    [supabase],
+  );
+
+  // Registers all files in inFlight atomically, then fires each independently.
+  const processFiles = useCallback(
+    (files: File[]) => {
+      if (!files.length) return;
+      setErrors([]);
+
+      const additions: [string, InFlightFile][] = files.map((f) => [
+        crypto.randomUUID(),
+        { name: f.name, phase: "uploading" as const },
+      ]);
+
+      // Single state write so all progress tiles appear at once.
+      setInFlight((prev) => new Map([...prev, ...additions]));
+
+      // Fire every file's async process without awaiting siblings.
+      additions.forEach(([localId], i) => {
+        processFile(localId, files[i]!);
+      });
+    },
+    [processFile],
   );
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) processFile(file);
+    processFiles(Array.from(e.target.files ?? []));
     e.target.value = "";
   };
 
   const onDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setDragOver(false);
-    const file = e.dataTransfer.files[0];
-    if (file) processFile(file);
+    processFiles(Array.from(e.dataTransfer.files));
   };
 
   const onDelete = (id: string) => {
     setDeletingId(id);
-    startTransition(async () => {
+    // Fire-and-forget — no useTransition needed here, delete is fast.
+    void (async () => {
       const result = await deleteUpload(id);
       if (result.error) {
-        setError(result.error);
+        setErrors((prev) => [...prev, result.error!]);
       } else {
         setUploads((prev) => prev.filter((u) => u.id !== id));
       }
       setDeletingId(null);
-    });
+    })();
   };
+
+  const inFlightEntries = Array.from(inFlight.entries());
 
   return (
     <div className="lc-uploads">
@@ -163,36 +198,43 @@ export function UploadClient({ initialUploads }: Props) {
         role="button"
         tabIndex={0}
         onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") inputRef.current?.click(); }}
-        aria-label="Upload a medical document"
+        aria-label="Upload medical documents"
       >
         <input
           ref={inputRef}
           type="file"
+          multiple
           accept={ACCEPTED_TYPES.join(",")}
           onChange={onFileChange}
         />
         <div className="dropzone-icon">📎</div>
         <p className="dropzone-label">
-          Drag a file here or <strong>browse</strong>
+          Drag files here or <strong>browse</strong>
         </p>
-        <p className="dropzone-hint">PDF or image · up to 50 MB</p>
+        <p className="dropzone-hint">PDF or image · up to 50 MB each · multiple files supported</p>
       </div>
 
-      {/* Upload progress */}
-      {uploading && (
-        <div className="upload-progress">
+      {/* Per-file progress tiles — one per in-flight upload */}
+      {inFlightEntries.map(([localId, f]) => (
+        <div className="upload-progress" key={localId}>
           <div className="spinner" aria-hidden="true" />
-          {uploading.phase === "uploading"
-            ? `Uploading ${uploading.name}…`
-            : `Janet is reading ${uploading.name}…`}
+          {f.phase === "uploading"
+            ? `Uploading ${f.name}…`
+            : `Janet is reading ${f.name}…`}
+        </div>
+      ))}
+
+      {/* Errors — one line per failed file */}
+      {errors.length > 0 && (
+        <div className="error-banner" role="alert">
+          {errors.map((e, i) => (
+            <div key={i}>{e}</div>
+          ))}
         </div>
       )}
 
-      {/* Error */}
-      {error && <div className="error-banner" role="alert">{error}</div>}
-
       {/* File list */}
-      {uploads.length === 0 && !uploading ? (
+      {uploads.length === 0 && inFlightEntries.length === 0 ? (
         <div className="empty-state">
           No files yet. Upload any previous pathology, imaging, or test results.
         </div>
@@ -201,9 +243,7 @@ export function UploadClient({ initialUploads }: Props) {
           {uploads.map((u) => (
             <div className="file-card" key={u.id}>
               <div className="file-icon">
-                {u.janet_category
-                  ? CATEGORY_ICONS[u.janet_category] ?? "📄"
-                  : "📄"}
+                {u.janet_category ? (CATEGORY_ICONS[u.janet_category] ?? "📄") : "📄"}
               </div>
               <div className="file-body">
                 <p className="file-name">{u.original_filename}</p>
@@ -215,9 +255,7 @@ export function UploadClient({ initialUploads }: Props) {
                     {CATEGORY_LABELS[u.janet_category] ?? u.janet_category}
                   </span>
                 )}
-                {u.janet_summary && (
-                  <p className="file-summary">{u.janet_summary}</p>
-                )}
+                {u.janet_summary && <p className="file-summary">{u.janet_summary}</p>}
                 {u.janet_status === "error" && u.janet_error && (
                   <p className="file-summary" style={{ color: "var(--lc-danger)" }}>
                     Analysis failed: {u.janet_error}

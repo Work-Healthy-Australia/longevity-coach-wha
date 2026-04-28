@@ -1,6 +1,6 @@
 # Longevity Coach — Progress Checklist
 
-**Last updated:** 2026-04-28  
+**Last updated:** 2026-04-28 (upload portal delivered)  
 **Legend:** ✅ Done · 🔄 Partial · ❌ Not built
 
 ---
@@ -81,11 +81,14 @@
 
 ### What's been built toward Phase 2
 - [x] ✅ Database schema for risk scores, supplement plans, patient uploads — all migrated
-- [x] ✅ Janet document analyser (`lib/uploads/janet.ts`) — parses uploaded blood tests
+- [x] ✅ `/uploads` portal — members can upload previous pathology and imaging; Janet reads each file and auto-detects category
+- [x] ✅ Multi-file parallel upload — drag or select multiple files; each runs its own independent async pipeline
+- [x] ✅ Janet document analyser (`lib/uploads/janet.ts`) — Claude Opus 4.7, adaptive thinking, prompt caching, PDF + image support
+- [x] ✅ Dashboard uploads card — file count, adaptive CTA, assessment gate wired
 - [x] ✅ `supplement_plans` table exists and has the right shape
 - [x] 🔄 `lib/pdf/report-doc.tsx` — skeleton exists, not wired to data
-- [ ] ❌ Atlas pipeline (risk narrative AI) — `lib/ai/` is empty
-- [ ] ❌ Sage pipeline (supplement protocol AI) — `lib/ai/` is empty
+- [ ] ❌ Atlas pipeline (risk narrative AI) — schema and types ready; pipeline logic not yet built
+- [ ] ❌ Sage pipeline (supplement protocol AI) — schema and types ready; pipeline logic not yet built
 - [ ] ❌ Risk engine triggered on questionnaire submit — not wired
 - [ ] ❌ Janet chat agent — not built
 
