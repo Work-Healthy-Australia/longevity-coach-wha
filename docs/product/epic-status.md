@@ -29,7 +29,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 | 5 | The Report | `●◐○○○` | 35% | 1 (P3) | 0 |
 | 6 | The Coach | `●●○○○` | 60% | 1 (P2) | 0 |
 | 7 | The Daily Return | `●●◐○○` | 65% | 0 | 0 |
-| 8 | The Living Record | `●○○○○` | 5% | 0 | 0 |
+| 8 | The Living Record | `●●◐○○` | 25% | 0 | 0 |
 | 9 | The Care Team | `●○○○○` | 5% | 0 | 0 |
 | 10 | The Knowledge Engine | `●○○○○` | 10% | 1 (P2) | 0 |
 | 11 | The Trust Layer | `●●◐○○` | 65% | 1 (P2) | 1 |
@@ -229,20 +229,25 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 8: The Living Record
 
-`●○○○○` Planned · ○ Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 5%** — schema shipped, no UI.
+`●●◐○○` Planned · Feature Complete (member labs surface) · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 25%** — first member-facing surface shipped 2026-04-28: `/labs` index + `/labs/[biomarker]` detail with Recharts time-series and reference-range bands. Recharts now in the dependency surface, unblocking B5 and B6.
 
 **Shipped:**
 - `biomarkers` schema with `lab_results`, `wearable_summaries`, `daily_logs` tables (migrations `0009`, `0010`).
 - Patient uploads parsed by Janet feed into `biomarkers.lab_results`.
+- **`/labs` index page** (2026-04-28) — biomarkers grouped by category, each card showing latest value + status badge + reference range + trend; empty-state CTA for zero-row members.
+- **`/labs/[biomarker]` detail page** (2026-04-28) — Recharts time-series with reference-range band, header card, full history table; `notFound()` on zero-row biomarker; Next 16 async params.
+- **Pure helpers** at `lib/labs/` (`groupByBiomarker`, `formatRange`, `statusTone`, `categoryLabel`, `toChartData`) sourced off generated DB types — schema drift forces a compile error. 23 unit tests.
+- **Dashboard tile** replaced "Coming soon · Lab Results" with live `<QuickTile>` showing biomarker count + latest test date.
 
 **Outstanding:**
-- Longitudinal biomarker charts per patient.
-- Out-of-range alerts.
+- B5 — daily-log charting (sleep/energy/mood/steps 30-day trends) — Recharts now available.
+- B6 — risk simulator ("if I lower my LDL to X, my CV risk drops to Y").
+- B7 — out-of-range alerts + repeat-test reminders.
 - Wearable OAuth integrations (Oura, Apple Watch, Garmin).
 - Manual metric entry UI.
-- Risk simulator ("if I lower my LDL to X, my CV risk drops to Y").
-- Repeat-test reminders driven by Atlas's `recommended_screenings`.
+- Source-upload back-link from each lab row to its `patient_uploads` document.
+- Top-nav entry for `/labs` (currently dashboard quick-link only).
 
 **Open bugs:** none.
 **Closed bugs:** 0.

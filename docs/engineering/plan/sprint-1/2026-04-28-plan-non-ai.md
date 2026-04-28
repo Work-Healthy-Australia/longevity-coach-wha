@@ -104,7 +104,7 @@ Visible work members will feel. Each item is independently shippable.
 - Place above or beside the streak counter in the hero.
 - Pure CSS, no new dependencies.
 
-### B4 — Lab results UI **(M, ~2–3 days)** — *Epic 8*
+### B4 — Lab results UI **(M, ~2–3 days)** — *Epic 8* — ✅ **DONE 2026-04-28**
 - New page: `app/(app)/labs/page.tsx`.
 - Reads `biomarkers.lab_results` (table already exists, schema exposed via migration 0020).
 - Group by biomarker, show latest value + reference range + colour-coded out-of-range badge.

@@ -71,6 +71,22 @@ export default async function DashboardPage() {
     .select("id", { count: "exact", head: true })
     .eq("user_uuid", user!.id);
 
+  // Lab summary for dashboard tile: total rows, distinct biomarker count,
+  // and latest test_date. Per-user lab data is small, so a single column-
+  // projection fetch is cheaper than three round-trips and PostgREST
+  // doesn't expose distinct counts cleanly anyway.
+  const { data: rawLabRows } = await supabase
+    .schema("biomarkers" as never)
+    .from("lab_results")
+    .select("biomarker, test_date")
+    .eq("user_uuid", user!.id)
+    .order("test_date", { ascending: false });
+  const labRows =
+    (rawLabRows ?? []) as unknown as { biomarker: string; test_date: string }[];
+  const labCount = labRows.length;
+  const biomarkerCount = new Set(labRows.map((r) => r.biomarker)).size;
+  const latestLabDate = labRows[0]?.test_date ?? null;
+
   const { data: subscription } = await supabase
     .from("subscriptions")
     .select("status, current_period_end, cancel_at_period_end")
@@ -328,6 +344,16 @@ export default async function DashboardPage() {
       {/* Quick links */}
       <section className="lc-quick">
         <QuickTile href="/uploads" label="Documents" sub={uploadCount ? `${uploadCount} files` : "Upload your panels"} icon="📄" />
+        <QuickTile
+          href="/labs"
+          label="Lab Results"
+          sub={
+            labCount === 0
+              ? "Upload your first panel"
+              : `${biomarkerCount} biomarker${biomarkerCount === 1 ? "" : "s"} · latest ${formatDate(latestLabDate)}`
+          }
+          icon="🔬"
+        />
         <QuickTile href="/report" label="Report" sub="Risk + supplements" icon="📊" />
         <QuickTile href="/check-in" label="Check-in" sub={todayLog ? "Today logged" : "Log today"} icon="✏️" />
         <QuickTile href="/onboarding" label="Update profile" sub="Refresh your answers" icon="👤" />
@@ -342,12 +368,6 @@ export default async function DashboardPage() {
           <span className="lc-section-note">In development across the next two phases</span>
         </div>
         <div className="lc-coming-grid">
-          <ComingTile
-            icon="🔬"
-            title="Lab Results"
-            stat="Latest panel · 8 weeks ago"
-            sub="ApoB 92 mg/dL · LDL 118 · HbA1c 5.3%"
-          />
           <ComingTile
             icon="🩸"
             title="Glucose Tracker"
