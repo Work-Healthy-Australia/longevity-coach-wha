@@ -10,6 +10,7 @@ import { recordConsents } from "@/lib/consent/record";
 import type { PolicyId } from "@/lib/consent/policies";
 import { triggerPipeline } from "@/lib/ai/trigger";
 import { assemblePatientFromDB, scoreRisk } from "@/lib/risk";
+import type { Json } from "@/lib/supabase/database.types";
 
 type SaveResult = { error?: string; ok?: boolean };
 
@@ -115,17 +116,16 @@ export async function submitAssessment(
       .flatMap((d) => d.factors.filter((f) => f.modifiable && f.score < 20))
       .slice(0, 5)
       .map((r) => r.name);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const row: any = {
+    const row = {
       user_uuid: user.id,
-      engine_output: output,
+      engine_output: output as unknown as Json,
       cv_risk: output.domains.cardiovascular.score,
       metabolic_risk: output.domains.metabolic.score,
       neuro_risk: output.domains.neurodegenerative.score,
       onco_risk: output.domains.oncological.score,
       msk_risk: output.domains.musculoskeletal.score,
       biological_age: output.biological_age,
-      confidence_level: output.score_confidence.level,
+      confidence_level: output.score_confidence,
       data_completeness: output.data_completeness,
       next_recommended_tests: output.next_recommended_tests,
       top_risk_drivers: output.top_risks.map(
@@ -137,8 +137,8 @@ export async function submitAssessment(
       composite_risk: output.composite_risk,
       risk_level: output.risk_level,
       cancer_risk: output.domains.oncological.score,
-      trajectory_6month: output.trajectory_6month,
-      domain_scores: output.domains,
+      trajectory_6month: output.trajectory_6month as unknown as Json,
+      domain_scores: output.domains as unknown as Json,
       assessment_date: today,
       computed_at: todayIso,
     };

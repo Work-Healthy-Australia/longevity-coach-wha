@@ -104,7 +104,7 @@ const apoe4Carrier: PatientInput = {
       omega3_index: 5,
       vitamin_B12: 380,
     },
-    genetic: { APOE_status: "e4/e3" },
+    genetic: { APOE_status: "e3/e4" },
   },
 };
 
@@ -120,7 +120,7 @@ const familialHypercholesterolemia: PatientInput = {
     exercise_minutes_weekly: 360,
     exercise_type: "Mixed cardio + weights",
     sleep_hours: 8,
-    diet_type: "whole_food_plant_based",
+    diet_type: "vegan",
     stress_level: "low",
     alcohol_units_weekly: 2,
   },
@@ -223,18 +223,20 @@ function renderSample(s: Sample, output: EngineOutput): string {
   lines.push("");
   lines.push("### Engine output");
   lines.push("");
+  const chronAge = s.profile.demographics?.age;
+  const ageDelta = chronAge != null ? Math.round((chronAge - output.biological_age) * 10) / 10 : null;
   const deltaText =
-    output.age_delta == null
+    ageDelta == null
       ? ""
-      : output.age_delta === 0
+      : ageDelta === 0
         ? " (matches chronological)"
-        : output.age_delta > 0
-          ? ` (${output.age_delta.toFixed(1)} years younger than chronological)`
-          : ` (${Math.abs(output.age_delta).toFixed(1)} years older than chronological)`;
+        : ageDelta > 0
+          ? ` (${ageDelta.toFixed(1)} years younger than chronological)`
+          : ` (${Math.abs(ageDelta).toFixed(1)} years older than chronological)`;
   lines.push(`- **Biological age:** ${output.biological_age}${deltaText}`);
   lines.push(`- **Composite risk:** ${fmtScore(output.composite_risk)} → \`${output.risk_level}\``);
   lines.push(`- **Longevity score:** ${output.longevity_score} (${output.longevity_label})`);
-  lines.push(`- **Confidence:** \`${output.score_confidence.level}\` — ${output.score_confidence.note}`);
+  lines.push(`- **Confidence:** \`${output.score_confidence}\``);
   lines.push(`- **Data completeness:** ${(output.data_completeness * 100).toFixed(0)}%`);
   lines.push("");
   lines.push("### Domain scores");
@@ -256,10 +258,10 @@ function renderSample(s: Sample, output: EngineOutput): string {
     }
     lines.push("");
   }
-  if (output.next_recommended_tests) {
+  if (output.next_recommended_tests.length > 0) {
     lines.push("### Engine-recommended next tests");
     lines.push("");
-    lines.push(output.next_recommended_tests);
+    lines.push(output.next_recommended_tests.join("; "));
     lines.push("");
   }
   lines.push("### GP-panel notes");

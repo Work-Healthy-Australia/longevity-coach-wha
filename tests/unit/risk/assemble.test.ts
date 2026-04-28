@@ -131,7 +131,7 @@ describe("buildPatientInput → scoreRisk e2e", () => {
     const out = scoreRisk(input);
     // Engine should populate confidence as one of the four valid levels — never
     // hardcoded "moderate".
-    expect(["high", "moderate", "low", "insufficient"]).toContain(out.score_confidence.level);
+    expect(["high", "moderate", "low", "insufficient"]).toContain(out.score_confidence);
     // High-CVD profile → composite risk should be elevated.
     expect(out.composite_risk).toBeGreaterThan(20);
   });

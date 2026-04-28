@@ -15,6 +15,7 @@ const mockProfilesSingle = vi.fn();
 const mockHealthMaybeSingle = vi.fn();
 const mockUploadsQuery = vi.fn();
 const mockRiskUpsert = vi.fn(() => Promise.resolve({ error: null }));
+const mockDailyLogsQuery = vi.fn();
 
 const mockFrom = vi.fn((table: string) => {
   if (table === "profiles") {
@@ -61,8 +62,23 @@ const mockFrom = vi.fn((table: string) => {
   return {};
 });
 
+const mockBiomarkersFrom = vi.fn((table: string) => {
+  if (table === "daily_logs") {
+    return {
+      select: () => ({
+        eq: () => ({ gte: () => mockDailyLogsQuery() }),
+      }),
+    };
+  }
+  return {};
+});
+
 vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: () => ({ from: mockFrom }),
+  createAdminClient: () => ({
+    from: mockFrom,
+    schema: (s: string) =>
+      s === "biomarkers" ? { from: mockBiomarkersFrom } : { from: vi.fn() },
+  }),
 }));
 
 import { createPipelineAgent } from "@/lib/ai/agent-factory";
@@ -97,6 +113,7 @@ beforeEach(() => {
     error: null,
   });
   mockUploadsQuery.mockResolvedValue({ data: [], error: null });
+  mockDailyLogsQuery.mockResolvedValue({ data: [], error: null });
   mockRun.mockResolvedValue(fakeOutput);
 });
 afterEach(() => vi.resetAllMocks());
@@ -168,6 +185,12 @@ describe("runRiskNarrativePipeline", () => {
     expect(mockRiskUpsert).not.toHaveBeenCalled();
   });
 
+  it("resolves without throwing when the daily_logs query rejects (non-fatal failure)", async () => {
+    mockDailyLogsQuery.mockRejectedValueOnce(new Error("DB timeout"));
+    await expect(runRiskNarrativePipeline("user-123")).resolves.toBeUndefined();
+    expect(mockRiskUpsert).not.toHaveBeenCalled();
+  });
+
   it("includes upload summaries in the prompt when pathology uploads exist", async () => {
     mockUploadsQuery.mockResolvedValueOnce({
       data: [
@@ -184,5 +207,25 @@ describe("runRiskNarrativePipeline", () => {
     const prompt = mockRun.mock.calls[0]![1] as string;
     expect(prompt).toMatch(/blood-test\.pdf/);
     expect(prompt).toMatch(/pathology/);
+  });
+
+  it("includes daily trends in the prompt when recent logs exist", async () => {
+    mockDailyLogsQuery.mockResolvedValueOnce({
+      data: [
+        { mood: 7, energy_level: 6, sleep_hours: 7.5, workout_duration_min: 30, steps: 8000, water_ml: 2000 },
+        { mood: 5, energy_level: 5, sleep_hours: 6.0, workout_duration_min: 0, steps: 5000, water_ml: 1500 },
+      ],
+      error: null,
+    });
+    await runRiskNarrativePipeline("user-123");
+    const prompt = mockRun.mock.calls[0]![1] as string;
+    expect(prompt).toMatch(/Recent daily trends/);
+    expect(prompt).toMatch(/Days logged: 2 of last 14/);
+  });
+
+  it("omits daily trends section when no recent logs exist", async () => {
+    await runRiskNarrativePipeline("user-123");
+    const prompt = mockRun.mock.calls[0]![1] as string;
+    expect(prompt).not.toMatch(/Recent daily trends/);
   });
 });

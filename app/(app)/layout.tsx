@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { signOut } from "../(auth)/actions";
 import { AlexFAB } from "./_components/alex-fab";
 
@@ -16,6 +17,15 @@ export default async function AppLayout({
   } = await supabase.auth.getUser();
 
   if (!user) redirect("/login");
+
+  const admin = createAdminClient();
+  const { data: profile } = await admin
+    .from("profiles")
+    .select("is_admin")
+    .eq("id", user.id)
+    .single();
+
+  const isAdmin = profile?.is_admin ?? false;
 
   return (
     <div style={{ minHeight: "100dvh", background: "#F4F7F9" }}>
@@ -44,6 +54,7 @@ export default async function AppLayout({
             { href: "/report", label: "My Report" },
             { href: "/uploads", label: "Documents" },
             { href: "/account", label: "Account" },
+            ...(isAdmin ? [{ href: "/admin", label: "Admin" }] : []),
           ].map(({ href, label }) => (
             <Link
               key={href}

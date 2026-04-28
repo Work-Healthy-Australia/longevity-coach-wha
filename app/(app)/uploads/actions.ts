@@ -6,6 +6,30 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { analyzeUpload } from "@/lib/uploads/janet";
 import { triggerPipeline } from "@/lib/ai/trigger";
 
+export interface CheckDuplicateResult {
+  duplicate: boolean;
+  originalFilename?: string;
+  uploadedAt?: string;
+}
+
+export async function checkDuplicate(fileHash: string): Promise<CheckDuplicateResult> {
+  if (!/^[0-9a-f]{64}$/.test(fileHash)) return { duplicate: false };
+
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { duplicate: false };
+
+  const { data } = await supabase
+    .from("patient_uploads")
+    .select("original_filename, created_at")
+    .eq("user_uuid", user.id)
+    .eq("file_hash", fileHash)
+    .single();
+
+  if (!data) return { duplicate: false };
+  return { duplicate: true, originalFilename: data.original_filename, uploadedAt: data.created_at };
+}
+
 export interface RecordUploadResult {
   ok?: true;
   id?: string;
@@ -26,6 +50,7 @@ export async function recordUpload(params: {
   originalFilename: string;
   mimeType: string;
   fileSizeBytes: number;
+  fileHash: string;
 }): Promise<RecordUploadResult> {
   const supabase = await createClient();
   const {
@@ -42,6 +67,7 @@ export async function recordUpload(params: {
       original_filename: params.originalFilename,
       mime_type: params.mimeType,
       file_size_bytes: params.fileSizeBytes,
+      file_hash: params.fileHash,
       janet_status: "processing",
     })
     .select("id")

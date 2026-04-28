@@ -863,6 +863,35 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_invites: {
+        Row: {
+          accepted_at: string | null
+          email: string
+          invited_at: string
+          invited_by: string | null
+        }
+        Insert: {
+          accepted_at?: string | null
+          email: string
+          invited_at?: string
+          invited_by?: string | null
+        }
+        Update: {
+          accepted_at?: string | null
+          email?: string
+          invited_at?: string
+          invited_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_invites_invited_by_fkey"
+            columns: ["invited_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       appointments: {
         Row: {
           appointment_type: string
@@ -1246,6 +1275,51 @@ export type Database = {
           },
         ]
       }
+      member_alerts: {
+        Row: {
+          alert_type: string
+          body: string
+          created_at: string
+          dismissed_at: string | null
+          id: string
+          link_href: string | null
+          resolved_at: string | null
+          severity: string
+          source_id: string
+          status: string
+          title: string
+          user_uuid: string
+        }
+        Insert: {
+          alert_type: string
+          body: string
+          created_at?: string
+          dismissed_at?: string | null
+          id?: string
+          link_href?: string | null
+          resolved_at?: string | null
+          severity: string
+          source_id: string
+          status?: string
+          title: string
+          user_uuid: string
+        }
+        Update: {
+          alert_type?: string
+          body?: string
+          created_at?: string
+          dismissed_at?: string | null
+          id?: string
+          link_href?: string | null
+          resolved_at?: string | null
+          severity?: string
+          source_id?: string
+          status?: string
+          title?: string
+          user_uuid?: string
+        }
+        Relationships: []
+      }
       patient_assignments: {
         Row: {
           assigned_at: string
@@ -1282,6 +1356,7 @@ export type Database = {
       patient_uploads: {
         Row: {
           created_at: string
+          file_hash: string | null
           file_size_bytes: number
           id: string
           janet_category: string | null
@@ -1298,6 +1373,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          file_hash?: string | null
           file_size_bytes: number
           id?: string
           janet_category?: string | null
@@ -1314,6 +1390,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          file_hash?: string | null
           file_size_bytes?: number
           id?: string
           janet_category?: string | null
@@ -1543,7 +1620,7 @@ export type Database = {
           msk_risk: number | null
           narrative: string | null
           neuro_risk: number | null
-          next_recommended_tests: string | null
+          next_recommended_tests: string[] | null
           onco_risk: number | null
           recommended_screenings: string[]
           risk_level: string | null
@@ -1572,7 +1649,7 @@ export type Database = {
           msk_risk?: number | null
           narrative?: string | null
           neuro_risk?: number | null
-          next_recommended_tests?: string | null
+          next_recommended_tests?: string[] | null
           onco_risk?: number | null
           recommended_screenings?: string[]
           risk_level?: string | null
@@ -1601,7 +1678,7 @@ export type Database = {
           msk_risk?: number | null
           narrative?: string | null
           neuro_risk?: number | null
-          next_recommended_tests?: string | null
+          next_recommended_tests?: string[] | null
           onco_risk?: number | null
           recommended_screenings?: string[]
           risk_level?: string | null

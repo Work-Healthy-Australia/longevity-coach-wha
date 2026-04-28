@@ -100,6 +100,9 @@ export function UploadClient({ initialUploads }: Props) {
         const uuid = crypto.randomUUID();
         const storagePath = `${userData.user.id}/${uuid}${ext ? `.${ext}` : ""}`;
 
+        const hashBuffer = await crypto.subtle.digest("SHA-256", await file.arrayBuffer());
+        const fileHash = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
+
         const { error: storageError } = await supabase.storage
           .from("patient-uploads")
           .upload(storagePath, file, { upsert: false, duplex: "half" });
@@ -118,6 +121,7 @@ export function UploadClient({ initialUploads }: Props) {
           originalFilename: file.name,
           mimeType: file.type,
           fileSizeBytes: file.size,
+          fileHash,
         });
 
         if (result.error) addError(`${file.name}: ${result.error}`);

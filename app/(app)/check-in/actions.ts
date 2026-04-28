@@ -2,6 +2,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { parseCheckInForm } from "./validation";
+import { triggerPipeline } from "@/lib/ai/trigger";
 
 export type CheckInState = {
   error?: string;
@@ -47,5 +48,6 @@ export async function saveCheckIn(
   if (error) return { error: error.message };
 
   revalidatePath("/check-in");
+  triggerPipeline("risk-narrative", user.id);
   return { success: true };
 }
