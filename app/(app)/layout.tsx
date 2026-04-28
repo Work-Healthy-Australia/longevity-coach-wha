@@ -37,22 +37,44 @@ export default async function AppLayout({
             priority
           />
         </Link>
-        <form action={signOut}>
-          <button
-            type="submit"
-            style={{
-              font: "inherit",
-              padding: "8px 14px",
-              background: "transparent",
-              color: "#2F6F8F",
-              border: "1px solid #DDE8EE",
-              borderRadius: 8,
-              cursor: "pointer",
-            }}
-          >
-            Sign out
-          </button>
-        </form>
+        <nav style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          {[
+            { href: "/dashboard", label: "Dashboard" },
+            { href: "/report", label: "My Report" },
+            { href: "/uploads", label: "Documents" },
+          ].map(({ href, label }) => (
+            <Link
+              key={href}
+              href={href}
+              style={{
+                fontSize: 14,
+                fontWeight: 500,
+                color: "#2F6F8F",
+                textDecoration: "none",
+                padding: "6px 12px",
+                borderRadius: 6,
+              }}
+            >
+              {label}
+            </Link>
+          ))}
+          <form action={signOut}>
+            <button
+              type="submit"
+              style={{
+                font: "inherit",
+                padding: "8px 14px",
+                background: "transparent",
+                color: "#2F6F8F",
+                border: "1px solid #DDE8EE",
+                borderRadius: 8,
+                cursor: "pointer",
+              }}
+            >
+              Sign out
+            </button>
+          </form>
+        </nav>
       </header>
       <main style={{ maxWidth: 960, margin: "0 auto", padding: "32px 24px" }}>
         {children}

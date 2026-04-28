@@ -1,0 +1,538 @@
+# Plan A — Agent Layer & AI Infrastructure
+
+**Owner:** Engineer A  
+**Can start:** Immediately from current `qa/patient-uploads` branch  
+**Depends on Plan B:** No  
+**Plan B depends on this:** No
+
+## Provider strategy
+
+| Call type | Package | Env var |
+|---|---|---|
+| Anthropic chat (Janet, Alex, Atlas, Sage) | `@ai-sdk/anthropic` via AI SDK `streamText` / `generateText` | `ANTHROPIC_API_KEY` |
+| OpenRouter chat (admin-switchable fallback, non-Anthropic pipeline models) | `@openrouter/sdk` native | `OPENROUTER_API_KEY` |
+| Embeddings (`perplexity/pplx-embed-v1-4b`) | `@openrouter/sdk` native `openrouter.embeddings.generate()` | `OPENROUTER_API_KEY` |
+
+`OPENROUTER_API_KEY` covers both OpenRouter chat and embeddings — one key, two call sites. No Vercel AI Gateway. No OIDC token management.
+
+> **OpenRouter streaming limitation:** `@openrouter/sdk` native streaming is not compatible with `useChat` from `@ai-sdk/react`. Therefore, when a chat agent (Janet, Alex) has `provider = 'openrouter'`, the API route must convert the native stream manually or fall back to a non-streaming response. For the MVP, Janet and Alex are Anthropic-only. OpenRouter provider support for chat agents is a stretch goal after MVP.
+
+## Packages already installed
+
+`ai@6.0.168`, `@ai-sdk/anthropic@3.0.71`, `@ai-sdk/openai@3.0.53`, `zustand@5.0.12`
+
+## Still to install before starting
+
+```sh
+pnpm add @ai-sdk/react @ai-sdk/mcp @openrouter/sdk
+```
+
+- `@ai-sdk/react` — `useChat` hook (extracted from core in v6)
+- `@ai-sdk/mcp` — `createMCPClient` for MCP tool connections
+- `@openrouter/sdk` — native OpenRouter client for embeddings and pipeline fallback
+
+## Files already in repo (do not recreate)
+
+- `supabase/migrations/0019_agent_definitions.sql` — written, **not yet pushed**. Provider CHECK is `('anthropic', 'openrouter')` — correct as-is.
+- `docs/features/ai-sdk-migration/feature-proposal.md`
+- `docs/features/alex-cs-agent/feature-proposal.md`
+- `docs/features/agent-manager/feature-proposal.md`
+
+---
+
+## Summary
+
+Five sequential items. Each unlocks the next.
+
+| # | Item | Touches |
+|---|---|---|
+| 1 | AI SDK v6 migration | `lib/ai/`, `app/api/chat/` |
+| 2 | Zustand chat store | `lib/stores/` |
+| 3 | Alex CS agent + FAB sidecar | `lib/ai/agents/`, `app/api/chat/alex/`, `app/(app)/` |
+| 4 | Agent Manager admin UI | `app/(admin)/admin/agents/` |
+| 5 | pgvector + RAG for Janet | migration 0016, `lib/ai/rag.ts` |
+
+No health-data schema changes. Plan B engineers will not conflict.
+
+---
+
+## Pre-flight (do before any code)
+
+```sh
+# 1. Apply migration 0019 (agent_definitions table + seed)
+supabase db push
+
+# 2. Regenerate TypeScript types
+supabase gen types typescript --linked \
+  | grep -v "^Initialising\|^A new version\|^We recommend" \
+  > lib/supabase/database.types.ts
+
+# 3. Install remaining packages
+pnpm add @ai-sdk/react @ai-sdk/mcp @openrouter/sdk
+```
+
+---
+
+## Item 1 — AI SDK v6 migration
+
+> **AI SDK v6 is installed.** APIs changed significantly from v5. Use the patterns below — do not guess from training data.
+
+### 1a. `lib/ai/types.ts` (new)
+
+```typescript
+export type AgentProvider = 'anthropic' | 'openrouter';
+
+export interface AgentDefinition {
+  id: string;
+  slug: string;
+  display_name: string;
+  model: string;
+  provider: AgentProvider;
+  system_prompt: string;
+  temperature: number;
+  max_tokens: number;
+  enabled: boolean;
+  mcp_servers: MCPServerConfig[];
+}
+
+export interface MCPServerConfig {
+  id: string;
+  name: string;
+  type: 'sse' | 'http';
+  url: string;
+  enabled: boolean;
+}
+```
+
+### 1b. `lib/ai/providers.ts` (new)
+
+```typescript
+import { createAnthropic } from '@ai-sdk/anthropic';
+import { OpenRouter } from '@openrouter/sdk';
+import type { AgentDefinition } from './types';
+
+// Anthropic direct — for all Anthropic-hosted models via Vercel AI SDK
+export const anthropic = createAnthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY ?? '',
+});
+
+// OpenRouter native — for non-Anthropic pipeline models and all embeddings
+export const openrouter = new OpenRouter({
+  apiKey: process.env.OPENROUTER_API_KEY ?? '',
+});
+
+// Returns an AI SDK model (Anthropic only). Throws if called for openrouter provider.
+// Chat agents (Janet, Alex) must use provider = 'anthropic'.
+export function getAnthropicModel(def: Pick<AgentDefinition, 'model' | 'provider'>) {
+  if (def.provider !== 'anthropic') {
+    throw new Error(`Streaming chat agents require provider='anthropic'. Got: ${def.provider}`);
+  }
+  return anthropic(def.model); // e.g. 'claude-sonnet-4-6'
+}
+```
+
+**Anthropic model IDs** use hyphens, not dots: `claude-sonnet-4-6`, `claude-opus-4-7`.  
+**OpenRouter model IDs** use the provider/model format: `perplexity/pplx-embed-v1-4b`, `meta-llama/llama-3.3-70b-instruct`.
+
+### 1c. `lib/ai/loader.ts` (new)
+
+Loads an agent definition from `agent_definitions` by slug. Uses admin client (server-side only). Cache with Next.js `unstable_cache` at 60s TTL so admin prompt edits propagate quickly.
+
+```typescript
+import { unstable_cache } from 'next/cache';
+import { createAdminClient } from '@/lib/supabase/admin';
+import type { AgentDefinition } from './types';
+
+export const loadAgentDef = unstable_cache(
+  async (slug: string): Promise<AgentDefinition> => {
+    const admin = createAdminClient();
+    const { data, error } = await admin
+      .from('agent_definitions')
+      .select('*')
+      .eq('slug', slug)
+      .eq('enabled', true)
+      .single();
+    if (error || !data) throw new Error(`Agent '${slug}' not found or disabled`);
+    return data as AgentDefinition;
+  },
+  ['agent-def'],
+  { revalidate: 60 }
+);
+```
+
+### 1d. `lib/ai/pipelines/risk-narrative.ts` — migrate to v6 `generateText + Output`
+
+**Remove:** `callAtlas` + manual retry + `JSON.parse` + `RiskNarrativeOutputSchema.parse`
+
+**Replace with:**
+
+```typescript
+import { generateText, Output } from 'ai';
+import { loadAgentDef, getAnthropicModel } from '@/lib/ai/loader';
+// ... (keep existing Zod schema as-is)
+
+const def = await loadAgentDef('atlas');
+const { output } = await generateText({
+  model: getAnthropicModel(def),
+  system: def.system_prompt,
+  prompt: buildPrompt({ ageYears, responses, uploadSummaries }),
+  output: Output.object({ schema: RiskNarrativeOutputSchema }),
+  maxTokens: def.max_tokens,
+  temperature: def.temperature,
+});
+// output is already typed as RiskNarrativeOutput — no parse/retry needed
+```
+
+> **OpenRouter pipeline path (stretch):** If `def.provider === 'openrouter'`, call `openrouter.chat.completions.create({ model: def.model, response_format: { type: 'json_object' }, ... })` and parse the JSON response manually with the Zod schema. Atlas and Sage default to `'anthropic'` in the seed — OpenRouter is only used when an admin switches the model.
+
+### 1e. `lib/ai/pipelines/supplement-protocol.ts` — same pattern
+
+```typescript
+const def = await loadAgentDef('sage');
+const { output } = await generateText({
+  model: getAnthropicModel(def),
+  system: def.system_prompt,
+  prompt: buildPrompt({ ageYears, responses, riskSummary, uploadSummaries }),
+  output: Output.object({ schema: SupplementOutputSchema }),
+  maxTokens: def.max_tokens,
+});
+```
+
+Remove `callSage` + retry wrapper entirely.
+
+### 1f. `lib/ai/agents/janet.ts` — migrate to v6 `streamText`
+
+Janet becomes a system-prompt + context assembler, not a streaming orchestrator.
+
+```typescript
+import { streamText, convertToModelMessages, type UIMessage } from 'ai';
+import { loadAgentDef, getAnthropicModel } from '@/lib/ai/loader';
+import { loadPatientContext, summariseContext } from '@/lib/ai/patient-context';
+
+export async function streamJanetTurn(userId: string, messages: UIMessage[]) {
+  const [def, ctx] = await Promise.all([
+    loadAgentDef('janet'),
+    loadPatientContext(userId),
+  ]);
+
+  return streamText({
+    model: getAnthropicModel(def),
+    system: def.system_prompt + '\n\n' + summariseContext(ctx),
+    messages: await convertToModelMessages(messages),
+    maxTokens: def.max_tokens,
+    temperature: def.temperature,
+    onFinish: async ({ text }) => {
+      persistTurn(userId, messages, text).catch(() => {});
+    },
+  });
+}
+```
+
+### 1g. `app/api/chat/route.ts` — switch to `toUIMessageStreamResponse()`
+
+```typescript
+import { type UIMessage } from 'ai';
+import { streamJanetTurn } from '@/lib/ai/agents/janet';
+
+export async function POST(req: Request) {
+  // ... auth check ...
+  const { messages }: { messages: UIMessage[] } = await req.json();
+  const result = await streamJanetTurn(user.id, messages);
+  return result.toUIMessageStreamResponse();
+}
+```
+
+### 1h. `app/(app)/report/_components/janet-chat.tsx` — migrate to `useChat` v6
+
+```typescript
+'use client';
+import { useChat } from '@ai-sdk/react';      // note: @ai-sdk/react, NOT ai/react
+import { DefaultChatTransport } from 'ai';
+import { useState } from 'react';
+
+export function JanetChat() {
+  const { messages, sendMessage, status } = useChat({
+    transport: new DefaultChatTransport({ api: '/api/chat' }),
+  });
+  const [input, setInput] = useState('');
+
+  return (
+    <>
+      {messages.map(msg => (
+        <div key={msg.id} className={`chat-msg role-${msg.role}`}>
+          {msg.parts.map((part, i) =>
+            part.type === 'text' ? <span key={i}>{part.text}</span> : null
+          )}
+        </div>
+      ))}
+      <form onSubmit={e => { e.preventDefault(); sendMessage({ text: input }); setInput(''); }}>
+        <input value={input} onChange={e => setInput(e.target.value)}
+               disabled={status !== 'ready'} />
+        <button disabled={status !== 'ready'}>Send</button>
+      </form>
+    </>
+  );
+}
+```
+
+**v6 API changes from v5:**
+- `useChat` imported from `@ai-sdk/react` (not `ai/react`)
+- `transport: new DefaultChatTransport({ api })` replaces the `api:` prop
+- `sendMessage({ text })` for submission — the v5 form-event pattern is gone
+- `status !== 'ready'` replaces `isLoading`
+- `msg.parts` replaces `msg.content` for rendering
+
+---
+
+## Item 2 — Zustand chat store
+
+**File:** `lib/stores/chat-store.ts`
+
+```typescript
+'use client';
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+
+interface ChatStore {
+  alex: { isOpen: boolean; unread: number };
+  openAlex: () => void;
+  closeAlex: () => void;
+  toggleAlex: () => void;
+  clearUnread: () => void;
+  incUnread: () => void;
+}
+
+export const useChatStore = create<ChatStore>()(
+  persist(
+    (set) => ({
+      alex: { isOpen: false, unread: 0 },
+      openAlex:   () => set(s => ({ alex: { ...s.alex, isOpen: true, unread: 0 } })),
+      closeAlex:  () => set(s => ({ alex: { ...s.alex, isOpen: false } })),
+      toggleAlex: () => set(s => ({
+        alex: { ...s.alex, isOpen: !s.alex.isOpen, unread: s.alex.isOpen ? s.alex.unread : 0 },
+      })),
+      clearUnread: () => set(s => ({ alex: { ...s.alex, unread: 0 } })),
+      incUnread:   () => set(s => ({ alex: { ...s.alex, unread: s.alex.unread + 1 } })),
+    }),
+    { name: 'lc-chat' }
+  )
+);
+```
+
+`isOpen` persists across page navigations so the panel stays open when members move between report / dashboard / uploads.
+
+---
+
+## Item 3 — Alex CS agent + FAB sidecar
+
+### 3a. `lib/ai/agents/alex.ts`
+
+```typescript
+import { streamText, convertToModelMessages, type UIMessage } from 'ai';
+import { loadAgentDef, getAnthropicModel } from '@/lib/ai/loader';
+
+export async function streamAlexTurn(messages: UIMessage[], currentPath: string) {
+  const def = await loadAgentDef('alex');
+  return streamText({
+    model: getAnthropicModel(def),
+    system: def.system_prompt + `\n\nCurrent member page: ${currentPath}`,
+    messages: await convertToModelMessages(messages),
+    maxTokens: def.max_tokens,
+  });
+  // No PatientContext — privacy boundary. Alex sees only the current page path.
+}
+```
+
+### 3b. `app/api/chat/alex/route.ts`
+
+```typescript
+import { type UIMessage } from 'ai';
+import { streamAlexTurn } from '@/lib/ai/agents/alex';
+
+export async function POST(req: Request) {
+  // session auth check
+  const { messages, currentPath }: { messages: UIMessage[]; currentPath: string } = await req.json();
+  const result = await streamAlexTurn(messages, currentPath);
+  return result.toUIMessageStreamResponse();
+}
+```
+
+No conversation persistence. Ephemeral support chat.
+
+### 3c. `app/(app)/_components/alex-fab.tsx` (client component)
+
+Layout — fixed bottom-right corner, z-index 200:
+
+```
+┌─────────────────┐   ← chat panel (400×520px, slides up above FAB)
+│ Alex · Support  │
+│                 │
+│ messages...     │
+│                 │
+│ [input] [Send]  │
+└─────────────────┘
+                [●]   ← FAB (56×56px), badge shows unread count
+```
+
+```typescript
+'use client';
+import { useChat } from '@ai-sdk/react';
+import { DefaultChatTransport } from 'ai';
+import { useChatStore } from '@/lib/stores/chat-store';
+import { usePathname } from 'next/navigation';
+
+export function AlexFAB() {
+  const { alex, toggleAlex, closeAlex } = useChatStore();
+  const pathname = usePathname();
+  const { messages, sendMessage, status } = useChat({
+    transport: new DefaultChatTransport({
+      api: '/api/chat/alex',
+      body: { currentPath: pathname },
+    }),
+    initialMessages: [{ id: 'intro', role: 'assistant',
+      parts: [{ type: 'text', text: "Hi! I'm Alex. How can I help you today?" }] }],
+  });
+  // ... render FAB button + panel
+}
+```
+
+Co-locate `alex-fab.css` with the component. Panel uses `position: fixed; bottom: 80px; right: 24px`.
+
+### 3d. `app/(app)/layout.tsx` — add `<AlexFAB />`
+
+Import and render after `{children}`. AlexFAB is a client component; server rendering is unaffected.
+
+---
+
+## Item 4 — Agent Manager UI
+
+### 4a. `app/(admin)/admin/agents/page.tsx`
+
+List all `agent_definitions` rows. Table columns: slug, display name, model, provider, enabled toggle, updated at, Edit link.
+
+### 4b. `app/(admin)/admin/agents/[slug]/page.tsx`
+
+Edit form:
+- System prompt (large `<textarea>`)
+- Model (text input — e.g. `claude-sonnet-4-6` for Anthropic, `meta-llama/llama-3.3-70b-instruct` for OpenRouter)
+- Provider (select: `anthropic` | `openrouter`)
+- Temperature (0–1), Max tokens
+- Enabled toggle
+- MCP Servers section: list of wired servers, add/remove form
+
+### 4c. `app/(admin)/admin/agents/[slug]/actions.ts`
+
+Server actions — all write via admin client (bypasses RLS):
+- `updateAgentDefinition(slug, data)` — validate + upsert core fields
+- `addMCPServer(slug, server)` — append to `mcp_servers` JSONB array
+- `removeMCPServer(slug, serverId)` — filter out by id
+- `toggleAgent(slug, enabled)` — flip enabled flag + revalidate `agent-def` cache key
+
+### 4d. Admin nav — add Agents link
+
+In `app/(admin)/layout.tsx`, add `<a href="/admin/agents">Agents</a>` to nav.
+
+### 4e. MCP runtime wiring (stretch goal within this item)
+
+When an agent has enabled MCP servers, the loader creates live clients and passes tools to `streamText`:
+
+```typescript
+import { createMCPClient } from '@ai-sdk/mcp';
+
+async function buildMCPTools(servers: MCPServerConfig[]) {
+  const active = servers.filter(s => s.enabled);
+  const clients = await Promise.all(
+    active.map(s => createMCPClient({ transport: { type: s.type, url: s.url } }))
+  );
+  const toolSets = await Promise.all(clients.map(c => c.tools()));
+  return Object.assign({}, ...toolSets);
+}
+
+// In streamJanetTurn / streamAlexTurn:
+const tools = def.mcp_servers.length ? await buildMCPTools(def.mcp_servers) : undefined;
+const result = streamText({ model, system, messages, tools });
+```
+
+MCP servers added in the Admin UI are live on the agent's next request — no redeploy.
+
+---
+
+## Item 5 — pgvector + RAG for Janet
+
+**Hard prerequisite:** pgvector extension must be enabled in Supabase Dashboard → Database → Extensions → `vector` → Enable.
+
+### 5a. Apply migration 0016
+
+```sh
+supabase db push   # applies 0016_knowledge_base_pgvector.sql
+```
+
+Creates `health_knowledge` table with `embedding vector(2560)` and `hybrid_search_health()` SQL function.
+
+### 5b. `lib/ai/rag.ts` (new) — OpenRouter native embeddings
+
+```typescript
+import { openrouter } from '@/lib/ai/providers';
+import { createAdminClient } from '@/lib/supabase/admin';
+
+export async function embedText(texts: string[]): Promise<number[][]> {
+  const result = await openrouter.embeddings.generate({
+    model: 'perplexity/pplx-embed-v1-4b',
+    input: texts,
+  });
+  return result.data.map(d => d.embedding);
+}
+
+export async function retrieveKnowledge(query: string, limit = 5): Promise<string[]> {
+  const admin = createAdminClient();
+  const { data } = await admin.rpc('hybrid_search_health', {
+    query_text: query,
+    match_count: limit,
+  });
+  return (data ?? []).map((r: { content: string }) => r.content);
+}
+```
+
+### 5c. `lib/ai/patient-context.ts` — add RAG field
+
+Add `knowledgeChunks: string[]` to `PatientContext`. Populate in `loadPatientContext` by calling `retrieveKnowledge(lastUserMessage)`. Include in `summariseContext()` output under a `## Relevant health knowledge` section.
+
+### 5d. `lib/ai/pipelines/nova.ts` (stub)
+
+Documented interface for the Nova research digest pipeline (Phase 4). Stub only — creates the file with the function signature and TODO comments so Janet's RAG endpoint is wired and ready to receive knowledge once Nova runs.
+
+---
+
+## Build sequence
+
+```
+Pre-flight: push 0019, regen types, install @ai-sdk/react @ai-sdk/mcp @openrouter/sdk
+1.  lib/ai/types.ts
+2.  lib/ai/providers.ts
+3.  lib/ai/loader.ts
+4.  lib/ai/pipelines/risk-narrative.ts  (generateText + Output.object)
+5.  lib/ai/pipelines/supplement-protocol.ts  (same)
+6.  lib/ai/agents/janet.ts  (streamText + convertToModelMessages)
+7.  app/api/chat/route.ts  (toUIMessageStreamResponse)
+8.  app/(app)/report/_components/janet-chat.tsx  (useChat v6)
+9.  lib/stores/chat-store.ts
+10. lib/ai/agents/alex.ts
+11. app/api/chat/alex/route.ts
+12. app/(app)/_components/alex-fab.tsx + alex-fab.css
+13. app/(app)/layout.tsx  (add AlexFAB)
+14. app/(admin)/admin/agents/* pages + actions
+15. app/(admin)/layout.tsx  (add Agents nav link)
+16. [If pgvector enabled] lib/ai/rag.ts + patient-context.ts update + nova stub
+17. pnpm build — must be clean before merge
+```
+
+---
+
+## Definition of done
+
+- [ ] `pnpm build` clean
+- [ ] Janet chat uses `useChat` v6 (`@ai-sdk/react`), streams via `toUIMessageStreamResponse()`
+- [ ] Alex FAB visible on all signed-in pages; chat opens/closes; streams correctly
+- [ ] Agent Manager lists all agents; system prompt + model editable without redeploy
+- [ ] MCP server CRUD works in admin (save, remove, toggle)
+- [ ] `.env.example` updated with `ANTHROPIC_API_KEY` and `OPENROUTER_API_KEY`

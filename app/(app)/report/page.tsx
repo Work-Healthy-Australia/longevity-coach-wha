@@ -1,0 +1,251 @@
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { JanetChat } from "./_components/janet-chat";
+import "./report.css";
+
+export const metadata = { title: "Your Report · Longevity Coach" };
+
+export default async function ReportPage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const [riskResult, supplementResult, healthResult] = await Promise.all([
+    supabase
+      .from("risk_scores")
+      .select("biological_age, cv_risk, metabolic_risk, neuro_risk, onco_risk, msk_risk, narrative, top_risk_drivers, top_protective_levers, recommended_screenings, confidence_level, data_gaps, assessment_date")
+      .eq("user_uuid", user.id)
+      .order("assessment_date", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+
+    supabase
+      .from("supplement_plans")
+      .select("items, created_at, notes")
+      .eq("patient_uuid", user.id)
+      .eq("status", "active")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+
+    supabase
+      .from("health_profiles")
+      .select("completed_at")
+      .eq("user_uuid", user.id)
+      .not("completed_at", "is", null)
+      .limit(1)
+      .maybeSingle(),
+  ]);
+
+  const risk = riskResult.data;
+  const supplement = supplementResult.data;
+  const hasAssessment = !!healthResult.data;
+
+  if (!hasAssessment) {
+    redirect("/onboarding");
+  }
+
+  type SupplementItem = {
+    name: string;
+    form: string;
+    dosage: string;
+    timing: string;
+    priority: "critical" | "high" | "recommended" | "performance";
+    domains: string[];
+    rationale: string;
+    note?: string;
+  };
+
+  const supplements = (supplement?.items as unknown as SupplementItem[]) ?? [];
+
+  const domains: [string, number | null][] = [
+    ["Cardiovascular", risk?.cv_risk ?? null],
+    ["Metabolic", risk?.metabolic_risk ?? null],
+    ["Neurological", risk?.neuro_risk ?? null],
+    ["Oncological", risk?.onco_risk ?? null],
+    ["Musculoskeletal", risk?.msk_risk ?? null],
+  ];
+
+  return (
+    <div className="report">
+      {/* Bio-age hero */}
+      <section className="bio-age-hero">
+        {risk?.biological_age != null ? (
+          <>
+            <div className="bio-age-number">{Math.round(risk.biological_age)}</div>
+            <div className="bio-age-label">Biological age</div>
+            {risk.confidence_level && (
+              <span className={`confidence-badge confidence-${risk.confidence_level}`}>
+                {risk.confidence_level} confidence
+              </span>
+            )}
+          </>
+        ) : (
+          <div className="pending-state">
+            <div className="pending-icon">⏳</div>
+            <h2>Your report is being prepared</h2>
+            <p>
+              It takes a few minutes to analyse your assessment. Check back shortly or
+              ask Janet a question below — she can help while your report processes.
+            </p>
+          </div>
+        )}
+      </section>
+
+      {/* Risk narrative */}
+      {risk?.narrative && (
+        <section className="card">
+          <h2>Your health story</h2>
+          <p className="narrative">{risk.narrative}</p>
+        </section>
+      )}
+
+      {/* Domain scores */}
+      <section className="card">
+        <h2>Risk domains</h2>
+        <p className="section-note">0 = optimal · 100 = highest risk</p>
+        <div className="domains-grid">
+          {domains.map(([label, value]) => (
+            <div key={label} className="domain-card">
+              <div className="domain-label">{label}</div>
+              {value != null ? (
+                <>
+                  <div
+                    className={`domain-value ${riskClass(value)}`}
+                  >
+                    {Math.round(value)}
+                  </div>
+                  <div className="domain-bar">
+                    <div
+                      className={`domain-bar-fill ${riskClass(value)}`}
+                      style={{ width: `${value}%` }}
+                    />
+                  </div>
+                </>
+              ) : (
+                <div className="domain-value pending">—</div>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Risk drivers & recommendations */}
+      {(risk?.top_risk_drivers?.length || risk?.recommended_screenings?.length) && (
+        <div className="two-col">
+          {(risk.top_risk_drivers as string[])?.length > 0 && (
+            <section className="card">
+              <h2>Top risk factors to address</h2>
+              <ol className="driver-list">
+                {(risk.top_risk_drivers as string[]).map((d, i) => (
+                  <li key={i}>{d}</li>
+                ))}
+              </ol>
+            </section>
+          )}
+          {(risk.recommended_screenings as string[])?.length > 0 && (
+            <section className="card">
+              <h2>Recommended screenings</h2>
+              <ul className="screening-list">
+                {(risk.recommended_screenings as string[]).map((s, i) => (
+                  <li key={i}>{s}</li>
+                ))}
+              </ul>
+            </section>
+          )}
+        </div>
+      )}
+
+      {/* Supplement protocol */}
+      <section className="card">
+        <div className="card-head">
+          <h2>Your supplement protocol</h2>
+          <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+            {supplement?.created_at && (
+              <span className="badge muted">
+                Updated {formatDate(supplement.created_at)}
+              </span>
+            )}
+            {supplements.length > 0 && (
+              <a href="/api/report/pdf" className="btn-download" download="longevity-report.pdf">
+                Download PDF
+              </a>
+            )}
+          </div>
+        </div>
+
+        {supplements.length === 0 ? (
+          <p className="muted-text">
+            Your supplement protocol is being generated. It will appear here shortly
+            after your assessment is processed.
+          </p>
+        ) : (
+          <div className="supplement-list">
+            {["critical", "high", "recommended", "performance"].map((tier) => {
+              const tierItems = supplements.filter((s) => s.priority === tier);
+              if (!tierItems.length) return null;
+              return (
+                <div key={tier} className="supplement-tier">
+                  <h3 className={`tier-label tier-${tier}`}>{tierLabel(tier)}</h3>
+                  {tierItems.map((s, i) => (
+                    <div key={i} className="supplement-item">
+                      <div className="supplement-header">
+                        <span className="supplement-name">{s.name}</span>
+                        <span className="supplement-dosage">
+                          {s.dosage} · {s.form}
+                        </span>
+                      </div>
+                      <div className="supplement-timing">{s.timing}</div>
+                      <div className="supplement-rationale">{s.rationale}</div>
+                      {s.note && (
+                        <div className="supplement-note">⚠ {s.note}</div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </section>
+
+      {/* Janet chat */}
+      <section className="card chat-section">
+        <h2>Ask Janet</h2>
+        <p className="section-note">
+          Janet is your longevity health coach. Ask about your results, supplements,
+          lifestyle changes, or anything else on your mind.
+        </p>
+        <JanetChat />
+      </section>
+    </div>
+  );
+}
+
+function riskClass(value: number): string {
+  if (value <= 25) return "risk-optimal";
+  if (value <= 45) return "risk-low";
+  if (value <= 65) return "risk-moderate";
+  if (value <= 80) return "risk-high";
+  return "risk-critical";
+}
+
+function tierLabel(tier: string): string {
+  const labels: Record<string, string> = {
+    critical: "Critical",
+    high: "High priority",
+    recommended: "Recommended",
+    performance: "Performance",
+  };
+  return labels[tier] ?? tier;
+}
+
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}

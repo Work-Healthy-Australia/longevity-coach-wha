@@ -30,6 +30,12 @@ export default async function DashboardPage() {
     .limit(1)
     .maybeSingle();
 
+  // Upload count for the uploads card.
+  const { count: uploadCount } = await supabase
+    .from("patient_uploads")
+    .select("id", { count: "exact", head: true })
+    .eq("user_uuid", user!.id);
+
   // Most recent subscription, regardless of status.
   const { data: subscription } = await supabase
     .from("subscriptions")
@@ -131,6 +137,39 @@ export default async function DashboardPage() {
           )}
         </div>
       </div>
+
+      {/* Uploads card */}
+        <div className="card">
+          <div className="head">
+            <h2>My documents</h2>
+            {uploadCount != null && uploadCount > 0 && (
+              <span className="badge primary">{uploadCount} file{uploadCount !== 1 ? "s" : ""}</span>
+            )}
+          </div>
+          {assessmentState !== "complete" ? (
+            <p>Complete your health assessment first, then upload your previous pathology and imaging.</p>
+          ) : uploadCount === 0 ? (
+            <>
+              <p>
+                Upload blood work, imaging, genetic tests, or any pathology.
+                Janet reads and categorises each file to improve your risk scores.
+              </p>
+              <Link className="btn btn-primary" href="/uploads">
+                Upload documents
+              </Link>
+            </>
+          ) : (
+            <>
+              <p>
+                {uploadCount} document{uploadCount !== 1 ? "s" : ""} uploaded.
+                Janet uses these alongside your questionnaire to refine your risk profile.
+              </p>
+              <Link className="btn btn-ghost" href="/uploads">
+                View documents
+              </Link>
+            </>
+          )}
+        </div>
 
       {/* Risk scores */}
       <div className="card">

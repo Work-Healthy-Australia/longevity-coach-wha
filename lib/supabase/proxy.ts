@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const PROTECTED_PREFIXES = ["/dashboard", "/onboarding", "/admin"];
+const PROTECTED_PREFIXES = ["/dashboard", "/onboarding", "/admin", "/uploads"];
 const AUTH_ONLY_PREFIXES = ["/login", "/signup", "/forgot-password"];
 
 function matches(pathname: string, prefixes: string[]): boolean {
