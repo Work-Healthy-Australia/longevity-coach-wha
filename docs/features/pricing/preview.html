@@ -603,9 +603,9 @@
   <div class="top-nav-inner">
     <div class="brand">Longevity<span>Coach</span> <span style="font-weight:400;color:var(--lc-grey);font-size:13px;margin-left:10px;">· Pricing Feature</span></div>
     <div class="view-tabs">
-      <button class="view-tab active" onclick="switchView('db')">Database Tables</button>
-      <button class="view-tab" onclick="switchView('sys')">System Design</button>
-      <button class="view-tab" onclick="switchView('ui')">UI Preview</button>
+      <button class="view-tab active" onclick="switchView('db', this)">Database Tables</button>
+      <button class="view-tab" onclick="switchView('sys', this)">System Design</button>
+      <button class="view-tab" onclick="switchView('ui', this)">UI Preview</button>
     </div>
   </div>
 </nav>
@@ -1091,10 +1091,10 @@
 
     <!-- sub-screen tabs -->
     <div class="screen-tabs" id="screenTabs" style="border-radius:12px 12px 0 0;border:1px solid var(--lc-line);border-bottom-color:var(--lc-line);overflow:hidden;">
-      <button class="screen-tab active" onclick="switchScreen('s-pricing')">Pricing Page</button>
-      <button class="screen-tab" onclick="switchScreen('s-billing')">Account / Billing</button>
-      <button class="screen-tab" onclick="switchScreen('s-employer')">Employer Dashboard</button>
-      <button class="screen-tab" onclick="switchScreen('s-admin')">Admin Panel</button>
+      <button class="screen-tab active" onclick="switchScreen('s-pricing', this)">Pricing Page</button>
+      <button class="screen-tab" onclick="switchScreen('s-billing', this)">Account / Billing</button>
+      <button class="screen-tab" onclick="switchScreen('s-employer', this)">Employer Dashboard</button>
+      <button class="screen-tab" onclick="switchScreen('s-admin', this)">Admin Panel</button>
     </div>
 
     <!-- SCREEN: Pricing Page -->
@@ -1224,32 +1224,12 @@
 
           <div class="billing-section">
             <div class="billing-section-title">Active Add-ons</div>
-            <div style="background:var(--lc-surface);border:1px solid var(--lc-line);border-radius:10px;overflow:hidden;">
-              <div class="addon-manage-row">
-                <div class="addon-status-dot dot-green"></div>
-                <div class="addon-manage-name">Advanced Supplement Protocol</div>
-                <div class="addon-manage-price">$90/yr</div>
-                <button class="btn btn-danger btn-sm">Remove</button>
-              </div>
-              <div class="addon-manage-row">
-                <div class="addon-status-dot dot-green"></div>
-                <div class="addon-manage-name">Branded PDF Export</div>
-                <div class="addon-manage-price">$48/yr</div>
-                <button class="btn btn-danger btn-sm">Remove</button>
-              </div>
-            </div>
+            <div id="billing-active-list" style="background:var(--lc-surface);border:1px solid var(--lc-line);border-radius:10px;overflow:hidden;"></div>
           </div>
 
           <div class="billing-section">
             <div class="billing-section-title">Available Add-ons</div>
-            <div style="background:var(--lc-surface);border:1px solid var(--lc-line);border-radius:10px;overflow:hidden;">
-              <div class="addon-manage-row">
-                <div class="addon-status-dot dot-grey"></div>
-                <div class="addon-manage-name">Genome Analysis Access</div>
-                <div class="addon-manage-price">$182/yr</div>
-                <button class="btn btn-primary btn-sm">Add</button>
-              </div>
-            </div>
+            <div id="billing-available-list" style="background:var(--lc-surface);border:1px solid var(--lc-line);border-radius:10px;overflow:hidden;"></div>
           </div>
 
           <div class="billing-section">
@@ -1325,32 +1305,32 @@
                   <td><span class="included-tag">included</span></td>
                   <td>—</td>
                 </tr>
-                <tr>
+                <tr data-feature="supplement" data-cost="9" data-on="true">
                   <td>Advanced Supplement Protocol</td>
-                  <td><span class="toggle-on">ON ●</span></td>
+                  <td><span class="toggle-on" id="feat-status-supplement">ON ●</span></td>
                   <td class="impact-cost">+$9/mo</td>
-                  <td class="impact-cost">$9 × 12 × 12 = $1,296/yr</td>
+                  <td id="feat-action-supplement"><span class="impact-cost">$9 × 12 × 12 = $1,296/yr</span> <button class="btn btn-danger btn-sm" style="margin-left:10px;" onclick="toggleFeature('supplement')">Disable</button></td>
                 </tr>
-                <tr>
+                <tr data-feature="pdf" data-cost="5" data-on="false">
                   <td>Branded PDF Export</td>
-                  <td><span class="toggle-off">OFF ○</span></td>
-                  <td style="color:var(--lc-grey);">+$5/mo</td>
-                  <td><button class="btn btn-primary btn-sm">Enable</button></td>
+                  <td><span class="toggle-off" id="feat-status-pdf">OFF ○</span></td>
+                  <td style="color:var(--lc-grey);" id="feat-cost-pdf">+$5/mo</td>
+                  <td id="feat-action-pdf"><button class="btn btn-primary btn-sm" onclick="toggleFeature('pdf')">Enable</button></td>
                 </tr>
-                <tr>
+                <tr data-feature="genome" data-cost="19" data-on="false">
                   <td>Genome Analysis Access</td>
-                  <td><span class="toggle-off">OFF ○</span></td>
-                  <td style="color:var(--lc-grey);">+$19/mo</td>
-                  <td><button class="btn btn-primary btn-sm">Enable</button></td>
+                  <td><span class="toggle-off" id="feat-status-genome">OFF ○</span></td>
+                  <td style="color:var(--lc-grey);" id="feat-cost-genome">+$19/mo</td>
+                  <td id="feat-action-genome"><button class="btn btn-primary btn-sm" onclick="toggleFeature('genome')">Enable</button></td>
                 </tr>
               </tbody>
             </table>
             <div class="emp-total-bar">
               <div>
                 <div class="emp-total-label">Current monthly cost</div>
-                <div style="font-size:12px;color:var(--lc-grey);">($45 base + $9 add-on) × 12 seats</div>
+                <div id="emp-total-formula" style="font-size:12px;color:var(--lc-grey);">($45 base + $9 add-on) × 12 seats</div>
               </div>
-              <div class="emp-total-amount">$648/mo · $7,776/yr</div>
+              <div class="emp-total-amount" id="emp-total-amount">$648/mo · $7,776/yr</div>
             </div>
           </div>
 
@@ -1384,16 +1364,56 @@
         <div class="admin-header">
           <div class="brand" style="font-size:14px;font-weight:700;">LongevityCoach <span style="opacity:0.4;margin-left:4px;">Admin</span></div>
           <nav>
-            <span>Plans</span>
-            <span>Add-ons</span>
-            <span class="active">Suppliers</span>
-            <span>Products</span>
-            <span>Test Orders</span>
+            <span onclick="switchAdminTab('plans', this)">Plans</span>
+            <span onclick="switchAdminTab('addons', this)">Add-ons</span>
+            <span class="active" onclick="switchAdminTab('suppliers', this)">Suppliers</span>
+            <span onclick="switchAdminTab('products', this)">Products</span>
+            <span onclick="switchAdminTab('testorders', this)">Test Orders</span>
           </nav>
         </div>
 
         <div style="padding:28px;">
+
+          <!-- Plans placeholder -->
+          <div id="admin-sec-plans" class="admin-section" style="display:none;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+              <h3 style="margin:0;font-size:16px;font-weight:700;color:var(--lc-ink);">Plans</h3>
+              <button class="btn btn-primary btn-sm">+ Add Plan</button>
+            </div>
+            <div style="background:var(--lc-surface);border:1px solid var(--lc-line);border-radius:12px;overflow:hidden;margin-bottom:28px;">
+              <table class="admin-table">
+                <thead><tr><th>Name</th><th>Tier</th><th>Interval</th><th>Price</th><th>Discount</th><th>Status</th><th></th></tr></thead>
+                <tbody>
+                  <tr><td style="font-weight:600;">Individual Monthly</td><td><span class="tag tag-s1">individual</span></td><td>month</td><td>$29/mo</td><td>—</td><td><span class="pill pill-green">Active</span></td><td><button class="btn btn-outline btn-sm">Edit</button></td></tr>
+                  <tr><td style="font-weight:600;">Individual Annual</td><td><span class="tag tag-s1">individual</span></td><td>year</td><td>$23/mo</td><td>20%</td><td><span class="pill pill-green">Active</span></td><td><button class="btn btn-outline btn-sm">Edit</button></td></tr>
+                  <tr><td style="font-weight:600;">Professional Monthly</td><td><span class="tag tag-s1" style="background:#e0f2ea;color:#1d6b40;">professional</span></td><td>month</td><td>$59/mo</td><td>—</td><td><span class="pill pill-green">Active</span></td><td><button class="btn btn-outline btn-sm">Edit</button></td></tr>
+                  <tr><td style="font-weight:600;">Professional Annual</td><td><span class="tag tag-s1" style="background:#e0f2ea;color:#1d6b40;">professional</span></td><td>year</td><td>$47/mo</td><td>20%</td><td><span class="pill pill-green">Active</span></td><td><button class="btn btn-outline btn-sm">Edit</button></td></tr>
+                  <tr><td style="font-weight:600;">Corporate Annual</td><td><span class="tag tag-s2">corporate</span></td><td>year</td><td>$36/seat/mo</td><td>20%</td><td><span class="pill pill-green">Active</span></td><td><button class="btn btn-outline btn-sm">Edit</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Add-ons placeholder -->
+          <div id="admin-sec-addons" class="admin-section" style="display:none;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+              <h3 style="margin:0;font-size:16px;font-weight:700;color:var(--lc-ink);">Add-ons</h3>
+              <button class="btn btn-primary btn-sm">+ Add Add-on</button>
+            </div>
+            <div style="background:var(--lc-surface);border:1px solid var(--lc-line);border-radius:12px;overflow:hidden;margin-bottom:28px;">
+              <table class="admin-table">
+                <thead><tr><th>Name</th><th>Feature Key</th><th>Min Tier</th><th>Monthly</th><th>Annual</th><th>Status</th><th></th></tr></thead>
+                <tbody>
+                  <tr><td style="font-weight:600;">Advanced Supplement Protocol</td><td class="route">supplement_protocol</td><td><span class="tag tag-s1" style="background:#e0f2ea;color:#1d6b40;">professional</span></td><td>$9/mo</td><td>$8/mo</td><td><span class="pill pill-green">Active</span></td><td><button class="btn btn-outline btn-sm">Edit</button></td></tr>
+                  <tr><td style="font-weight:600;">Branded PDF Export</td><td class="route">pdf_export</td><td><span class="tag tag-s1">individual</span></td><td>$5/mo</td><td>$4/mo</td><td><span class="pill pill-green">Active</span></td><td><button class="btn btn-outline btn-sm">Edit</button></td></tr>
+                  <tr><td style="font-weight:600;">Genome Analysis Access</td><td class="route">genome_access</td><td><span class="tag tag-s1" style="background:#e0f2ea;color:#1d6b40;">professional</span></td><td>$19/mo</td><td>$15/mo</td><td><span class="pill pill-green">Active</span></td><td><button class="btn btn-outline btn-sm">Edit</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
           <!-- Suppliers table -->
+          <div id="admin-sec-suppliers" class="admin-section">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
             <h3 style="margin:0;font-size:16px;font-weight:700;color:var(--lc-ink);">Suppliers</h3>
             <button class="btn btn-primary btn-sm">+ Add Supplier</button>
@@ -1427,7 +1447,10 @@
             </table>
           </div>
 
+          </div><!-- /admin-sec-suppliers -->
+
           <!-- Products table -->
+          <div id="admin-sec-products" class="admin-section" style="display:none;">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
             <h3 style="margin:0;font-size:16px;font-weight:700;color:var(--lc-ink);">Products <span style="font-size:13px;font-weight:400;color:var(--lc-grey);margin-left:8px;">Supplier: All</span></h3>
             <button class="btn btn-primary btn-sm">+ Add Product</button>
@@ -1468,7 +1491,7 @@
           </div>
 
           <!-- Add product modal example -->
-          <div class="modal-overlay">
+          <div class="modal-overlay" id="products-modal">
             <div style="font-size:12px;font-weight:600;color:var(--lc-grey);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.06em;">Example modal — Add / Edit Product</div>
             <div class="modal">
               <h4>Add Product</h4>
@@ -1490,6 +1513,25 @@
               </div>
             </div>
           </div>
+          </div><!-- /admin-sec-products -->
+
+          <!-- Test Orders -->
+          <div id="admin-sec-testorders" class="admin-section" style="display:none;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+              <h3 style="margin:0;font-size:16px;font-weight:700;color:var(--lc-ink);">Test Orders</h3>
+            </div>
+            <div style="background:var(--lc-surface);border:1px solid var(--lc-line);border-radius:12px;overflow:hidden;margin-bottom:28px;">
+              <table class="admin-table">
+                <thead><tr><th>Date</th><th>User</th><th>Product</th><th>Supplier</th><th>Amount</th><th>Status</th><th></th></tr></thead>
+                <tbody>
+                  <tr><td style="color:var(--lc-grey);font-size:12px;">2026-04-25</td><td>alice@example.com</td><td>DEXA Scan</td><td>HealthPath</td><td>$350</td><td><span class="pill pill-green">Completed</span></td><td><button class="btn btn-outline btn-sm">View</button></td></tr>
+                  <tr><td style="color:var(--lc-grey);font-size:12px;">2026-04-26</td><td>bob@acme.com</td><td>Full Blood Panel</td><td>HealthPath</td><td>$120</td><td><span class="pill pill-amber">Fulfilling</span></td><td><button class="btn btn-outline btn-sm">Update</button></td></tr>
+                  <tr><td style="color:var(--lc-grey);font-size:12px;">2026-04-28</td><td>carol@example.com</td><td>Genetic Test</td><td>GenomicsCo</td><td>$499</td><td><span class="pill pill-blue">Paid</span></td><td><button class="btn btn-outline btn-sm">Update</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -1499,22 +1541,33 @@
 
 <script>
   // ── View switching ──
-  function switchView(name) {
+  function switchView(name, el) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
     document.getElementById('view-' + name).classList.add('active');
-    event.currentTarget.classList.add('active');
+    el.classList.add('active');
   }
 
   // ── Screen switching (within UI view) ──
-  function switchScreen(name) {
+  function switchScreen(name, el) {
     document.querySelectorAll('.screen-panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.screen-tab').forEach(t => t.classList.remove('active'));
     document.getElementById(name).classList.add('active');
-    event.currentTarget.classList.add('active');
+    el.classList.add('active');
   }
 
-  // ── Billing toggle ──
+  // ── Admin tab switching ──
+  const adminSections = ['plans','addons','suppliers','products','testorders'];
+  function switchAdminTab(name, el) {
+    adminSections.forEach(s => {
+      const sec = document.getElementById('admin-sec-' + s);
+      if (sec) sec.style.display = s === name ? '' : 'none';
+    });
+    document.querySelectorAll('.admin-header nav span').forEach(s => s.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  // ── Billing toggle (pricing page) ──
   const prices = {
     monthly: { individual: 29, professional: 59, corporate: 45,
                 supplement: 9, pdf: 5, genome: 19 },
@@ -1534,20 +1587,20 @@
   function updatePrices() {
     const p = prices[currentInterval];
     const suffix = currentInterval === 'annual' ? '/ mo (billed annually)' : '/ mo';
-    document.getElementById('price-individual').innerHTML = `$${p.individual} <span>${suffix}</span>`;
+    document.getElementById('price-individual').innerHTML   = `$${p.individual} <span>${suffix}</span>`;
     document.getElementById('price-professional').innerHTML = `$${p.professional} <span>${suffix}</span>`;
-    document.getElementById('price-corporate').innerHTML = `$${p.corporate} <span>/ seat ${suffix}</span>`;
+    document.getElementById('price-corporate').innerHTML    = `$${p.corporate} <span>/ seat ${suffix}</span>`;
     document.getElementById('addon-price-supplement').textContent = `+$${p.supplement}/mo`;
-    document.getElementById('addon-price-pdf').textContent       = `+$${p.pdf}/mo`;
+    document.getElementById('addon-price-pdf').textContent        = `+$${p.pdf}/mo`;
     document.getElementById('addon-price-genome').textContent     = `+$${p.genome}/mo`;
     if (currentInterval === 'annual') {
       document.getElementById('note-individual').textContent    = `Save $${(29-p.individual)*12}/yr`;
       document.getElementById('note-professional').textContent  = `Save $${(59-p.professional)*12}/yr`;
       document.getElementById('note-corporate').textContent     = `Save $${(45-p.corporate)*12}/seat/yr`;
     } else {
-      document.getElementById('note-individual').innerHTML  = '&nbsp;';
+      document.getElementById('note-individual').innerHTML   = '&nbsp;';
       document.getElementById('note-professional').innerHTML = '&nbsp;';
-      document.getElementById('note-corporate').textContent = 'Minimum 5 seats';
+      document.getElementById('note-corporate').textContent  = 'Minimum 5 seats';
     }
     updateTotal();
   }
@@ -1570,6 +1623,104 @@
     if (name.includes('pdf'))        addonState.pdf        = isNowChecked;
     updateTotal();
   }
+
+  // ── Employer feature toggles ──
+  const orgFeatures = { supplement: true, pdf: false, genome: false };
+  const orgCosts    = { supplement: 9, pdf: 5, genome: 19 };
+  const SEATS = 12, BASE = 45;
+
+  function toggleFeature(key) {
+    orgFeatures[key] = !orgFeatures[key];
+    const isOn = orgFeatures[key];
+
+    // Update status badge
+    const statusEl = document.getElementById('feat-status-' + key);
+    statusEl.className = isOn ? 'toggle-on' : 'toggle-off';
+    statusEl.textContent = isOn ? 'ON ●' : 'OFF ○';
+
+    // Update cost cell style
+    const costEl = document.getElementById('feat-cost-' + key);
+    if (costEl) costEl.style.color = isOn ? 'var(--lc-accent-600)' : 'var(--lc-grey)';
+
+    // Update action cell
+    const actionEl = document.getElementById('feat-action-' + key);
+    const cost = orgCosts[key];
+    if (isOn) {
+      const impact = cost * SEATS * 12;
+      actionEl.innerHTML = `<span class="impact-cost">$${cost} × ${SEATS} × 12 = $${impact.toLocaleString()}/yr</span> <button class="btn btn-danger btn-sm" style="margin-left:10px;" onclick="toggleFeature('${key}')">Disable</button>`;
+    } else {
+      actionEl.innerHTML = `<button class="btn btn-primary btn-sm" onclick="toggleFeature('${key}')">Enable</button>`;
+    }
+
+    // Recalculate org total
+    const addonTotal = Object.entries(orgFeatures)
+      .filter(([, on]) => on)
+      .reduce((s, [k]) => s + orgCosts[k], 0);
+    const monthly = (BASE + addonTotal) * SEATS;
+    const yearly  = monthly * 12;
+    document.getElementById('emp-total-amount').textContent = `$${monthly.toLocaleString()}/mo · $${yearly.toLocaleString()}/yr`;
+    const addonKeys = Object.entries(orgFeatures).filter(([,on]) => on).map(([k]) => k);
+    const formulaParts = addonKeys.length
+      ? `($${BASE} base + $${addonTotal} add-on${addonTotal !== orgCosts[addonKeys[0]] ? 's' : ''}) × ${SEATS} seats`
+      : `$${BASE} base × ${SEATS} seats`;
+    document.getElementById('emp-total-formula').textContent = formulaParts;
+  }
+
+  // ── Account / Billing — Remove / Add add-ons ──
+  const billingAddons = {
+    active: [
+      { id: 'ba-supplement', name: 'Advanced Supplement Protocol', price: '$90/yr' },
+      { id: 'ba-pdf',        name: 'Branded PDF Export',           price: '$48/yr' }
+    ],
+    available: [
+      { id: 'ba-genome', name: 'Genome Analysis Access', price: '$182/yr' }
+    ]
+  };
+
+  function removeBillingAddon(id) {
+    const idx = billingAddons.active.findIndex(a => a.id === id);
+    if (idx === -1) return;
+    const [addon] = billingAddons.active.splice(idx, 1);
+    billingAddons.available.push(addon);
+    renderBillingAddons();
+  }
+
+  function addBillingAddon(id) {
+    const idx = billingAddons.available.findIndex(a => a.id === id);
+    if (idx === -1) return;
+    const [addon] = billingAddons.available.splice(idx, 1);
+    billingAddons.active.push(addon);
+    renderBillingAddons();
+  }
+
+  function renderBillingAddons() {
+    const activeEl    = document.getElementById('billing-active-list');
+    const availableEl = document.getElementById('billing-available-list');
+    if (!activeEl || !availableEl) return;
+
+    activeEl.innerHTML = billingAddons.active.length
+      ? billingAddons.active.map(a => `
+          <div class="addon-manage-row">
+            <div class="addon-status-dot dot-green"></div>
+            <div class="addon-manage-name">${a.name}</div>
+            <div class="addon-manage-price">${a.price}</div>
+            <button class="btn btn-danger btn-sm" onclick="removeBillingAddon('${a.id}')">Remove</button>
+          </div>`).join('')
+      : '<div style="padding:14px;font-size:13px;color:var(--lc-grey);">No active add-ons.</div>';
+
+    availableEl.innerHTML = billingAddons.available.length
+      ? billingAddons.available.map(a => `
+          <div class="addon-manage-row">
+            <div class="addon-status-dot dot-grey"></div>
+            <div class="addon-manage-name">${a.name}</div>
+            <div class="addon-manage-price">${a.price}</div>
+            <button class="btn btn-primary btn-sm" onclick="addBillingAddon('${a.id}')">Add</button>
+          </div>`).join('')
+      : '<div style="padding:14px;font-size:13px;color:var(--lc-grey);">All add-ons are active.</div>';
+  }
+
+  // Initialise billing list on page load
+  document.addEventListener('DOMContentLoaded', renderBillingAddons);
 </script>
 </body>
 </html>
