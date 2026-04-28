@@ -1,0 +1,88 @@
+.lc-account {
+  --lc-primary: #2F6F8F;
+  --lc-primary-700: #245672;
+  --lc-sage: #6B8E83;
+  --lc-line: #E3E8EC;
+  --lc-ink: #2B2B2B;
+  --lc-ink-soft: #4B4B4B;
+  --lc-surface: #FFFFFF;
+
+  color: var(--lc-ink);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.lc-account h1 {
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--lc-primary-700);
+}
+
+.lc-account-card {
+  background: var(--lc-surface);
+  border: 1px solid var(--lc-line);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lc-account-card h2 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--lc-primary-700);
+}
+
+.lc-account-id {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin: 0;
+}
+
+.lc-account-id > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lc-account-id dt {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--lc-sage);
+}
+
+.lc-account-id dd {
+  font-size: 15px;
+  margin: 0;
+  color: var(--lc-ink);
+}
+
+.lc-account-info {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--lc-ink-soft);
+}
+
+.lc-account-button {
+  align-self: flex-start;
+  display: inline-block;
+  padding: 10px 18px;
+  background: var(--lc-primary);
+  color: #fff;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+
+.lc-account-button:hover {
+  background: var(--lc-primary-700);
+}

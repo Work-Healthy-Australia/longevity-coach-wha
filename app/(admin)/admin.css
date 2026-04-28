@@ -62,6 +62,71 @@
   gap: 24px;
 }
 
+/* Admin overview header */
+.admin-overview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.admin-overview-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1A3A4A;
+  margin: 0;
+}
+
+.admin-range-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-range-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: #6B7C85;
+  font-weight: 600;
+}
+
+.admin-range-select {
+  font-size: 13px;
+  padding: 6px 10px;
+  border: 1px solid #D4E0E8;
+  border-radius: 6px;
+  background: #fff;
+  color: #1A3A4A;
+}
+
+.admin-range-submit {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  background: #2F6F8F;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.admin-range-submit:hover { background: #1A3A4A; }
+
+/* Metric grid (3 x 2) */
+.admin-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.admin-metric-tile {
+  min-height: 92px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 /* Analytics */
 .analytics-strip {
   display: grid;

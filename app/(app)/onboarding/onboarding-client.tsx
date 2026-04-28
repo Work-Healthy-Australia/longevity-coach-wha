@@ -1,8 +1,14 @@
 "use client";
 
 import { useCallback, useState, useTransition } from "react";
-import type { AllergyEntry, FieldDef, ResponsesByStep } from "@/lib/questionnaire/schema";
-import { onboardingQuestionnaire } from "@/lib/questionnaire/questions";
+import type {
+  AllergyEntry,
+  CancerHistoryEntry,
+  CancerHistoryValue,
+  FieldDef,
+  ResponsesByStep,
+} from "@/lib/questionnaire/schema";
+import { CANCER_TYPES, RELATIVES, onboardingQuestionnaire } from "@/lib/questionnaire/questions";
 import { requiredMissing } from "@/lib/questionnaire/validation";
 import { splitFullName } from "@/lib/profiles/name";
 import { saveDraft, submitAssessment } from "./actions";
@@ -345,7 +351,183 @@ function FieldRenderer({
       return (
         <AllergyListField field={field} value={value} onChange={onChange} />
       );
+    case "cancer_history":
+      return (
+        <CancerHistoryField field={field} value={value} onChange={onChange} />
+      );
   }
+}
+
+function CancerHistoryField({
+  field,
+  value,
+  onChange,
+}: {
+  field: FieldDef;
+  value: unknown;
+  onChange: (v: unknown) => void;
+}) {
+  const cv: CancerHistoryValue =
+    value && typeof value === "object" && "status" in (value as object)
+      ? (value as CancerHistoryValue)
+      : { status: "no" };
+  const entries = cv.entries ?? [];
+  const selectedTypes = new Set(entries.map((e) => e.type));
+
+  const setStatus = (status: CancerHistoryValue["status"]) => {
+    if (status === "yes") {
+      onChange({ status, entries: cv.entries ?? [] });
+    } else {
+      // Drop entries when the answer is no/unknown — keeps stored data honest.
+      onChange({ status });
+    }
+  };
+
+  const toggleType = (type: string) => {
+    if (selectedTypes.has(type)) {
+      onChange({ ...cv, entries: entries.filter((e) => e.type !== type) });
+    } else {
+      const newEntry: CancerHistoryEntry = { type };
+      onChange({ ...cv, entries: [...entries, newEntry] });
+    }
+  };
+
+  const updateEntry = (type: string, patch: Partial<CancerHistoryEntry>) => {
+    onChange({
+      ...cv,
+      entries: entries.map((e) => (e.type === type ? { ...e, ...patch } : e)),
+    });
+  };
+
+  const statusOptions: Array<{ value: CancerHistoryValue["status"]; label: string }> = [
+    { value: "no", label: "No" },
+    { value: "yes", label: "Yes" },
+    { value: "unknown", label: "Don't know" },
+  ];
+
+  return (
+    <div className="field cancer-history">
+      <label>
+        {field.label}
+        {field.optional && <span className="optional">(optional)</span>}
+      </label>
+      {field.helpText && <p className="field-help">{field.helpText}</p>}
+
+      <div className="cancer-status">
+        {statusOptions.map((opt) => (
+          <button
+            key={opt.value}
+            type="button"
+            className={`chip ${cv.status === opt.value ? "selected" : ""}`}
+            onClick={() => setStatus(opt.value)}
+          >
+            {opt.label}
+          </button>
+        ))}
+      </div>
+
+      {cv.status === "yes" && (
+        <div className="cancer-detail">
+          <p className="field-help">Tap any types that apply. Skip the age if you don't know it.</p>
+          <div className="chips">
+            {CANCER_TYPES.map((t) => (
+              <button
+                key={t}
+                type="button"
+                className={`chip ${selectedTypes.has(t) ? "selected" : ""}`}
+                onClick={() => toggleType(t)}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+
+          {entries.map((entry) => (
+            <div key={entry.type} className="cancer-entry">
+              <div className="cancer-entry-head">
+                <strong>{entry.type}</strong>
+                <button
+                  type="button"
+                  className="btn btn-ghost cancer-remove"
+                  onClick={() => toggleType(entry.type)}
+                  aria-label={`Remove ${entry.type}`}
+                >
+                  ×
+                </button>
+              </div>
+
+              {entry.type === "Other" && (
+                <input
+                  type="text"
+                  placeholder="Which cancer? (e.g. stomach, kidney, brain)"
+                  value={entry.otherText ?? ""}
+                  onChange={(e) => updateEntry(entry.type, { otherText: e.target.value })}
+                />
+              )}
+
+              <div className="cancer-entry-grid">
+                <div>
+                  <label className="cancer-sub-label">Affected relatives</label>
+                  <div className="chips">
+                    {RELATIVES.filter((r) => r !== "None").map((rel) => {
+                      const on = (entry.relatives ?? []).includes(rel);
+                      return (
+                        <button
+                          key={rel}
+                          type="button"
+                          className={`chip ${on ? "selected" : ""}`}
+                          onClick={() => {
+                            const cur = entry.relatives ?? [];
+                            updateEntry(entry.type, {
+                              relatives: on ? cur.filter((r) => r !== rel) : [...cur, rel],
+                            });
+                          }}
+                        >
+                          {rel}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+                <div>
+                  <label className="cancer-sub-label">Earliest age of onset</label>
+                  <div className="cancer-onset">
+                    <div className="input-suffix">
+                      <input
+                        type="number"
+                        placeholder="e.g. 55"
+                        disabled={entry.onsetUnknown}
+                        value={entry.onsetAge ?? ""}
+                        onChange={(e) =>
+                          updateEntry(entry.type, {
+                            onsetAge: e.target.value === "" ? undefined : Number(e.target.value),
+                          })
+                        }
+                      />
+                      <span className="suffix">years</span>
+                    </div>
+                    <label className="cancer-unknown">
+                      <input
+                        type="checkbox"
+                        checked={entry.onsetUnknown ?? false}
+                        onChange={(e) =>
+                          updateEntry(entry.type, {
+                            onsetUnknown: e.target.checked,
+                            onsetAge: e.target.checked ? undefined : entry.onsetAge,
+                          })
+                        }
+                      />
+                      Don't know
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 const ALLERGY_CATEGORIES: Array<{ value: AllergyEntry["category"]; label: string }> = [

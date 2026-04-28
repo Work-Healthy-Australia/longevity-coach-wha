@@ -5,13 +5,11 @@
 // Deferred for Sunday with James:
 //   - File uploads (blood, imaging, genetic, microbiome, hormonal, other)
 //     - needs Supabase Storage bucket + RLS decision
-//   - Detailed family-history sub-fields (age of onset, cancer types)
-//     - start with a simple yes/no per category, deepen later
 //   - Payment step - handled by /api/stripe/checkout, not part of this form
 
 import type { FieldDef, QuestionnaireDef } from "./schema";
 
-const RELATIVES = [
+export const RELATIVES = [
   "Mother",
   "Father",
   "Sister",
@@ -22,6 +20,22 @@ const RELATIVES = [
   "Paternal grandfather",
   "Aunt or uncle",
   "None",
+] as const;
+
+// Progressive disclosure: Y/N → type chips → per-type relatives + onset.
+// Curated list pending James's clinical sub-type review; "Other" + "Don't know
+// specific type" are escape hatches so members aren't forced into false precision.
+export const CANCER_TYPES = [
+  "Breast",
+  "Colorectal",
+  "Lung",
+  "Prostate",
+  "Ovarian",
+  "Pancreatic",
+  "Melanoma / skin",
+  "Leukaemia / lymphoma",
+  "Don't know specific type",
+  "Other",
 ] as const;
 
 const VITAL_STATUS = ["Alive", "Deceased", "Unknown"] as const;
@@ -190,7 +204,14 @@ export const onboardingQuestionnaire: QuestionnaireDef = {
         "For each condition, mark which relatives were affected and (if known) the earliest age it appeared. This feeds your inherited-risk score.",
       fields: [
         ...familyConditionFields("cardiovascular", "Heart disease or stroke"),
-        ...familyConditionFields("cancer", "Cancer"),
+        {
+          id: "cancer_history",
+          label: "Cancer in your family",
+          type: "cancer_history",
+          optional: true,
+          helpText:
+            "Cancer type, age, and which relatives are the strongest signals for inherited risk. Skip anything you don't know.",
+        },
         ...familyConditionFields(
           "neurodegenerative",
           "Neurodegenerative (Alzheimer's, Parkinson's)",

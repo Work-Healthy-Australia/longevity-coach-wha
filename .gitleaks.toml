@@ -1,0 +1,9 @@
+title = "Longevity Coach Gitleaks Config"
+
+[extend]
+useDefault = true
+
+# [[allowlists]]
+# description = "Sample AWS-key patterns inside docs/ are illustrative not real."
+# paths = ['''docs/.*\.md$''']
+# regexes = ['''AKIA[0-9A-Z]{16}''']

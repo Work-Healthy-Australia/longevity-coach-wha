@@ -343,6 +343,7 @@
 
     <div class="nav-group">
       <div class="nav-label">Overview</div>
+      <a class="nav-item" data-doc="epic-status">Epic Status <span class="filename">epic-status.md</span></a>
       <a class="nav-item" data-doc="README">Project Index <span class="filename">README.md</span></a>
       <a class="nav-item" data-doc="timeline">Phase Timeline <span class="filename">01-product-timeline.md</span></a>
       <a class="nav-item" data-doc="state">Current State <span class="filename">2026-04-28-current-state.md</span></a>
@@ -352,7 +353,6 @@
       <div class="nav-label">Strategy</div>
       <a class="nav-item" data-doc="product">Product <span class="filename">product.md</span></a>
       <a class="nav-item" data-doc="epics">Epics <span class="filename">epics.md</span></a>
-      <a class="nav-item" data-doc="epic-status">Epic Status <span class="filename">epic-status.md</span></a>
     </div>
 
     <div class="nav-group">
@@ -1209,13 +1209,13 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 | # | Epic | Pipeline | Estimate | Open bugs | Closed bugs |
 |---|---|---|---:|---:|---:|
-| 1 | The Front Door | `●●●◐◐` | 90% | 2 (P2, P3) | 1 |
+| 1 | The Front Door | `●●●●◐` | 95% | 0 | 3 |
 | 2 | The Intake | `●●●◐○` | 85% | 0 | 0 |
 | 3 | The Number | `●●○○○` | 50% | 1 (P1) | 0 |
 | 4 | The Protocol | `●●○○○` | 50% | 0 | 0 |
 | 5 | The Report | `●◐○○○` | 35% | 1 (P3) | 0 |
 | 6 | The Coach | `●●○○○` | 60% | 1 (P2) | 0 |
-| 7 | The Daily Return | `●◐○○○` | 25% | 0 | 0 |
+| 7 | The Daily Return | `●●◐○○` | 55% | 0 | 0 |
 | 8 | The Living Record | `●○○○○` | 5% | 0 | 0 |
 | 9 | The Care Team | `●○○○○` | 5% | 0 | 0 |
 | 10 | The Knowledge Engine | `●○○○○` | 5% | 1 (P2) | 0 |
@@ -1224,7 +1224,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 | 13 | The Business Model | `●○○○○` | 0% | 0 | 0 |
 | 14 | The Platform Foundation | `●◐○○○` | 40% | 0 | 0 |
 
-**Bug totals:** 7 open, 1 closed. (Bug log: forthcoming `qa/QA-bugs.md`. The single closed bug is BUG-001, signup form clearing — fixed 2026-04-27.)
+**Bug totals:** 5 open, 3 closed. (Bug log: forthcoming `qa/QA-bugs.md`.)
 
 ---
 
@@ -1232,29 +1232,28 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 1: The Front Door
 
-`●●●◐◐` Planned · Feature Complete · Unit Tested · ◐ Regression Tested · ◐ User Reviewed
-**Estimate: 90%** — feature-complete enough for early members; missing the `/account` self-service page and a single Account link in the nav.
+`●●●●◐` Planned · Feature Complete · Unit Tested · Regression Tested · ◐ User Reviewed
+**Estimate: 95%** — full member-facing front door shipped end-to-end; only outstanding gate is sustained user review.
 
 **Shipped:**
 - Marketing pages: `/`, `/science`, `/team`, `/stories`, `/sample-report`, `/legal/collection-notice`.
 - Auth flows: signup, signin, password reset, email verification (OTP + PKCE).
-- Welcome email on activation (Resend).
+- Welcome email on activation (Resend) with DB-flag idempotency (`profiles.welcome_email_sent_at`).
 - Stripe checkout (monthly + annual) and webhook lifecycle handling.
-- Logged-in nav with Dashboard / Report / Documents links.
+- Logged-in nav with Dashboard / Report / Documents / Account links.
+- `/account` self-service page — profile edit, address edit, subscription cancel, password change, export-everything.
 - Live QA Playwright suite: 33/33 passing on public pages.
 - Vitest integration tests on auth + Stripe + onboarding actions.
 
 **Outstanding:**
-- `/account` page — profile edit, address edit, subscription cancel, password change, export-everything button.
-- Account link in the logged-in nav (currently no surface to reach `/account` even if it existed).
-- Welcome-email idempotency upgrade (currently a 60s time window, should be a `profiles.welcome_email_sent_at` flag).
+- Sustained user-review pass on `/account` flows with real members.
 
-**Open bugs:**
-- **BUG-002** (P2): Welcome email idempotency is a 60s window, not a DB flag. A double-click on the verification link inside a minute = two welcome emails.
-- **BUG-006** (P3): No Account link in the logged-in nav. The page does not exist yet, but the nav slot is also missing.
+**Open bugs:** none.
 
 **Closed bugs:**
 - **BUG-001** (FIXED 2026-04-27): Signup form cleared all fields after a server-side validation error. Fix: server actions echo `{ email, full_name }` back via `state.values`, form passes those to `defaultValue`. Verified by `tests/live-qa/qa_run.py::test_signup_short_password`.
+- **BUG-002** (CLOSED 2026-04-28): Welcome email idempotency was a 60s window, not a DB flag. A double-click on the verification link inside a minute = two welcome emails.
+- **BUG-006** (CLOSED 2026-04-28): No Account link in the logged-in nav. The page did not exist yet, and the nav slot was also missing.
 
 ---
 
@@ -1388,23 +1387,27 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 7: The Daily Return
 
-`●◐○○○` Planned · ◐ Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 25%** — drip-email cron + table shipped; check-in flow, habits, streaks, push reminders are all unbuilt.
+`●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 55%** — daily check-in UI shipped 2026-04-28, streak math shipped (UTC-safe, 10 unit tests), dashboard wired with today-strip + streak hero + supplement adherence + action picker; remaining work is reminders, weekly digest, and journal.
 
 **Shipped:**
 - Drip-email cron at `app/api/cron/drip-emails/route.ts`.
 - `lib/email/drip.ts` template wrapper.
 - `drip_email_log` table (migration `0018_drip_tracking.sql`).
 - `daily_logs` table in `biomarkers` schema (`0010_biomarkers_daily_logs.sql`).
+- `/check-in` daily form at `app/(app)/check-in/` — mood, energy, sleep, exercise, notes; upserts one row per UTC day (2026-04-28).
+- Streak math at `computeStreak()` in `app/(app)/dashboard/page.tsx` — UTC-consistent with the writer; locked in by 10 deterministic unit tests in `tests/unit/dashboard/streak.test.ts`.
+- New dashboard surface: streak hero, today-strip (sleep/energy/steps/water with progress bars), single-action picker, three big numbers (bio age, top risk, supplement adherence), what's-new row, quick links, coming-soon shelf.
+- Migration `0020_expose_schemas_to_postgrest.sql` + Supabase Cloud API config to expose `biomarkers` and `billing` schemas.
 
 **Outstanding:**
-- Daily check-in UI (mood, sleep, energy, weight) — 90-second target.
-- Personalised daily goals tied to risk profile.
-- Habit streak math + Mon-Sun dot UI.
+- Personalised daily goals tied to risk profile (currently goals are static defaults like 8 hours sleep, 8000 steps).
+- Mon-Sun dot UI for the last 7 days of check-ins.
 - Rest-day mechanic for travel and grief.
 - Push / SMS / email reminder for the daily check-in.
 - Weekly insights digest from check-in patterns.
 - Health journal for free-form notes.
+- Steps and water-intake fields in the check-in form (currently only sleep/energy/mood/exercise/notes captured).
 
 **Open bugs:** none.
 **Closed bugs:** 0.
@@ -2472,8 +2475,8 @@ Live QA via skill:
     document.getElementById('sidebar').classList.toggle('open');
   });
 
-  const initialKey = (location.hash || '#README').slice(1).split('/')[0];
-  loadDoc(docs[initialKey] ? initialKey : 'README');
+  const initialKey = (location.hash || '#epic-status').slice(1).split('/')[0];
+  loadDoc(docs[initialKey] ? initialKey : 'epic-status');
 </script>
 
 </body>
