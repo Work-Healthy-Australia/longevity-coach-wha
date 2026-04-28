@@ -5,11 +5,12 @@ export const metadata = { title: "Agents · Admin · Longevity Coach" };
 export const dynamic = "force-dynamic";
 
 export default async function AdminAgentsPage() {
-  const admin = createAdminClient();
-  const { data: agents } = await admin
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: agents } = await (createAdminClient() as any)
+    .schema("agents")
     .from("agent_definitions")
     .select("slug, display_name, model, provider, enabled, updated_at")
-    .order("slug");
+    .order("slug") as { data: Array<{ slug: string; display_name: string; model: string; provider: string; enabled: boolean; updated_at: string | null }> | null };
 
   return (
     <div style={{ maxWidth: 960, margin: "0 auto", padding: "32px 24px" }}>

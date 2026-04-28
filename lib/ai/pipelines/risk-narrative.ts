@@ -24,8 +24,12 @@ function buildPrompt(params: {
   ageYears: number | null;
   responses: Record<string, unknown>;
   uploadSummaries: string[];
+  standardsContext?: string;
 }): string {
   const parts: string[] = [];
+  if (params.standardsContext) {
+    parts.push(`## Clinical scoring standards\n${params.standardsContext}`);
+  }
   if (params.ageYears) parts.push(`Chronological age: ${params.ageYears} years`);
   if (Object.keys(params.responses).length > 0) {
     parts.push(`\n## Questionnaire responses\n${JSON.stringify(params.responses, null, 2)}`);
@@ -72,11 +76,40 @@ export async function runRiskNarrativePipeline(userId: string): Promise<void> {
       (u.janet_findings ? `\nFindings: ${JSON.stringify(u.janet_findings)}` : ''),
   );
 
+  // Load clinical scoring standards for context injection
+  let standardsContext = '';
+  try {
+    const { data: standards } = await admin
+      .from('risk_assessment_standards')
+      .select('domain, framework_name, risk_tier, clinical_threshold, key_risk_factors, clinical_guidance, source_citation')
+      .eq('active', true)
+      .in('domain', ['cv', 'metabolic', 'neuro', 'onco', 'msk'])
+      .order('domain')
+      .order('internal_score_min');
+
+    if (standards?.length) {
+      const byDomain = standards.reduce<Record<string, typeof standards>>((acc, row) => {
+        (acc[row.domain] ??= []).push(row);
+        return acc;
+      }, {});
+      standardsContext = Object.entries(byDomain)
+        .map(([domain, rows]) =>
+          `### ${domain.toUpperCase()}\n` +
+          rows.map(r =>
+            `[${r.risk_tier}] ${r.clinical_threshold ?? ''} — ${r.clinical_guidance ?? ''} (${r.source_citation})`
+          ).join('\n')
+        )
+        .join('\n\n');
+    }
+  } catch {
+    // Standards unavailable — proceed without; prompt still contains framework names
+  }
+
   const agent = createPipelineAgent('atlas');
 
   let output: RiskNarrativeOutput;
   try {
-    output = await agent.run(RiskNarrativeOutputSchema, buildPrompt({ ageYears, responses, uploadSummaries }));
+    output = await agent.run(RiskNarrativeOutputSchema, buildPrompt({ ageYears, responses, uploadSummaries, standardsContext }));
   } catch (err) {
     console.error(`[Atlas] Risk narrative pipeline failed for user ${userId}:`, err);
     return;

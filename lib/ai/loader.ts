@@ -5,7 +5,9 @@ import type { AgentDefinition } from './types';
 export const loadAgentDef = unstable_cache(
   async (slug: string): Promise<AgentDefinition> => {
     const admin = createAdminClient();
-    const { data, error } = await admin
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (admin as any)
+      .schema('agents')
       .from('agent_definitions')
       .select('*')
       .eq('slug', slug)

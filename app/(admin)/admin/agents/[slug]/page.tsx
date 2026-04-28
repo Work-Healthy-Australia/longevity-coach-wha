@@ -12,8 +12,9 @@ import { createClient } from "@/lib/supabase/server";
 
 async function AgentEditPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const admin = createAdminClient();
-  const { data: agent } = await admin
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: agent } = await (createAdminClient() as any)
+    .schema("agents")
     .from("agent_definitions")
     .select("*")
     .eq("slug", slug)
