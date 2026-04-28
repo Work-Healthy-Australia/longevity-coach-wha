@@ -8,6 +8,17 @@ export type JanetCategory =
   | "metabolic"
   | "other";
 
+export interface BiomarkerExtraction {
+  biomarker: string;
+  value: number;
+  unit: string;
+  reference_min: number | null;
+  reference_max: number | null;
+  test_date: string | null;
+  panel_name: string | null;
+  lab_provider: string | null;
+}
+
 export interface JanetResult {
   category: JanetCategory;
   summary: string;
@@ -17,10 +28,11 @@ export interface JanetResult {
     notable_findings?: string[];
     date_of_test?: string;
     ordering_provider?: string;
+    biomarkers?: BiomarkerExtraction[];
   };
 }
 
-const SYSTEM_PROMPT = `You are Janet, an AI clinical analyst for a longevity coaching platform.
+export const SYSTEM_PROMPT = `You are Janet, an AI clinical analyst for a longevity coaching platform.
 Your role is to read medical documents and pathology reports uploaded by patients and extract structured information.
 
 For each document you must:
@@ -45,13 +57,33 @@ Always respond with valid JSON matching this exact shape:
     "key_values": { "<name>": "<value with unit>" },
     "notable_findings": ["<finding 1>", "<finding 2>"],
     "date_of_test": "<ISO date or null>",
-    "ordering_provider": "<name or null>"
+    "ordering_provider": "<name or null>",
+    "biomarkers": [
+      {
+        "biomarker": "<verbatim name>",
+        "value": <number>,
+        "unit": "<verbatim unit>",
+        "reference_min": <number or null>,
+        "reference_max": <number or null>,
+        "test_date": "<ISO YYYY-MM-DD or null>",
+        "panel_name": "<panel name or null>",
+        "lab_provider": "<lab company or null>"
+      }
+    ]
   }
 }
 
+When category is "blood_work", also extract one biomarkers array entry per measured biomarker. Use the document's exact biomarker name and unit. Pull reference_min and reference_max from the lab's reference range when shown; use null for either bound if the document does not show it. Do NOT compute or interpret status (high / low / critical) — that is computed server-side.
+
+When category is not "blood_work", omit the biomarkers array entirely.
+
 Do not include any text outside the JSON object. Do not wrap in markdown code blocks.`;
 
-const client = new Anthropic();
+let _client: Anthropic | null = null;
+function getClient(): Anthropic {
+  if (!_client) _client = new Anthropic();
+  return _client;
+}
 
 export async function analyzeUpload(
   fileBuffer: ArrayBuffer,
@@ -76,9 +108,9 @@ export async function analyzeUpload(
           },
         });
 
-  const message = await client.messages.create({
+  const message = await getClient().messages.create({
     model: "claude-opus-4-7",
-    max_tokens: 1024,
+    max_tokens: 2048,
     thinking: { type: "adaptive" },
     system: [
       {

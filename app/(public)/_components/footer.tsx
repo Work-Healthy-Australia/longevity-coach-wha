@@ -9,8 +9,8 @@ export function PublicFooter() {
           <Image
             src="/longevity-coach-horizontal-logo.png"
             alt="Longevity Coach"
-            width={600}
-            height={125}
+            width={900}
+            height={188}
           />
         </div>
         <div className="links">

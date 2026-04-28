@@ -7,6 +7,7 @@ import { analyzeUpload } from "@/lib/uploads/janet";
 import { triggerPipeline } from "@/lib/ai/trigger";
 import { evaluateLabAlerts } from "@/lib/alerts";
 import type { LabRow } from "@/lib/labs";
+import { persistLabResults } from "@/lib/uploads/persist-lab-results";
 
 export interface CheckDuplicateResult {
   duplicate: boolean;
@@ -114,6 +115,21 @@ export async function recordUpload(params: {
       })
       .eq("id", row.id);
 
+    // Janet → lab_results writer: persist any biomarkers Janet extracted from
+    // the document into biomarkers.lab_results. Best-effort — failure must not
+    // block the upload response. Idempotent on (user_uuid, biomarker, test_date)
+    // via the 0032 unique partial index.
+    try {
+      const { inserted, skipped } = await persistLabResults(admin, result, user.id, row.id);
+      if (inserted > 0 || skipped > 0) {
+        console.info(
+          `[lab-results] upload=${row.id} inserted=${inserted} skipped=${skipped}`,
+        );
+      }
+    } catch (err) {
+      console.error("[lab-results] persistence failed:", err);
+    }
+
     // Re-run supplement protocol with updated upload data (non-blocking)
     triggerPipeline("supplement-protocol", user.id);
 
@@ -177,6 +193,7 @@ export async function recordUpload(params: {
 
   revalidatePath("/uploads");
   revalidatePath("/dashboard");
+  revalidatePath("/labs");
   return { ok: true, id: row.id };
 }
 

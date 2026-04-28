@@ -1320,51 +1320,6 @@ export type Database = {
           },
         ]
       }
-      member_alerts: {
-        Row: {
-          alert_type: string
-          body: string
-          created_at: string
-          dismissed_at: string | null
-          id: string
-          link_href: string | null
-          resolved_at: string | null
-          severity: string
-          source_id: string
-          status: string
-          title: string
-          user_uuid: string
-        }
-        Insert: {
-          alert_type: string
-          body: string
-          created_at?: string
-          dismissed_at?: string | null
-          id?: string
-          link_href?: string | null
-          resolved_at?: string | null
-          severity: string
-          source_id: string
-          status?: string
-          title: string
-          user_uuid: string
-        }
-        Update: {
-          alert_type?: string
-          body?: string
-          created_at?: string
-          dismissed_at?: string | null
-          id?: string
-          link_href?: string | null
-          resolved_at?: string | null
-          severity?: string
-          source_id?: string
-          status?: string
-          title?: string
-          user_uuid?: string
-        }
-        Relationships: []
-      }
       patient_assignments: {
         Row: {
           assigned_at: string

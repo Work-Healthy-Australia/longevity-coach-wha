@@ -23,13 +23,13 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 | # | Epic | Pipeline | Estimate | Open bugs | Closed bugs |
 |---|---|---|---:|---:|---:|
 | 1 | The Front Door | `●●●●●` | 100% | 0 | 3 |
-| 2 | The Intake | `●●●◐○` | 95% | 0 | 0 |
+| 2 | The Intake | `●●●◐○` | 97% | 0 | 0 |
 | 3 | The Number | `●●◐○○` | 70% | 0 | 1 |
 | 4 | The Protocol | `●●◐○○` | 60% | 0 | 0 |
 | 5 | The Report | `●◐○○○` | 35% | 1 (P3) | 0 |
 | 6 | The Coach | `●●◐○○` | 90% | 0 | 1 |
 | 7 | The Daily Return | `●●◐○○` | 70% | 0 | 0 |
-| 8 | The Living Record | `●●◐○○` | 45% | 0 | 0 |
+| 8 | The Living Record | `●●◐○○` | 55% | 0 | 0 |
 | 9 | The Care Team | `●○○○○` | 5% | 0 | 0 |
 | 10 | The Knowledge Engine | `●◐◐○○` | 60% | 0 | 1 |
 | 11 | The Trust Layer | `●●◐○○` | 65% | 0 | 1 |
@@ -73,7 +73,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 2: The Intake
 
 `●●●◐○` Planned · Feature Complete · Unit Tested · ◐ Regression Tested · ○ User Reviewed
-**Estimate: 95%** — questionnaire + uploads + Janet document analyser + SHA-256 deduplication all live. Only outstanding items are external-dependency blocks.
+**Estimate: 97%** — questionnaire + uploads + Janet document analyser + SHA-256 deduplication + Janet → `lab_results` structured writer all live. Only outstanding items are external-dependency blocks.
 
 **Shipped:**
 - Six-step questionnaire (basics, medical, family, lifestyle, goals, consent) with save-and-resume.
@@ -82,6 +82,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - Patient uploads portal (50 MB cap, MIME whitelist, Supabase Storage).
 - Janet document analyser (Claude Opus 4.7 + adaptive thinking) at `lib/uploads/janet.ts`.
 - **Upload deduplication** — SHA-256 content hash (`lib/uploads/hash.ts`), `file_hash` column + unique index on `(user_uuid, file_hash)` (migration `0031_patient_uploads_file_hash.sql`), client-side pre-check before any storage write.
+- **Janet → `lab_results` structured writer** (2026-04-28) — Janet's `analyzeUpload` now emits a typed `findings.biomarkers[]` array on `blood_work` documents; `persistLabResults` writes one typed row per biomarker into `biomarkers.lab_results` with server-side-derived status (low/optimal/high/critical via the pure `deriveStatus` rule). Migration `0032_lab_results_idempotency.sql` adds a unique partial index `(user_uuid, biomarker, test_date) where test_date is not null` for re-upload safety. 21 unit tests across `derive-status`, `extract-lab-results`, and `janet-prompt`.
 - 14 questionnaire schema unit tests passing.
 - 7 onboarding-action integration tests passing (Vitest with mocked Supabase).
 - Unit tests for `hashFile` and `checkDuplicate`.
@@ -241,7 +242,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 8: The Living Record
 
 `●●◐○○` Planned · Feature Complete (member labs surface) · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 45%** — three member-facing surfaces shipped 2026-04-28: `/labs` (Lab Results UI), `/trends` (Daily-log 30-day trends), and the alerts surface (`member_alerts` table + dashboard chip + repeat-test cron + upload-flow lab-alert hook). Lab-alert path is wired but defensive — fires automatically once a Janet → `lab_results` converter ships.
+**Estimate: 55%** — four shipped 2026-04-28: `/labs` (Lab Results UI), `/trends` (Daily-log trends), the alerts surface (`member_alerts` + dashboard chip + repeat-test cron + upload-flow lab-alert hook), and the **Janet → `lab_results` structured writer** (migration 0032 idempotency index, prompt extension, server-side `deriveStatus` rule, `persistLabResults` upload step). Lab-alert path is now live — fires the moment any Janet-extracted biomarker is `low`/`high`/`critical`.
 
 **Shipped:**
 - `biomarkers` schema with `lab_results`, `wearable_summaries`, `daily_logs` tables (migrations `0009`, `0010`).
@@ -254,7 +255,6 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - **Member alerts surface** (2026-04-28) — `public.member_alerts` table (migration 0031, append-mostly, RLS owner-select + owner-update, service-role-only insert, unique partial index for idempotent re-runs). `lib/alerts/` pure evaluators (`evaluateLabAlerts`, `evaluateRepeatTests` with whole-token matching against a `SCREENING_KEYWORDS` map, `chipPayload`). Daily cron `/api/cron/repeat-tests` (Bearer-secret gated). Upload-flow lab-alert hook (defensive — no-op until Janet → `lab_results` writer lands). Dashboard hero chip with three severity tones (info/attention/urgent), `View →` link, dismiss server action. 20 unit tests.
 
 **Outstanding:**
-- **Janet → `lab_results` structured writer.** Bottleneck for B7's lab-alert surface and for B4's data depth. Janet currently writes free-text JSONB into `patient_uploads.janet_findings`. A converter step is the single most impactful follow-up.
 - B6 — risk simulator ("if I lower my LDL to X, my CV risk drops to Y").
 - `vercel.json` cron registration for `/api/cron/repeat-tests` (operator step).
 - Snooze / dismiss-suppression mechanism on alerts.
@@ -444,6 +444,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - AHPRA breach-notification protocol document.
 - Data residency confirmation per region.
 - Architecture-level enforcement of "we never train on patient data" (no training endpoints, no model fine-tune jobs, no third-party data shares).
+- **Migration filename collisions** at `0031_*.sql` (member_alerts vs patient_uploads_file_hash) and `0032_*.sql` (lab_results_idempotency vs seed_admins). Both pairs landed via parallel branches; all four are applied to the production DB and Supabase tracks them by name so the chain is functional. Cosmetic only — worth a one-shot renumber to keep history monotonic before Epic 14 hits "Regression Tested" status.
 
 **Open bugs:** none directly.
 **Closed bugs:** 0.
