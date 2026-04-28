@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Janet — Global Competitive Audit 2026</title>
+<style>
+  :root {
+    --teal: #00C9A7;
+    --teal-dim: #00866e;
+    --teal-glow: rgba(0,201,167,0.15);
+    --teal-border: rgba(0,201,167,0.25);
+    --bg: #080e0d;
+    --bg2: #0d1614;
+    --surface: #152320;
+    --surface2: #1c2e2a;
+    --text: #e8f2f0;
+    --text-dim: #7da89f;
+    --text-muted: #4a6b65;
+    --red: #ff5b5b;
+    --amber: #f5a623;
+    --purple: #a78bfa;
+    --blue: #5cb8ff;
+    --pink: #ff7eb9;
+    --white: #fff;
+    --border: rgba(255,255,255,0.06);
+    --font-head: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --font-body: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-mono: 'Consolas', 'Menlo', 'Monaco', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-body); background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image: linear-gradient(rgba(0,201,167,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,201,167,0.04) 1px, transparent 1px);
+    background-size: 48px 48px; pointer-events: none; z-index: 0;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 20px 80px; position: relative; z-index: 1; }
+
+  /* HEADER */
+  header { padding: 52px 0 36px; border-bottom: 1px solid var(--teal-border); margin-bottom: 44px; }
+  .chip { font-family: var(--font-mono); font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: var(--teal); background: var(--teal-glow); border: 1px solid var(--teal-border); padding: 4px 11px; border-radius: 4px; display: inline-block; margin-bottom: 18px; }
+  h1 { font-family: var(--font-head); font-size: clamp(32px,6vw,56px); font-weight: 800; line-height: 1.06; letter-spacing: -.02em; color: var(--white); margin-bottom: 14px; }
+  h1 em { color: var(--teal); font-style: normal; }
+  .sub { font-size: 15px; color: var(--text-dim); font-weight: 300; max-width: 600px; line-height: 1.65; }
+  .meta { display: flex; gap: 28px; margin-top: 24px; flex-wrap: wrap; }
+  .meta-i { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); }
+  .meta-i strong { color: var(--teal); display: block; font-size: 12px; margin-bottom: 2px; }
+
+  /* SECTION */
+  section { margin-bottom: 52px; }
+  .sec-lbl { font-family: var(--font-mono); font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--teal); margin-bottom: 18px; display: flex; align-items: center; gap: 10px; }
+  .sec-lbl::after { content: ''; flex: 1; height: 1px; background: var(--teal-border); }
+  h2 { font-family: var(--font-head); font-size: 22px; font-weight: 700; color: var(--white); margin-bottom: 22px; letter-spacing: -.01em; }
+  h3 { font-family: var(--font-head); font-size: 14px; font-weight: 600; color: var(--text-dim); margin: 28px 0 14px; }
+
+  /* VERDICT */
+  .verdict { background: linear-gradient(135deg,rgba(0,201,167,.12),rgba(0,201,167,.03)); border: 1px solid var(--teal); border-radius: 12px; padding: 28px; position: relative; overflow: hidden; }
+  .verdict::before { content: ''; position: absolute; top: -40px; right: -40px; width: 160px; height: 160px; background: radial-gradient(circle,rgba(0,201,167,.18),transparent 70%); pointer-events: none; }
+  .v-score { font-family: var(--font-head); font-size: 68px; font-weight: 800; color: var(--teal); line-height: 1; margin-bottom: 6px; }
+  .v-lbl { font-family: var(--font-mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 14px; }
+  .v-text { font-size: 14px; line-height: 1.72; color: var(--text); max-width: 680px; }
+  .v-text strong { color: var(--teal); }
+
+  /* REGION CARDS */
+  .rg { display: grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap: 14px; }
+  .rc { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 20px; position: relative; overflow: hidden; }
+  .rc::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; }
+  .rc.us::before { background: linear-gradient(90deg,var(--purple),var(--teal)); }
+  .rc.apac::before { background: linear-gradient(90deg,var(--pink),var(--amber)); }
+  .rc.anz::before { background: linear-gradient(90deg,var(--blue),var(--teal)); }
+  .rf { font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 6px; }
+  .rc.us .rf { color: var(--purple); }
+  .rc.apac .rf { color: var(--pink); }
+  .rc.anz .rf { color: var(--blue); }
+  .rt { font-family: var(--font-head); font-size: 17px; font-weight: 700; color: var(--white); margin-bottom: 10px; }
+  .rs { display: flex; gap: 14px; margin-bottom: 12px; flex-wrap: wrap; }
+  .rv { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); }
+  .rv strong { display: block; font-family: var(--font-head); font-size: 18px; color: var(--white); margin-bottom: 1px; font-weight: 700; }
+  .rd { font-size: 12px; color: var(--text-dim); line-height: 1.6; }
+
+  /* SCORES */
+  .sg { display: grid; grid-template-columns: repeat(auto-fill,minmax(190px,1fr)); gap: 11px; margin-bottom: 36px; }
+  .si { background: var(--bg2); border: 1px solid var(--border); border-radius: 9px; padding: 14px; }
+  .sl { font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 9px; }
+  .sbw { height: 5px; background: var(--surface2); border-radius: 3px; overflow: hidden; margin-bottom: 7px; }
+  .sb { height: 100%; border-radius: 3px; }
+  .sb.g { background: linear-gradient(90deg,var(--teal-dim),var(--teal)); }
+  .sb.a { background: linear-gradient(90deg,#c47d00,var(--amber)); }
+  .sb.r { background: linear-gradient(90deg,#b03030,var(--red)); }
+  .sv { font-family: var(--font-head); font-size: 19px; font-weight: 800; color: var(--white); }
+  .sv small { font-size: 11px; color: var(--text-muted); font-weight: 400; }
+
+  /* POSITIONING MATRIX */
+  .pm { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 22px; margin-bottom: 28px; }
+  .pm-title { font-family: var(--font-mono); font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--text-dim); text-align: center; margin-bottom: 14px; }
+  .pm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .pq { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 13px; min-height: 120px; }
+  .pq.star { border-color: var(--teal); background: rgba(0,201,167,.05); }
+  .ql { font-family: var(--font-mono); font-size: 9px; letter-spacing: .12em; text-transform: uppercase; color: var(--teal); margin-bottom: 7px; }
+  .pq.star .ql { color: var(--teal); }
+  .qc { font-size: 12px; color: var(--text); line-height: 1.65; }
+  .qc strong { color: var(--white); }
+
+  /* COMPETITOR CARDS */
+  .cg { display: grid; grid-template-columns: repeat(auto-fill,minmax(270px,1fr)); gap: 14px; margin-bottom: 8px; }
+  .cc { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 18px; transition: border-color .2s; position: relative; }
+  .cc:hover { border-color: var(--teal-border); }
+  .cc-flag { position: absolute; top: 14px; right: 14px; font-size: 17px; }
+  .cc-reg { font-family: var(--font-mono); font-size: 9px; letter-spacing: .13em; text-transform: uppercase; color: var(--text-muted); background: var(--surface); padding: 2px 6px; border-radius: 3px; display: inline-block; margin-bottom: 8px; }
+  .cc-name { font-family: var(--font-head); font-size: 15px; font-weight: 700; color: var(--white); margin-bottom: 4px; padding-right: 28px; }
+  .tier { font-family: var(--font-mono); font-size: 10px; padding: 2px 7px; border-radius: 4px; letter-spacing: .08em; display: inline-block; margin-bottom: 10px; }
+  .t1 { background: rgba(167,139,250,.15); color: var(--purple); border: 1px solid rgba(167,139,250,.3); }
+  .t2 { background: rgba(245,166,35,.12); color: var(--amber); border: 1px solid rgba(245,166,35,.3); }
+  .t3 { background: rgba(0,201,167,.1); color: var(--teal); border: 1px solid var(--teal-border); }
+  .t4 { background: rgba(92,184,255,.12); color: var(--blue); border: 1px solid rgba(92,184,255,.3); }
+  .t5 { background: rgba(255,126,185,.12); color: var(--pink); border: 1px solid rgba(255,126,185,.3); }
+  .cc-desc { font-size: 12px; color: var(--text-dim); line-height: 1.55; margin-bottom: 12px; }
+  .cc-lbl { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 7px; }
+  .pills { display: flex; flex-wrap: wrap; gap: 5px; }
+  .p { font-size: 11px; font-family: var(--font-mono); padding: 2px 8px; border-radius: 20px; background: var(--surface); color: var(--text-dim); border: 1px solid var(--border); }
+  .p.gap { background: rgba(255,91,91,.08); color: var(--red); border-color: rgba(255,91,91,.2); }
+
+  /* TABLE */
+  .tw { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; overflow-x: auto; margin-bottom: 28px; }
+  table { width: 100%; min-width: 740px; border-collapse: collapse; font-size: 11px; }
+  thead { background: var(--surface); border-bottom: 1px solid var(--border); }
+  th { padding: 12px 12px; text-align: left; font-family: var(--font-mono); font-size: 9px; letter-spacing: .12em; text-transform: uppercase; color: var(--text-dim); white-space: nowrap; }
+  th.jc { color: var(--teal); background: rgba(0,201,167,.06); }
+  th .rm { display: block; color: var(--text-muted); font-size: 8px; margin-top: 1px; }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,.02); }
+  td.fn { font-size: 12px; color: var(--text); }
+  td.fc { font-family: var(--font-mono); font-size: 9px; color: var(--text-muted); text-transform: uppercase; }
+  td.jc { background: rgba(0,201,167,.04); }
+  .ck { color: var(--teal); font-size: 15px; }
+  .cx { color: var(--text-muted); font-size: 14px; }
+  .pt { color: var(--amber); font-size: 12px; font-family: var(--font-mono); }
+
+  /* GAPS */
+  .gg { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media(max-width:580px){ .gg,.cg,.rg{ grid-template-columns:1fr; } }
+  .gc { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 18px; transition: border-color .2s; }
+  .gc:hover { border-color: var(--teal-border); }
+  .gc.cr { border-left: 3px solid var(--red); }
+  .gc.hi { border-left: 3px solid var(--amber); }
+  .gc.me { border-left: 3px solid var(--purple); }
+  .gc.re { border-left: 3px solid var(--blue); }
+  .gbadge { font-family: var(--font-mono); font-size: 9px; letter-spacing: .14em; text-transform: uppercase; padding: 2px 7px; border-radius: 3px; margin-bottom: 9px; display: inline-block; }
+  .bcr { background: rgba(255,91,91,.12); color: var(--red); }
+  .bhi { background: rgba(245,166,35,.12); color: var(--amber); }
+  .bme { background: rgba(167,139,250,.12); color: var(--purple); }
+  .bre { background: rgba(92,184,255,.12); color: var(--blue); }
+  .gt { font-family: var(--font-head); font-size: 14px; font-weight: 700; color: var(--white); margin-bottom: 7px; }
+  .gd { font-size: 12px; color: var(--text-dim); line-height: 1.6; margin-bottom: 9px; }
+  .gw { font-size: 11px; font-family: var(--font-mono); color: var(--teal-dim); padding: 7px 9px; background: var(--teal-glow); border-radius: 5px; line-height: 1.55; }
+
+  /* STRENGTHS */
+  .sl-list { display: flex; flex-direction: column; gap: 11px; }
+  .si2 { display: grid; grid-template-columns: 32px 1fr; gap: 13px; align-items: start; padding: 15px; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; transition: border-color .2s; }
+  .si2:hover { border-color: var(--teal-border); }
+  .sico { width: 32px; height: 32px; background: var(--teal-glow); border: 1px solid var(--teal-border); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+  .stitle { font-family: var(--font-head); font-size: 14px; font-weight: 700; color: var(--white); margin-bottom: 3px; }
+  .stxt { font-size: 12px; color: var(--text-dim); line-height: 1.55; }
+
+  /* ROADMAP */
+  .rm-list { position: relative; }
+  .rm-list::before { content: ''; position: absolute; left: 19px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom,var(--teal),var(--teal-dim),transparent); }
+  .ri { display: grid; grid-template-columns: 40px 1fr; gap: 18px; padding-bottom: 26px; }
+  .rdot { width: 13px; height: 13px; border-radius: 50%; margin-top: 4px; margin-left: 7px; flex-shrink: 0; position: relative; z-index: 1; }
+  .dc { background: var(--red); box-shadow: 0 0 10px rgba(255,91,91,.5); }
+  .dh { background: var(--amber); box-shadow: 0 0 9px rgba(245,166,35,.4); }
+  .dm { background: var(--purple); box-shadow: 0 0 9px rgba(167,139,250,.4); }
+  .dr { background: var(--blue); box-shadow: 0 0 9px rgba(92,184,255,.4); }
+  .rtitle { font-family: var(--font-head); font-size: 14px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+  .rdetail { font-size: 12px; color: var(--text-dim); line-height: 1.55; }
+  .rtag { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); margin-top: 5px; }
+
+  /* FOOTER */
+  footer { border-top: 1px solid var(--border); padding-top: 28px; margin-top: 56px; display: flex; justify-content: space-between; align-items: center; font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); flex-wrap: wrap; gap: 10px; }
+  footer span { color: var(--teal); }
+
+  /* ANIM */
+  @keyframes fu { from { opacity:0; transform: translateY(18px); } to { opacity:1; transform: translateY(0); } }
+  .fi { animation: fu .55s ease forwards; }
+  .d1 { animation-delay:.08s; opacity:0; }
+  .d2 { animation-delay:.16s; opacity:0; }
+  .d3 { animation-delay:.24s; opacity:0; }
+
+  .note { font-size:11px; color:var(--text-muted); font-family:var(--font-mono); margin-top:10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <header class="fi">
+    <div class="chip">Global Competitive Intelligence · v2.0 · April 2026</div>
+    <h1>Janet <em>Global Audit</em></h1>
+    <p class="sub">Full-spectrum audit of Janet (Longevity Coach) against the 2026 health platform landscape across <strong style="color:var(--white)">North America · Asia-Pacific · ANZ</strong> — strengths, regional gaps, and a prioritised global roadmap.</p>
+    <div class="meta">
+      <div class="meta-i"><strong>Markets</strong>US · SG · MY · ID · TH · AU</div>
+      <div class="meta-i"><strong>Platforms Reviewed</strong>18</div>
+      <div class="meta-i"><strong>Categories</strong>Consumer · Clinical · Coaching · Insurer · Corporate</div>
+      <div class="meta-i"><strong>Version</strong>MVP → Scale</div>
+    </div>
+  </header>
+
+  <!-- VERDICT -->
+  <section class="fi d1">
+    <div class="sec-lbl">Overall Verdict</div>
+    <div class="verdict">
+      <div class="v-score">B+</div>
+      <div class="v-lbl">Strong Cross-Market Position — Regional Plays Required</div>
+      <p class="v-text">Janet's combination of biological age scoring, supplement protocols, B2B billing, and gamification places it ahead of most coaching platforms globally. The global landscape is regionally fragmented: the <strong>US market</strong> is dominated by clinical depth (Geviti, HolistiCare); the <strong style="color:var(--blue)">ANZ market</strong> has one dominant longevity player (Vively) — consumer-only, no B2B; and the <strong style="color:var(--pink)">APAC market</strong> is ruled by insurance-linked wellness (AIA Vitality, Prudential Pulse) and B2B corporate coaching (Naluri, ThoughtFull) — neither with longevity science. Janet has a real lane in all three, but each requires different go-to-market and feature priorities.</p>
+    </div>
+  </section>
+
+  <!-- REGIONAL MARKETS -->
+  <section class="fi d1">
+    <div class="sec-lbl">Regional Market Dynamics</div>
+    <h2>Three Markets, Three Distinct Plays</h2>
+    <div class="rg">
+      <div class="rc us">
+        <div class="rf">🇺🇸 North America</div>
+        <div class="rt">Clinical Depth Wins</div>
+        <div class="rs">
+          <div class="rv"><strong>$24.1B</strong>Health coaching 2026</div>
+          <div class="rv"><strong>9.3%</strong>CAGR</div>
+        </div>
+        <p class="rd">Mature, fragmented. Consumer plays compete on biomarker science. Clinical plays move on B2B and clinic licensing. Coaching infra is generic. Janet's edge: B2B + longevity science + gamification — no incumbent combines all three.</p>
+      </div>
+      <div class="rc apac">
+        <div class="rf">🌏 APAC / SEA</div>
+        <div class="rt">Insurance + Corporate Rule</div>
+        <div class="rs">
+          <div class="rv"><strong>Fastest</strong>Growing region</div>
+          <div class="rv"><strong>15.3%</strong>Digital health CAGR</div>
+        </div>
+        <p class="rd">AIA Vitality and Prudential Pulse own consumer at insurer-subsidised prices. Naluri and ThoughtFull own enterprise B2B. Singapore is the longevity clinic capital. Local language and cultural localisation (TCM, halal) is non-negotiable. Janet's path: insurer partnership + corporate B2B.</p>
+      </div>
+      <div class="rc anz">
+        <div class="rf">🇦🇺 ANZ</div>
+        <div class="rt">One Dominant Player</div>
+        <div class="rs">
+          <div class="rv"><strong>Vively</strong>Market leader</div>
+          <div class="rv"><strong>Greenfield</strong>B2B longevity</div>
+        </div>
+        <p class="rd">Vively owns consumer longevity (CGM + 50-biomarker + GP + bio age). MFM and Biogenix serve the premium clinical tier. There is NO dominant B2B corporate longevity play in ANZ — Janet's clearest greenfield. Gates to clear: Australian Privacy Act, TGA, HCANZA coach network.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCORES -->
+  <section class="fi d2">
+    <div class="sec-lbl">Dimension Scores</div>
+    <h2>Where Janet Stands Globally</h2>
+    <div class="sg">
+      <div class="si"><div class="sl">Biological Age Engine</div><div class="sbw"><div class="sb g" style="width:80%"></div></div><div class="sv">80<small>/100</small></div></div>
+      <div class="si"><div class="sl">Wearable Integration</div><div class="sbw"><div class="sb a" style="width:50%"></div></div><div class="sv">50<small>/100</small></div></div>
+      <div class="si"><div class="sl">Biomarker / Lab Data</div><div class="sbw"><div class="sb r" style="width:35%"></div></div><div class="sv">35<small>/100</small></div></div>
+      <div class="si"><div class="sl">Supplement Protocol AI</div><div class="sbw"><div class="sb g" style="width:85%"></div></div><div class="sv">85<small>/100</small></div></div>
+      <div class="si"><div class="sl">B2B / Corporate</div><div class="sbw"><div class="sb g" style="width:78%"></div></div><div class="sv">78<small>/100</small></div></div>
+      <div class="si"><div class="sl">Gamification</div><div class="sbw"><div class="sb g" style="width:90%"></div></div><div class="sv">90<small>/100</small></div></div>
+      <div class="si"><div class="sl">Insurer Integration</div><div class="sbw"><div class="sb r" style="width:15%"></div></div><div class="sv">15<small>/100</small></div></div>
+      <div class="si"><div class="sl">Regional Localisation</div><div class="sbw"><div class="sb r" style="width:20%"></div></div><div class="sv">20<small>/100</small></div></div>
+      <div class="si"><div class="sl">Multi-Region Compliance</div><div class="sbw"><div class="sb a" style="width:40%"></div></div><div class="sv">40<small>/100</small></div></div>
+      <div class="si"><div class="sl">Genetic / Epigenetic</div><div class="sbw"><div class="sb r" style="width:10%"></div></div><div class="sv">10<small>/100</small></div></div>
+    </div>
+  </section>
+
+  <!-- POSITIONING -->
+  <section class="fi d2">
+    <div class="sec-lbl">Strategic Positioning</div>
+    <h2>Market Map: Longevity Depth vs B2B Strength</h2>
+    <div class="pm">
+      <div class="pm-title">High Longevity Depth ↑ / Low ↓ &nbsp;·&nbsp; Low B2B Strength ← / High →</div>
+      <div class="pm-grid">
+        <div class="pq">
+          <div class="ql">High Longevity · Low B2B</div>
+          <div class="qc"><strong>Vively</strong> 🇦🇺 · <strong>InsideTracker</strong> 🇺🇸 · <strong>TruDiagnostic</strong> 🇺🇸 · <strong>Chi Longevity</strong> 🇸🇬 · <strong>MFM</strong> 🇦🇺 · <strong>Geviti</strong> 🇺🇸 · <strong>Biogenix</strong> 🇦🇺</div>
+        </div>
+        <div class="pq star">
+          <div class="ql">High Longevity · High B2B ★ JANET'S MOAT</div>
+          <div class="qc"><strong style="color:var(--teal)">Janet</strong> · <strong>HolistiCare</strong> 🇺🇸<br><span style="color:var(--text-muted);font-size:10px;">— sparsely populated globally —</span></div>
+        </div>
+        <div class="pq">
+          <div class="ql">Low Longevity · Low B2B</div>
+          <div class="qc"><strong>Practice Better</strong> 🇺🇸 · <strong>TrueCoach</strong> 🇺🇸 · <strong>Halodoc</strong> 🇮🇩 · <strong>Healthie</strong> 🇺🇸</div>
+        </div>
+        <div class="pq">
+          <div class="ql">Low Longevity · High B2B</div>
+          <div class="qc"><strong>Naluri</strong> 🇲🇾 · <strong>ThoughtFull</strong> 🇸🇬 · <strong>AIA Vitality</strong> 🌏 · <strong>Prudential Pulse</strong> 🌏</div>
+        </div>
+      </div>
+    </div>
+    <p class="note">★ The high-longevity / high-B2B quadrant is Janet's global defensive moat. Only HolistiCare competes there, and only in the US. ANZ and APAC versions of this quadrant are completely empty.</p>
+  </section>
+
+  <!-- COMPETITORS: US -->
+  <section class="fi d2">
+    <div class="sec-lbl">Competitive Landscape</div>
+    <h2>18 Platforms · 6 Markets</h2>
+    <h3>🇺🇸 North America</h3>
+    <div class="cg">
+      <div class="cc">
+        <div class="cc-flag">🇺🇸</div>
+        <div class="cc-reg">USA</div>
+        <div class="cc-name">InsideTracker</div>
+        <div class="tier t1">Consumer</div>
+        <p class="cc-desc">Gold standard blood biomarker analysis. InnerAge bio score, 40+ biomarkers, wearable sync. No coaching, gamification, or B2B.</p>
+        <div class="cc-lbl">Janet's Edge</div>
+        <div class="pills"><span class="p">B2B model</span><span class="p">Gamification</span><span class="p">Coach portal</span><span class="p gap">Lab depth gap</span></div>
+      </div>
+      <div class="cc">
+        <div class="cc-flag">🇺🇸</div>
+        <div class="cc-reg">USA · 47 states</div>
+        <div class="cc-name">Geviti</div>
+        <div class="tier t2">Clinical</div>
+        <p class="cc-desc">Fastest-growing longevity platform. Clinician-led biomarker analysis, personalised supplement stacks at wholesale, AI assistant. Consumer DTC only.</p>
+        <div class="cc-lbl">Janet's Edge</div>
+        <div class="pills"><span class="p">B2B/PEPM</span><span class="p">Partner ecosystem</span><span class="p">Gamification</span><span class="p gap">No lab ordering</span></div>
+      </div>
+      <div class="cc">
+        <div class="cc-flag">🇺🇸</div>
+        <div class="cc-reg">USA</div>
+        <div class="cc-name">HolistiCare</div>
+        <div class="tier t2">Clinical</div>
+        <p class="cc-desc">Clinic-first AI longevity OS. 800+ biomarker analysis, corporate wellness B2B, cohort detection. Clinic license model only.</p>
+        <div class="cc-lbl">Janet's Edge</div>
+        <div class="pills"><span class="p">Consumer app</span><span class="p">Gamification</span><span class="p">Coach portal</span><span class="p gap">800+ biomarkers gap</span></div>
+      </div>
+      <div class="cc">
+        <div class="cc-flag">🇺🇸</div>
+        <div class="cc-reg">USA · Global</div>
+        <div class="cc-name">Practice Better</div>
+        <div class="tier t3">Coaching</div>
+        <p class="cc-desc">Leading health coach platform. HIPAA, telehealth, protocol builder, supplement integrations. Generic wellness — zero longevity depth.</p>
+        <div class="cc-lbl">Janet's Edge</div>
+        <div class="pills"><span class="p">Bio age engine</span><span class="p">Gamification</span><span class="p">B2B/PEPM</span><span class="p">Longevity AI</span></div>
+      </div>
+      <div class="cc">
+        <div class="cc-flag">🇺🇸</div>
+        <div class="cc-reg">USA</div>
+        <div class="cc-name">TruDiagnostic</div>
+        <div class="tier t1">Consumer</div>
+        <p class="cc-desc">Epigenetic testing gold standard. GrimAge, DunedinPACE, PhenoAge organ-specific aging clocks. Testing only — no platform, no coaching.</p>
+        <div class="cc-lbl">Janet's Edge</div>
+        <div class="pills"><span class="p">Full platform</span><span class="p">Coaching layer</span><span class="p">B2B</span><span class="p gap">Epigenetic gap</span></div>
+      </div>
+      <div class="cc">
+        <div class="cc-flag">🇺🇸</div>
+        <div class="cc-reg">USA · Global</div>
+        <div class="cc-name">Healthie</div>
+        <div class="tier t3">Coaching</div>
+        <p class="cc-desc">All-in-one coaching platform, pivoting to API/enterprise (Healthie+). HIPAA, telehealth, Dexcom CGM integration. No longevity engine.</p>
+        <div class="cc-lbl">Janet's Edge</div>
+        <div class="pills"><span class="p">Biological age</span><span class="p">Longevity protocols</span><span class="p">B2B/PEPM</span><span class="p gap">CGM gap</span></div>
+      </div>
+    </div>
+
+    <h3>🌏 Asia-Pacific (SG · MY · ID · TH)</h3>
+    <div class="cg">
+      <div class="cc">
+        <div class="cc-flag">🇲🇾</div>
+        <div class="cc-reg">MY · SG · ID · TH · PH · VN</div>
+        <div class="cc-name">Naluri</div>
+        <div class="tier t5">B2B Corporate</div>
+        <p class="cc-desc">SEA's largest B2B health coaching platform. Multidisciplinary AI-augmented coaching (psychologists, dietitians, doctors, fitness). HIPAA + ISO 27001. 75+ enterprise clients incl. PETRONAS, AmEx. $19.9M raised. Mental health + chronic disease focus — NOT longevity.</p>
+        <div class="cc-lbl">Janet's Edge</div>
+        <div class="pills"><span class="p">Bio age engine</span><span class="p">Longevity science</span><span class="p">Supplement AI</span><span class="p">Gamification</span><span class="p gap">SEA presence gap</span></div>
+      </div>
+      <div class="cc">
+        <div class="cc-flag">🇸🇬</div>
+        <div class="cc-reg">Singapore</div>
+        <div class="cc-name">Chi Longevity</div>
+        <div class="tier t2">Clinical</div>
+        <p class="cc-desc">Singapore's premier longevity clinic. "Maier Method" by Prof. Andrea Maier. Biological age testing, comprehensive biomarker mapping, personalised protocols. Affluent in-clinic only. No app, no digital scale.</p>
+        <div class="cc-lbl">Janet's Edge</div>
+        <div class="pills"><span class="p">Digital scale</span><span class="p">B2B</span><span class="p">Coach portal</span><span class="p">Gamification</span></div>
+      </div>
+      <div class="cc">
+        <div class="cc-flag">🇸🇬</div>
+        <div class="cc-reg">SG · MY · ID · PH · TH · HK</div>
+        <div class="cc-name">AIA Vitality</div>
+        <div class="tier t4">Insurer-linked</div>
+        <p class="cc-desc">Pan-Asia insurer wellness program via AIA+ app. Bronze-to-Platinum points gamification, partner rewards, insurance premium discounts. Tens of millions of users. Deep distribution — but zero longevity science or supplement depth.</p>
+        <div class="cc-lbl">Janet's Edge</div>
+        <div class="pills"><span class="p">Bio age science</span><span class="p">Supplement AI</span><span class="p">Coach portal</span><span class="p gap">Distribution gap</span></div>
+      </div>
+      <div class="cc">
+        <div class="cc-flag">🌏</div>
+        <div class="cc-reg">11 Asian markets</div>
+        <div class="cc-name">Prudential Pulse</div>
+        <div class="tier t4">Insurer-linked</div>
+        <p class="cc-desc">Prudential's pan-Asia health super-app. AI symptom checker, telemedicine via MyDoc, e-prescription. Holistic but generic — no longevity, no bio age, no behavior change.</p>
+        <div class="cc-lbl">Janet's Edge</div>
+        <div class="pills"><span class="p">Longevity science</span><span class="p">Behavior change</span><span class="p">Bio age engine</span><span class="p">B2B</span></div>
+      </div>
+      <div class="cc">
+        <div class="cc-flag">🇸🇬</div>
+        <div class="cc-reg">SG · MY · ID · PH</div>
+        <div class="cc-name">ThoughtFull</div>
+        <div class="tier t5">B2B Mental Health</div>
+        <p class="cc-desc">Asia's pioneer text-based mental health coaching. ISO 27001-certified. 28+ languages. 69% enterprise utilisation. Mental health only — no physical longevity science.</p>
+        <div class="cc-lbl">Janet's Edge</div>
+        <div class="pills"><span class="p">Physical longevity</span><span class="p">Bio age engine</span><span class="p">Supplement AI</span><span class="p gap">Multilingual gap</span></div>
+      </div>
+      <div class="cc">
+        <div class="cc-flag">🇮🇩</div>
+        <div class="cc-reg">Indonesia</div>
+        <div class="cc-name">Halodoc + Halofit</div>
+        <div class="tier t1">Telehealth</div>
+        <p class="cc-desc">Indonesia's #1 health super-app, 20M+ MAU. Halofit: 30-day clinical metabolism program with dietitian + GP + home lab + supplements. Massive distribution, shallow longevity science.</p>
+        <div class="cc-lbl">Janet's Edge</div>
+        <div class="pills"><span class="p">Longevity depth</span><span class="p">Bio age engine</span><span class="p">B2B</span><span class="p gap">Distribution gap</span></div>
+      </div>
+    </div>
+
+    <h3>🇦🇺 Australia & New Zealand</h3>
+    <div class="cg">
+      <div class="cc" style="border-color:var(--blue)">
+        <div class="cc-flag">🇦🇺</div>
+        <div class="cc-reg">Australia · Market leader</div>
+        <div class="cc-name">Vively</div>
+        <div class="tier t1">Consumer Longevity</div>
+        <p class="cc-desc">Australia's leading longevity & metabolic platform. CGM + 50+ biomarker blood panel + biological age (PhenoAge) + GP consult + coaching. AUD $299 entry, 2,000+ collection centres. Strong content ecosystem. Consumer-only — no B2B, no employer model.</p>
+        <div class="cc-lbl">Janet's Edge</div>
+        <div class="pills"><span class="p">B2B/corporate</span><span class="p">Coach network</span><span class="p">Gamification</span><span class="p">Supplement margin</span><span class="p gap">CGM gap</span><span class="p gap">PhenoAge gap</span></div>
+      </div>
+      <div class="cc">
+        <div class="cc-flag">🇦🇺</div>
+        <div class="cc-reg">Australia · Melbourne</div>
+        <div class="cc-name">Melbourne Functional Medicine</div>
+        <div class="tier t2">Clinical Premium</div>
+        <p class="cc-desc">230+ metabolic biomarkers, epigenome + biological age, food inflammation panel, genetic testing. HCANZA-accredited coaches. Practitioner-only therapeutics (NMN, NR, urolithin A). High-touch, low-volume.</p>
+        <div class="cc-lbl">Janet's Edge</div>
+        <div class="pills"><span class="p">Digital scale</span><span class="p">B2B</span><span class="p">Gamification</span><span class="p gap">Biomarker depth gap</span></div>
+      </div>
+      <div class="cc">
+        <div class="cc-flag">🇦🇺</div>
+        <div class="cc-reg">Australia</div>
+        <div class="cc-name">Biogenix Australia</div>
+        <div class="tier t2">Clinical Premium</div>
+        <p class="cc-desc">Doctor-led longevity, regenerative medicine and aesthetics. "Biostatus" diagnostics: bio age, DNA methylation, peptides, NAD+, PRP. Premium clinic — no scaled platform.</p>
+        <div class="cc-lbl">Janet's Edge</div>
+        <div class="pills"><span class="p">Coaching scale</span><span class="p">B2B/corporate</span><span class="p">App platform</span><span class="p gap">Regenerative gap</span></div>
+      </div>
+      <div class="cc">
+        <div class="cc-flag">🌍</div>
+        <div class="cc-reg">Global · ANZ available</div>
+        <div class="cc-name">Humanity App</div>
+        <div class="tier t1">Consumer App</div>
+        <p class="cc-desc">UK-origin biological age app. Wearable-powered aging rate calculation. Available in ANZ (~AUD $180/yr). Strong app, weak coaching layer, no B2B, no protocols.</p>
+        <div class="cc-lbl">Janet's Edge</div>
+        <div class="pills"><span class="p">Coaching layer</span><span class="p">Protocols</span><span class="p">B2B model</span><span class="p">Lab integration</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURE MATRIX -->
+  <section class="fi d3">
+    <div class="sec-lbl">Feature Matrix</div>
+    <h2>Janet vs. Key Global Competitors</h2>
+    <div class="tw">
+      <table>
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Cat</th>
+            <th class="jc">Janet</th>
+            <th>Vively<span class="rm">🇦🇺</span></th>
+            <th>Naluri<span class="rm">🇲🇾 SEA</span></th>
+            <th>AIA Vitality<span class="rm">🌏 APAC</span></th>
+            <th>Chi Longevity<span class="rm">🇸🇬</span></th>
+            <th>InsideTracker<span class="rm">🇺🇸</span></th>
+            <th>Geviti<span class="rm">🇺🇸</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="fn">Biological Age Calc</td><td class="fc">Core</td><td class="jc"><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="cx">—</span></td><td><span class="cx">—</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td></tr>
+          <tr><td class="fn">AI Supplement Protocol</td><td class="fc">Protocols</td><td class="jc"><span class="ck">✓</span></td><td><span class="pt">~</span></td><td><span class="cx">—</span></td><td><span class="cx">—</span></td><td><span class="ck">✓</span></td><td><span class="pt">~</span></td><td><span class="ck">✓</span></td></tr>
+          <tr><td class="fn">Gamification / Points</td><td class="fc">Engagement</td><td class="jc"><span class="ck">✓</span></td><td><span class="cx">—</span></td><td><span class="pt">~</span></td><td><span class="ck">✓</span></td><td><span class="cx">—</span></td><td><span class="cx">—</span></td><td><span class="cx">—</span></td></tr>
+          <tr><td class="fn">B2B Corporate / PEPM</td><td class="fc">B2B</td><td class="jc"><span class="ck">✓</span></td><td><span class="cx">—</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="cx">—</span></td><td><span class="cx">—</span></td><td><span class="cx">—</span></td></tr>
+          <tr><td class="fn">Insurer Integration</td><td class="fc">B2B</td><td class="jc"><span class="cx">—</span></td><td><span class="cx">—</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="cx">—</span></td><td><span class="cx">—</span></td><td><span class="cx">—</span></td></tr>
+          <tr><td class="fn">Multi-Language (6+)</td><td class="fc">Localisation</td><td class="jc"><span class="cx">—</span></td><td><span class="cx">—</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="pt">~</span></td><td><span class="cx">—</span></td><td><span class="cx">—</span></td></tr>
+          <tr><td class="fn">TCM / Halal Adapt</td><td class="fc">Localisation</td><td class="jc"><span class="cx">—</span></td><td><span class="cx">—</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="pt">~</span></td><td><span class="cx">—</span></td><td><span class="cx">—</span></td></tr>
+          <tr><td class="fn">CGM Integration</td><td class="fc">Data</td><td class="jc"><span class="cx">—</span></td><td><span class="ck">✓</span></td><td><span class="cx">—</span></td><td><span class="cx">—</span></td><td><span class="cx">—</span></td><td><span class="cx">—</span></td><td><span class="pt">~</span></td></tr>
+          <tr><td class="fn">Live Wearable Data</td><td class="fc">Data</td><td class="jc"><span class="pt">~</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td></tr>
+          <tr><td class="fn">Lab PDF Import</td><td class="fc">Data</td><td class="jc"><span class="cx">—</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="cx">—</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td></tr>
+          <tr><td class="fn">Epigenetic Clock</td><td class="fc">Data</td><td class="jc"><span class="cx">—</span></td><td><span class="cx">—</span></td><td><span class="cx">—</span></td><td><span class="cx">—</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="cx">—</span></td></tr>
+          <tr><td class="fn">HIPAA / ISO 27001</td><td class="fc">Infra</td><td class="jc"><span class="pt">~</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td></tr>
+          <tr><td class="fn">AU Privacy Act / SG PDPA</td><td class="fc">Infra</td><td class="jc"><span class="cx">—</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="cx">—</span></td><td><span class="cx">—</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">✓ = present &nbsp; ~ = partial / in-build &nbsp; — = absent</p>
+  </section>
+
+  <!-- STRENGTHS -->
+  <section class="fi d3">
+    <div class="sec-lbl">Where Janet Leads Globally</div>
+    <h2>Genuine Cross-Market Advantages</h2>
+    <div class="sl-list">
+      <div class="si2">
+        <div class="sico">🧬</div>
+        <div><div class="stitle">Multi-Domain Biological Age Engine</div><p class="stxt">Combination of bio age + multi-domain risk scoring in one platform matched only by clinical platforms charging $500+/month. Janet delivers this in a consumer + coach hybrid. No global competitor combines all three layers.</p></div>
+      </div>
+      <div class="si2">
+        <div class="sico">💊</div>
+        <div><div class="stitle">AI Supplement Protocol Generation</div><p class="stxt">No mainstream coaching platform globally generates personalised supplement protocols from health data. Geviti does it within a closed ecosystem. Janet's is open and affiliatable — a monetisation moat in every region.</p></div>
+      </div>
+      <div class="si2">
+        <div class="sico">🏢</div>
+        <div><div class="stitle">B2B Longevity — Empty Quadrant Globally</div><p class="stxt">In ANZ, Vively is consumer-only and MFM/Biogenix are clinic-only. In APAC, Naluri/ThoughtFull have B2B but no longevity science. Janet sits in the empty B2B-longevity quadrant in every market — globally defensible if built to regional compliance.</p></div>
+      </div>
+      <div class="si2">
+        <div class="sico">🎮</div>
+        <div><div class="stitle">Gamification — Unique in Longevity, Proven in APAC</div><p class="stxt">No longevity competitor has gamification. AIA Vitality's points model proves engagement value at scale across Asia. Janet is the only platform combining gamification with serious longevity science — the engagement depth AIA's wellness arm wants but can't build internally.</p></div>
+      </div>
+      <div class="si2">
+        <div class="sico">🤝</div>
+        <div><div class="stitle">No-Staff Ecosystem Partner Model</div><p class="stxt">Partnership architecture (coaches, labs, GPs, supplement vendors, meal providers) has no direct global analogue. In ANZ this maps to HCANZA-accredited coaches; in SEA to insurance partners and corporate health vendors. The model scales margin without headcount in every market.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CRITICAL GAPS -->
+  <section class="fi d3">
+    <div class="sec-lbl">Priority Gap Analysis</div>
+    <h2>What Must Be Built to Win Globally</h2>
+    <div class="gg">
+      <div class="gc cr">
+        <div class="gbadge bcr">🔴 Critical — Build Now</div>
+        <div class="gt">Lab Result Import & Biomarker Parsing</div>
+        <p class="gd">Every clinical longevity competitor (Vively AU, Chi Longevity SG, InsideTracker, Geviti) offers PDF lab upload with automatic biomarker extraction. Without this, bio age scores rely on user-entered estimates rather than real pathology data.</p>
+        <div class="gw">→ Vively imports panels from 2,000+ AU collection centres. Table-stakes globally for the longevity category.</div>
+      </div>
+      <div class="gc cr">
+        <div class="gbadge bcr">🔴 Critical — Build Now</div>
+        <div class="gt">Live Wearable Data Normalisation</div>
+        <p class="gd">Terra API is partially implemented but data isn't yet flowing into the bio age engine in real time. HRV, sleep, RHR and recovery are inputs that Vively, Naluri, AIA Vitality, and 5 of 6 US competitors already use live.</p>
+        <div class="gw">→ Without live wearable data, Janet's bio age engine is a static questionnaire. Competitors update risk scores daily from Oura, Whoop, Apple Watch.</div>
+      </div>
+      <div class="gc re">
+        <div class="gbadge bre">🔵 Regional — APAC Critical</div>
+        <div class="gt">Insurer Partnership API (Vitality-Style)</div>
+        <p class="gd">In APAC, AIA Vitality and Prudential Pulse own consumer distribution at insurer-subsidised pricing (S$8/month). Without an insurer integration layer, Janet cannot enter the APAC consumer market at competitive pricing.</p>
+        <div class="gw">→ Pilot with one regional insurer (Income, AIA, FWD, Prudential) before any APAC consumer launch. Consumer-direct pricing without insurer subsidy won't compete below AIA's S$8/mo benchmark.</div>
+      </div>
+      <div class="gc re">
+        <div class="gbadge bre">🔵 Regional — APAC Critical</div>
+        <div class="gt">Multi-Language + Cultural Localisation</div>
+        <p class="gd">Naluri runs in EN/MS/ID/TH. ThoughtFull supports 28+ languages. Beyond translation, supplement protocols need halal certification awareness, TCM integration, and Asian dietary patterns (rice-based, hawker, Indonesian street food).</p>
+        <div class="gw">→ Minimum viable SEA launch: EN, Bahasa Malaysia/Indonesia, Mandarin, Thai. AI translation alone is not sufficient — protocol content needs review by regional dietitians.</div>
+      </div>
+      <div class="gc re">
+        <div class="gbadge bre">🔵 Regional — ANZ Critical</div>
+        <div class="gt">HCANZA Coach Partnership + TGA Compliance</div>
+        <p class="gd">In Australia, credible coaches run through HCANZA (Health Coaches Australia and New Zealand Association). TGA tightly regulates supplement and health claims — Janet's protocol content must be TGA-compliant before any AU consumer launch.</p>
+        <div class="gw">→ Become an HCANZA-recognised platform. TGA compliance review of all supplement content. Without these, no Australian practitioner will recommend Janet.</div>
+      </div>
+      <div class="gc re">
+        <div class="gbadge bre">🔵 Regional — All Markets</div>
+        <div class="gt">Multi-Region Data Compliance</div>
+        <p class="gd">HIPAA covers the US. APAC requires Singapore PDPA, Indonesian PDP Law, Thai PDPA. ANZ requires Privacy Act 1988 + Australian Privacy Principles. Each region requires specific data residency, breach notification timelines, and consent frameworks.</p>
+        <div class="gw">→ ISO 27001 helps but does not substitute for local law compliance. Engage local privacy counsel per launch market before handling live user data.</div>
+      </div>
+      <div class="gc hi">
+        <div class="gbadge bhi">🟡 High — Next Sprint</div>
+        <div class="gt">Epigenetic / DNA Clock Integration</div>
+        <p class="gd">InsideTracker, TruDiagnostic (US) and Chi Longevity, MFM, Biogenix (APAC/AU) all offer or integrate epigenetic biological age. DunedinPACE and GrimAge are the new standard. Partnership model — no build required.</p>
+        <div class="gw">→ TruDiagnostic globally, MFM or Biogenix in AU, Chi Longevity in SG. Import epigenetic score into bio age dashboard via partnership agreement.</div>
+      </div>
+      <div class="gc hi">
+        <div class="gbadge bhi">🟡 High — Next Sprint</div>
+        <div class="gt">Supplement Affiliate Commission Tracking (Live)</div>
+        <p class="gd">In AU, supplement partners must be TGA-listed. In SEA, halal-certified supply chains are critical (Indonesia MUI certification). Each region requires a separate supplier integration. Coach incentive model depends on commission accuracy.</p>
+        <div class="gw">→ AU: TGA-listed partners (Activated Probiotics, BioCeuticals). SEA: halal-certified vendors per market. Every week delayed costs coach activation.</div>
+      </div>
+      <div class="gc me">
+        <div class="gbadge bme">🟣 Medium — Q3 Build</div>
+        <div class="gt">Microbiome / Gut Pipeline</div>
+        <p class="gd">Singapore's AMILI is launching a personalised nutrition app with Google in April 2026. Viome leads globally. Both are partnership opportunities for data import into Janet's supplement protocol engine.</p>
+        <div class="gw">→ AMILI partnership is strategic for Singapore — local data, local trust, local regulatory standing. Viome for US and global reach.</div>
+      </div>
+      <div class="gc me">
+        <div class="gbadge bme">🟣 Medium — Q3 Build</div>
+        <div class="gt">White-Label / Clinic Licensing Tier</div>
+        <p class="gd">HolistiCare's model is white-label clinic licensing (US). In AU, this maps to functional medicine clinics; in SEA, to private hospital networks (Bumrungrad, Mount Elizabeth, Gleneagles, Siloam). Each targets high-net-worth international patients.</p>
+        <div class="gw">→ APAC private hospital groups are actively seeking longevity programs. White-label is the entry path that avoids competing with insurer distribution.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROADMAP -->
+  <section class="fi d3">
+    <div class="sec-lbl">Prioritised Build Roadmap</div>
+    <h2>120-Day Path to Multi-Region Leadership</h2>
+    <div class="rm-list">
+      <div class="ri">
+        <div class="rdot dc"></div>
+        <div>
+          <div class="rtitle">Week 1–2: HIPAA + Live Wearable Data + Region-1 Compliance</div>
+          <p class="rdetail">Pick ANZ as launch region (clearest B2B greenfield, no entrenched competitor). Complete HIPAA + Australian Privacy Act compliance simultaneously. Finish Terra API normalisation so HRV, sleep, recovery feed live into bio age engine.</p>
+          <div class="rtag">Blocks: all B2B sales, practitioner partnerships, regional launch</div>
+        </div>
+      </div>
+      <div class="ri">
+        <div class="rdot dc"></div>
+        <div>
+          <div class="rtitle">Week 2–4: Lab PDF Import + Biomarker Parser</div>
+          <p class="rdetail">Build PDF upload flow that extracts biomarker values, maps to risk engine, updates bio age. Use Claude API for parsing. In AU, partner with Sonic Healthcare or Australian Clinical Labs to match Vively's 2,000+ collection centre footprint.</p>
+          <div class="rtag">Closes biggest gap vs. Vively (AU), Chi Longevity (SG), Geviti (US)</div>
+        </div>
+      </div>
+      <div class="ri">
+        <div class="rdot dr"></div>
+        <div>
+          <div class="rtitle">Week 3–6: ANZ Launch — HCANZA + TGA + AU Telehealth</div>
+          <p class="rdetail">Become HCANZA-recognised. TGA-compliance review of all supplement/protocol content. Pilot with 5–10 HCANZA-accredited coaches as launch network. Integrate AU telehealth providers (Eucalyptus, InstantScripts) for GP referrals.</p>
+          <div class="rtag">ANZ is greenfield for B2B longevity — Vively cannot pivot fast enough to defend</div>
+        </div>
+      </div>
+      <div class="ri">
+        <div class="rdot dh"></div>
+        <div>
+          <div class="rtitle">Week 4–6: Supplement Affiliate Tracking Live (AU)</div>
+          <p class="rdetail">Complete affiliate checkout and margin tracking. Launch in AU with a TGA-listed supplement partner (Activated Probiotics, BioCeuticals, Eagle/Fusion). This activates the AU coach network's financial incentive.</p>
+          <div class="rtag">Revenue unlock — every week delayed costs coach activation</div>
+        </div>
+      </div>
+      <div class="ri">
+        <div class="rdot dr"></div>
+        <div>
+          <div class="rtitle">Month 2: Singapore Beachhead — PDPA + Insurer Pilot</div>
+          <p class="rdetail">Singapore PDPA compliance. Approach one insurer partner (Income Insurance or FWD Singapore — more open than AIA to new partnerships). Local biomarker lab integration (Innoquest, Quest). Multi-language MVP: English + Mandarin.</p>
+          <div class="rtag">Singapore is the APAC longevity capital — Chi Longevity validates demand at premium pricing</div>
+        </div>
+      </div>
+      <div class="ri">
+        <div class="rdot dh"></div>
+        <div>
+          <div class="rtitle">Month 2–3: Epigenetic Partnerships (Per Region)</div>
+          <p class="rdetail">TruDiagnostic global affiliate. In AU, partner with MFM or Biogenix. In SG, integrate with Chi Longevity or Alexandra Hospital HEAL study. Build unified import flow for DunedinPACE / GrimAge / PhenoAge regardless of source.</p>
+          <div class="rtag">Positions Janet alongside InsideTracker on scientific credibility globally</div>
+        </div>
+      </div>
+      <div class="ri">
+        <div class="rdot dm"></div>
+        <div>
+          <div class="rtitle">Month 3: Corporate B2B Hardening + ANZ Employer Pilots</div>
+          <p class="rdetail">Complete corporate admin panel, cohort dashboards, PEPM billing flows. Engage 2–3 AU pilot employers — target ASX-listed companies. PEPM benchmarks: AU AUD$15–30/employee/month, SG S$10–25. Naluri charges per these ranges in SEA.</p>
+          <div class="rtag">No B2B longevity competitor in ANZ. Open territory.</div>
+        </div>
+      </div>
+      <div class="ri">
+        <div class="rdot dr"></div>
+        <div>
+          <div class="rtitle">Month 3–4: SEA Multi-Language Expansion (MY · ID · TH)</div>
+          <p class="rdetail">Roll out Bahasa Malaysia, Bahasa Indonesia, Thai. Halal supplement vendor partnerships per market. Indonesian PDP Law + Thai PDPA compliance. Partner with regional dietitians to localise meal planning. This unlocks Naluri's market footprint without competing head-on (Naluri is mental health + chronic disease, not longevity).</p>
+          <div class="rtag">SEA is the fastest-growing digital health region globally</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- POSITIONING -->
+  <section class="fi d3">
+    <div class="sec-lbl">Global Positioning</div>
+    <div class="verdict">
+      <div class="v-lbl">Janet's Defensible Multi-Region Pitch</div>
+      <p class="v-text">
+        <strong>Janet is the only longevity platform combining biological age + AI supplements + gamification + B2B PEPM + no-staff ecosystem — engineered for multi-region deployment.</strong> In <strong style="color:var(--blue)">ANZ</strong>, Vively owns consumer but no one owns B2B longevity — Janet's clearest greenfield. In <strong style="color:var(--pink)">APAC</strong>, AIA Vitality and Naluri own distribution but lack longevity science — Janet's path is partnership, not competition. In <strong style="color:var(--purple)">North America</strong>, Janet sits in the empty B2B-longevity quadrant alongside HolistiCare. Win corporate B2B per region first; consumer follows through coach networks. The 120-day roadmap above closes all critical global gaps and establishes beachheads in ANZ and Singapore before expanding across SEA.
+      </p>
+    </div>
+  </section>
+
+  <footer>
+    <div>Janet Global Audit · <span>April 2026</span> · v2.0</div>
+    <div>18 platforms · US · 🇸🇬 SG · 🇲🇾 MY · 🇮🇩 ID · 🇹🇭 TH · 🇦🇺 AU</div>
+  </footer>
+
+</div>
+</body>
+</html>
