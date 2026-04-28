@@ -27,8 +27,16 @@ function buildPrompt(params: {
   responses: Record<string, unknown>;
   riskSummary: string | null;
   uploadSummaries: string[];
+  supplementStandardsContext?: string;
+  drugInteractionContext?: string;
 }): string {
   const parts: string[] = [];
+  if (params.supplementStandardsContext) {
+    parts.push(`## Supplement evidence reference\n${params.supplementStandardsContext}`);
+  }
+  if (params.drugInteractionContext) {
+    parts.push(`## Drug-supplement interactions\n${params.drugInteractionContext}`);
+  }
   if (params.ageYears) parts.push(`Patient age: ${params.ageYears} years`);
   if (params.riskSummary) parts.push(`\n## Risk profile\n${params.riskSummary}`);
   if (Object.keys(params.responses).length > 0) {
@@ -90,11 +98,46 @@ export async function runSupplementProtocolPipeline(userId: string): Promise<voi
       (u.janet_findings ? `\nFindings: ${JSON.stringify(u.janet_findings)}` : ''),
   );
 
+  // Load supplement evidence standards and drug-interaction data for context injection
+  let supplementStandardsContext = '';
+  let drugInteractionContext = '';
+  try {
+    const { data: standards } = await admin
+      .from('risk_assessment_standards')
+      .select('domain, framework_name, risk_tier, clinical_threshold, key_risk_factors, clinical_guidance, source_citation')
+      .eq('active', true)
+      .in('domain', ['supplement', 'drug_interaction'])
+      .order('domain')
+      .order('internal_score_min');
+
+    if (standards?.length) {
+      const supplementRows = standards.filter(r => r.domain === 'supplement');
+      const drugRows = standards.filter(r => r.domain === 'drug_interaction');
+
+      if (supplementRows.length) {
+        supplementStandardsContext = supplementRows
+          .map(r =>
+            `[${r.risk_tier}] ${r.framework_name}: ${r.clinical_threshold ?? ''} — ${r.clinical_guidance ?? ''} (${r.source_citation})`
+          )
+          .join('\n');
+      }
+      if (drugRows.length) {
+        drugInteractionContext = drugRows
+          .map(r =>
+            `[${r.risk_tier}] ${r.framework_name}: ${r.clinical_threshold ?? ''} — ${r.clinical_guidance ?? ''} (${r.source_citation})`
+          )
+          .join('\n');
+      }
+    }
+  } catch {
+    // Standards unavailable — proceed without; system prompt contains baseline interaction rules
+  }
+
   const agent = createPipelineAgent('sage');
 
   let output: SupplementOutput;
   try {
-    output = await agent.run(SupplementOutputSchema, buildPrompt({ ageYears, responses, riskSummary, uploadSummaries }));
+    output = await agent.run(SupplementOutputSchema, buildPrompt({ ageYears, responses, riskSummary, uploadSummaries, supplementStandardsContext, drugInteractionContext }));
   } catch (err) {
     console.error(`[Sage] Supplement protocol pipeline failed for user ${userId}:`, err);
     return;

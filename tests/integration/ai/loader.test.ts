@@ -7,7 +7,7 @@ const mockSelect = vi.fn(() => ({ eq: mockEqSlug }));
 const mockFrom = vi.fn(() => ({ select: mockSelect }));
 
 vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: () => ({ from: mockFrom }),
+  createAdminClient: () => ({ schema: () => ({ from: mockFrom }) }),
 }));
 
 import { loadAgentDef } from "@/lib/ai/loader";

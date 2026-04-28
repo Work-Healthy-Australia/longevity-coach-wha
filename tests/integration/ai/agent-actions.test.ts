@@ -13,7 +13,7 @@ const mockFrom = vi.fn(() => ({
 }));
 
 vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: () => ({ from: mockFrom }),
+  createAdminClient: () => ({ schema: () => ({ from: mockFrom }) }),
 }));
 
 import {

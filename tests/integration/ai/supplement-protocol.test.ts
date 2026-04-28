@@ -61,6 +61,19 @@ const mockFrom = vi.fn((table: string) => {
       insert: mockPlanInsert,
     };
   }
+  if (table === "risk_assessment_standards") {
+    return {
+      select: () => ({
+        eq: () => ({
+          in: () => ({
+            order: () => ({
+              order: () => Promise.resolve({ data: [], error: null }),
+            }),
+          }),
+        }),
+      }),
+    };
+  }
   return {};
 });
 

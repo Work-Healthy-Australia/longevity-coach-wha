@@ -12,32 +12,7 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
-  public: {
+  agents: {
     Tables: {
       agent_conversations: {
         Row: {
@@ -114,6 +89,720 @@ export type Database = {
         }
         Relationships: []
       }
+      health_knowledge: {
+        Row: {
+          content: string
+          created_at: string
+          embedding: string | null
+          fts: unknown
+          id: string
+          metadata: Json | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          embedding?: string | null
+          fts?: unknown
+          id?: string
+          metadata?: Json | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          embedding?: string | null
+          fts?: unknown
+          id?: string
+          metadata?: Json | null
+        }
+        Relationships: []
+      }
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      [_ in never]: never
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
+  billing: {
+    Tables: {
+      organisation_addons: {
+        Row: {
+          enabled_at: string
+          org_id: string
+          plan_addon_id: string
+        }
+        Insert: {
+          enabled_at?: string
+          org_id: string
+          plan_addon_id: string
+        }
+        Update: {
+          enabled_at?: string
+          org_id?: string
+          plan_addon_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organisation_addons_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organisation_addons_plan_addon_id_fkey"
+            columns: ["plan_addon_id"]
+            isOneToOne: false
+            referencedRelation: "plan_addons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organisation_members: {
+        Row: {
+          joined_at: string
+          org_id: string
+          role: string
+          user_uuid: string
+        }
+        Insert: {
+          joined_at?: string
+          org_id: string
+          role?: string
+          user_uuid: string
+        }
+        Update: {
+          joined_at?: string
+          org_id?: string
+          role?: string
+          user_uuid?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organisation_members_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organisations: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          plan_id: string | null
+          seat_count: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          plan_id?: string | null
+          seat_count?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          plan_id?: string | null
+          seat_count?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organisations_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plan_addons: {
+        Row: {
+          created_at: string
+          description: string | null
+          feature_key: string
+          id: string
+          is_active: boolean
+          min_tier: string
+          name: string
+          price_annual_cents: number
+          price_monthly_cents: number
+          stripe_price_id_annual: string
+          stripe_price_id_monthly: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          feature_key: string
+          id?: string
+          is_active?: boolean
+          min_tier: string
+          name: string
+          price_annual_cents: number
+          price_monthly_cents: number
+          stripe_price_id_annual: string
+          stripe_price_id_monthly: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          feature_key?: string
+          id?: string
+          is_active?: boolean
+          min_tier?: string
+          name?: string
+          price_annual_cents?: number
+          price_monthly_cents?: number
+          stripe_price_id_annual?: string
+          stripe_price_id_monthly?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      plans: {
+        Row: {
+          annual_discount_pct: number
+          base_price_cents: number
+          billing_interval: string
+          created_at: string
+          feature_flags: Json
+          id: string
+          is_active: boolean
+          name: string
+          stripe_price_id: string
+          tier: string
+          updated_at: string
+        }
+        Insert: {
+          annual_discount_pct?: number
+          base_price_cents: number
+          billing_interval: string
+          created_at?: string
+          feature_flags?: Json
+          id?: string
+          is_active?: boolean
+          name: string
+          stripe_price_id: string
+          tier: string
+          updated_at?: string
+        }
+        Update: {
+          annual_discount_pct?: number
+          base_price_cents?: number
+          billing_interval?: string
+          created_at?: string
+          feature_flags?: Json
+          id?: string
+          is_active?: boolean
+          name?: string
+          stripe_price_id?: string
+          tier?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          product_code: string
+          retail_cents: number
+          stripe_price_id: string | null
+          supplier_id: string
+          updated_at: string
+          wholesale_cents: number
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          product_code: string
+          retail_cents: number
+          stripe_price_id?: string | null
+          supplier_id: string
+          updated_at?: string
+          wholesale_cents: number
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          product_code?: string
+          retail_cents?: number
+          stripe_price_id?: string | null
+          supplier_id?: string
+          updated_at?: string
+          wholesale_cents?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subscription_addons: {
+        Row: {
+          created_at: string
+          id: string
+          plan_addon_id: string
+          status: string
+          stripe_subscription_id: string
+          stripe_subscription_item_id: string
+          updated_at: string
+          user_uuid: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          plan_addon_id: string
+          status?: string
+          stripe_subscription_id: string
+          stripe_subscription_item_id: string
+          updated_at?: string
+          user_uuid: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          plan_addon_id?: string
+          status?: string
+          stripe_subscription_id?: string
+          stripe_subscription_item_id?: string
+          updated_at?: string
+          user_uuid?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscription_addons_plan_addon_id_fkey"
+            columns: ["plan_addon_id"]
+            isOneToOne: false
+            referencedRelation: "plan_addons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      suppliers: {
+        Row: {
+          address: string | null
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string
+          external_identifier: string | null
+          id: string
+          is_active: boolean
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          external_identifier?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          external_identifier?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      test_orders: {
+        Row: {
+          amount_cents: number
+          created_at: string
+          id: string
+          notes: string | null
+          product_id: string
+          status: string
+          stripe_payment_intent_id: string | null
+          updated_at: string
+          user_uuid: string
+        }
+        Insert: {
+          amount_cents: number
+          created_at?: string
+          id?: string
+          notes?: string | null
+          product_id: string
+          status?: string
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
+          user_uuid: string
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string
+          id?: string
+          notes?: string | null
+          product_id?: string
+          status?: string
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
+          user_uuid?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "test_orders_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "test_orders_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+    }
+    Views: {
+      products_public: {
+        Row: {
+          category: string | null
+          description: string | null
+          id: string | null
+          is_active: boolean | null
+          name: string | null
+          product_code: string | null
+          retail_cents: number | null
+          stripe_price_id: string | null
+          supplier_id: string | null
+        }
+        Insert: {
+          category?: string | null
+          description?: string | null
+          id?: string | null
+          is_active?: boolean | null
+          name?: string | null
+          product_code?: string | null
+          retail_cents?: number | null
+          stripe_price_id?: string | null
+          supplier_id?: string | null
+        }
+        Update: {
+          category?: string | null
+          description?: string | null
+          id?: string | null
+          is_active?: boolean | null
+          name?: string | null
+          product_code?: string | null
+          retail_cents?: number | null
+          stripe_price_id?: string | null
+          supplier_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+    }
+    Functions: {
+      [_ in never]: never
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
+  biomarkers: {
+    Tables: {
+      biological_age_tests: {
+        Row: {
+          biological_age: number
+          created_at: string
+          elevated_markers: number | null
+          id: string
+          key_insights: string[]
+          notes: string | null
+          optimal_markers: number | null
+          report_url: string | null
+          suboptimal_markers: number | null
+          test_date: string
+          test_method: string | null
+          test_provider: string | null
+          total_markers: number | null
+          upload_id: string | null
+          user_uuid: string
+        }
+        Insert: {
+          biological_age: number
+          created_at?: string
+          elevated_markers?: number | null
+          id?: string
+          key_insights?: string[]
+          notes?: string | null
+          optimal_markers?: number | null
+          report_url?: string | null
+          suboptimal_markers?: number | null
+          test_date: string
+          test_method?: string | null
+          test_provider?: string | null
+          total_markers?: number | null
+          upload_id?: string | null
+          user_uuid: string
+        }
+        Update: {
+          biological_age?: number
+          created_at?: string
+          elevated_markers?: number | null
+          id?: string
+          key_insights?: string[]
+          notes?: string | null
+          optimal_markers?: number | null
+          report_url?: string | null
+          suboptimal_markers?: number | null
+          test_date?: string
+          test_method?: string | null
+          test_provider?: string | null
+          total_markers?: number | null
+          upload_id?: string | null
+          user_uuid?: string
+        }
+        Relationships: []
+      }
+      daily_logs: {
+        Row: {
+          blood_pressure_diastolic: number | null
+          blood_pressure_systolic: number | null
+          bowel_movements: number | null
+          bowel_quality: string | null
+          created_at: string
+          energy_level: number | null
+          gut_health: number | null
+          hrv: number | null
+          id: string
+          log_date: string
+          meals_consumed: Json | null
+          meditation_completed: boolean | null
+          meditation_duration_min: number | null
+          mobility_completed: boolean | null
+          mobility_duration_min: number | null
+          mood: number | null
+          notes: string | null
+          protein_grams: number | null
+          resting_heart_rate: number | null
+          sauna_completed: boolean | null
+          sauna_rounds: number | null
+          sleep_hours: number | null
+          sleep_quality: number | null
+          steps: number | null
+          strength_notes: string | null
+          stress_level: number | null
+          supplements_taken: string[]
+          updated_at: string
+          user_uuid: string
+          water_ml: number | null
+          weight_kg: number | null
+          workout_completed: boolean | null
+          workout_duration_min: number | null
+          workout_intensity: number | null
+          workout_type: string | null
+        }
+        Insert: {
+          blood_pressure_diastolic?: number | null
+          blood_pressure_systolic?: number | null
+          bowel_movements?: number | null
+          bowel_quality?: string | null
+          created_at?: string
+          energy_level?: number | null
+          gut_health?: number | null
+          hrv?: number | null
+          id?: string
+          log_date: string
+          meals_consumed?: Json | null
+          meditation_completed?: boolean | null
+          meditation_duration_min?: number | null
+          mobility_completed?: boolean | null
+          mobility_duration_min?: number | null
+          mood?: number | null
+          notes?: string | null
+          protein_grams?: number | null
+          resting_heart_rate?: number | null
+          sauna_completed?: boolean | null
+          sauna_rounds?: number | null
+          sleep_hours?: number | null
+          sleep_quality?: number | null
+          steps?: number | null
+          strength_notes?: string | null
+          stress_level?: number | null
+          supplements_taken?: string[]
+          updated_at?: string
+          user_uuid: string
+          water_ml?: number | null
+          weight_kg?: number | null
+          workout_completed?: boolean | null
+          workout_duration_min?: number | null
+          workout_intensity?: number | null
+          workout_type?: string | null
+        }
+        Update: {
+          blood_pressure_diastolic?: number | null
+          blood_pressure_systolic?: number | null
+          bowel_movements?: number | null
+          bowel_quality?: string | null
+          created_at?: string
+          energy_level?: number | null
+          gut_health?: number | null
+          hrv?: number | null
+          id?: string
+          log_date?: string
+          meals_consumed?: Json | null
+          meditation_completed?: boolean | null
+          meditation_duration_min?: number | null
+          mobility_completed?: boolean | null
+          mobility_duration_min?: number | null
+          mood?: number | null
+          notes?: string | null
+          protein_grams?: number | null
+          resting_heart_rate?: number | null
+          sauna_completed?: boolean | null
+          sauna_rounds?: number | null
+          sleep_hours?: number | null
+          sleep_quality?: number | null
+          steps?: number | null
+          strength_notes?: string | null
+          stress_level?: number | null
+          supplements_taken?: string[]
+          updated_at?: string
+          user_uuid?: string
+          water_ml?: number | null
+          weight_kg?: number | null
+          workout_completed?: boolean | null
+          workout_duration_min?: number | null
+          workout_intensity?: number | null
+          workout_type?: string | null
+        }
+        Relationships: []
+      }
+      lab_results: {
+        Row: {
+          biomarker: string
+          category: string | null
+          created_at: string
+          id: string
+          lab_provider: string | null
+          notes: string | null
+          optimal_max: number | null
+          optimal_min: number | null
+          panel_name: string | null
+          reference_max: number | null
+          reference_min: number | null
+          status: string | null
+          test_date: string
+          trend: string | null
+          unit: string
+          upload_id: string | null
+          user_uuid: string
+          value: number
+        }
+        Insert: {
+          biomarker: string
+          category?: string | null
+          created_at?: string
+          id?: string
+          lab_provider?: string | null
+          notes?: string | null
+          optimal_max?: number | null
+          optimal_min?: number | null
+          panel_name?: string | null
+          reference_max?: number | null
+          reference_min?: number | null
+          status?: string | null
+          test_date: string
+          trend?: string | null
+          unit: string
+          upload_id?: string | null
+          user_uuid: string
+          value: number
+        }
+        Update: {
+          biomarker?: string
+          category?: string | null
+          created_at?: string
+          id?: string
+          lab_provider?: string | null
+          notes?: string | null
+          optimal_max?: number | null
+          optimal_min?: number | null
+          panel_name?: string | null
+          reference_max?: number | null
+          reference_min?: number | null
+          status?: string | null
+          test_date?: string
+          trend?: string | null
+          unit?: string
+          upload_id?: string | null
+          user_uuid?: string
+          value?: number
+        }
+        Relationships: []
+      }
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      [_ in never]: never
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
+  public: {
+    Tables: {
       appointments: {
         Row: {
           appointment_type: string
@@ -154,15 +843,7 @@ export type Database = {
           status?: string
           updated_at?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "appointments_conversation_ref_fkey"
-            columns: ["conversation_ref"]
-            isOneToOne: false
-            referencedRelation: "agent_conversations"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       care_notes: {
         Row: {
@@ -682,6 +1363,75 @@ export type Database = {
         }
         Relationships: []
       }
+      risk_assessment_standards: {
+        Row: {
+          active: boolean
+          applicable_age_max: number | null
+          applicable_age_min: number | null
+          applicable_sex: string | null
+          clinical_guidance: string | null
+          clinical_threshold: string | null
+          created_at: string
+          domain: string
+          evidence_level: string
+          framework_name: string
+          id: string
+          internal_score_max: number | null
+          internal_score_min: number | null
+          key_risk_factors: Json
+          notes: string | null
+          protective_factors: Json
+          risk_tier: string
+          source_citation: string
+          source_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          applicable_age_max?: number | null
+          applicable_age_min?: number | null
+          applicable_sex?: string | null
+          clinical_guidance?: string | null
+          clinical_threshold?: string | null
+          created_at?: string
+          domain: string
+          evidence_level: string
+          framework_name: string
+          id?: string
+          internal_score_max?: number | null
+          internal_score_min?: number | null
+          key_risk_factors?: Json
+          notes?: string | null
+          protective_factors?: Json
+          risk_tier: string
+          source_citation: string
+          source_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          applicable_age_max?: number | null
+          applicable_age_min?: number | null
+          applicable_sex?: string | null
+          clinical_guidance?: string | null
+          clinical_threshold?: string | null
+          created_at?: string
+          domain?: string
+          evidence_level?: string
+          framework_name?: string
+          id?: string
+          internal_score_max?: number | null
+          internal_score_min?: number | null
+          key_risk_factors?: Json
+          notes?: string | null
+          protective_factors?: Json
+          risk_tier?: string
+          source_citation?: string
+          source_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       risk_scores: {
         Row: {
           assessment_date: string | null
@@ -811,6 +1561,54 @@ export type Database = {
         }
         Relationships: []
       }
+      supplement_catalog: {
+        Row: {
+          canonical_dose: string
+          contraindicates: Json
+          cost_aud_month: number | null
+          created_at: string
+          display_name: string
+          domain: string
+          evidence_tag: string
+          id: string
+          notes: string | null
+          sku: string
+          supplier_sku_au: string | null
+          timing_default: string | null
+          triggers_when: Json
+        }
+        Insert: {
+          canonical_dose: string
+          contraindicates?: Json
+          cost_aud_month?: number | null
+          created_at?: string
+          display_name: string
+          domain: string
+          evidence_tag: string
+          id?: string
+          notes?: string | null
+          sku: string
+          supplier_sku_au?: string | null
+          timing_default?: string | null
+          triggers_when?: Json
+        }
+        Update: {
+          canonical_dose?: string
+          contraindicates?: Json
+          cost_aud_month?: number | null
+          created_at?: string
+          display_name?: string
+          domain?: string
+          evidence_tag?: string
+          id?: string
+          notes?: string | null
+          sku?: string
+          supplier_sku_au?: string | null
+          timing_default?: string | null
+          triggers_when?: Json
+        }
+        Relationships: []
+      }
       supplement_plans: {
         Row: {
           created_at: string
@@ -898,15 +1696,7 @@ export type Database = {
           updated_at?: string
           user_uuid?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "support_tickets_conversation_ref_fkey"
-            columns: ["conversation_ref"]
-            isOneToOne: false
-            referencedRelation: "agent_conversations"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       training_plans: {
         Row: {
@@ -969,7 +1759,35 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      hybrid_search_health:
+        | {
+            Args: {
+              match_count?: number
+              query_text: string
+              query_vec?: string
+            }
+            Returns: {
+              category: string
+              content: string
+              id: string
+              rank: number
+            }[]
+          }
+        | {
+            Args: {
+              kw_weight?: number
+              match_count?: number
+              query_text: string
+              query_vec?: string
+              sem_weight?: number
+            }
+            Returns: {
+              content: string
+              id: string
+              metadata: Json
+              score: number
+            }[]
+          }
     }
     Enums: {
       [_ in never]: never
@@ -1098,7 +1916,13 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
+  agents: {
+    Enums: {},
+  },
+  billing: {
+    Enums: {},
+  },
+  biomarkers: {
     Enums: {},
   },
   public: {

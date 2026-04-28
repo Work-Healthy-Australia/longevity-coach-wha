@@ -15,14 +15,16 @@ export async function streamJanetTurn(userId: string, messages: UIMessage[]) {
       const admin = createAdminClient();
       const lastUserMsg = messages.findLast((m) => m.role === 'user');
       const userText = lastUserMsg?.parts?.find((p) => p.type === 'text')?.text ?? '';
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const agentsDb = (admin as any).schema('agents');
       await Promise.allSettled([
-        admin.from('agent_conversations').insert({
+        agentsDb.from('agent_conversations').insert({
           user_uuid: userId,
           agent: 'janet',
           role: 'user',
           content: userText,
         }),
-        admin.from('agent_conversations').insert({
+        agentsDb.from('agent_conversations').insert({
           user_uuid: userId,
           agent: 'janet',
           role: 'assistant',

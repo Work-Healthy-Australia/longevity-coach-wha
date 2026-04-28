@@ -1,4 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
+import { retrieveKnowledge } from "@/lib/ai/rag";
 
 export interface SupplementItem {
   name: string;
@@ -71,7 +72,7 @@ export async function loadPatientContext(
 ): Promise<PatientContext> {
   const admin = createAdminClient();
 
-  const [profileResult, riskResult, healthResult, uploadsResult, supplementResult, conversationResult] =
+  const [profileResult, riskResult, healthResult, uploadsResult, supplementResult, conversationResult, knowledgeChunks] =
     await Promise.all([
       // Profile (PII layer — demographics only, no clinical data)
       admin
@@ -119,7 +120,9 @@ export async function loadPatientContext(
 
       // Last 20 conversation turns for the specified agent
       options.includeConversation !== false
-        ? admin
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ? (admin as any)
+            .schema("agents")
             .from("agent_conversations")
             .select("role, content, created_at")
             .eq("user_uuid", userId)
@@ -127,6 +130,9 @@ export async function loadPatientContext(
             .order("created_at", { ascending: false })
             .limit(20)
         : Promise.resolve({ data: [], error: null }),
+
+      // RAG knowledge chunks — hybrid BM25 + vector search (vector falls back to BM25-only when unavailable)
+      retrieveKnowledge("longevity health risk prevention assessment", 4).catch((): string[] => []),
     ]);
 
   const profile = profileResult.data;
@@ -190,8 +196,7 @@ export async function loadPatientContext(
     // Conversation is returned in chronological order (reversed from query)
     recentConversation: [...conversation].reverse() as ConversationTurn[],
 
-    // RAG chunks populated by Nova pipeline — empty until pgvector is seeded
-    knowledgeChunks: [],
+    knowledgeChunks,
   };
 }
 
