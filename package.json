@@ -11,7 +11,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "test:all": "vitest run && playwright test"
+    "test:all": "vitest run && playwright test",
+    "eval:janet": "vitest run --config vitest.eval.config.ts tests/evals/janet.eval.ts",
+    "eval:sage": "vitest run --config vitest.eval.config.ts tests/evals/sage.eval.ts",
+    "eval:all": "vitest run --config vitest.eval.config.ts"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.71",
