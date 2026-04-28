@@ -27,11 +27,11 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 | 3 | The Number | `●●○○○` | 50% | 1 (P1) | 0 |
 | 4 | The Protocol | `●●○○○` | 50% | 0 | 0 |
 | 5 | The Report | `●◐○○○` | 35% | 1 (P3) | 0 |
-| 6 | The Coach | `●●○○○` | 60% | 1 (P2) | 0 |
+| 6 | The Coach | `●●○○○` | 75% | 0 | 1 |
 | 7 | The Daily Return | `●◐○○○` | 25% | 0 | 0 |
 | 8 | The Living Record | `●○○○○` | 5% | 0 | 0 |
 | 9 | The Care Team | `●○○○○` | 5% | 0 | 0 |
-| 10 | The Knowledge Engine | `●○○○○` | 10% | 1 (P2) | 0 |
+| 10 | The Knowledge Engine | `●○○○○` | 10% | 0 | 1 |
 | 11 | The Trust Layer | `●●◐○○` | 55% | 1 (P2) | 0 |
 | 12 | The Distribution | `●○○○○` | 5% | 0 | 0 |
 | 13 | The Business Model | `●○○○○` | 0% | 0 | 0 |
@@ -175,7 +175,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 6: The Coach
 
 `●●○○○` Planned · Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 60%** — Janet streaming chat shipped end-to-end; sub-agents wired as background pipelines, not as real-time `tool_use` yet; RAG layer deferred (pgvector not enabled).
+**Estimate: 75%** — Janet streaming chat shipped end-to-end; cross-session history, stale-data nudge, Nova digests, and Alex route shipped 2026-04-28. RAG live (pgvector enabled). Sub-agent `tool_use` wiring and eval suite still outstanding.
 
 **Shipped:**
 - Janet agent at `lib/ai/agents/janet.ts` (Claude Sonnet 4.6, streaming).
@@ -183,19 +183,21 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - Janet API route at `app/api/chat/route.ts` (Supabase session auth).
 - 20-turn conversation window, persisted to `agent_conversations` (table created in migration `0014`).
 - Janet chat panel embedded in `/report`.
+- Cross-session conversation history — Janet loads last 20 turns from `agent_conversations` on each call.
+- Stale-data nudge — `summariseContext` warns Janet when risk scores are >30 days old.
+- Nova research digests surfaced in `summariseContext` — Janet sees latest evidence from `health_updates`.
+- Alex support agent API route at `app/api/chat/alex/route.ts` (same auth pattern as Janet).
+- RAG layer active — `hybrid_search_health()` runs on each Janet turn (pgvector now enabled).
 
 **Outstanding:**
-- Atlas + Sage as real-time `tool_use` sub-agents (currently they're background pipelines that write to DB; Janet reads the result).
-- pgvector / RAG over `health_knowledge` (migration `0016` written, extension not enabled, Janet has no knowledge base).
-- Stale-data nudge ("your risk scores are 30 days old — let me refresh that").
-- Conversation-summary compression for older turns.
+- Atlas + Sage as real-time `tool_use` sub-agents (currently background pipelines; Janet reads DB result).
+- Conversation-summary compression for turns older than 20.
 - Janet eval suite (turn-by-turn quality, hallucination rate, context utilisation).
-- Alex support-agent persona switch.
 
 **Open bugs:**
-- **BUG-004** (P2): Janet has no knowledge base because the `vector` extension is not enabled in the Supabase project. She answers from `PatientContext` only. Migration `0016_knowledge_base_pgvector.sql` is written and ready to apply once the extension is enabled in the dashboard.
+- **BUG-004** (P2): Closed — pgvector enabled, migrations applied, RAG layer active.
 
-**Closed bugs:** 0.
+**Closed bugs:** 1 (BUG-004 — pgvector/RAG now live).
 
 ---
 
@@ -293,10 +295,8 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - Hybrid RAG `hybrid_search_health()` SQL function.
 - In-app research feed page reading `health_updates`.
 
-**Open bugs:**
-- **BUG-007** (P2): pgvector migration `0016_knowledge_base_pgvector.sql` is written but blocked on enabling the `vector` extension in the Supabase dashboard. Until the extension is enabled, Janet has no knowledge base (also surfaces under Epic 6 as BUG-004).
-
-**Closed bugs:** 0.
+**Open bugs:** none.
+**Closed bugs:** 1 (BUG-007 — pgvector extension enabled, migrations applied).
 
 ---
 

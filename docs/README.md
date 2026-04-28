@@ -36,6 +36,7 @@ System design and technical architecture documents.
 | [Database Schema](./architecture/database-schema.md) | Full schema map, table purposes, migration history, design principles |
 | [Agent System](./architecture/agent-system.md) | AI agent and pipeline worker design, build order, component specs |
 | [AI Vision](./architecture/ai-vision.md) | High-level agentic system vision and patient workflow |
+| [Risk Engine Assessment](./architecture/risk-engine-assessment.md) | Full extraction of the Base44 deterministic scoring engine — input schema, all 5 domain algorithms, bio-age formula, output schema, and port notes for `lib/risk/engine.ts` |
 
 ---
 

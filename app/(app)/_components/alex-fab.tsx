@@ -1,38 +1,12 @@
 'use client';
+// ai-elements: @vercel/ai-elements not published; using react-markdown via shared AssistantBubble.
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { usePathname } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { useChatStore } from '@/lib/stores/chat-store';
+import { AssistantBubble } from './chat-message';
 import './alex-fab.css';
-
-function StreamingBubble({ text, isStreaming }: { text: string; isStreaming: boolean }) {
-  const [chunks, setChunks] = useState<string[]>([]);
-  const prevRef = useRef('');
-
-  useEffect(() => {
-    if (!isStreaming) {
-      setChunks([]);
-      prevRef.current = '';
-      return;
-    }
-    const next = text.slice(prevRef.current.length);
-    if (next) {
-      prevRef.current = text;
-      setChunks((c) => [...c, next]);
-    }
-  }, [text, isStreaming]);
-
-  if (!isStreaming) return <span>{text}</span>;
-
-  return (
-    <>
-      {chunks.map((chunk, i) => (
-        <span key={i} className="alex-chunk">{chunk}</span>
-      ))}
-    </>
-  );
-}
 
 export function AlexFAB() {
   const { alex, toggleAlex, closeAlex } = useChatStore();
@@ -72,11 +46,15 @@ export function AlexFAB() {
                 <div className="alex-bubble">
                   {msg.parts.map((part, i) =>
                     part.type === 'text' ? (
-                      <StreamingBubble
-                        key={i}
-                        text={part.text}
-                        isStreaming={status === 'streaming' && idx === lastIdx && msg.role === 'assistant'}
-                      />
+                      msg.role === 'assistant' ? (
+                        <AssistantBubble
+                          key={i}
+                          text={part.text}
+                          isStreaming={status === 'streaming' && idx === lastIdx}
+                        />
+                      ) : (
+                        <span key={i}>{part.text}</span>
+                      )
                     ) : null,
                   )}
                 </div>

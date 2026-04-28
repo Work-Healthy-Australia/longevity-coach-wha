@@ -89,6 +89,33 @@ export type Database = {
         }
         Relationships: []
       }
+      conversation_summaries: {
+        Row: {
+          agent: string
+          id: string
+          last_compressed_turn_id: string | null
+          summary: string
+          updated_at: string
+          user_uuid: string
+        }
+        Insert: {
+          agent: string
+          id?: string
+          last_compressed_turn_id?: string | null
+          summary: string
+          updated_at?: string
+          user_uuid: string
+        }
+        Update: {
+          agent?: string
+          id?: string
+          last_compressed_turn_id?: string | null
+          summary?: string
+          updated_at?: string
+          user_uuid?: string
+        }
+        Relationships: []
+      }
       health_knowledge: {
         Row: {
           content: string
@@ -1012,6 +1039,36 @@ export type Database = {
           policy_id?: string
           policy_version?: string
           user_agent?: string | null
+          user_uuid?: string
+        }
+        Relationships: []
+      }
+      export_log: {
+        Row: {
+          byte_size: number | null
+          created_at: string
+          exported_at: string
+          format: string
+          id: string
+          request_ip: string | null
+          user_uuid: string
+        }
+        Insert: {
+          byte_size?: number | null
+          created_at?: string
+          exported_at?: string
+          format: string
+          id?: string
+          request_ip?: string | null
+          user_uuid: string
+        }
+        Update: {
+          byte_size?: number | null
+          created_at?: string
+          exported_at?: string
+          format?: string
+          id?: string
+          request_ip?: string | null
           user_uuid?: string
         }
         Relationships: []
@@ -1962,3 +2019,5 @@ export const Constants = {
     Enums: {},
   },
 } as const
+A new version of Supabase CLI is available: v2.95.4 (currently installed v2.45.5)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli

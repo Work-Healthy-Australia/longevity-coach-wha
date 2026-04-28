@@ -158,15 +158,6 @@
   cursor: not-allowed;
 }
 
-.alex-chunk {
-  animation: alex-unfold 0.08s ease-out both;
-}
-
-@keyframes alex-unfold {
-  from { opacity: 0; filter: blur(3px); }
-  to   { opacity: 1; filter: blur(0);   }
-}
-
 .alex-typing {
   display: flex;
   align-items: center;
