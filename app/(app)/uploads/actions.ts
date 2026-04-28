@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { analyzeUpload } from "@/lib/uploads/janet";
+import { triggerPipeline } from "@/lib/ai/trigger";
 
 export interface RecordUploadResult {
   ok?: true;
@@ -84,6 +85,9 @@ export async function recordUpload(params: {
         janet_processed_at: new Date().toISOString(),
       })
       .eq("id", row.id);
+
+    // Re-run supplement protocol with updated upload data (non-blocking)
+    triggerPipeline("supplement-protocol", user.id);
   } catch (err) {
     await admin
       .from("patient_uploads")

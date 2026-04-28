@@ -7,6 +7,7 @@ import type { ResponsesByStep } from "@/lib/questionnaire/schema";
 import { splitPii, type ProfilePatch } from "@/lib/profiles/pii-split";
 import { recordConsents } from "@/lib/consent/record";
 import type { PolicyId } from "@/lib/consent/policies";
+import { triggerPipeline } from "@/lib/ai/trigger";
 
 type SaveResult = { error?: string; ok?: boolean };
 
@@ -96,6 +97,10 @@ export async function submitAssessment(
     const { error } = await recordConsents(supabase as any, user.id, accepted);
     if (error) return { error };
   }
+
+  // Fire async pipeline workers (non-blocking — each runs in its own function invocation)
+  triggerPipeline("risk-narrative", user.id);
+  triggerPipeline("supplement-protocol", user.id);
 
   revalidatePath("/dashboard");
   redirect("/dashboard?onboarding=complete");
