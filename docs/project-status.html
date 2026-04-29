@@ -615,11 +615,11 @@ The patient has now:
 1. Signed up ✅
 2. Completed onboarding questionnaire ✅
 3. Uploaded blood test files ✅ (Janet analysed them)
-4. Received a biological age and five-domain risk narrative ✅ (Atlas pipeline — `lib/ai/pipelines/risk-narrative.ts`)
-5. Received a personalised 30-day supplement protocol ✅ (Sage pipeline — `lib/ai/pipelines/supplement-protocol.ts`)
+4. Received a biological age and five-domain risk narrative ✅ (risk_analyzer pipeline — `lib/ai/pipelines/risk-narrative.ts`)
+5. Received a personalised 30-day supplement protocol ✅ (supplement_advisor pipeline — `lib/ai/pipelines/supplement-protocol.ts`)
 6. Can view results and chat with Janet on `/report` ✅ (streaming, 20-turn window, PatientContext in <50ms)
 7. Risk scores are deterministic ✅ (ported engine in `lib/risk/` — five domains, bio-age, modifiable-factor ranking)
-8. Janet has real-time Atlas + Sage sub-agents via `tool_use` ✅
+8. Janet has real-time risk_analyzer + supplement_advisor sub-agents via `tool_use` ✅
 9. Janet remembers past sessions via conversation-summary compression ✅
 
 ### Remaining Phase 2 gaps
@@ -627,7 +627,7 @@ The patient has now:
 | Gap | Impact | Notes |
 |---|---|---|
 | Branded PDF | P3 | PDF endpoint scaffold exists; renders unstyled skeleton (BUG-005) |
-| Nova pipeline | — | Fully implemented + weekly cron running; pgvector extension still needs dashboard enable for full semantic precision |
+| health_researcher pipeline | — | Fully implemented + weekly cron running; pgvector extension still needs dashboard enable for full semantic precision |
 
 ---
 
@@ -648,11 +648,11 @@ The patient has now:
 | `patient_assignments` | public | ✅ Complete |
 | `agent_conversations` | agents | ✅ Shipped — 20-turn window (migration 0014) |
 | `conversation_summaries` | agents | ✅ Shipped — session compression (migration 0030) |
-| `agent_definitions` | agents | ✅ Shipped — Janet, Atlas, Sage, Nova rows (migrations 0019, 0028) |
+| `agent_definitions` | agents | ✅ Shipped — Janet, risk_analyzer, supplement_advisor, health_researcher rows (migrations 0019, 0028, 0036) |
 | `health_updates` | public | ✅ Shipped — digest display table (migration 0015) |
 | `health_knowledge` | agents | ◐ Migrations written (0037) — pending pgvector extension enable in Supabase |
 | `admin_invites` | public | ✅ Shipped — pending invite table (migration 0033) |
-| `support_tickets` | — | ❌ Missing — needed for Alex |
+| `support_tickets` | — | ❌ Missing — needed for support agent |
 | `appointments` | — | ❌ Missing — needed for Janet booking |
 
 ---
@@ -669,7 +669,7 @@ The patient has now:
 | `lib/email/` | ✅ Complete — welcome email |
 | `lib/consent/` | ✅ Complete |
 | `lib/stripe/` | ✅ Stripe client exists |
-| `lib/ai/` | ✅ Built — Janet + Alex agents; Atlas + Sage pipelines + tool_use wrappers; PatientContext, RAG, compression, agent-factory, providers, trigger, types; Nova stub |
+| `lib/ai/` | ✅ Built — Janet + support agents; risk_analyzer + supplement_advisor pipelines + tool_use wrappers; PatientContext, RAG, compression, agent-factory, providers, trigger, types; health_researcher stub |
 | `lib/risk/` | ✅ Complete — deterministic five-domain risk engine + biological age estimator ported from Base44 |
 | `lib/pdf/` | ◐ Skeleton — `report-doc.tsx` scaffold exists; unstyled (BUG-005) |
 
@@ -747,7 +747,7 @@ A 30-day supplement protocol with rationale per item, and a daily target you don
 
 ### 3.3 A coach who remembers
 
-Janet reads the patient's full context before every conversation. The patient never has to re-explain. The coaching gets sharper the longer they stay. Atlas (risk narrative) and Sage (supplement protocol) are sub-agents Janet calls when a specialist answer is needed in real time.
+Janet reads the patient's full context before every conversation. The patient never has to re-explain. The coaching gets sharper the longer they stay. risk_analyzer (risk narrative) and supplement_advisor (supplement protocol) are sub-agents Janet calls when a specialist answer is needed in real time.
 
 ### 3.4 A trust layer your doctor accepts
 
@@ -771,8 +771,8 @@ Most consumer health platforms show you a dashboard and walk away. We close the 
 
 Anyone can build a questionnaire. Anyone can hire a doctor to write supplement rules. The defensible thing is:
 
-- The narrative **Atlas** writes for each domain, indistinguishable from a thoughtful GP letter.
-- The protocol **Sage** assembles, indistinguishable from what an integrative medicine clinic would prescribe at $600 a visit.
+- The narrative **risk_analyzer** writes for each domain, indistinguishable from a thoughtful GP letter.
+- The protocol **supplement_advisor** assembles, indistinguishable from what an integrative medicine clinic would prescribe at $600 a visit.
 - **Janet's** ability to pick up a conversation three weeks later as if she had been waiting all along.
 
 The eval suite (qa-plan.md §2) is the system that lets us hold that bar — and notice the day a model upgrade quietly breaks it. Without evals, "AI quality" is theatre.
@@ -781,7 +781,7 @@ The eval suite (qa-plan.md §2) is the system that lets us hold that bar — and
 
 ## 6. The architecture in one sentence
 
-A patient identity and questionnaire layer (Supabase, RLS-enforced, PII-isolated) feeds two pipelines (Atlas and Sage) that run async on assessment submit and on every upload, writing structured narratives and protocols back to the patient's row, which Janet reads in parallel via `PatientContext.load()` before every conversation.
+A patient identity and questionnaire layer (Supabase, RLS-enforced, PII-isolated) feeds two pipelines (risk_analyzer and supplement_advisor) that run async on assessment submit and on every upload, writing structured narratives and protocols back to the patient's row, which Janet reads in parallel via `PatientContext.load()` before every conversation.
 
 Specifics in `docs/architecture/agent-system.md`. The data rules live in `.claude/rules/data-management.md`. The AI rules live in `.claude/rules/ai-agents.md`.
 
@@ -820,14 +820,14 @@ We are mid-Phase-2.
 - Six-step health questionnaire with save-and-resume.
 - Stripe subscription checkout + webhook.
 - Patient uploads portal + Janet document analyser (Claude Opus 4.7).
-- Atlas + Sage pipelines (risk narrative + supplement protocol).
+- risk_analyzer + supplement_advisor pipelines (risk narrative + supplement protocol).
 - Janet streaming chat agent (Claude Sonnet 4.6).
 - `/report` page combining narrative, scores, protocol, and Janet chat.
 - Drip-email cron, basic admin pages, consent records.
 - 13 RLS-enforced migrations, full TypeScript schema types regenerated.
 
 **Not shipped:**
-- Deterministic risk engine port from Base44 (Atlas currently derives all scores via LLM at `confidence_level = 'moderate'`).
+- Deterministic risk engine port from Base44 (risk_analyzer currently derives all scores via LLM at `confidence_level = 'moderate'`).
 - Branded PDF export (skeleton only).
 - Patient `/account` self-service page.
 - pgvector / RAG (migration written, extension not enabled).
@@ -909,11 +909,11 @@ An epic earns shipping when **the success criterion is true** — not when every
 **Bundle:**
 - Deterministic risk engine ported from Base44 (`lib/risk/`) — five scoring functions plus bio-age estimator.
 - Risk engine runs synchronously inside `submitAssessment()` and writes `risk_scores.engine_output`.
-- Atlas pipeline (risk narrative LLM) reads `engine_output` and writes a per-domain narrative + top drivers + recommended screenings + data gaps.
+- risk_analyzer pipeline (risk narrative LLM) reads `engine_output` and writes a per-domain narrative + top drivers + recommended screenings + data gaps.
 - Confidence label on every score (`high` when biomarkers present, `moderate` when questionnaire-only).
 - Risk scores recomputed on every new upload.
 
-**Mechanism:** Two-step pipeline: deterministic arithmetic for the score, LLM for the explanation. Atlas is a pipeline worker (async, idempotent upsert keyed on `user_uuid`). Triggered by the `health_profiles.completed_at` write and by `patient_uploads.janet_status = 'complete'` events.
+**Mechanism:** Two-step pipeline: deterministic arithmetic for the score, LLM for the explanation. risk_analyzer is a pipeline worker (async, idempotent upsert keyed on `user_uuid`). Triggered by the `health_profiles.completed_at` write and by `patient_uploads.janet_status = 'complete'` events.
 
 **Success criterion:** A member who completes the questionnaire receives a bio-age and risk picture within 60 seconds of submission. The narrative names which questionnaire answers and which uploaded biomarkers drove each score. A panel of three GPs reviewing 10 sample reports rate them ≥ 4/5 on "would I send this to a patient."
 
@@ -924,14 +924,14 @@ An epic earns shipping when **the success criterion is true** — not when every
 **Thesis:** Every member walks away with a 30-day supplement plan they can buy at the chemist tonight.
 
 **Bundle:**
-- Sage pipeline (supplement protocol LLM) reads risk + uploads + questionnaire and writes `supplement_plans.items`.
+- supplement_advisor pipeline (supplement protocol LLM) reads risk + uploads + questionnaire and writes `supplement_plans.items`.
 - Per-item rationale linked to the specific risk driver it addresses.
 - Tier label per item (`critical` / `high` / `recommended` / `performance`).
 - Auto-replanning when risk scores change.
 - Janet (Supplement Advisor mode) can answer questions about any item.
 - Hand-curated supplement catalog (~40 evidence-backed items) for deterministic Phase 1 generation; LLM-enhanced generation in Phase 2.
 
-**Mechanism:** Sage is a pipeline worker. Triggered by Atlas completion. Writes to `supplement_plans` (one active row per patient, status check constraint). Janet reads `supplement_plans.items` via `PatientContext`.
+**Mechanism:** supplement_advisor is a pipeline worker. Triggered by risk_analyzer completion. Writes to `supplement_plans` (one active row per patient, status check constraint). Janet reads `supplement_plans.items` via `PatientContext`.
 
 **Success criterion:** Every protocol contains at least three tier-`critical` items with rationale text under 200 characters that names the patient's specific driver. A panel of three integrative-medicine doctors reviewing 10 sample protocols rate them ≥ 4/5 on "would I prescribe this."
 
@@ -962,10 +962,10 @@ An epic earns shipping when **the success criterion is true** — not when every
 - Janet streaming chat agent (Claude Sonnet 4.6).
 - `PatientContext.load()` runs all DB reads in parallel via `Promise.all` (target < 50ms).
 - 20-turn conversation window per patient with older turns summarised to one sentence per session.
-- Sub-agent tool calls: Atlas (risk narrative), Sage (supplement protocol), PT Coach (live exercise).
-- Hybrid RAG over `health_knowledge` (pgvector HNSW + BM25 + RRF fusion) — populated by Nova.
+- Sub-agent tool calls: risk_analyzer (risk narrative), supplement_advisor (supplement protocol), PT Coach (live exercise).
+- Hybrid RAG over `health_knowledge` (pgvector HNSW + BM25 + RRF fusion) — populated by health_researcher.
 - Stale-data nudges (e.g. "your risk scores are 30 days old — let me refresh that").
-- Persona-aware support agent (Alex) for platform questions.
+- Persona-aware support agent for platform questions.
 
 **Mechanism:** Janet runs at `app/api/chat/route.ts`, streams via Anthropic SDK. PatientContext lives at `lib/ai/patient-context.ts`. Sub-agents are real-time `tool_use` (the user waits ~3s when a specialist is needed). Janet → sub-agent only one layer deep — never sub-agent → sub-agent.
 
@@ -1034,7 +1034,7 @@ An epic earns shipping when **the success criterion is true** — not when every
 **Thesis:** Janet always knows the latest research, and her answers are grounded in cited evidence.
 
 **Bundle:**
-- Nova research digest pipeline (weekly cron, ~200s runtime).
+- health_researcher research digest pipeline (weekly cron, ~200s runtime).
 - Six-category parallel literature scan (PubMed, Nature, Cell, medRxiv, Cochrane, plus one rotating).
 - LLM synthesis per category, embedded into `health_knowledge` (pgvector HNSW + GIN hybrid index).
 - Embedding model: `perplexity/pplx-embed-v1-4b` via OpenRouter (2560 dims, 32K context, INT8, MRL).
@@ -1042,9 +1042,9 @@ An epic earns shipping when **the success criterion is true** — not when every
 - Hybrid RAG search function `hybrid_search_health()` called by Janet at session start (~30ms overhead).
 - Citations surfaced in Janet's responses ("a 2026 Cell paper on rapamycin in mice…").
 
-**Mechanism:** Nova runs at `app/api/cron/nova/route.ts` (to be built). Migration `0016_knowledge_base_pgvector.sql` is written but blocked on enabling the `vector` extension in Supabase. Nova is independent of every other component — it only writes; nothing reads from it synchronously.
+**Mechanism:** health_researcher runs at `app/api/cron/health-researcher/route.ts`. Migration `0016_knowledge_base_pgvector.sql` is written but blocked on enabling the `vector` extension in Supabase. health_researcher is independent of every other component — it only writes; nothing reads from it synchronously.
 
-**Success criterion:** Janet's responses cite a research source in > 30% of substantive answers. Citation accuracy (does the cited paper actually say what Janet claims) > 95% on a quarterly audit. Nova runtime stays under 250s.
+**Success criterion:** Janet's responses cite a research source in > 30% of substantive answers. Citation accuracy (does the cited paper actually say what Janet claims) > 95% on a quarterly audit. health_researcher runtime stays under 250s.
 
 ---
 
@@ -1281,43 +1281,43 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 3: The Number
 
 `●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 70%** — Atlas pipeline ships risk narratives end-to-end. Deterministic risk engine ported from Base44 and unit tested; BUG-003 closed. GP-panel review still outstanding.
+**Estimate: 70%** — risk_analyzer pipeline ships risk narratives end-to-end. Deterministic risk engine ported from Base44 and unit tested; BUG-003 closed. GP-panel review still outstanding.
 
 **Shipped:**
-- Atlas pipeline at `lib/ai/pipelines/risk-narrative.ts`.
+- risk_analyzer pipeline at `lib/ai/pipelines/risk-narrative.ts`.
 - Pipeline endpoint at `app/api/pipelines/risk-narrative/route.ts` (secured with `x-pipeline-secret`).
 - Pipeline triggered by `submitAssessment()`, by every successful upload, and by every daily check-in.
 - `risk_scores` table extended with `narrative`, `engine_output`, `data_gaps` columns (migration `0014_agent_tables.sql`).
 - Idempotent upsert keyed on `(user_uuid, computed_at_date)`.
 - **Deterministic risk engine ported** from Base44 to `lib/risk/` (migration `0034`) — five scoring domains (CV, metabolic, brain, cancer, MSK), biological age estimator, confidence levels based on data completeness, modifiable-risk-factor ranking, 6-month projected improvement.
 - Unit tests: `tests/unit/risk/scorer.test.ts`, `tests/unit/risk/_gp-panel-pack.test.ts`, `tests/unit/risk/assemble.test.ts`.
-- **Check-in → Atlas trigger** (2026-04-28) — daily check-in submission fires background Atlas refresh; completes the pipeline loop.
+- **Check-in → risk_analyzer trigger** (2026-04-28) — daily check-in submission fires background risk_analyzer refresh; completes the pipeline loop.
 
 **Outstanding:**
-- Atlas narrative tone tuning now that `engine_output` is available.
+- risk_analyzer narrative tone tuning now that `engine_output` is available.
 - GP-panel review of 10 sample narratives.
 - Per-domain regression tests in CI.
 
 **Open bugs:** none.
 
 **Closed bugs:**
-- **BUG-003** (P1, CLOSED 2026-04-28): Atlas was writing `confidence_level = 'moderate'` for every patient because the deterministic engine was not ported. Deterministic engine now live in `lib/risk/`.
+- **BUG-003** (P1, CLOSED 2026-04-28): risk_analyzer was writing `confidence_level = 'moderate'` for every patient because the deterministic engine was not ported. Deterministic engine now live in `lib/risk/`.
 
 ---
 
 ### Epic 4: The Protocol
 
 `●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 60%** — Sage pipeline ships a 30-day protocol; Sage eval suite shipped 2026-04-28 with 4 rubrics. No deterministic catalog yet.
+**Estimate: 60%** — supplement_advisor pipeline ships a 30-day protocol; supplement_advisor eval suite shipped 2026-04-28 with 4 rubrics. No deterministic catalog yet.
 
 **Shipped:**
-- Sage pipeline at `lib/ai/pipelines/supplement-protocol.ts`.
+- supplement_advisor pipeline at `lib/ai/pipelines/supplement-protocol.ts`.
 - Pipeline endpoint at `app/api/pipelines/supplement-protocol/route.ts` (secured with `x-pipeline-secret`).
-- Triggered after Atlas completion and after every Janet document analysis.
+- Triggered after risk_analyzer completion and after every Janet document analysis.
 - `supplement_plans` table with `items JSONB`, `status` check constraint, `valid_from`/`valid_to`.
 - Per-item rationale tied to the patient's specific risk drivers.
 - Tier label per item (`critical` / `high` / `recommended` / `performance`).
-- **Sage eval suite** (`tests/evals/sage.eval.ts`, 2026-04-28) — 4 rubrics: protocol completeness, safe language, personalisation, citation of specific supplements.
+- **supplement_advisor eval suite** (`tests/evals/supplement-advisor.eval.ts`, 2026-04-28) — 4 rubrics: protocol completeness, safe language, personalisation, citation of specific supplements.
 
 **Outstanding:**
 - Hand-curated supplement catalog (~40 evidence-backed items) for deterministic generation.
@@ -1359,7 +1359,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 6: The Coach
 
 `●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 90%** — Janet streaming chat, cross-session history, stale-data nudge, RAG, Atlas + Sage `tool_use` sub-agents, conversation-summary compression, and eval suites all shipped. Remaining work is end-to-end regression suite and user review.
+**Estimate: 90%** — Janet streaming chat, cross-session history, stale-data nudge, RAG, risk_analyzer + supplement_advisor `tool_use` sub-agents, conversation-summary compression, and eval suites all shipped. Remaining work is end-to-end regression suite and user review.
 
 **Shipped:**
 - Janet agent at `lib/ai/agents/janet.ts` (Claude Sonnet 4.6, streaming).
@@ -1367,17 +1367,17 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - Janet API route at `app/api/chat/route.ts` (Supabase session auth).
 - 20-turn conversation window, persisted to `agent_conversations` (migration `0014`).
 - Janet chat panel embedded in `/report`.
-- Cross-session conversation history, stale-data nudge, Nova digest context, Alex support agent route.
+- Cross-session conversation history, stale-data nudge, health_researcher digest context, support agent route.
 - RAG layer active — `hybrid_search_health()` runs on each Janet turn (pgvector enabled).
 - **Conversation-summary compression** (2026-04-28) — `lib/ai/compression.ts`; turns older than 20 summarised per session; persisted in `conversation_summaries` (migration `0030`).
-- **Atlas `tool_use` sub-agent** (2026-04-28) — `lib/ai/tools/atlas-tool.ts`; Janet invokes Atlas mid-conversation for risk questions. Unit tests in `tests/unit/ai/tools/atlas-tool.test.ts`.
-- **Sage `tool_use` sub-agent** (2026-04-28) — `lib/ai/tools/sage-tool.ts`; Janet invokes Sage for supplement questions. Unit tests in `tests/unit/ai/tools/sage-tool.test.ts`.
+- **risk_analyzer `tool_use` sub-agent** (2026-04-28) — `lib/ai/tools/risk-analyzer-tool.ts`; Janet invokes risk_analyzer mid-conversation for risk questions. Unit tests in `tests/unit/ai/tools/risk-analyzer-tool.test.ts`.
+- **supplement_advisor `tool_use` sub-agent** (2026-04-28) — `lib/ai/tools/supplement-advisor-tool.ts`; Janet invokes supplement_advisor for supplement questions. Unit tests in `tests/unit/ai/tools/supplement-advisor-tool.test.ts`.
 - **Janet eval suite** (2026-04-28) — `tests/evals/janet.eval.ts`; 5 rubrics: context grounding, supplement grounding, no hallucination, coaching tone, conversation memory.
 - Eval runner and judge at `tests/evals/runner.ts` and `tests/evals/judge.ts`.
 
 **Outstanding:**
 - End-to-end Playwright regression test of the full Janet conversation loop.
-- Latency benchmarking under load (three-LLM-call turns when both Atlas and Sage are invoked).
+- Latency benchmarking under load (three-LLM-call turns when both risk_analyzer and supplement_advisor are invoked).
 - PT Coach `tool_use` integration (Phase 3).
 - Clinical review of sub-agent prompts.
 
@@ -1391,7 +1391,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 7: The Daily Return
 
 `●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 70%** — daily check-in UI, streak math, Mon-Sun dot strip, steps + water capture, and Atlas trigger all shipped; remaining work is personalised goals, reminders, weekly digest, and journal.
+**Estimate: 70%** — daily check-in UI, streak math, Mon-Sun dot strip, steps + water capture, and risk_analyzer trigger all shipped; remaining work is personalised goals, reminders, weekly digest, and journal.
 
 **Shipped:**
 - Drip-email cron at `app/api/cron/drip-emails/route.ts`.
@@ -1404,7 +1404,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - Steps + water validation — `parseCheckInForm()` validates ranges; 6 unit tests.
 - New dashboard surface: streak hero, today-strip, single-action picker, three big numbers, quick links.
 - Migration `0020_expose_schemas_to_postgrest.sql` + Supabase Cloud API config.
-- **Check-in → Atlas trigger** (2026-04-28) — check-in submit fires Atlas pipeline in background; completes the data loop.
+- **Check-in → risk_analyzer trigger** (2026-04-28) — check-in submit fires risk_analyzer pipeline in background; completes the data loop.
 
 **Outstanding:**
 - Personalised daily goals tied to risk profile (currently static defaults).
@@ -1471,18 +1471,18 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 10: The Knowledge Engine
 
 `●◐◐○○` Planned · ◐ Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 60%** — Nova pipeline fully implemented 2026-04-28: PubMed search, LLM synthesis, chunk+embed, cron route, Vercel weekly schedule, PatientContext integration, unit + integration tests. Member-facing insights feed and pgvector semantic precision still outstanding.
+**Estimate: 60%** — health_researcher pipeline fully implemented 2026-04-28: PubMed search, LLM synthesis, chunk+embed, cron route, Vercel weekly schedule, PatientContext integration, unit + integration tests. Member-facing insights feed and pgvector semantic precision still outstanding.
 
 **Shipped:**
 - `health_updates` table for structured digest display (`0015_health_updates.sql`).
-- `agents.health_updates` table + `nova` agent_definition row (migration `0027_nova_health_updates.sql`).
+- `agents.health_updates` table + `health_researcher` agent_definition row (migration `0027_nova_health_updates.sql`, slug updated via `0036_rename_agent_slugs.sql`).
 - pgvector / health knowledge migrations (`0037_health_knowledge_embeddings.sql` and supporting migrations).
-- **Nova pipeline** (`lib/ai/pipelines/nova.ts`, 2026-04-28) — 5-phase: PubMed search → abstract fetch → LLM synthesis (Claude) → chunk+embed → upsert+prune (90-day rolling window). `chunkText()` helper with 300-word chunks, 60-word overlap.
-- **`/api/cron/nova` route** (`app/api/cron/nova/route.ts`) — secured with `CRON_SECRET`, returns 200 on error to suppress Vercel retry.
+- **health_researcher pipeline** (`lib/ai/pipelines/health-researcher.ts`, 2026-04-28) — 5-phase: PubMed search → abstract fetch → LLM synthesis (Claude) → chunk+embed → upsert+prune (90-day rolling window). `chunkText()` helper with 300-word chunks, 60-word overlap.
+- **`/api/cron/health-researcher` route** (`app/api/cron/health-researcher/route.ts`) — secured with `CRON_SECRET`, returns 200 on error to suppress Vercel retry.
 - **Vercel weekly cron** — Monday 02:00 UTC entry in `vercel.json`.
 - **`PatientContext` integration** — `recentDigests` loaded as 8th parallel read; Janet sees latest 3 digests on every turn.
 - Unit tests: `tests/unit/ai/nova-helpers.test.ts` — 5 tests for `chunkText`.
-- Integration tests: `tests/integration/ai/nova.test.ts` — 5 tests for `runNovaDigestPipeline` with mocked PubMed + Supabase.
+- Integration tests: `tests/integration/ai/health-researcher.test.ts` — 5 tests for `runHealthResearcherPipeline` with mocked PubMed + Supabase.
 
 **Outstanding:**
 - Enable the `vector` pgvector extension in Supabase dashboard (one-click) — improves semantic search precision; keyword search still functional without it.
@@ -1675,7 +1675,7 @@ Build system prompt + window (last 20 turns)
   ▼
 Anthropic API (streaming)
   │
-  ├── tool_use if specialist needed → Sub-agent (Atlas · Sage · PT Coach live)
+  ├── tool_use if specialist needed → Sub-agent (risk_analyzer · supplement_advisor · PT Coach live)
   │                                           │
   │                                           ▼
   │                                       tool_result
@@ -1685,8 +1685,8 @@ Stream response back to user           Janet synthesizes
 ```
 
 - `PatientContext.load()` runs all DB reads and the RAG query in parallel — ~50 ms total.
-- Sub-agent calls (Atlas, Sage, PT Coach) are real-time `tool_use` — the user waits; Janet synthesizes the result before streaming.
-- Pipeline workers (Nova, PT monthly, Meal Plan, Janet-Clinician) run async in the background and write to DB. Janet reads their output at the next session start.
+- Sub-agent calls (risk_analyzer, supplement_advisor, PT Coach) are real-time `tool_use` — the user waits; Janet synthesizes the result before streaming.
+- Pipeline workers (health_researcher, PT monthly, Meal Plan, Janet-Clinician) run async in the background and write to DB. Janet reads their output at the next session start.
 
 ---
 
@@ -1694,15 +1694,15 @@ Stream response back to user           Janet synthesizes
 
 **Real-time Agents:**
 - **Janet** — Health coaching · Risk · Supplements · Appointments
-- **Alex** — Platform support: Patient · Clinician · B2B
+- **support** — Platform support: Patient · Clinician · B2B
 - **PT Coach (live)** — Real-time session coaching via Janet `tool_use`
-- **Risk Narrative (Atlas)** — Sub-agent via Janet `tool_use`
-- **Supplement Protocol (Sage)** — Sub-agent via Janet `tool_use`
+- **risk_analyzer** — Sub-agent via Janet `tool_use`
+- **supplement_advisor** — Sub-agent via Janet `tool_use`
 
 **Async Pipeline Workers:**
 - **PT Coach Monthly Plan** — Periodized 4-week program; 1st-of-month cron
-- **Meal Plan Pipeline (Marco)** — Weekly plan + shopping list
-- **Research Digest (Nova)** — Weekly literature scan; writes structured digest + vector chunks
+- **Meal Plan Pipeline (chef)** — Weekly plan + shopping list
+- **Research Digest (health_researcher)** — Weekly literature scan; writes structured digest + vector chunks
 - **Janet-Clinician Pipeline** — Clinical brief + 30-day program; clinician-gated
 - **Onboarding Flow** — Drop-off nudges (deferred)
 
@@ -1710,19 +1710,19 @@ Stream response back to user           Janet synthesizes
 - Supabase — patient + platform data
 - pgvector `health_knowledge` — HNSW + GIN hybrid index
 
-Nova writes structured digests to DB and embedded chunks (perplexity/pplx-embed-v1-4b via OpenRouter) to pgvector. PT/Marco/JC write to their own DB tables. Janet/Alex/PT-live read from DB. Janet hits pgvector via hybrid RAG (~30ms). Janet uses `tool_use` to call Atlas, Sage, and PT Coach live.
+health_researcher writes structured digests to DB and embedded chunks (perplexity/pplx-embed-v1-4b via OpenRouter) to pgvector. PT/chef/JC write to their own DB tables. Janet/support/PT-live read from DB. Janet hits pgvector via hybrid RAG (~30ms). Janet uses `tool_use` to call risk_analyzer, supplement_advisor, and PT Coach live.
 
 ---
 
-## Research Agent (Nova) design
+## Research Agent (health_researcher) design
 
-Nova runs separately from Janet. Its job is to maintain the knowledge base that Janet reads. It does not interact with users.
+health_researcher runs separately from Janet. Its job is to maintain the knowledge base that Janet reads. It does not interact with users.
 
 ```
 ⏰ Weekly Cron
    │
    ▼
-Nova Research Agent
+health_researcher pipeline
    │
    ▼
 web_search × 6 categories (PubMed · Nature · Cell · medRxiv · Cochrane)
@@ -1755,24 +1755,24 @@ Target runtime: **< 200 s** — well within Vercel Pro's 300 s function limit.
 | **Single cortex** | Every component uses the Anthropic Claude API. Context and tools wrap around it. |
 | **Context at query time** | PatientContext loads fresh on every message via `Promise.all`. Never stale. |
 | **Hybrid RAG for knowledge** | pgvector HNSW + BM25 full-text + RRF fusion. ~30 ms overhead. `perplexity/pplx-embed-v1-4b` via OpenRouter (2560 dims, 32K context, INT8, MRL) — same API key as all LLM calls. Janet always has current research. |
-| **Real-time sub-agents** | Atlas, Sage, PT Coach live are invoked synchronously via `tool_use` when the user needs a specialist answer right now. |
+| **Real-time sub-agents** | risk_analyzer, supplement_advisor, PT Coach live are invoked synchronously via `tool_use` when the user needs a specialist answer right now. |
 | **Async pre-computation** | Monthly plans, meal plans, research digests, and clinical briefs run in the background. Agents read results at session start. |
 | **One job per component** | Each pipeline or agent owns exactly one write target. No cross-component table writes. |
-| **Persona-aware support** | Alex reads `profiles.role` at session start and switches mode — patient, clinician, or B2B. |
+| **Persona-aware support** | support reads `profiles.role` at session start and switches mode — patient, clinician, or B2B. |
 
 ---
 
 ## Build order (P1 → P7)
 
 ```
-P1  Supplement Protocol (Sage)    ← needs uploads infra + pgvector
-P2  Risk Narrative (Atlas)
+P1  supplement_advisor pipeline   ← needs uploads infra + pgvector
+P2  risk_analyzer pipeline
 P3  Janet Agent                   ← needs P1 + P2 as real-time sub-agents
 P4  Janet-Clinician Pipeline      ← needs clinician CRM portal
 P5  PT Coach (live + monthly)  ┐
-P5  Alex Support Agent         ┘  both need WhatsApp channels
-P6  Meal Plan Pipeline
-P7  Research Digest (Nova)        ← independent; feeds Janet RAG via pgvector
+P5  support agent              ┘  both need WhatsApp channels
+P6  chef meal plan pipeline
+P7  health_researcher pipeline    ← independent; feeds Janet RAG via pgvector
 
 Deferred: Onboarding Flow (build when drop-off rate justifies it)
 ```</script>
@@ -1797,8 +1797,8 @@ Most QA plans optimise for "no bugs." That's the wrong target for Longevity Coac
 So the QA hierarchy is:
 
 1. **Trust integrity** (RLS, PII boundary, consent records, signed URL TTL, never-train clause). Existential.
-2. **Loop integrity** (questionnaire submits → Atlas writes narrative → Sage writes protocol → `/report` renders → Janet replies). The product.
-3. **AI quality** (Atlas narrative, Sage protocol, Janet coaching, Janet document analyser). The moat.
+2. **Loop integrity** (questionnaire submits → risk_analyzer writes narrative → supplement_advisor writes protocol → `/report` renders → Janet replies). The product.
+3. **AI quality** (risk_analyzer narrative, supplement_advisor protocol, Janet coaching, Janet document analyser). The moat.
 4. **Vibe** (does `/report` feel like medicine; does Janet feel like a coach who remembers). The brand.
 5. **Everything else** (perf, polish, accessibility). Important but ranked.
 
@@ -1838,8 +1838,8 @@ Already shipped: 29 tests across `tests/integration/auth/`, `tests/integration/o
 | `tests/integration/auth/actions.test.ts` | All 13 paths through `signIn`, `signUp`, `requestPasswordReset`, `updatePassword`. |
 | `tests/integration/onboarding/actions.test.ts` | `saveDraft` and `submitAssessment` happy paths plus the no-user error path. |
 | `tests/integration/stripe/webhook.test.ts` | All 8 lifecycle event types plus signature failure plus missing user metadata. |
-| **(new) Atlas pipeline** | Trigger Atlas with a fixture `health_profiles.responses`. Assert `risk_scores.narrative` is populated, scores are present, idempotent on second run. |
-| **(new) Sage pipeline** | Trigger Sage with a fixture `risk_scores`. Assert `supplement_plans.items` has ≥ 3 critical-tier items with rationale strings under 200 chars. |
+| **(new) risk_analyzer pipeline** | Trigger risk_analyzer with a fixture `health_profiles.responses`. Assert `risk_scores.narrative` is populated, scores are present, idempotent on second run. |
+| **(new) supplement_advisor pipeline** | Trigger supplement_advisor with a fixture `risk_scores`. Assert `supplement_plans.items` has ≥ 3 critical-tier items with rationale strings under 200 chars. |
 | **(new) Janet streaming response** | Mock Anthropic SDK. Assert `PatientContext.load()` is called once, the system prompt includes the patient summary, and turns persist to `agent_conversations`. |
 
 #### 2b. Real-Supabase integration (RLS + trigger truth)
@@ -1854,7 +1854,7 @@ Spin up a separate Supabase project named `longevity-coach-test` (mirrors the pr
 | **Service-role bypass scope** | Confirm service-role can write to `risk_scores`, `supplement_plans`, `subscriptions`. Confirm service-role does NOT bypass FK constraints. |
 | **Auth trigger** | New `auth.users` row → `handle_new_user` populates `profiles.id` and `profiles.full_name`. |
 | **Consent append-only** | Insert one consent record, attempt UPDATE → policy denies. Attempt DELETE → policy denies. |
-| **Pipeline idempotency** | Run Atlas twice on the same `(user_uuid, computed_at_date)`. Assert no duplicate row, second run updates the first. |
+| **Pipeline idempotency** | Run risk_analyzer twice on the same `(user_uuid, computed_at_date)`. Assert no duplicate row, second run updates the first. |
 | **Migration safety** | After every new migration: run all prior tests against the new schema. Migrations that break tests get rolled back, not patched. |
 
 The pgTAP file at `supabase/tests/rls.sql` (20 assertions, written 2026-04-27) is the starting point. **Wire it into CI on every PR via `supabase db test`.** This is the single highest-value QA investment we are not yet making.
@@ -1870,13 +1870,13 @@ Headless on every push to main. Already exist at `tests/e2e/` for auth and the p
 2. Land on /onboarding (no health profile yet)
 3. Complete the 6-step questionnaire with fixture answers
 4. Submit, land on /dashboard?onboarding=complete
-5. Wait for Atlas pipeline (poll risk_scores until narrative is present, max 60s)
-6. Wait for Sage pipeline (poll supplement_plans until items present, max 30s)
+5. Wait for risk_analyzer pipeline (poll risk_scores until narrative is present, max 60s)
+6. Wait for supplement_advisor pipeline (poll supplement_plans until items present, max 30s)
 7. Open /report — assert bio-age, all 5 domain scores, narrative paragraph, supplement table render
 8. Open Janet chat panel, send "what is my biggest risk", assert a streaming response that names the patient's actual top driver
 9. Upload a fixture blood-panel PDF
 10. Wait for Janet document analyser (poll patient_uploads.janet_status until 'complete')
-11. Wait for Sage re-run (poll supplement_plans for new row newer than original)
+11. Wait for supplement_advisor re-run (poll supplement_plans for new row newer than original)
 12. Sign out, /login renders
 13. Sign back in, /report still shows the same narrative + protocol
 ```
@@ -1981,8 +1981,8 @@ Snapshot targets:
 Members are on home Wi-Fi and middle-aged iPhones. Budgets:
 - LCP `< 2.5s` on `/dashboard` and `/report`
 - TTI `< 3.5s` on every signed-in route
-- Atlas pipeline p95 latency `< 45s` end-to-end
-- Sage pipeline p95 latency `< 25s` end-to-end
+- risk_analyzer pipeline p95 latency `< 45s` end-to-end
+- supplement_advisor pipeline p95 latency `< 25s` end-to-end
 - Janet first-token latency `< 800ms`
 - Janet full-response p95 `< 12s` for a 200-token reply
 - No bundle larger than 250 KB gzipped per route
@@ -2006,7 +2006,7 @@ This catches Anthropic API outages, Supabase regional flakes, and Stripe webhook
 
 Longevity Coach's moat is AI quality. Evals get their own pipeline, separate from CI, run on a schedule and after every prompt or model change.
 
-### 2a. Atlas (risk narrative) evals
+### 2a. risk_analyzer (risk narrative) evals
 
 **Golden dataset:** 30 anonymised completed assessments. Diverse:
 - Lifestyle-only (no biomarker uploads)
@@ -2025,9 +2025,9 @@ Longevity Coach's moat is AI quality. Evals get their own pipeline, separate fro
 
 **Pass bar:** specificity mean ≥ 4.0, no-overclaim 100%, driver-to-score linkage 100%, GP-readability mean ≥ 4.0. If a model upgrade regresses any dimension by `> 0.5`, we don't ship it.
 
-### 2b. Sage (supplement protocol) evals
+### 2b. supplement_advisor (supplement protocol) evals
 
-**Golden dataset:** the same 30 assessments above, paired with the protocol Sage produces for each.
+**Golden dataset:** the same 30 assessments above, paired with the protocol supplement_advisor produces for each.
 
 **Metrics:**
 - **Item-to-driver linkage**: every item has a rationale that names the patient's specific risk driver.
@@ -2163,7 +2163,7 @@ What blocks a deploy:
 - Tier 3 critical-path E2E fails.
 - Tier 4 `qa_public.py` fails.
 - Lighthouse budget regression > 10%.
-- Eval suite 2a (Atlas) regression > 0.5 on any dimension.
+- Eval suite 2a (risk_analyzer) regression > 0.5 on any dimension.
 - Eval suite 2d (Janet document analyser) regression > 5% on any biomarker.
 - Visual regression on the four "vibe" surfaces (`/`, `/dashboard`, `/report`, Janet chat panel).
 
@@ -2196,10 +2196,10 @@ The agent layer just landed (2026-04-28). Phase 2 isn't user-reviewed yet. We ca
 
 | Week | QA build |
 |---|---|
-| 1 | Wire `pgTAP` RLS suite into CI. Atlas + Sage integration tests in 2a. Pre-pilot-invite checklist run for the first time on the new Phase 2 surfaces. |
+| 1 | Wire `pgTAP` RLS suite into CI. risk_analyzer + supplement_advisor integration tests in 2a. Pre-pilot-invite checklist run for the first time on the new Phase 2 surfaces. |
 | 2 | Critical-path E2E in Playwright TS, including a seeded test-user fixture. Live-QA `qa_report.py` and `qa_uploads.py` under the `webapp-testing` skill. |
-| 3 | Atlas eval suite (2a) live with first golden dataset of 10 fixture assessments; Sage eval (2b) the same. Synthetic monitor in production. |
-| 4 | Janet eval suite (2c) live with first 20 fixture conversations. Doctor panel scheduled for Atlas + Sage. |
+| 3 | risk_analyzer eval suite (2a) live with first golden dataset of 10 fixture assessments; supplement_advisor eval (2b) the same. Synthetic monitor in production. |
+| 4 | Janet eval suite (2c) live with first 20 fixture conversations. Doctor panel scheduled for risk_analyzer + supplement_advisor. |
 | 5 | Visual regression (Chromatic) on the four vibe surfaces. Lighthouse budgets enforced. |
 | 6 | Mobile Safari runs on BrowserStack. Bug-bash before pilot invites. |
 | 7 | Trust audit. Pre-pilot-invite checklist run on every new test phone. |
