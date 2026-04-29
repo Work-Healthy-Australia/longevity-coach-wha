@@ -197,9 +197,57 @@
 .lc-report .badge.muted { background: var(--lc-primary-50); color: var(--lc-grey); }
 
 /* Supplements */
-.lc-report .supplement-list { display: flex; flex-direction: column; gap: 20px; }
+.lc-report .supplement-list { display: flex; flex-direction: column; gap: 4px; }
 
-.lc-report .supplement-tier { display: flex; flex-direction: column; gap: 10px; }
+.lc-report .supplement-accordion { border: none; }
+
+.lc-report .supplement-accordion-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  list-style: none;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 0;
+  user-select: none;
+  transition: background 0.15s;
+}
+.lc-report .supplement-accordion-summary::-webkit-details-marker { display: none; }
+.lc-report .supplement-accordion-summary:hover { background: var(--lc-canvas); }
+
+.lc-report .supplement-accordion-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lc-report .supplement-accordion-count {
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0.55;
+  font-family: var(--font-lc-sans), system-ui, sans-serif;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.lc-report .supplement-collapse-chevron {
+  font-size: 13px;
+  transition: transform 0.2s ease;
+  opacity: 0.6;
+}
+.lc-report details.supplement-accordion:not([open]) .supplement-collapse-chevron {
+  transform: rotate(-90deg);
+}
+
+.lc-report .supplement-accordion-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 0 12px;
+}
+
+.lc-report .supplement-tier { display: flex; flex-direction: column; gap: 0; }
 
 .lc-report .tier-label {
   font-size: 11px;
@@ -350,31 +398,75 @@
   40%            { transform: scale(1);   opacity: 1;   }
 }
 
-.lc-report .chat-bubble-task-pending {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 12px 14px;
-}
-.lc-report .chat-task-label {
-  font-size: 0.875rem;
+.lc-report .chat-task-line {
+  margin: 4px 0 8px 44px; /* aligns under assistant bubble, past avatar */
+  font-size: 0.85rem;
   color: var(--lc-ink-soft);
-  font-style: italic;
 }
-.lc-report .chat-task-dots {
-  display: flex;
-  gap: 5px;
+.lc-report .chat-task-line[open] .chat-task-line-caret { transform: rotate(90deg); }
+
+.lc-report .chat-task-line-summary {
+  display: inline-flex;
   align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  list-style: none;
+  font-style: italic;
+  user-select: none;
+  padding: 2px 4px;
+  border-radius: 4px;
 }
-.lc-report .chat-task-dots span {
-  width: 6px;
-  height: 6px;
+.lc-report .chat-task-line-summary::-webkit-details-marker { display: none; }
+.lc-report .chat-task-line-summary:hover { background: rgba(0, 0, 0, 0.04); }
+
+.lc-report .chat-task-line-caret {
+  display: inline-block;
+  font-size: 0.7rem;
+  transition: transform 0.15s ease;
+  opacity: 0.6;
+}
+
+.lc-report .chat-task-line-label { font-style: italic; }
+
+.lc-report .chat-task-line-dots {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  margin-left: 4px;
+}
+.lc-report .chat-task-line-dots span {
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
-  background: var(--lc-sage);
+  background: currentColor;
   animation: chat-dot 1.2s infinite ease-in-out;
 }
-.lc-report .chat-task-dots span:nth-child(2) { animation-delay: 0.2s; }
-.lc-report .chat-task-dots span:nth-child(3) { animation-delay: 0.4s; }
+.lc-report .chat-task-line-dots span:nth-child(2) { animation-delay: 0.2s; }
+.lc-report .chat-task-line-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+.lc-report .chat-task-line-events {
+  margin: 6px 0 4px 18px;
+  padding: 0;
+  list-style: none;
+  border-left: 2px solid rgba(0, 0, 0, 0.08);
+  padding-left: 10px;
+  font-size: 0.8rem;
+}
+.lc-report .chat-task-line-events li {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+.lc-report .chat-task-line-events time {
+  color: var(--lc-ink-soft);
+  opacity: 0.7;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+.lc-report .chat-task-line-empty {
+  font-style: italic;
+  opacity: 0.6;
+}
 
 .lc-report .chat-message-user .chat-bubble {
   background: var(--lc-primary-700);
@@ -453,9 +545,29 @@
 .lc-report .btn-secondary:hover:not(:disabled) { background: var(--lc-primary-50); }
 .lc-report .btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
 
+.lc-report .supplement-refresh-done {
+  display: inline-flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #16a34a;
+  background: #f0fdf4;
+  border: 1.5px solid #bbf7d0;
+  border-radius: 6px;
+  padding: 6px 14px;
+}
+
+.lc-report .supplement-refresh-wrap {
+  position: relative;
+}
+
 .lc-report .supplement-refresh-msg {
-  font-size: 0.85rem;
-  margin-top: 6px;
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 0;
+  white-space: nowrap;
+  font-size: 0.8rem;
   color: var(--lc-grey);
+  margin: 0;
 }
 .lc-report .supplement-refresh-error { color: var(--lc-danger); }

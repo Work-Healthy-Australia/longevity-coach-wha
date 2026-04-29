@@ -26,7 +26,7 @@ export function supplementProtocolTool(ctx: PatientContext): Tool {
 
       return {
         status: 'generating',
-        message: "I'm generating your personalised supplement protocol now — it'll be ready in about a minute. Refresh the page to see your protocol once it's done.",
+        message: "I'm generating your personalised supplement protocol now — it'll be ready in about a minute and will appear in your report automatically.",
       };
     },
   };

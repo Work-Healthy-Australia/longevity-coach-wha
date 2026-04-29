@@ -18,7 +18,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
 
-  await runMealPlanPipeline(userId, weekStart);
+  console.log(`[meal-plan route] starting pipeline for user ${userId}`);
+  try {
+    await runMealPlanPipeline(userId, weekStart);
+    console.log(`[meal-plan route] pipeline completed for user ${userId}`);
+  } catch (err) {
+    console.error(`[meal-plan route] pipeline failed for user ${userId}:`, err);
+    return NextResponse.json({ error: 'Pipeline failed' }, { status: 500 });
+  }
 
   return NextResponse.json({ ok: true });
 }

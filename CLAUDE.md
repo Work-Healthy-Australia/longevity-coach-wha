@@ -105,10 +105,10 @@ Never leave superpowers skill output (plans, specs, brainstorms) in a `docs/supe
 After any superpowers skill produces a plan or spec, immediately migrate it to the project convention:
 
 ```
-docs/engineering/changes/YYYY-MM-DD-slug/PLAN.md
+docs/engineering/changes/YYYY-MM-DD/<slug>/PLAN.md
 ```
 
-Name the slug after the feature, not the skill. Delete the superpowers source file once migrated. The `docs/superpowers/` directory must never exist in this repo.
+The date folder groups everything that happened that day; the slug subfolder owns the artefacts (PLAN, QA_REPORT, CHANGELOG, EXECUTIVE_SUMMARY) for that single change. Name the slug after the feature, not the skill. Delete the superpowers source file once migrated. The `docs/superpowers/` directory must never exist in this repo.
 
 ---
 

@@ -64,26 +64,27 @@ export function SupplementRefreshButton({ hasProtocol }: { hasProtocol: boolean 
     startPolling(since);
   }
 
-  const label =
-    state === 'pending' ? 'Generating…' :
-    hasProtocol ? 'Refresh protocol' :
-    'Generate my protocol';
+  if (state === 'done') {
+    return <span className="supplement-refresh-done">✓ Protocol ready</span>;
+  }
+
+  const label = state === 'pending' ? 'Generating…' : hasProtocol ? 'Refresh protocol' : 'Generate my protocol';
 
   return (
-    <div>
-      <button
-        type="button"
-        className="btn-secondary"
-        onClick={handleClick}
-        disabled={state === 'pending' || state === 'done'}
-      >
-        {label}
-      </button>
+    <div className="supplement-refresh-wrap">
       {message && (
         <p className={`supplement-refresh-msg${state === 'error' || state === 'timeout' ? ' supplement-refresh-error' : ''}`}>
           {message}
         </p>
       )}
+      <button
+        type="button"
+        className="btn-secondary"
+        onClick={handleClick}
+        disabled={state === 'pending'}
+      >
+        {label}
+      </button>
     </div>
   );
 }

@@ -78,6 +78,7 @@ export interface PatientContext {
     id: string;
     validFrom: string | null;
     calorieTarget: number | null;
+    lastRunAt: string | null;
     recipes: Array<{
       name: string;
       mealType: string;
@@ -172,7 +173,7 @@ export async function loadPatientContext(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (admin as any)
         .from('meal_plans')
-        .select('id, valid_from, calorie_target, recipes(name, meal_type, day_of_week, macros, is_bloodwork_optimised), shopping_lists(items)')
+        .select('id, valid_from, calorie_target, last_run_at, recipes(name, meal_type, day_of_week, macros, is_bloodwork_optimised), shopping_lists(items)')
         .eq('patient_uuid', userId)
         .eq('status', 'active')
         .order('valid_from', { ascending: false })
@@ -230,6 +231,7 @@ export async function loadPatientContext(
     id: string;
     valid_from: string | null;
     calorie_target: number | null;
+    last_run_at: string | null;
     recipes: Array<{ name: string; meal_type: string; day_of_week: number; macros: unknown; is_bloodwork_optimised: boolean }> | null;
     shopping_lists: Array<{ items: unknown }> | null;
   } | null;
@@ -307,6 +309,7 @@ export async function loadPatientContext(
           id: mealPlanData.id,
           validFrom: mealPlanData.valid_from ?? null,
           calorieTarget: mealPlanData.calorie_target ?? null,
+          lastRunAt: mealPlanData.last_run_at ?? null,
           recipes: (mealPlanData.recipes ?? []).map(r => ({
             name: r.name,
             mealType: r.meal_type,
@@ -403,9 +406,59 @@ export function summariseContext(ctx: PatientContext): string {
 
   if (ctx.mealPlan) {
     const recipeCount = ctx.mealPlan.recipes.length;
-    lines.push(`Meal plan: ${recipeCount} recipes for week of ${ctx.mealPlan.validFrom ?? 'unknown'} (${ctx.mealPlan.calorieTarget ?? '?'} kcal/day target)`);
+    const ref = ctx.mealPlan.lastRunAt ?? ctx.mealPlan.validFrom;
+    const daysSince = ref
+      ? Math.floor((Date.now() - new Date(ref).getTime()) / (1000 * 60 * 60 * 24))
+      : null;
+    const staleTag = daysSince === null
+      ? ''
+      : daysSince > 7
+        ? ` ⚠ STALE (${daysSince} days old — threshold: 7 days)`
+        : ` ✓ fresh (generated ${daysSince === 0 ? 'today' : `${daysSince} day${daysSince === 1 ? '' : 's'} ago`})`;
+    lines.push(
+      `Meal plan: ${recipeCount} recipes for week of ${ctx.mealPlan.validFrom ?? 'unknown'} (${ctx.mealPlan.calorieTarget ?? '?'} kcal/day target)${staleTag}`,
+    );
+
+    // Include the actual recipes so Janet can answer "what's for Monday breakfast?"
+    // without needing to re-trigger the chef pipeline.
+    if (ctx.mealPlan.recipes.length > 0) {
+      const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      const byDay = new Map<number, typeof ctx.mealPlan.recipes>();
+      for (const r of ctx.mealPlan.recipes) {
+        const list = byDay.get(r.dayOfWeek) ?? [];
+        list.push(r);
+        byDay.set(r.dayOfWeek, list);
+      }
+      const order: Record<string, number> = { breakfast: 0, lunch: 1, dinner: 2, snack: 3 };
+      const sortedDays = [...byDay.keys()].sort((a, b) => a - b);
+      lines.push('Meals by day:');
+      for (const d of sortedDays) {
+        const dayName = days[d] ?? `Day ${d}`;
+        const meals = (byDay.get(d) ?? []).slice().sort(
+          (a, b) => (order[a.mealType] ?? 99) - (order[b.mealType] ?? 99),
+        );
+        for (const m of meals) {
+          const macros = m.macros as { calories?: number } | null;
+          const kcal = macros?.calories ? ` (${Math.round(macros.calories)} kcal)` : '';
+          const opt = m.isBloodworkOptimised ? ' ⭐' : '';
+          lines.push(`  ${dayName} ${m.mealType}: ${m.name}${kcal}${opt}`);
+        }
+      }
+    }
+
     if (ctx.mealPlan.shoppingList.length > 0) {
-      lines.push(`Shopping list: ${ctx.mealPlan.shoppingList.length} items`);
+      // Group by category for compact display.
+      const byCat = new Map<string, string[]>();
+      for (const item of ctx.mealPlan.shoppingList) {
+        const cat = item.category || 'other';
+        const list = byCat.get(cat) ?? [];
+        list.push(`${item.item} ${item.quantity}${item.unit ?? ''}`.trim());
+        byCat.set(cat, list);
+      }
+      lines.push(`Shopping list (${ctx.mealPlan.shoppingList.length} items):`);
+      for (const [cat, items] of byCat) {
+        lines.push(`  ${cat}: ${items.join(', ')}`);
+      }
     }
   } else {
     lines.push(`Meal plan: not yet generated`);

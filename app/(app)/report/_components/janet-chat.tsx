@@ -3,6 +3,7 @@
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import type { UIMessage } from 'ai';
+import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import { AssistantBubble } from '@/app/(app)/_components/chat-message';
 
@@ -12,28 +13,148 @@ export function JanetChat({ initialMessages = [], userId }: { initialMessages?: 
     messages: initialMessages,
   });
   const [input, setInput] = useState('');
-  const [pendingTask, setPendingTask] = useState<{ label: string; since: string } | null>(null);
+  type TaskEvent = { ts: string; text: string };
+  type PendingTask = { id: string; label: string; since: string; events: TaskEvent[] };
+  const [pendingTasks, setPendingTasks] = useState<PendingTask[]>([]);
+  const seenToolCallsRef = useRef<Set<string>>(new Set());
+  const mealPlanPollersRef = useRef<Map<string, ReturnType<typeof setInterval>>>(new Map());
   const bottomRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   const lastIdx = messages.length - 1;
+
+  function appendTaskEvent(taskId: string, text: string) {
+    setPendingTasks((prev) =>
+      prev.map((t) =>
+        t.id === taskId
+          ? { ...t, events: [...t.events, { ts: new Date().toISOString(), text }] }
+          : t,
+      ),
+    );
+  }
+
+  function stopMealPlanPolling(taskId: string) {
+    const handle = mealPlanPollersRef.current.get(taskId);
+    if (handle) {
+      clearInterval(handle);
+      mealPlanPollersRef.current.delete(taskId);
+    }
+  }
+
+  // Detect meal-plan tool calls in the assistant stream, then poll
+  // /api/report/meal-plan-status until the row appears.
+  useEffect(() => {
+    for (const msg of messages) {
+      if (msg.role !== 'assistant') continue;
+      for (const part of msg.parts) {
+        const partType = (part as { type?: string }).type ?? '';
+        if (partType !== 'tool-request_meal_plan') continue;
+        if (seenToolCallsRef.current.has(msg.id)) continue;
+
+        const output = (part as { output?: { since?: string } }).output;
+        const since = output?.since;
+        if (!since) continue; // wait for tool result with since to arrive
+
+        seenToolCallsRef.current.add(msg.id);
+        const id = `mealplan-${msg.id}`;
+        setPendingTasks((prev) =>
+          prev.some((t) => t.id === id)
+            ? prev
+            : [
+                ...prev,
+                {
+                  id,
+                  label: 'Generating your 7-day meal plan',
+                  since,
+                  events: [{ ts: since, text: 'Pipeline started — chef agent invoked' }],
+                },
+              ],
+        );
+
+        let attempts = 0;
+        const MAX = 36; // 3 min at 5s
+        const handle = setInterval(async () => {
+          attempts++;
+          if (attempts > MAX) {
+            stopMealPlanPolling(id);
+            appendTaskEvent(id, 'Timed out waiting for completion — try refreshing.');
+            return;
+          }
+          try {
+            const res = await fetch(`/api/report/meal-plan-status?since=${encodeURIComponent(since)}`);
+            if (!res.ok) return;
+            const data = (await res.json()) as { ready: boolean };
+            if (!data.ready) return;
+            stopMealPlanPolling(id);
+            setPendingTasks((prev) => prev.filter((t) => t.id !== id));
+
+            // Fetch the full plan summary written by the pipeline; fall back to
+            // a short ready-message if the message row hasn't landed yet.
+            let pushText =
+              'Your 7-day meal plan and shopping list are ready in your report. Ask me about any specific meal, swap, or ingredient.';
+            try {
+              const msgRes = await fetch(`/api/report/meal-plan-message?since=${encodeURIComponent(since)}`);
+              if (msgRes.ok) {
+                const { text } = (await msgRes.json()) as { text: string | null };
+                if (text) pushText = text;
+              }
+            } catch {
+              // keep fallback text
+            }
+
+            setMessages((prev) => [
+              ...prev,
+              {
+                id: `push-mealplan-${Date.now()}`,
+                role: 'assistant' as const,
+                parts: [{ type: 'text' as const, text: pushText }],
+              },
+            ]);
+            router.refresh();
+          } catch {
+            // network blip — keep polling
+          }
+        }, 5000);
+        mealPlanPollersRef.current.set(id, handle);
+      }
+    }
+  }, [messages, router, setMessages]);
+
+  useEffect(() => () => {
+    for (const handle of mealPlanPollersRef.current.values()) clearInterval(handle);
+    mealPlanPollersRef.current.clear();
+  }, []);
 
   // Scroll to bottom when a new message arrives, a pending task appears, or typing indicator shows
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages.length, status, pendingTask]);
+  }, [messages.length, status, pendingTasks.length]);
 
   useEffect(() => {
     function handleTaskStarted(e: Event) {
       const since = (e as CustomEvent<{ since: string }>).detail?.since;
       if (!since) return;
-      setPendingTask({ label: 'Generating your supplement protocol in the background…', since });
+      const id = `supplement-${since}`;
+      setPendingTasks((prev) =>
+        prev.some((t) => t.id === id)
+          ? prev
+          : [
+              ...prev,
+              {
+                id,
+                label: 'Generating your supplement protocol',
+                since,
+                events: [{ ts: since, text: 'Pipeline started — supplement advisor invoked' }],
+              },
+            ],
+      );
     }
 
     async function handleProtocolReady(e: Event) {
       const since = (e as CustomEvent<{ since: string }>).detail?.since;
       if (!since) return;
 
-      setPendingTask(null);
+      setPendingTasks((prev) => prev.filter((t) => t.id !== `supplement-${since}`));
 
       try {
         const res = await fetch(`/api/report/supplement-message?since=${encodeURIComponent(since)}`);
@@ -108,15 +229,27 @@ export function JanetChat({ initialMessages = [], userId }: { initialMessages?: 
           </div>
         ))}
 
-        {pendingTask && (
-          <div className="chat-message chat-message-assistant">
-            <div className="chat-avatar">J</div>
-            <div className="chat-bubble chat-bubble-task-pending">
-              <span className="chat-task-label">{pendingTask.label}</span>
-              <span className="chat-task-dots"><span /><span /><span /></span>
-            </div>
-          </div>
-        )}
+        {pendingTasks.map((task) => (
+          <details key={task.id} className="chat-task-line">
+            <summary className="chat-task-line-summary">
+              <span className="chat-task-line-caret" aria-hidden>▸</span>
+              <span className="chat-task-line-label">{task.label}</span>
+              <span className="chat-task-line-dots"><span /><span /><span /></span>
+            </summary>
+            <ul className="chat-task-line-events">
+              {task.events.length === 0 ? (
+                <li className="chat-task-line-empty">Waiting for updates…</li>
+              ) : (
+                task.events.map((ev, i) => (
+                  <li key={i}>
+                    <time>{new Date(ev.ts).toLocaleTimeString()}</time>
+                    <span>{ev.text}</span>
+                  </li>
+                ))
+              )}
+            </ul>
+          </details>
+        ))}
 
         {status === 'submitted' && (
           <div className="chat-message chat-message-assistant">

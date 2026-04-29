@@ -210,24 +210,32 @@ export default async function ReportPage() {
               const tierItems = supplements.filter((s) => s.priority === tier);
               if (!tierItems.length) return null;
               return (
-                <div key={tier} className="supplement-tier">
-                  <h3 className={`tier-label tier-${tier}`}>{tierLabel(tier)}</h3>
-                  {tierItems.map((s, i) => (
-                    <div key={i} className="supplement-item">
-                      <div className="supplement-header">
-                        <span className="supplement-name">{s.name}</span>
-                        <span className="supplement-dosage">
-                          {s.dosage} · {s.form}
-                        </span>
+                <details key={tier} className="supplement-tier supplement-accordion" open>
+                  <summary className={`supplement-accordion-summary tier-label tier-${tier}`}>
+                    <span>{tierLabel(tier)}</span>
+                    <span className="supplement-accordion-meta">
+                      <span className="supplement-accordion-count">{tierItems.length}</span>
+                      <span className="supplement-collapse-chevron" aria-hidden="true">▾</span>
+                    </span>
+                  </summary>
+                  <div className="supplement-accordion-body">
+                    {tierItems.map((s, i) => (
+                      <div key={i} className="supplement-item">
+                        <div className="supplement-header">
+                          <span className="supplement-name">{s.name}</span>
+                          <span className="supplement-dosage">
+                            {s.dosage} · {s.form}
+                          </span>
+                        </div>
+                        <div className="supplement-timing">{s.timing}</div>
+                        <div className="supplement-rationale">{s.rationale}</div>
+                        {s.note && (
+                          <div className="supplement-note">⚠ {s.note}</div>
+                        )}
                       </div>
-                      <div className="supplement-timing">{s.timing}</div>
-                      <div className="supplement-rationale">{s.rationale}</div>
-                      {s.note && (
-                        <div className="supplement-note">⚠ {s.note}</div>
-                      )}
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                </details>
               );
             })}
           </div>
