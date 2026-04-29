@@ -16,6 +16,7 @@ export function PublicFooter() {
         <div className="links">
           <a href="#">Privacy</a>
           <a href="#">Terms</a>
+          <Link href="/legal/data-handling">Data handling</Link>
           <a href="#">Clinical governance</a>
           <a href="#">Contact</a>
         </div>

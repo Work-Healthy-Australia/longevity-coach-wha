@@ -1,0 +1,55 @@
+.lc-data-handling {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 48px 24px 96px;
+  color: var(--lc-ink);
+  line-height: 1.6;
+}
+.lc-data-handling h1 { font-size: 28px; margin: 8px 0 4px; }
+.lc-data-handling h2 { font-size: 18px; margin: 32px 0 8px; }
+.lc-data-handling p,
+.lc-data-handling ul,
+.lc-data-handling ol { margin: 8px 0; }
+.lc-data-handling ul,
+.lc-data-handling ol { padding-left: 22px; }
+.lc-data-handling li { margin: 6px 0; }
+
+.lc-data-handling-eyebrow {
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--lc-ink-soft);
+  margin: 0;
+}
+.lc-data-handling-meta { color: var(--lc-ink-soft); font-size: 13px; }
+.lc-data-handling-back { margin-top: 48px; font-size: 14px; }
+.lc-data-handling a { color: var(--lc-accent); }
+
+.lc-data-handling-table-wrap {
+  margin: 12px 0;
+  overflow-x: auto;
+  border: 1px solid var(--lc-line, rgba(0, 0, 0, 0.08));
+  border-radius: 8px;
+}
+.lc-data-handling table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.lc-data-handling th,
+.lc-data-handling td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--lc-line, rgba(0, 0, 0, 0.08));
+  vertical-align: top;
+}
+.lc-data-handling thead th {
+  background: var(--lc-surface-soft, rgba(0, 0, 0, 0.02));
+  font-weight: 600;
+  color: var(--lc-ink-soft);
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+}
+.lc-data-handling tbody tr:last-child td { border-bottom: none; }
+.lc-data-handling td a { word-break: break-word; }

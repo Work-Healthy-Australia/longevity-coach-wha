@@ -58,6 +58,20 @@ describe("onboardingQuestionnaire schema", () => {
     }
   });
 
+  it("consent step requires the data_no_training acknowledgement and exposes all four toggles as required", () => {
+    const consent = onboardingQuestionnaire.steps.find((s) => s.id === "consent")!;
+    const ids = consent.fields.map((f) => f.id);
+    expect(ids).toEqual([
+      "data_processing",
+      "not_medical_advice",
+      "data_no_training",
+      "terms",
+    ]);
+    const dataNoTraining = consent.fields.find((f) => f.id === "data_no_training")!;
+    expect(dataNoTraining.type).toBe("toggle");
+    expect(dataNoTraining.optional).toBeFalsy();
+  });
+
   it("basics step collects identifying info needed for risk engine", () => {
     const basics = onboardingQuestionnaire.steps.find((s) => s.id === "basics")!;
     const ids = basics.fields.map((f) => f.id);

@@ -246,7 +246,11 @@ export function TiersClient({ plans, janetServices, tierInclusions, featureKeys 
       try {
         const result = (await apiPost("/api/admin/janet-services", {
           name: "New Service",
+<<<<<<< HEAD
           unit_type: "per_session",
+=======
+          unit_type: "session",
+>>>>>>> main
           internal_cost_cents: 0,
           retail_value_cents: 0,
           delivery_owner: null,
@@ -903,6 +907,10 @@ function TierEditor({
               {isPending ? "Saving…" : "Save changes"}
             </button>
           </div>
+<<<<<<< HEAD
+=======
+        </div>
+>>>>>>> main
     </div>
   );
 }
@@ -960,6 +968,7 @@ function JanetServicesPanel({
                 />
               </td>
               <td>
+<<<<<<< HEAD
                 <select
                   className="panel-input"
                   value={svc.unit_type}
@@ -974,6 +983,14 @@ function JanetServicesPanel({
                   <option value="once_off">once_off</option>
                   <option value="per_patient">per_patient</option>
                 </select>
+=======
+                <input
+                  className="panel-input"
+                  value={svc.unit_type}
+                  onChange={(e) => onUpdate(svc.id, "unit_type", e.target.value)}
+                  onBlur={() => onSave(svc)}
+                />
+>>>>>>> main
               </td>
               <td>
                 <input

@@ -200,8 +200,8 @@ export default async function DashboardPage() {
           {streakDots(new Set(logs.map((l) => l.log_date)), new Date()).map((d) => (
             <div
               key={d.date}
-              className={`lc-streak-dot ${d.filled ? "filled" : ""} ${d.isToday ? "today" : ""}`}
-              aria-label={`${d.date}${d.filled ? " logged" : " not logged"}`}
+              className={`lc-streak-dot ${d.filled ? "filled" : d.isRest ? "rest" : ""} ${d.isToday ? "today" : ""}`}
+              aria-label={`${d.date}${d.filled ? " logged" : d.isRest ? " rest day" : " not logged"}`}
             >
               <span className="lc-streak-day">{d.dayLetter}</span>
             </div>
@@ -391,6 +391,7 @@ export default async function DashboardPage() {
         />
         <QuickTile href="/report" label="Report" sub="Risk + supplements" icon="📊" />
         <QuickTile href="/check-in" label="Check-in" sub={todayLog ? "Today logged" : "Log today"} icon="✏️" />
+        <QuickTile href="/journal" label="Journal" sub="Free-form notes" icon="📓" />
         <QuickTile href="/trends" label="Trends" sub="30-day patterns" icon="📈" />
         <QuickTile href="/simulator" label="Simulator" sub="Slide and see" icon="🎚️" />
         <QuickTile href="/onboarding" label="Update profile" sub="Refresh your answers" icon="👤" />
@@ -672,29 +673,30 @@ export type StreakDot = {
   date: string;
   dayLetter: string;
   filled: boolean;
+  isRest: boolean;
   isToday: boolean;
 };
 
 // Returns 7 entries oldest -> newest (6 days ago through today, UTC).
 // dayLetter is the one-letter UTC weekday label for the date itself.
+// isRest is true for days in a tolerated rest gap (1–2 consecutive missed days
+// within an otherwise unbroken streak run).
 export function streakDots(
   logDates: Set<string>,
   now: Date = new Date(),
 ): StreakDot[] {
   const DAY_LETTERS = ["S", "M", "T", "W", "T", "F", "S"]; // Sun..Sat
   const todayStr = now.toISOString().slice(0, 10);
-  const out: StreakDot[] = [];
-  for (let i = 6; i >= 0; i--) {
-    const date = shiftDate(todayStr, -i);
-    const d = new Date(date + "T00:00:00Z");
-    out.push({
-      date,
-      dayLetter: DAY_LETTERS[d.getUTCDay()],
-      filled: logDates.has(date),
-      isToday: i === 0,
-    });
-  }
-  return out;
+  const { days } = calculateStreak(Array.from(logDates), todayStr);
+  // calculateStreak returns 14 days oldest-first; take the last 7.
+  const last7 = days.slice(-7);
+  return last7.map((d) => ({
+    date: d.date,
+    dayLetter: DAY_LETTERS[new Date(d.date + "T00:00:00Z").getUTCDay()],
+    filled: d.state === "active",
+    isRest: d.state === "rest",
+    isToday: d.date === todayStr,
+  }));
 }
 
 function chronologicalAge(

@@ -1091,16 +1091,24 @@ export function PlanBuilderClient({
             <div className="pb-modal-actions">
               <button
                 className="btn-cancel"
+<<<<<<< HEAD
                 onClick={() => {
                   setShowNewClientForm(false);
                   setNewClientName("");
                 }}
+=======
+                onClick={() => setShowNewClientForm(false)}
+>>>>>>> main
               >
                 Cancel
               </button>
               <button
                 className="btn-activate"
+<<<<<<< HEAD
                 disabled={saving || !newClientName.trim()}
+=======
+                disabled={saving || !newPlanName.trim()}
+>>>>>>> main
                 onClick={handleCreatePlan}
               >
                 {saving ? "Creating…" : "Create"}

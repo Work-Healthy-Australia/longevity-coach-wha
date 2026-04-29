@@ -171,6 +171,7 @@ function collectAcceptedConsents(responses: ResponsesByStep): PolicyId[] {
     accepted.push("data_processing", "app5_collection_notice");
   }
   if (consent.not_medical_advice === true) accepted.push("not_medical_advice");
+  if (consent.data_no_training === true) accepted.push("data_no_training");
   if (consent.terms === true) accepted.push("terms");
   return accepted;
 }
