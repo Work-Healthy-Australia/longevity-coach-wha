@@ -23,7 +23,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 | # | Epic | Pipeline | Estimate | Open bugs | Closed bugs |
 |---|---|---|---:|---:|---:|
 | 1 | The Front Door | `●●●●●` | 100% | 0 | 3 |
-| 2 | The Intake | `●●●◐○` | 97% | 0 | 0 |
+| 2 | The Intake | `●●●◐○` | 99% | 0 | 0 |
 | 3 | The Number | `●●●○○` | 85% | 0 | 1 |
 | 4 | The Protocol | `●●●○○` | 80% | 0 | 0 |
 | 5 | The Report | `●●●○○` | 80% | 0 | 1 |
@@ -73,7 +73,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 2: The Intake
 
 `●●●◐○` Planned · Feature Complete · Unit Tested · ◐ Regression Tested · ○ User Reviewed
-**Estimate: 97%** — questionnaire + uploads + Janet document analyser + SHA-256 deduplication + Janet → `lab_results` structured writer all live. Only outstanding items are external-dependency blocks.
+**Estimate: 99%** — questionnaire + uploads + Janet document analyser + SHA-256 deduplication + Janet → `lab_results` structured writer + per-relative family-history card model all live. Only outstanding item is the E2E Playwright test of the full onboarding flow.
 
 **Shipped:**
 - Six-step questionnaire (basics, medical, family, lifestyle, goals, consent) with save-and-resume.
@@ -86,9 +86,9 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - 14 questionnaire schema unit tests passing.
 - 7 onboarding-action integration tests passing (Vitest with mocked Supabase).
 - Unit tests for `hashFile` and `checkDuplicate`.
+- **Per-relative family-history card model** (2026-04-29) — replaced the per-condition multiselects + separate "Deaths in the family" step with a single unified per-relative step. Each card collects relationship + alive/dead + age + cause-of-death + smoking + alcohol + per-condition age-of-onset list. Six-step questionnaire (was seven). Hydration shim migrates legacy data on every form load; old JSONB keys orphan and get stripped on next save by `stripUnknownKeys`. New `aggregateConditionFromMembers()` derives the engine's `FamilyHistory` shape (`first_degree`, `second_degree`, `age_onset`, `multiple`). **Latent bug fix:** `metabolic.ts:132`'s `multiple` flag now actually fires when ≥ 2 first-degree relatives have diabetes (was silently always false). 41 new tests (14 family-aggregation + 18 migrate-family + 6 family-members-field + 3 integration). Engine itself untouched.
 
 **Outstanding:**
-- Family-history sub-fields (age of onset, cancer types) — blocked on James.
 - E2E Playwright test of the full onboarding flow with a seeded test user fixture.
 
 **Open bugs:** none.

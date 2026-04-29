@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { ResponsesByStep } from "@/lib/questionnaire/schema";
+import { formatRiskDriver } from "@/lib/risk/format-driver";
 import { splitPii, type ProfilePatch } from "@/lib/profiles/pii-split";
 import { recordConsents } from "@/lib/consent/record";
 import type { PolicyId } from "@/lib/consent/policies";
@@ -128,9 +129,7 @@ export async function submitAssessment(
       confidence_level: output.score_confidence,
       data_completeness: output.data_completeness,
       next_recommended_tests: output.next_recommended_tests,
-      top_risk_drivers: output.top_risks.map(
-        (r) => `${r.domain}: ${r.name} (score ${r.score})`,
-      ),
+      top_risk_drivers: output.top_risks.map((r) => formatRiskDriver(r.domain, r.name, r.score)),
       top_protective_levers: protectiveLevers,
       longevity_score: output.longevity_score,
       longevity_label: output.longevity_label,

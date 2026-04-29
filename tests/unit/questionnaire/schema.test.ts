@@ -7,7 +7,6 @@ describe("onboardingQuestionnaire schema", () => {
       "basics",
       "medical",
       "family",
-      "family_deaths",
       "lifestyle",
       "goals",
       "consent",

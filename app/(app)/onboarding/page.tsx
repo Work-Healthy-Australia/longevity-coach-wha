@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { ResponsesByStep } from "@/lib/questionnaire/schema";
 import { onboardingQuestionnaire } from "@/lib/questionnaire/questions";
 import { stripUnknownKeys } from "@/lib/questionnaire/hydrate";
+import { migrateLegacyFamily } from "@/lib/questionnaire/migrate-family";
 import { OnboardingClient } from "./onboarding-client";
 
 export const metadata = { title: "Health assessment · Longevity Coach" };
@@ -47,14 +48,29 @@ export default async function OnboardingPage() {
     (latestDraft?.responses ?? latestCompleted?.responses ?? {}) as ResponsesByStep;
   const isEditing = !latestDraft && !!latestCompleted;
 
-  // Hydrate basics fields from profiles (single source of truth for PII).
-  // stripUnknownKeys drops any keys from older schema versions so a stale
-  // draft can't reintroduce removed fields on the next save.
-  const persistedResponses = stripUnknownKeys(sourceResponses, onboardingQuestionnaire);
+  // Hydrate legacy family-history data into the new per-relative card shape
+  // BEFORE stripping unknown keys — otherwise the legacy keys (which are no
+  // longer in the schema) would be dropped before the migration shim could
+  // read them. Idempotent: once `family.family_members[]` is non-empty, the
+  // shim short-circuits so member edits are never overwritten.
+  const familyMembers = hydrateFamilyMembers(sourceResponses);
+  const sourceWithMembers: ResponsesByStep = {
+    ...sourceResponses,
+    family: {
+      ...((sourceResponses.family as Record<string, unknown>) ?? {}),
+      family_members: familyMembers,
+    },
+  };
+
+  // stripUnknownKeys drops any keys from older schema versions (including the
+  // now-removed legacy family multiselects and deceased-relatives step) so a
+  // stale draft can't reintroduce removed fields on the next save.
+  const responsesWithMigration = stripUnknownKeys(sourceWithMembers, onboardingQuestionnaire);
+
   const initialResponses: ResponsesByStep = {
-    ...persistedResponses,
+    ...responsesWithMigration,
     basics: {
-      ...(persistedResponses.basics ?? {}),
+      ...(responsesWithMigration.basics ?? {}),
       date_of_birth: profile?.date_of_birth ?? "",
       phone_mobile: profile?.phone ?? "",
       address_postal: profile?.address_postal ?? "",
@@ -73,4 +89,21 @@ export default async function OnboardingPage() {
       isEditing={isEditing}
     />
   );
+}
+
+/**
+ * Returns the family_members[] array to use for hydration. If the responses
+ * already carry a non-empty array, it wins; otherwise we derive cards from
+ * legacy condition-multiselect and deceased-relative keys.
+ *
+ * Pure helper so it can be unit-tested without spinning up the page server
+ * component.
+ */
+export function hydrateFamilyMembers(responses: ResponsesByStep): unknown[] {
+  const family = (responses?.family as Record<string, unknown> | undefined) ?? {};
+  const existing = family.family_members;
+  if (Array.isArray(existing) && existing.length > 0) {
+    return existing as unknown[];
+  }
+  return migrateLegacyFamily(responses);
 }

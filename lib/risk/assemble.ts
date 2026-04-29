@@ -11,6 +11,7 @@ import type {
   BloodPanel,
   DietType,
   FamilyHistory,
+  Imaging,
   PatientInput,
   Sex,
   SmokingStatus,
@@ -20,6 +21,8 @@ import type {
 import type {
   CancerHistoryEntry,
   CancerHistoryValue,
+  CardConditionType,
+  FamilyMemberCard,
   ResponsesByStep,
 } from "@/lib/questionnaire/schema";
 
@@ -36,6 +39,24 @@ const SECOND_DEGREE_RELATIVES = new Set([
   "Paternal grandmother",
   "Paternal grandfather",
   "Aunt or uncle",
+]);
+
+// New lowercase relationship keys used by the per-relative card model.
+// Distinct from FIRST/SECOND_DEGREE_RELATIVES which are Title-Case strings
+// kept for the legacy multiselect path.
+const FIRST_DEGREE_REL_KEYS = new Set<string>([
+  "mother",
+  "father",
+  "sister",
+  "brother",
+]);
+const SECOND_DEGREE_REL_KEYS = new Set<string>([
+  "maternal_grandmother",
+  "maternal_grandfather",
+  "paternal_grandmother",
+  "paternal_grandfather",
+  "aunt",
+  "uncle",
 ]);
 
 const BIOMARKER_KEY_MAP: Record<string, keyof BloodPanel> = {
@@ -78,6 +99,30 @@ const BIOMARKER_KEY_MAP: Record<string, keyof BloodPanel> = {
   rbc_magnesium: "magnesium_rbc",
   nlr: "neutrophil_lymphocyte_ratio",
   neutrophil_lymphocyte_ratio: "neutrophil_lymphocyte_ratio",
+};
+
+// Imaging-derived biomarkers that Janet may extract from a DEXA / cardiac CT /
+// carotid ultrasound report. The lab_results writer is a single sink for any
+// structured biomarker Janet finds — these keys are routed into
+// `Biomarkers.imaging` instead of `BloodPanel` at assemble time.
+const IMAGING_BIOMARKER_KEY_MAP: Record<string, keyof Imaging> = {
+  visceral_fat_area: "visceral_fat_area_cm2",
+  visceral_fat_area_cm2: "visceral_fat_area_cm2",
+  vfa: "visceral_fat_area_cm2",
+  coronary_calcium_score: "coronary_calcium_score",
+  cac: "coronary_calcium_score",
+  cac_score: "coronary_calcium_score",
+  agatston: "coronary_calcium_score",
+  carotid_imt: "carotid_IMT",
+  carotid_imt_mm: "carotid_IMT",
+  liver_fat_fraction: "liver_fat_fraction",
+  liver_pdff: "liver_fat_fraction",
+  dexa_t_score_spine: "DEXA_t_score_spine",
+  t_score_spine: "DEXA_t_score_spine",
+  t_score_lumbar: "DEXA_t_score_spine",
+  dexa_t_score_hip: "DEXA_t_score_hip",
+  t_score_hip: "DEXA_t_score_hip",
+  t_score_femoral: "DEXA_t_score_hip",
 };
 
 const SMOKING_MAP: Record<string, SmokingStatus> = {
@@ -174,25 +219,40 @@ export function adaptCancerHistory(
   };
 }
 
-function familyConditionFromMultiselect(
-  relatives: unknown,
-  onsetAge: unknown,
-): FamilyHistory["cardiovascular"] | undefined {
-  if (!Array.isArray(relatives) || relatives.length === 0) return undefined;
-  const list = relatives.filter((r): r is string => typeof r === "string");
-  if (list.includes("None")) return undefined;
-  const firstDegree = list.some((r) => FIRST_DEGREE_RELATIVES.has(r));
-  const secondDegree = list.some((r) => SECOND_DEGREE_RELATIVES.has(r));
-  if (!firstDegree && !secondDegree) return undefined;
-  const out: FamilyHistory["cardiovascular"] = {
-    first_degree: firstDegree,
+/**
+ * Aggregate a per-condition `FamilyHistoryCondition` shape from the new
+ * `family_members[]` cards. Pure / deterministic.
+ *
+ * - `first_degree`: at least one mother/father/sister/brother card has the condition.
+ * - `second_degree`: at least one grandparent/aunt/uncle card has the condition.
+ * - `age_onset`: minimum across all matching cards' `age_onset` (undefined if none provided).
+ * - `multiple`: `true` only when ≥ 2 first-degree cards have the condition. This fixes
+ *   the long-standing silent bug in `metabolic.ts` where the legacy multiselect path
+ *   could not distinguish "Mother" from "Mother + Father".
+ *
+ * Returns `undefined` when no card has the condition.
+ */
+export function aggregateConditionFromMembers(
+  members: FamilyMemberCard[],
+  type: CardConditionType,
+): { first_degree: boolean; second_degree: boolean; age_onset?: number; multiple: boolean } | undefined {
+  const matched = members.flatMap((m) => {
+    const entry = m.conditions?.find((c) => c.type === type);
+    if (!entry) return [];
+    return [{ relationship: m.relationship, age_onset: entry.age_onset }];
+  });
+  if (matched.length === 0) return undefined;
+  const firstDegreeCount = matched.filter((m) => FIRST_DEGREE_REL_KEYS.has(m.relationship)).length;
+  const secondDegree = matched.some((m) => SECOND_DEGREE_REL_KEYS.has(m.relationship));
+  const ages = matched
+    .map((m) => m.age_onset)
+    .filter((a): a is number => typeof a === "number" && Number.isFinite(a));
+  const out: { first_degree: boolean; second_degree: boolean; age_onset?: number; multiple: boolean } = {
+    first_degree: firstDegreeCount > 0,
     second_degree: secondDegree,
+    multiple: firstDegreeCount >= 2,
   };
-  if (typeof onsetAge === "number") out.age_onset = onsetAge;
-  else if (typeof onsetAge === "string" && onsetAge.trim()) {
-    const n = Number(onsetAge);
-    if (Number.isFinite(n)) out.age_onset = n;
-  }
+  if (ages.length > 0) out.age_onset = Math.min(...ages);
   return out;
 }
 
@@ -200,29 +260,15 @@ export function buildFamilyHistory(family: Record<string, unknown> | undefined):
   if (!family) return {};
   const fh: FamilyHistory = {};
 
-  const cv = familyConditionFromMultiselect(
-    family.cardiovascular_relatives,
-    family.cardiovascular_onset_age,
-  );
-  if (cv) fh.cardiovascular = cv;
+  const membersRaw = (family as { family_members?: unknown }).family_members;
+  const members: FamilyMemberCard[] = Array.isArray(membersRaw)
+    ? (membersRaw as FamilyMemberCard[])
+    : [];
 
-  const neuro = familyConditionFromMultiselect(
-    family.neurodegenerative_relatives,
-    family.neurodegenerative_onset_age,
-  );
-  if (neuro) fh.neurodegenerative = neuro;
-
-  const dia = familyConditionFromMultiselect(
-    family.diabetes_relatives,
-    family.diabetes_onset_age,
-  );
-  if (dia) fh.diabetes = dia;
-
-  const osteo = familyConditionFromMultiselect(
-    family.osteoporosis_relatives,
-    family.osteoporosis_onset_age,
-  );
-  if (osteo) fh.osteoporosis = osteo;
+  for (const type of ["cardiovascular", "neurodegenerative", "diabetes", "osteoporosis"] as const) {
+    const agg = aggregateConditionFromMembers(members, type);
+    if (agg) fh[type] = agg;
+  }
 
   const cancer = adaptCancerHistory(family.cancer_history as CancerHistoryValue | undefined);
   if (cancer) fh.cancer = cancer;
@@ -238,15 +284,17 @@ function num(v: unknown): number | undefined {
 
 /**
  * Map an array of biomarkers.lab_results rows (latest per code) into a flat
- * BloodPanel object the engine consumes.
+ * BloodPanel object the engine consumes. Imaging-flagged biomarkers (DEXA,
+ * coronary calcium, etc.) are routed by `buildImagingFromLabResults` instead.
  */
 export function buildBloodPanel(
   rows: Array<{ biomarker: string; value: number; test_date: string }>,
 ): BloodPanel {
-  // Group by lowercase code, keep the row with the latest test_date.
+  // Group by normalised key (lowercase, all non-alphanumerics → underscore),
+  // keep the row with the latest test_date.
   const latest: Record<string, { value: number; test_date: string }> = {};
   rows.forEach((r) => {
-    const key = r.biomarker.toLowerCase().replace(/\s+/g, "_");
+    const key = r.biomarker.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
     if (!latest[key] || r.test_date > latest[key].test_date) {
       latest[key] = { value: r.value, test_date: r.test_date };
     }
@@ -254,6 +302,8 @@ export function buildBloodPanel(
 
   const panel: BloodPanel = {};
   Object.entries(latest).forEach(([code, { value }]) => {
+    // Skip imaging keys — they belong on Biomarkers.imaging.
+    if (IMAGING_BIOMARKER_KEY_MAP[code]) return;
     const target = BIOMARKER_KEY_MAP[code];
     if (target) panel[target] = value;
   });
@@ -261,10 +311,65 @@ export function buildBloodPanel(
 }
 
 /**
+ * Map an array of biomarkers.lab_results rows (latest per code) into a flat
+ * Imaging object — used when Janet has extracted DEXA / cardiac CT / carotid
+ * ultrasound values and persisted them via the lab_results writer.
+ *
+ * Normalises biomarker names by lowercasing then replacing any sequence of
+ * non-alphanumeric characters with a single underscore so hyphens and spaces
+ * map to the same key (e.g. "T-score Spine", "T score spine", "t_score_spine"
+ * all resolve to "t_score_spine").
+ */
+export function buildImagingFromLabResults(
+  rows: Array<{ biomarker: string; value: number; test_date: string }>,
+): Imaging {
+  const latest: Record<string, { value: number; test_date: string }> = {};
+  rows.forEach((r) => {
+    const key = r.biomarker.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
+    if (!latest[key] || r.test_date > latest[key].test_date) {
+      latest[key] = { value: r.value, test_date: r.test_date };
+    }
+  });
+  const imaging: Imaging = {};
+  Object.entries(latest).forEach(([code, { value }]) => {
+    const target = IMAGING_BIOMARKER_KEY_MAP[code];
+    if (target) imaging[target] = value;
+  });
+  return imaging;
+}
+
+/**
+ * Estimate visceral fat area (cm²) from waist circumference when no DEXA
+ * measurement is available. Sex-adjusted, based on the rough population
+ * relationship: VFA ≈ k × (waist_cm − threshold). Used as a fallback only;
+ * a real DEXA-derived value always wins.
+ *
+ * Threshold: 80 cm female, 90 cm male (IDF/AHA metabolic-syndrome cutoffs).
+ * Slope: 5 — empirically calibrated so a male at waist 100 maps to ~50 cm²
+ * (mid-band), at 110 maps to ~100 cm² (high-risk threshold).
+ */
+export function estimateVisceralFatFromWaist(
+  waistCm: number,
+  sex: Sex | undefined,
+): number | undefined {
+  if (!Number.isFinite(waistCm) || waistCm <= 0) return undefined;
+  const threshold = sex === "female" ? 80 : 90;
+  const slope = 5;
+  const estimate = Math.max(0, (waistCm - threshold) * slope);
+  return Math.round(estimate);
+}
+
+/**
  * Average the numeric wearable-relevant fields across the last 7 daily logs.
  */
 export function buildWearableFromLogs(
-  logs: Array<{ hrv: number | null; resting_heart_rate: number | null; steps: number | null; sleep_hours: number | null }>,
+  logs: Array<{
+    hrv: number | null;
+    resting_heart_rate: number | null;
+    steps: number | null;
+    sleep_hours: number | null;
+    deep_sleep_pct?: number | null;
+  }>,
 ): WearableData {
   if (!logs.length) return {};
   const avg = (vals: Array<number | null | undefined>): number | undefined => {
@@ -277,10 +382,12 @@ export function buildWearableFromLogs(
   const rhr = avg(logs.map((l) => l.resting_heart_rate));
   const steps = avg(logs.map((l) => l.steps));
   const sleep = avg(logs.map((l) => l.sleep_hours));
+  const deepSleepPct = avg(logs.map((l) => l.deep_sleep_pct));
   if (hrv != null) wd.hrv_rmssd = Math.round(hrv * 10) / 10;
   if (rhr != null) wd.resting_hr = Math.round(rhr);
   if (steps != null) wd.avg_daily_steps = Math.round(steps);
   if (sleep != null) wd.avg_sleep_duration = Math.round(sleep * 10) / 10;
+  if (deepSleepPct != null) wd.avg_deep_sleep_pct = Math.round(deepSleepPct * 10) / 10;
   return wd;
 }
 
@@ -308,7 +415,24 @@ export function buildPatientInput(sources: AssembleSources): PatientInput {
   const sex = sexFrom(basics.sex_at_birth);
 
   const bloodPanel = buildBloodPanel(sources.labResults);
+  const imagingFromLabs = buildImagingFromLabResults(sources.labResults);
   const wearable = buildWearableFromLogs(sources.dailyLogs);
+
+  // Self-reported VO₂max from the lifestyle step is layered on top of any
+  // wearable-derived value (which today never exists — kept here for the day
+  // a wearable OAuth integration lands). DEXA wins over self-report.
+  const vo2maxSelfReport = num(lifestyle.vo2max_estimated);
+  if (vo2maxSelfReport != null && wearable.vo2max_estimated == null) {
+    wearable.vo2max_estimated = vo2maxSelfReport;
+  }
+
+  const waist = num(basics.waist_circumference_cm);
+  const sexLifted = sexFrom(basics.sex_at_birth);
+  // If no DEXA visceral fat is on file, fall back to a waist-derived estimate.
+  if (imagingFromLabs.visceral_fat_area_cm2 == null && waist != null) {
+    const est = estimateVisceralFatFromWaist(waist, sexLifted);
+    if (est != null) imagingFromLabs.visceral_fat_area_cm2 = est;
+  }
 
   const conditions = Array.isArray(medical.conditions)
     ? (medical.conditions as unknown[]).filter((c): c is string => typeof c === "string")
@@ -332,6 +456,8 @@ export function buildPatientInput(sources: AssembleSources): PatientInput {
       sex,
       height_cm: num(basics.height_cm),
       weight_kg: num(basics.weight_kg),
+      systolic_bp_mmHg: num(basics.systolic_bp_mmHg),
+      waist_circumference_cm: waist ?? undefined,
     },
     family_history: buildFamilyHistory(family),
     medical_history: {
@@ -351,7 +477,7 @@ export function buildPatientInput(sources: AssembleSources): PatientInput {
     },
     biomarkers: {
       blood_panel: bloodPanel,
-      imaging: {},
+      imaging: imagingFromLabs,
       genetic: {},
       hormonal: {},
       microbiome: {},
@@ -399,7 +525,7 @@ export async function assemblePatientFromDB(
     supabase
       .schema("biomarkers")
       .from("daily_logs")
-      .select("hrv, resting_heart_rate, steps, sleep_hours")
+      .select("hrv, resting_heart_rate, steps, sleep_hours, deep_sleep_pct")
       .eq("user_uuid", userId)
       .gte("log_date", sevenDaysAgo),
   ]);

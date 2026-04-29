@@ -7,7 +7,7 @@
 //     - needs Supabase Storage bucket + RLS decision
 //   - Payment step - handled by /api/stripe/checkout, not part of this form
 
-import type { FieldDef, QuestionnaireDef } from "./schema";
+import type { QuestionnaireDef } from "./schema";
 
 export const RELATIVES = [
   "Mother",
@@ -38,60 +38,6 @@ export const CANCER_TYPES = [
   "Other",
 ] as const;
 
-const VITAL_STATUS = ["Alive", "Deceased", "Unknown"] as const;
-
-// Per-condition pair: which relatives were affected + earliest age of onset.
-// Both fields are optional; a user with no family history simply leaves them
-// empty (or selects "None"). The risk engine treats absence as "no signal".
-function familyConditionFields(id: string, label: string): FieldDef[] {
-  return [
-    {
-      id: `${id}_relatives`,
-      label: `${label} — affected relatives`,
-      type: "multiselect",
-      optional: true,
-      options: [...RELATIVES],
-    },
-    {
-      id: `${id}_onset_age`,
-      label: `${label} — earliest age of onset`,
-      type: "number",
-      optional: true,
-      placeholder: "e.g. 55",
-      suffix: "years",
-    },
-  ];
-}
-
-// Per-relative trio: vital status + age + cause of death. Cause/age are only
-// meaningful when status === "Deceased" but we don't yet support conditional
-// fields, so all three are optional and skip-friendly.
-function deceasedRelativeFields(id: string, label: string): FieldDef[] {
-  return [
-    {
-      id: `${id}_status`,
-      label: `${label} — status`,
-      type: "select",
-      optional: true,
-      options: [...VITAL_STATUS],
-    },
-    {
-      id: `${id}_age`,
-      label: `${label} — age (current or at death)`,
-      type: "number",
-      optional: true,
-      suffix: "years",
-    },
-    {
-      id: `${id}_cause_of_death`,
-      label: `${label} — cause of death`,
-      type: "text",
-      optional: true,
-      placeholder: "e.g. heart attack, stroke, cancer (lung)",
-    },
-  ];
-}
-
 export const onboardingQuestionnaire: QuestionnaireDef = {
   steps: [
     {
@@ -119,6 +65,32 @@ export const onboardingQuestionnaire: QuestionnaireDef = {
         },
         { id: "height_cm", label: "Height", type: "number", placeholder: "178", suffix: "cm" },
         { id: "weight_kg", label: "Weight", type: "number", placeholder: "82", suffix: "kg" },
+        {
+          id: "waist_circumference_cm",
+          label: "Waist circumference",
+          type: "number",
+          optional: true,
+          placeholder: "92",
+          suffix: "cm",
+          min: 40,
+          max: 200,
+          step: 1,
+          helpText:
+            "Measured at the level of the navel, after a normal exhale. Used as a proxy for visceral fat when no DEXA scan is available.",
+        },
+        {
+          id: "systolic_bp_mmHg",
+          label: "Recent systolic BP reading",
+          type: "number",
+          optional: true,
+          placeholder: "120",
+          suffix: "mmHg",
+          min: 70,
+          max: 250,
+          step: 1,
+          helpText:
+            "If you have a recent reading from a clinic, home monitor, or pharmacy. Skip if you don't have one. The top number on a BP reading.",
+        },
         {
           id: "ethnicity",
           label: "Ethnicity",
@@ -201,9 +173,16 @@ export const onboardingQuestionnaire: QuestionnaireDef = {
       id: "family",
       label: "Family history",
       description:
-        "For each condition, mark which relatives were affected and (if known) the earliest age it appeared. This feeds your inherited-risk score.",
+        "Add each family member you know about. Mark which conditions they had and at what age. The richest data feeds the most accurate risk picture.",
       fields: [
-        ...familyConditionFields("cardiovascular", "Heart disease or stroke"),
+        {
+          id: "family_members",
+          label: "Family members",
+          type: "family_members",
+          optional: true,
+          helpText:
+            "Add parents, siblings, grandparents, aunts, and uncles. Skip any you don't know about.",
+        },
         {
           id: "cancer_history",
           label: "Cancer in your family",
@@ -212,26 +191,6 @@ export const onboardingQuestionnaire: QuestionnaireDef = {
           helpText:
             "Cancer type, age, and which relatives are the strongest signals for inherited risk. Skip anything you don't know.",
         },
-        ...familyConditionFields(
-          "neurodegenerative",
-          "Neurodegenerative (Alzheimer's, Parkinson's)",
-        ),
-        ...familyConditionFields("diabetes", "Type 2 diabetes"),
-        ...familyConditionFields("osteoporosis", "Osteoporosis or fractures"),
-      ],
-    },
-    {
-      id: "family_deaths",
-      label: "Deaths in the family",
-      description:
-        "If known, record cause of death and age for parents and grandparents. This is the strongest single signal for inherited longevity — the actuarial models depend on it. Skip any you don't know.",
-      fields: [
-        ...deceasedRelativeFields("mother", "Mother"),
-        ...deceasedRelativeFields("father", "Father"),
-        ...deceasedRelativeFields("maternal_grandmother", "Maternal grandmother"),
-        ...deceasedRelativeFields("maternal_grandfather", "Maternal grandfather"),
-        ...deceasedRelativeFields("paternal_grandmother", "Paternal grandmother"),
-        ...deceasedRelativeFields("paternal_grandfather", "Paternal grandfather"),
       ],
     },
     {
@@ -323,6 +282,19 @@ export const onboardingQuestionnaire: QuestionnaireDef = {
             "Vegan",
             "Other",
           ],
+        },
+        {
+          id: "vo2max_estimated",
+          label: "VO₂max",
+          type: "number",
+          optional: true,
+          placeholder: "42",
+          suffix: "mL/kg/min",
+          min: 10,
+          max: 90,
+          step: 1,
+          helpText:
+            "If you know your VO₂max from a clinical assessment or a wearable (Apple Watch, Garmin, Whoop), enter it here. This is the single biggest mortality predictor in the bio-age model. Skip if unknown.",
         },
       ],
     },

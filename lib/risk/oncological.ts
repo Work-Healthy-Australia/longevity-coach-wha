@@ -94,7 +94,15 @@ export function scoreOncological(patient: PatientInput): DomainResult {
     else if (bmi < 30) s = 20;
     else if (bmi < 35) s = 45;
     else s = 70;
-    factors.push({ name: "BMI_onco", raw_value: Math.round(bmi * 10) / 10, score: s, weight: 0.05, modifiable: true, optimal_range: "< 25" });
+    factors.push({
+      name: "BMI (cancer risk)",
+      raw_value: Math.round(bmi * 10) / 10,
+      score: s,
+      weight: 0.05,
+      modifiable: true,
+      optimal_range: "< 25",
+      note: "Scored in stepped bands — obesity-related cancer risk (endometrial, post-menopausal breast, colorectal, kidney) rises in plateaus rather than continuously.",
+    });
   }
 
   if (img.visceral_fat_area_cm2 != null) {

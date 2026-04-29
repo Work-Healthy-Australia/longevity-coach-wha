@@ -150,7 +150,8 @@ export interface Demographics {
   sex?: Sex;
   height_cm?: number;
   weight_kg?: number;
-  systolic_bp_mmHg?: number;  // NEW — vital sign, optional
+  systolic_bp_mmHg?: number;
+  waist_circumference_cm?: number;
 }
 
 export interface PatientInput {

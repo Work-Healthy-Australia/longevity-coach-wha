@@ -34,7 +34,7 @@ export const INTERVENTION_EFFECT_SIZES: Record<string, number> = {
   HOMA_IR: 25, fasting_glucose: 15,
   tg_hdl_ratio: 20, uric_acid: 15, ALT: 15, GGT: 15,
   liver_fat_fraction: 20, visceral_fat: 20, visceral_fat_onco: 20,
-  BMI: 15, BMI_onco: 15, microbiome_diversity: 20,
+  "BMI (metabolic)": 15, "BMI (cancer risk)": 15, microbiome_diversity: 20,
   diet_quality: 20, diet_onco: 20, exercise_volume: 20,
   deep_sleep_pct: 20, sleep_duration: 15, stress_level: 25,
   alcohol: 20, alcohol_onco: 20,
