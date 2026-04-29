@@ -10,6 +10,7 @@ import {
 } from 'ai';
 import { type ZodTypeAny, type infer as ZodInfer } from 'zod';
 import { loadAgentDef, getAnthropicModel } from '@/lib/ai/loader';
+import { recordUsage, extractUsage, type UsagePath } from '@/lib/ai/usage';
 
 export interface StreamingAgentOptions {
   /** Appended after def.system_prompt — caller must include \n\n prefix if a blank line is needed. */
@@ -23,12 +24,15 @@ export interface StreamingAgentOptions {
   tools?: Record<string, Tool>;
   /** Max tool→response cycles when tools are provided. Defaults to 3. */
   maxToolSteps?: number;
+  /** Optional caller user UUID — recorded against the cost row for per-user spend reporting. */
+  userUuid?: string | null;
 }
 
 export function createStreamingAgent(slug: string) {
   return {
     async stream(messages: UIMessage[], opts?: StreamingAgentOptions) {
       const def = await loadAgentDef(slug);
+      const startedAt = Date.now();
       return streamText({
         model: getAnthropicModel(def),
         system: def.system_prompt + (opts?.systemSuffix ?? ''),
@@ -37,7 +41,22 @@ export function createStreamingAgent(slug: string) {
         temperature: def.temperature,
         tools: opts?.tools,
         stopWhen: opts?.tools ? stepCountIs(opts.maxToolSteps ?? 3) : undefined,
-        onFinish: opts?.onFinish,
+        onFinish: async (event) => {
+          // Telemetry first — fire-and-forget so a caller onFinish failure
+          // can't suppress it. Errors inside recordUsage are already swallowed.
+          void recordUsage({
+            agentSlug: slug,
+            model: def.model,
+            userUuid: opts?.userUuid ?? null,
+            usage: extractUsage((event as unknown as { usage?: unknown }).usage),
+            latencyMs: Date.now() - startedAt,
+            success: true,
+            path: 'stream',
+          });
+          if (opts?.onFinish) {
+            await opts.onFinish(event as Parameters<NonNullable<StreamingAgentOptions['onFinish']>>[0]);
+          }
+        },
       });
     },
   };
@@ -137,6 +156,8 @@ export function createPipelineAgent(slug: string) {
       let lastErr: unknown;
 
       for (let attempt = 1; attempt <= 3; attempt++) {
+        const path: UsagePath = attempt === 1 ? 'pipeline_t1' : attempt === 2 ? 'pipeline_t2' : 'pipeline_t3';
+        const startedAt = Date.now();
         try {
           if (attempt <= 2) {
             // ── Tier 1 & 2: structured output via Anthropic tool_use ──────────
@@ -147,6 +168,15 @@ export function createPipelineAgent(slug: string) {
               output: Output.object({ schema }),
               maxOutputTokens: def.max_tokens,
               temperature: attempt === 1 ? def.temperature : 0,
+            });
+
+            void recordUsage({
+              agentSlug: slug,
+              model: def.model,
+              usage: extractUsage((result as unknown as { usage?: unknown }).usage),
+              latencyMs: Date.now() - startedAt,
+              success: result.output != null,
+              path,
             });
 
             if (result.output == null) {
@@ -180,6 +210,15 @@ export function createPipelineAgent(slug: string) {
               prompt: escapePrompt,
               maxOutputTokens: def.max_tokens,
               temperature: 0,
+            });
+
+            void recordUsage({
+              agentSlug: slug,
+              model: def.model,
+              usage: extractUsage((result as unknown as { usage?: unknown }).usage),
+              latencyMs: Date.now() - startedAt,
+              success: true,
+              path,
             });
 
             lastRawText = result.text;
@@ -216,6 +255,19 @@ export function createPipelineAgent(slug: string) {
           if (NoObjectGeneratedError.isInstance(err) && err.text) {
             lastRawText = err.text;
           }
+
+          // Telemetry — record the failed attempt with whatever usage info is
+          // attached to the thrown error (Vercel SDK exposes usage on
+          // NoObjectGeneratedError). Token counts may be 0 for hard failures.
+          const errUsage = (err as { usage?: unknown } | undefined)?.usage;
+          void recordUsage({
+            agentSlug: slug,
+            model: def.model,
+            usage: extractUsage(errUsage),
+            latencyMs: Date.now() - startedAt,
+            success: false,
+            path,
+          });
 
           // Before spending another LLM call, try to heal from whatever raw text we have
           if (lastRawText && attempt < 3) {
