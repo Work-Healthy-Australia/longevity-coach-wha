@@ -62,6 +62,38 @@ export function ProductsClient({
         { header: "Stripe", cell: (r) => (r.stripe_price_id ? "✓" : "—") },
       ]}
       onPatch={(id, body) => putJson(`/api/admin/products/${id}`, body)}
+      onUpdate={async (id, form) => {
+        const fd = new FormData(form);
+        await putJson(`/api/admin/products/${id}`, {
+          product_code: String(fd.get("product_code") ?? ""),
+          name: String(fd.get("name") ?? ""),
+          description: (fd.get("description") as string) || null,
+          category: String(fd.get("category") ?? "other"),
+          wholesale_cents: Number(fd.get("wholesale_cents") ?? 0),
+          retail_cents: Number(fd.get("retail_cents") ?? 0),
+          stripe_price_id: (fd.get("stripe_price_id") as string) || null,
+        });
+      }}
+      editForm={(row) => (
+        <>
+          <label>Product code<input name="product_code" defaultValue={row.product_code} required /></label>
+          <label>Name<input name="name" defaultValue={row.name} required /></label>
+          <label>Description<input name="description" defaultValue={row.description ?? ""} /></label>
+          <label>Category
+            <select name="category" defaultValue={row.category}>
+              <option value="imaging">imaging</option>
+              <option value="pathology">pathology</option>
+              <option value="genomics">genomics</option>
+              <option value="hormonal">hormonal</option>
+              <option value="microbiome">microbiome</option>
+              <option value="other">other</option>
+            </select>
+          </label>
+          <label>Wholesale (cents)<input name="wholesale_cents" type="number" min="0" defaultValue={row.wholesale_cents} required /></label>
+          <label>Retail (cents)<input name="retail_cents" type="number" min="0" defaultValue={row.retail_cents} required /></label>
+          <label>Stripe price ID<input name="stripe_price_id" defaultValue={row.stripe_price_id ?? ""} /></label>
+        </>
+      )}
       onCreate={async (form) => {
         const fd = new FormData(form);
         await postJson("/api/admin/products", {

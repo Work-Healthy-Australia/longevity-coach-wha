@@ -51,6 +51,35 @@ export function AddonsClient({ initialRows }: { initialRows: AddonRow[] }) {
         { header: "Annual", cell: (r) => centsToDollarsString(r.price_annual_cents) },
       ]}
       onPatch={(id, body) => putJson(`/api/admin/plan-addons/${id}`, body)}
+      onUpdate={async (id, form) => {
+        const fd = new FormData(form);
+        await putJson(`/api/admin/plan-addons/${id}`, {
+          name: String(fd.get("name") ?? ""),
+          description: (fd.get("description") as string) || null,
+          price_monthly_cents: Number(fd.get("price_monthly_cents") ?? 0),
+          price_annual_cents: Number(fd.get("price_annual_cents") ?? 0),
+          min_tier: String(fd.get("min_tier") ?? "individual"),
+          stripe_price_id_monthly: String(fd.get("stripe_price_id_monthly") ?? ""),
+          stripe_price_id_annual: String(fd.get("stripe_price_id_annual") ?? ""),
+        });
+      }}
+      editForm={(row) => (
+        <>
+          <label>Name<input name="name" defaultValue={row.name} required /></label>
+          <label>Description<input name="description" defaultValue={row.description ?? ""} /></label>
+          <label>Min tier
+            <select name="min_tier" defaultValue={row.min_tier}>
+              <option value="individual">individual</option>
+              <option value="professional">professional</option>
+              <option value="corporate">corporate</option>
+            </select>
+          </label>
+          <label>Stripe price ID (monthly)<input name="stripe_price_id_monthly" defaultValue={row.stripe_price_id_monthly} required /></label>
+          <label>Stripe price ID (annual)<input name="stripe_price_id_annual" defaultValue={row.stripe_price_id_annual} required /></label>
+          <label>Price monthly (cents)<input name="price_monthly_cents" type="number" min="0" defaultValue={row.price_monthly_cents} required /></label>
+          <label>Price annual (cents)<input name="price_annual_cents" type="number" min="0" defaultValue={row.price_annual_cents} required /></label>
+        </>
+      )}
       onCreate={async (form) => {
         const fd = new FormData(form);
         await postJson("/api/admin/plan-addons", {
