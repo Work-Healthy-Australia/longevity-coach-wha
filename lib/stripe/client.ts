@@ -12,6 +12,11 @@ export function getStripe(): Stripe {
 
 export type PlanId = "monthly" | "annual";
 
+/**
+ * @deprecated Use the DB-driven checkout path: POST /api/stripe/checkout with
+ * `{ plan_id, addon_ids[], billing_interval }`. Plans live in `billing.plans`.
+ * Remove once no callers send the legacy `{ plan }` body.
+ */
 export function priceIdForPlan(plan: PlanId): string {
   const id =
     plan === "monthly"

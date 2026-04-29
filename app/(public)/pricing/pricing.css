@@ -1,0 +1,262 @@
+.lc-pricing {
+  min-height: 100vh;
+  background: #fafaf7;
+  color: #1a1a1a;
+  display: flex;
+  flex-direction: column;
+}
+
+.pricing-main {
+  flex: 1;
+  padding: 80px 24px 120px;
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.pricing-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.pricing-header h1 {
+  font-size: 44px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.pricing-header p {
+  font-size: 18px;
+  color: #555;
+}
+
+.pricing-toggle {
+  display: inline-flex;
+  margin: 0 auto 36px;
+  background: #fff;
+  border: 1px solid #e0ddd2;
+  border-radius: 999px;
+  padding: 4px;
+  display: flex;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.pricing-toggle button {
+  padding: 8px 24px;
+  border: 0;
+  background: transparent;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 15px;
+  color: #555;
+}
+
+.pricing-toggle button.active {
+  background: #1a1a1a;
+  color: #fff;
+}
+
+.pricing-toggle .badge {
+  display: inline-block;
+  background: #ffeac1;
+  color: #8a6300;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
+}
+
+.plan-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  margin-bottom: 48px;
+}
+
+.plan-card {
+  background: #fff;
+  border: 2px solid #e0ddd2;
+  border-radius: 12px;
+  padding: 24px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: border-color .15s, box-shadow .15s;
+}
+
+.plan-card:hover {
+  border-color: #c7c1ad;
+}
+
+.plan-card.selected {
+  border-color: #1a1a1a;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.plan-card:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+.plan-tier {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: #888;
+  margin-bottom: 4px;
+}
+
+.plan-name {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.plan-price {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.plan-suffix {
+  font-size: 16px;
+  font-weight: 400;
+  color: #777;
+  margin-left: 4px;
+}
+
+.plan-billed {
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 16px;
+}
+
+.plan-features {
+  font-size: 14px;
+  color: #333;
+  margin-top: 16px;
+}
+
+.plan-features div {
+  margin-bottom: 4px;
+  text-transform: capitalize;
+}
+
+.addons {
+  margin-bottom: 48px;
+}
+
+.addons h2 {
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+
+.addon-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.addon {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #e0ddd2;
+  border-radius: 10px;
+  cursor: pointer;
+  align-items: flex-start;
+}
+
+.addon.gated {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.addon.checked {
+  border-color: #1a1a1a;
+}
+
+.addon input[type=checkbox] {
+  margin-top: 4px;
+}
+
+.addon-body {
+  flex: 1;
+}
+
+.addon-name {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.addon-desc {
+  color: #555;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.addon-meta {
+  font-size: 14px;
+  color: #333;
+}
+
+.addon-meta span {
+  color: #888;
+  margin-left: 2px;
+}
+
+.addon-gate {
+  display: inline-block;
+  margin-left: 10px;
+  font-size: 11px;
+  background: #f0ebda;
+  color: #8a6300;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.pricing-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #e0ddd2;
+  border-radius: 12px;
+  padding: 20px 24px;
+  position: sticky;
+  bottom: 24px;
+}
+
+.pricing-total {
+  font-size: 16px;
+}
+
+.pricing-total strong {
+  font-size: 22px;
+  margin-left: 6px;
+}
+
+.pricing-total span {
+  font-weight: 400;
+  color: #888;
+  font-size: 16px;
+  margin-left: 2px;
+}
+
+.pricing-footer .btn {
+  padding: 12px 24px;
+  border: 0;
+  border-radius: 8px;
+  background: #1a1a1a;
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.pricing-footer .btn:disabled {
+  background: #888;
+  cursor: not-allowed;
+}
