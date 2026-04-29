@@ -392,7 +392,7 @@
 
     <div class="nav-group">
       <div class="nav-label">Planning</div>
-      <a class="nav-item" data-doc="plan">Plans <span class="filename">sprint-2/</span></a>
+      <a class="nav-item" data-doc="plan">Plans <span class="filename">sprint-1/</span></a>
       <a class="nav-item" data-doc="proposals">Proposals <span class="filename">feature-proposal.md</span></a>
     </div>
 
@@ -3243,7 +3243,7 @@ Features already addressed in the current epics are excluded below even where th
     'ai-vision':   { eyebrow: 'Architecture', filename: 'ai-vision.md' },
     'qa-plan':     { eyebrow: 'Quality',      filename: 'qa-plan.md' },
     'qa-report':   { eyebrow: 'Quality',      filename: '2026-04-27-qa-report.md' },
-    'plan':        { eyebrow: 'Planning',     filename: 'Sprint 2 Plans' },
+    'plan':        { eyebrow: 'Planning',     filename: 'Sprint 1 Plans' },
     'proposals':   { eyebrow: 'Planning',     filename: 'au-asean-expansion/feature-proposal.md' },
   };
 
@@ -3287,8 +3287,8 @@ Features already addressed in the current epics are excluded below even where th
         if (!h.id) h.id = slugify(h.textContent);
       });
       document.getElementById('docEyebrow').textContent = 'Planning';
-      document.getElementById('docMeta').textContent = 'Sprint 2 Plans';
-      document.title = 'Longevity Coach · Sprint 2 Plans';
+      document.getElementById('docMeta').textContent = 'Sprint 1 Plans';
+      document.title = 'Longevity Coach · Sprint 1 Plans';
       document.querySelectorAll('.nav-item').forEach((n) => {
         n.classList.toggle('active', n.dataset.doc === 'plan');
       });
