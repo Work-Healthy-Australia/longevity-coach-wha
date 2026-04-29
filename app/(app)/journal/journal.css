@@ -1,0 +1,95 @@
+.lc-journal {
+  max-width: 640px;
+}
+
+.lc-journal h1 {
+  font-family: Georgia, serif;
+  font-weight: 400;
+  font-size: 28px;
+  margin: 0 0 4px;
+  color: #1F3A4D;
+}
+
+.lc-journal > p {
+  font-size: 14px;
+  color: #6B7A82;
+  margin: 0 0 24px;
+}
+
+/* ---- compose form ---- */
+.journal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.journal-form textarea {
+  font: inherit;
+  font-size: 15px;
+  line-height: 1.55;
+  padding: 14px 16px;
+  border: 1px solid #DDE8EE;
+  border-radius: 10px;
+  resize: vertical;
+  min-height: 100px;
+  color: #2B2B2B;
+  background: #fff;
+  transition: border-color 0.15s;
+}
+
+.journal-form textarea:focus {
+  outline: none;
+  border-color: #2F6F8F;
+  box-shadow: 0 0 0 3px rgba(47, 111, 143, 0.12);
+}
+
+.journal-form textarea::placeholder {
+  color: #A5B5BF;
+}
+
+.journal-form button {
+  align-self: flex-end;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 20px;
+  background: #2F6F8F;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.journal-form button:hover {
+  background: #245E78;
+}
+
+/* ---- entries ---- */
+.journal-entries {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.journal-entry {
+  background: #fff;
+  border: 1px solid #E3E8EC;
+  border-radius: 10px;
+  padding: 16px 20px;
+}
+
+.journal-date {
+  font-size: 12px;
+  color: #8A9AA5;
+  margin: 0 0 6px;
+}
+
+.journal-body {
+  font-size: 15px;
+  line-height: 1.55;
+  color: #2B2B2B;
+  margin: 0;
+  white-space: pre-wrap;
+}

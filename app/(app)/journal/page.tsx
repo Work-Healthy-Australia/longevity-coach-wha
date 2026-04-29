@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { saveJournalEntry } from './actions';
+import './journal.css';
 
 export const metadata = { title: 'Journal · Longevity Coach' };
 
