@@ -116,7 +116,15 @@ export function scoreMetabolic(patient: PatientInput): DomainResult {
     else if (bmi < 30) s = 35 + ((bmi - 27) / 3) * 25;
     else if (bmi < 35) s = 60 + ((bmi - 30) / 5) * 25;
     else s = 85;
-    factors.push({ name: "BMI", raw_value: Math.round(bmi * 10) / 10, score: Math.round(s), weight: 0.05, modifiable: true, optimal_range: "18.5–24.9" });
+    factors.push({
+      name: "BMI (metabolic)",
+      raw_value: Math.round(bmi * 10) / 10,
+      score: Math.round(s),
+      weight: 0.05,
+      modifiable: true,
+      optimal_range: "18.5–24.9",
+      note: "Scored on a smooth gradient — insulin resistance and metabolic risk rise continuously with adipose excess.",
+    });
   }
 
   if (mb.diversity_index != null) {
