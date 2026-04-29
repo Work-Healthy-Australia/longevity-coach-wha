@@ -32,7 +32,15 @@ export default async function AdminTiersPage() {
         .order("label"),
     ]);
 
-  const plans = (plansResult.data ?? []) as Plan[];
+  // One plan per tier slug — keep the row with the highest base_price_cents
+  // (guards against legacy duplicate rows from earlier migrations)
+  const allPlans = (plansResult.data ?? []) as Plan[];
+  const seenTiers = new Set<string>();
+  const plans = allPlans.filter((p) => {
+    if (seenTiers.has(p.tier)) return false;
+    seenTiers.add(p.tier);
+    return true;
+  });
 
   return (
     <div className="tiers-page">

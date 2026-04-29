@@ -303,6 +303,20 @@ export function TiersClient({ plans, janetServices, tierInclusions, featureKeys 
     });
   }, []);
 
+  const handleDeleteTier = useCallback((planId: string) => {
+    startTransition(async () => {
+      try {
+        setError(null);
+        await apiDelete(`/api/admin/tiers/${planId}`);
+        setLocalPlans((prev) => prev.filter((p) => p.id !== planId));
+        setLocalInclusions((prev) => prev.filter((i) => i.plan_id !== planId));
+        setExpandedTier(null);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "Delete failed");
+      }
+    });
+  }, []);
+
   const handleAddTier = useCallback(() => {
     if (!newTierName.trim() || !newTierSlug.trim()) return;
     startTransition(async () => {
@@ -357,7 +371,7 @@ export function TiersClient({ plans, janetServices, tierInclusions, featureKeys 
           const annualDisplay = calcAnnualPrice(plan.base_price_cents, plan.annual_discount_pct);
           const isEditing = expandedTier === plan.tier;
           return (
-            <div key={plan.tier} className={`tier-card${isEditing ? " editing" : ""}`}>
+            <div key={plan.id} className={`tier-card${isEditing ? " editing" : ""}`}>
               <div className="tier-card-name">{plan.name}</div>
               <div className="tier-card-price" style={{ color: tierColor(plan.tier) }}>
                 {centsToDisplay(plan.base_price_cents)}
@@ -370,12 +384,26 @@ export function TiersClient({ plans, janetServices, tierInclusions, featureKeys 
                 <span className={`pill ${plan.is_active ? "pill-green" : "pill-grey"}`}>
                   {plan.is_active ? "Active" : "Inactive"}
                 </span>
-                <button
-                  className={isEditing ? "btn-primary btn-xs" : "btn-outline btn-xs"}
-                  onClick={() => handleToggleExpand(plan.tier)}
-                >
-                  {isEditing ? "Editing ▾" : "Edit tier"}
-                </button>
+                <div style={{ display: "flex", gap: 6 }}>
+                  <button
+                    className={isEditing ? "btn-primary btn-xs" : "btn-outline btn-xs"}
+                    onClick={() => handleToggleExpand(plan.tier)}
+                  >
+                    {isEditing ? "Editing ▾" : "Edit"}
+                  </button>
+                  <button
+                    className="btn-danger-xs"
+                    title="Delete tier"
+                    disabled={isPending}
+                    onClick={() => {
+                      if (confirm(`Delete "${plan.name}" tier? This removes all its service inclusions too.`)) {
+                        handleDeleteTier(plan.id);
+                      }
+                    }}
+                  >
+                    ✕
+                  </button>
+                </div>
               </div>
             </div>
           );

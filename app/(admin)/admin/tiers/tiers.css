@@ -68,6 +68,22 @@
 .btn-sm  { padding: 6px 12px; font-size: 12px; }
 .btn-xs  { padding: 4px 10px; font-size: 11px; }
 
+.btn-danger-xs {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  padding: 4px 7px;
+  background: transparent;
+  color: #B9C3CB;
+  border: 1px solid #E3E8EC;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+.btn-danger-xs:hover { color: #991B1B; border-color: #FECACA; background: #FEF2F2; }
+.btn-danger-xs:disabled { opacity: 0.4; cursor: not-allowed; }
+
 /* Pills */
 .pill {
   display: inline-block;
