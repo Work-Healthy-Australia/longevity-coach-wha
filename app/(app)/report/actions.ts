@@ -1,5 +1,36 @@
-'use server';
-import { createClient } from '@/lib/supabase/server';
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { createClient } from "@/lib/supabase/server";
+import { runRiskNarrativePipeline } from "@/lib/ai/pipelines/risk-narrative";
+import { runSupplementProtocolPipeline } from "@/lib/ai/pipelines/supplement-protocol";
+
+type RegenerateState = {
+  error?: string;
+  success?: boolean;
+};
+
+export async function regenerateReport(
+  _prev: RegenerateState | null,
+): Promise<RegenerateState> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Not authenticated." };
+
+  try {
+    // Risk narrative first — supplement pipeline reads risk_scores
+    await runRiskNarrativePipeline(user.id);
+    await runSupplementProtocolPipeline(user.id);
+  } catch (err) {
+    console.error("[regenerateReport] Pipeline error:", err);
+    return { error: "Report generation failed. Please try again." };
+  }
+
+  revalidatePath("/report");
+  return { success: true };
+}
 
 export async function triggerSupplementProtocol(): Promise<{ status: 'generating' | 'error'; message: string }> {
   const supabase = await createClient();

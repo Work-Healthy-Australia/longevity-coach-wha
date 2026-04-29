@@ -21,11 +21,62 @@
   --lc-canvas: #FAFAF7;
   --lc-bg: #F4F7F9;
 
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 24px;
+  align-items: start;
+  font-family: var(--font-lc-sans), system-ui, sans-serif;
+  color: var(--lc-ink);
+}
+
+/* Left column: scrollable report data */
+.lc-report .report-data {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  font-family: var(--font-lc-sans), system-ui, sans-serif;
-  color: var(--lc-ink);
+  min-width: 0;
+}
+
+/* Right column: Janet sticky alongside report */
+.lc-report .report-chat-panel {
+  position: sticky;
+  top: 24px;
+}
+
+/* Chat card fills sticky panel height */
+.lc-report .chat-card {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 120px);
+  max-height: 820px;
+  overflow: hidden;
+}
+
+.lc-report .chat-card-header { flex-shrink: 0; }
+.lc-report .chat-card h2 { margin-bottom: 4px; }
+
+/* Chat container grows to fill remaining card space */
+.lc-report .chat-card .chat-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+/* Messages scroll within the fixed-height panel */
+.lc-report .chat-card .chat-messages {
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+}
+
+@media (max-width: 860px) {
+  .lc-report { grid-template-columns: 1fr; }
+  .lc-report .report-chat-panel { position: static; }
+  .lc-report .chat-card { height: auto; }
+  .lc-report .chat-card .chat-messages { max-height: 400px; }
 }
 
 /* Bio-age hero */
@@ -68,6 +119,41 @@
 .lc-report .confidence-moderate { background: rgba(255,200,100,0.3); }
 .lc-report .confidence-low { background: rgba(255,150,100,0.3); }
 .lc-report .confidence-insufficient { background: rgba(255,100,100,0.3); }
+
+/* Regenerate button */
+.regenerate-form {
+  margin-top: 16px;
+}
+
+.btn-regenerate {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-regenerate:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.btn-regenerate:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.regen-error {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #ffb3b3;
+}
 
 /* Pending state */
 .lc-report .pending-state { padding: 8px 0; }
@@ -298,8 +384,6 @@
 .lc-report .placeholder-text { line-height: 1.6; font-style: italic; }
 
 /* Chat */
-.lc-report .chat-section { display: flex; flex-direction: column; }
-
 .lc-report .chat-container {
   display: flex;
   flex-direction: column;

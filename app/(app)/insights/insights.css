@@ -1,0 +1,185 @@
+.lc-insights {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.insights-section h1,
+.insights-section h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a2332;
+  margin: 0;
+}
+
+.insights-empty {
+  color: #6b7c93;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Weekly check-in insights */
+.insights-list {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.insight-item {
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 1.6;
+  border-left: 3px solid transparent;
+}
+
+.insight-trend {
+  background: #F0F7FF;
+  border-left-color: #2f6f8f;
+  color: #1a3a5c;
+}
+
+.insight-achievement {
+  background: #EEFBF3;
+  border-left-color: #00875a;
+  color: #1a3a2e;
+}
+
+.insight-warning {
+  background: #FFF8EF;
+  border-left-color: #d97706;
+  color: #6b4500;
+}
+
+.insight-suggestion {
+  background: #F4F0FF;
+  border-left-color: #7c3aed;
+  color: #3b1f6e;
+}
+
+/* Research digests */
+.digests-heading {
+  font-size: 20px !important;
+}
+
+.digests-subheading {
+  color: #6b7c93;
+  font-size: 14px;
+  margin: 4px 0 0;
+  line-height: 1.5;
+}
+
+.digests-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.digest-card {
+  background: #fff;
+  border: 1px solid #E3E8EC;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.digest-card:hover {
+  border-color: #c8d4de;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.digest-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.digest-category {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.digest-category-longevity { background: #EEF2FF; color: #4338ca; }
+.digest-category-biohacking { background: #F0FDFA; color: #0f766e; }
+.digest-category-supplements { background: #FFF7ED; color: #c2410c; }
+.digest-category-exercise { background: #ECFDF5; color: #047857; }
+.digest-category-nutrition { background: #FEF9C3; color: #854d0e; }
+.digest-category-sleep { background: #EFF6FF; color: #1d4ed8; }
+
+.digest-evidence {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.digest-evidence-strong { background: #ECFDF5; color: #047857; }
+.digest-evidence-moderate { background: #FFF7ED; color: #c2410c; }
+.digest-evidence-preliminary { background: #F0F4F7; color: #6b7c93; }
+
+.digest-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a2332;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.digest-content {
+  font-size: 14px;
+  color: #4a5568;
+  line-height: 1.65;
+  margin: 0;
+  /* Clamp to 4 lines to keep cards uniform */
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.digest-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 8px;
+  border-top: 1px solid #F0F4F7;
+}
+
+.digest-source {
+  font-size: 12px;
+  color: #6b7c93;
+  font-style: italic;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 70%;
+}
+
+.digest-date {
+  font-size: 12px;
+  color: #6b7c93;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .digests-grid {
+    grid-template-columns: 1fr;
+  }
+}
