@@ -16,7 +16,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
 
-  await runSupplementProtocolPipeline(userId);
+  try {
+    await runSupplementProtocolPipeline(userId);
+    console.log(`[supplement-protocol route] Pipeline completed for user ${userId}`);
+  } catch (err) {
+    console.error(`[supplement-protocol route] Unhandled error for user ${userId}:`, err);
+    return NextResponse.json({ error: String(err) }, { status: 500 });
+  }
 
   return NextResponse.json({ ok: true });
 }

@@ -25,7 +25,7 @@ const MealPlanOutputSchema = z.object({
   week_start: z.string(),
   calorie_target: z.number(),
   macros_target: z.object({ protein_g: z.number(), carbs_g: z.number(), fat_g: z.number() }),
-  meals: z.array(MealSchema).min(7).max(35),
+  meals: z.array(MealSchema),
   shopping_list: z.array(z.object({
     item: z.string(),
     quantity: z.number(),
