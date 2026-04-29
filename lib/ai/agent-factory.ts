@@ -6,7 +6,10 @@ export interface StreamingAgentOptions {
   /** Appended after def.system_prompt — caller must include \n\n prefix if a blank line is needed. */
   systemSuffix?: string;
   /** Non-blocking callback fired after the full response is written. */
-  onFinish?: (opts: { text: string }) => Promise<void>;
+  onFinish?: (opts: {
+    text: string;
+    steps?: ReadonlyArray<{ toolCalls?: ReadonlyArray<{ toolName: string }> }>;
+  }) => Promise<void>;
   /** Tool_use sub-agents Janet can call mid-turn (one level deep only). */
   tools?: Record<string, Tool>;
   /** Max tool→response cycles when tools are provided. Defaults to 3. */

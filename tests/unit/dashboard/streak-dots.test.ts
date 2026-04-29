@@ -74,4 +74,45 @@ describe("streakDots", () => {
     expect(dots.slice(0, 4).every((d) => d.filled === false)).toBe(true);
     expect(dots[6].isToday).toBe(true);
   });
+
+  it("marks 1–2 consecutive missed days as rest within an active streak", () => {
+    // NOW = 2026-04-28 (Tuesday). Logged Apr 23 (Thu) and Apr 27 (Mon).
+    // Gap from Apr 27 going backward: Apr 26 (1st miss → rest), Apr 25 (2nd miss → rest),
+    // Apr 24 (3rd miss → MISSED, breaks run). Algorithm counts from the nearest active day.
+    const dots = streakDots(new Set(["2026-04-23", "2026-04-27"]), NOW);
+    expect(dots[5].date).toBe("2026-04-27");
+    expect(dots[5].filled).toBe(true);   // Mon Apr 27 logged
+    expect(dots[5].isRest).toBe(false);
+    expect(dots[4].date).toBe("2026-04-26");
+    expect(dots[4].isRest).toBe(true);   // 1st miss from Apr 27 → rest
+    expect(dots[4].filled).toBe(false);
+    expect(dots[3].date).toBe("2026-04-25");
+    expect(dots[3].isRest).toBe(true);   // 2nd miss from Apr 27 → rest
+    expect(dots[3].filled).toBe(false);
+    expect(dots[2].date).toBe("2026-04-24");
+    expect(dots[2].isRest).toBe(false);  // 3rd consecutive miss → breaks run, not rest
+    expect(dots[2].filled).toBe(false);
+  });
+
+  it("1-day gap between two logged days is marked rest", () => {
+    // Logged today (2026-04-28) and 2 days ago (2026-04-26); yesterday is a rest day.
+    const dots = streakDots(new Set(["2026-04-28", "2026-04-26"]), NOW);
+    expect(dots[6].filled).toBe(true);  // today logged
+    expect(dots[5].date).toBe("2026-04-27");
+    expect(dots[5].filled).toBe(false);
+    expect(dots[5].isRest).toBe(true);  // 1-day gap = rest
+    expect(dots[4].filled).toBe(true);  // 2026-04-26 logged
+    expect(dots[4].isRest).toBe(false);
+  });
+
+  it("3+ consecutive missed days produce no rest dots — streak broken", () => {
+    // Logged today only; 3+ days back are all missed or rest then missed.
+    const dots = streakDots(new Set(["2026-04-28"]), NOW);
+    expect(dots[6].filled).toBe(true);  // today
+    // Days 3+ behind today (Apr 25 and earlier) must NOT all be rest
+    // The 3rd consecutive miss (Apr 25) breaks the run — isRest=false.
+    const thirdBack = dots.find((d) => d.date === "2026-04-25");
+    expect(thirdBack?.isRest).toBe(false);
+    expect(thirdBack?.filled).toBe(false);
+  });
 });

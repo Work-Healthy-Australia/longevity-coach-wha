@@ -26,11 +26,15 @@ export async function streamJanetTurn(userId: string, messages: UIMessage[]) {
       consult_pt_coach: ptCoachTool(ctx),
       request_meal_plan: mealPlanTool(ctx),
     },
-    onFinish: async ({ text }) => {
+    onFinish: async ({ text, steps }) => {
       const totalMs = Date.now() - t0;
+      const toolsInvoked = (steps ?? []).flatMap((s) =>
+        (s.toolCalls ?? []).map((c) => c.toolName),
+      );
       console.log(JSON.stringify({
         event: 'janet_turn',
         patient_context_ms: ctxMs,
+        tools_invoked: toolsInvoked,
         total_ms: totalMs,
       }));
       const admin = createAdminClient();
