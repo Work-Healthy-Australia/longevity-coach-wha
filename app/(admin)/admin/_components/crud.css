@@ -89,3 +89,30 @@
   font-size: 14px;
   padding: 12px 0;
 }
+
+.crud-edit-row > td {
+  background: #fafaf7;
+  padding: 14px 16px;
+}
+
+.crud-edit-row form {
+  display: grid;
+  gap: 10px;
+}
+
+.crud-edit-row label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: #555;
+}
+
+.crud-edit-row input,
+.crud-edit-row select,
+.crud-edit-row textarea {
+  padding: 8px;
+  border: 1px solid #ddd6c0;
+  border-radius: 6px;
+  font: inherit;
+}
