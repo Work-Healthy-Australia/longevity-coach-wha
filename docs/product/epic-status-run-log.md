@@ -22,7 +22,7 @@ In-flight: origin/feat/260429-agent-complete carries Chef meal-plan pipeline
 
 Flags:    none — all referenced paths verified on disk
 Written:  docs/product/epic-status.md
-PR:       pending (to be opened by this run)
+PR:       https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/28
 ──────────────────────────────────────────────────────
 ```
 
