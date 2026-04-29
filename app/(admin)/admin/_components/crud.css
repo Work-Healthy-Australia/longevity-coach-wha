@@ -1,0 +1,91 @@
+.crud {
+  background: #fff;
+  border: 1px solid #e0ddd2;
+  border-radius: 10px;
+  padding: 16px 20px;
+}
+
+.crud-error {
+  background: #fee;
+  color: #a00;
+  padding: 10px 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+
+.crud-create {
+  margin-bottom: 16px;
+}
+
+.crud-create form {
+  display: grid;
+  gap: 10px;
+  background: #fafaf7;
+  padding: 14px 16px;
+  border-radius: 8px;
+}
+
+.crud-create label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: #555;
+}
+
+.crud-create input,
+.crud-create select,
+.crud-create textarea {
+  padding: 8px;
+  border: 1px solid #ddd6c0;
+  border-radius: 6px;
+  font: inherit;
+}
+
+.crud-form-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.crud-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.crud-table th,
+.crud-table td {
+  padding: 8px 10px;
+  text-align: left;
+  border-bottom: 1px solid #f3f0e5;
+}
+
+.crud-table th {
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #666;
+  letter-spacing: .05em;
+}
+
+.crud button {
+  background: #1a1a1a;
+  color: #fff;
+  border: 0;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.crud button:disabled {
+  background: #888;
+  cursor: not-allowed;
+}
+
+.crud .muted {
+  color: #777;
+  font-size: 14px;
+  padding: 12px 0;
+}

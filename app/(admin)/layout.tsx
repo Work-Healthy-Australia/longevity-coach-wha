@@ -28,6 +28,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <div className="admin-nav-links">
           <a href="/admin">Overview</a>
           <a href="/admin/users">Users</a>
+          <a href="/admin/plans">Plans</a>
+          <a href="/admin/addons">Add-ons</a>
+          <a href="/admin/suppliers">Suppliers</a>
+          <a href="/admin/products">Products</a>
           <a href="/admin/agents">Agents</a>
           <a href="/admin/admins">Admins</a>
           <a href="/dashboard" className="muted">Exit admin</a>
