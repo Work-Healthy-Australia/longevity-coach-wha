@@ -16,7 +16,7 @@ export default async function CheckInPage() {
   const { data: recentLogs } = await supabase
     .schema("biomarkers" as never)
     .from("daily_logs")
-    .select("log_date, mood, energy_level, sleep_hours, workout_duration_min, steps, water_ml, notes")
+    .select("log_date, mood, energy_level, sleep_hours, workout_duration_min, steps, water_ml, hrv, resting_heart_rate, deep_sleep_pct, notes")
     .eq("user_uuid", user!.id)
     .gte("log_date", sevenDaysAgo.toISOString().slice(0, 10))
     .order("log_date", { ascending: false });

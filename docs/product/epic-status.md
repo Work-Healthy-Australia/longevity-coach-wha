@@ -24,7 +24,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 |---|---|---|---:|---:|---:|
 | 1 | The Front Door | `●●●●●` | 100% | 0 | 3 |
 | 2 | The Intake | `●●●◐○` | 99% | 0 | 0 |
-| 3 | The Number | `●●◐○○` | 75% | 0 | 1 |
+| 3 | The Number | `●●◐○○` | 85% | 0 | 1 |
 | 4 | The Protocol | `●●◐○○` | 60% | 0 | 0 |
 | 5 | The Report | `●●○○○` | 65% | 0 | 1 |
 | 6 | The Coach | `●●◐○○` | 90% | 0 | 1 |

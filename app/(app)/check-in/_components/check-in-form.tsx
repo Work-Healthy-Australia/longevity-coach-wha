@@ -10,6 +10,9 @@ export type LogEntry = {
   workout_duration_min: number | null;
   steps: number | null;
   water_ml: number | null;
+  hrv: number | null;
+  resting_heart_rate: number | null;
+  deep_sleep_pct: number | null;
   notes: string | null;
 };
 
@@ -93,6 +96,45 @@ export function CheckInForm({ todayEntry }: { todayEntry: LogEntry | null }) {
           min={0}
           max={20}
           step={1}
+        />
+      </label>
+
+      <label className="checkin-field">
+        <span>Resting HRV (ms, optional)</span>
+        <input
+          type="number"
+          name="hrv"
+          defaultValue={todayEntry?.hrv ?? ""}
+          min={5}
+          max={200}
+          step={1}
+          placeholder="e.g. 45 (from your wearable)"
+        />
+      </label>
+
+      <label className="checkin-field">
+        <span>Resting heart rate (bpm, optional)</span>
+        <input
+          type="number"
+          name="resting_heart_rate"
+          defaultValue={todayEntry?.resting_heart_rate ?? ""}
+          min={30}
+          max={150}
+          step={1}
+          placeholder="e.g. 58"
+        />
+      </label>
+
+      <label className="checkin-field">
+        <span>Deep sleep last night (% of total sleep, optional)</span>
+        <input
+          type="number"
+          name="deep_sleep_pct"
+          defaultValue={todayEntry?.deep_sleep_pct ?? ""}
+          min={0}
+          max={60}
+          step={1}
+          placeholder="e.g. 18"
         />
       </label>
 
