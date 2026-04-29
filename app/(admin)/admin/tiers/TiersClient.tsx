@@ -52,9 +52,6 @@ type Props = {
   featureKeys: FeatureKey[];
 };
 
-const TIER_ORDER = ["core", "clinical", "elite"] as const;
-type TierName = (typeof TIER_ORDER)[number];
-
 const FREQ_MULTIPLIER: Record<string, number> = {
   monthly: 1,
   quarterly: 1 / 3,
@@ -62,6 +59,13 @@ const FREQ_MULTIPLIER: Record<string, number> = {
   once_off: 1 / 12,
   per_participant: 1,
 };
+
+function tierColor(tier: string): string {
+  if (tier === "core") return "#1A3A4A";
+  if (tier === "clinical") return "#2F6F8F";
+  if (tier === "elite") return "#5B21B6";
+  return "#2B7A2B";
+}
 
 function centsToDisplay(cents: number): string {
   return `$${(cents / 100).toFixed(2)}`;
@@ -112,6 +116,11 @@ export function TiersClient({ plans, janetServices, tierInclusions, featureKeys 
   const [localServices, setLocalServices] = useState<JanetService[]>(janetServices);
   const [showJanetPanel, setShowJanetPanel] = useState(false);
   const [showFlagsPanel, setShowFlagsPanel] = useState(false);
+  const [showAddTierModal, setShowAddTierModal] = useState(false);
+  const [newTierName, setNewTierName] = useState("");
+  const [newTierSlug, setNewTierSlug] = useState("");
+  const [newTierPrice, setNewTierPrice] = useState("");
+  const [newTierDiscount, setNewTierDiscount] = useState("20");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -183,7 +192,6 @@ export function TiersClient({ plans, janetServices, tierInclusions, featureKeys 
       startTransition(async () => {
         try {
           setError(null);
-          // Save plan
           await apiPut(`/api/admin/tiers/${plan.id}`, {
             name: plan.name,
             base_price_cents: plan.base_price_cents,
@@ -197,7 +205,6 @@ export function TiersClient({ plans, janetServices, tierInclusions, featureKeys 
             is_active: plan.is_active,
           });
 
-          // Upsert inclusions
           const planInclusions = getInclusions(plan.id);
           for (const inc of planInclusions) {
             await apiPost("/api/admin/tier-inclusions", {
@@ -221,32 +228,29 @@ export function TiersClient({ plans, janetServices, tierInclusions, featureKeys 
     [localPlans, localInclusions],
   );
 
-  const handleServiceSave = useCallback(
-    (svc: JanetService) => {
-      startTransition(async () => {
-        try {
-          await apiPut(`/api/admin/janet-services/${svc.id}`, {
-            name: svc.name,
-            unit_type: svc.unit_type,
-            internal_cost_cents: svc.internal_cost_cents,
-            retail_value_cents: svc.retail_value_cents,
-            delivery_owner: svc.delivery_owner,
-            is_active: svc.is_active,
-          });
-        } catch (e) {
-          setError(e instanceof Error ? e.message : "Save failed");
-        }
-      });
-    },
-    [],
-  );
+  const handleServiceSave = useCallback((svc: JanetService) => {
+    startTransition(async () => {
+      try {
+        await apiPut(`/api/admin/janet-services/${svc.id}`, {
+          name: svc.name,
+          unit_type: svc.unit_type,
+          internal_cost_cents: svc.internal_cost_cents,
+          retail_value_cents: svc.retail_value_cents,
+          delivery_owner: svc.delivery_owner,
+          is_active: svc.is_active,
+        });
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "Save failed");
+      }
+    });
+  }, []);
 
   const handleAddService = useCallback(() => {
     startTransition(async () => {
       try {
         const result = (await apiPost("/api/admin/janet-services", {
           name: "New Service",
-          unit_type: "session",
+          unit_type: "per_session",
           internal_cost_cents: 0,
           retail_value_cents: 0,
           delivery_owner: null,
@@ -299,19 +303,61 @@ export function TiersClient({ plans, janetServices, tierInclusions, featureKeys 
     });
   }, []);
 
+  const handleDeleteTier = useCallback((planId: string) => {
+    startTransition(async () => {
+      try {
+        setError(null);
+        await apiDelete(`/api/admin/tiers/${planId}`);
+        setLocalPlans((prev) => prev.filter((p) => p.id !== planId));
+        setLocalInclusions((prev) => prev.filter((i) => i.plan_id !== planId));
+        setExpandedTier(null);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "Delete failed");
+      }
+    });
+  }, []);
+
+  const handleAddTier = useCallback(() => {
+    if (!newTierName.trim() || !newTierSlug.trim()) return;
+    startTransition(async () => {
+      try {
+        setError(null);
+        const slug = newTierSlug.trim().toLowerCase().replace(/\s+/g, "_");
+        const result = (await apiPost("/api/admin/tiers", {
+          name: newTierName.trim(),
+          tier: slug,
+          base_price_cents: Math.round(Number(newTierPrice || 0) * 100),
+          annual_discount_pct: Number(newTierDiscount || 0),
+        })) as Plan;
+        setLocalPlans((prev) => [...prev, result]);
+        setShowAddTierModal(false);
+        setNewTierName("");
+        setNewTierSlug("");
+        setNewTierPrice("");
+        setNewTierDiscount("20");
+        setExpandedTier(result.tier);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "Create failed");
+      }
+    });
+  }, [newTierName, newTierSlug, newTierPrice, newTierDiscount]);
+
   return (
     <>
       <div className="tiers-header">
         <div className="tiers-header-left">
           <h1>Tiers</h1>
-          <p>/admin/tiers — configure Core, Clinical, and Elite subscription tiers (B2C)</p>
+          <p>/admin/tiers — configure subscription tiers (B2C)</p>
         </div>
         <div className="tiers-header-actions">
           <button className="btn-outline btn-sm" onClick={() => setShowFlagsPanel(true)}>
             Feature Keys
           </button>
-          <button className="btn-primary btn-sm" onClick={() => setShowJanetPanel(true)}>
+          <button className="btn-outline btn-sm" onClick={() => setShowJanetPanel(true)}>
             Janet Services
+          </button>
+          <button className="btn-primary btn-sm" onClick={() => setShowAddTierModal(true)}>
+            + Add Tier
           </button>
         </div>
       </div>
@@ -320,50 +366,44 @@ export function TiersClient({ plans, janetServices, tierInclusions, featureKeys 
 
       {/* Horizontal tier card row */}
       <div className="tier-cards">
-        {TIER_ORDER.map((tier) => {
-          const plan = getPlan(tier);
-          const inclCount = plan ? getInclusions(plan.id).length : 0;
-          const annualDisplay = plan
-            ? calcAnnualPrice(plan.base_price_cents, plan.annual_discount_pct)
-            : "—";
-          const isEditing = expandedTier === tier;
-          const tierPriceColors: Record<TierName, string> = {
-            core: "#1A3A4A",
-            clinical: "#2F6F8F",
-            elite: "#5B21B6",
-          };
-          const tierLabels: Record<TierName, string> = {
-            core: "Core",
-            clinical: "Clinical",
-            elite: "Elite",
-          };
+        {localPlans.map((plan) => {
+          const inclCount = getInclusions(plan.id).length;
+          const annualDisplay = calcAnnualPrice(plan.base_price_cents, plan.annual_discount_pct);
+          const isEditing = expandedTier === plan.tier;
           return (
-            <div key={tier} className={`tier-card${isEditing ? " editing" : ""}`}>
-              <div className="tier-card-name">{tierLabels[tier]}</div>
-              {plan ? (
-                <div
-                  className="tier-card-price"
-                  style={{ color: tierPriceColors[tier] }}
-                >
-                  {centsToDisplay(plan.base_price_cents)}
-                  <span style={{ fontSize: 14, fontWeight: 400, color: "#9AABBA" }}>/mo</span>
-                </div>
-              ) : (
-                <div className="tier-card-price" style={{ color: "#9AABBA" }}>—</div>
-              )}
+            <div key={plan.id} className={`tier-card${isEditing ? " editing" : ""}`}>
+              <div className="tier-card-name">{plan.name}</div>
+              <div className="tier-card-price" style={{ color: tierColor(plan.tier) }}>
+                {centsToDisplay(plan.base_price_cents)}
+                <span style={{ fontSize: 14, fontWeight: 400, color: "#9AABBA" }}>/mo</span>
+              </div>
               <div className="tier-card-meta">
                 {inclCount} inclusion{inclCount !== 1 ? "s" : ""} · Annual: {annualDisplay}
               </div>
               <div style={{ display: "flex", gap: 8, alignItems: "center", justifyContent: "space-between" }}>
-                <span className={`pill ${plan?.is_active ? "pill-green" : "pill-grey"}`}>
-                  {plan?.is_active ? "Active" : "Inactive"}
+                <span className={`pill ${plan.is_active ? "pill-green" : "pill-grey"}`}>
+                  {plan.is_active ? "Active" : "Inactive"}
                 </span>
-                <button
-                  className={isEditing ? "btn-primary btn-xs" : "btn-outline btn-xs"}
-                  onClick={() => handleToggleExpand(tier)}
-                >
-                  {isEditing ? "Editing ▾" : "Edit tier"}
-                </button>
+                <div style={{ display: "flex", gap: 6 }}>
+                  <button
+                    className={isEditing ? "btn-primary btn-xs" : "btn-outline btn-xs"}
+                    onClick={() => handleToggleExpand(plan.tier)}
+                  >
+                    {isEditing ? "Editing ▾" : "Edit"}
+                  </button>
+                  <button
+                    className="btn-danger-xs"
+                    title="Delete tier"
+                    disabled={isPending}
+                    onClick={() => {
+                      if (confirm(`Delete "${plan.name}" tier? This removes all its service inclusions too.`)) {
+                        handleDeleteTier(plan.id);
+                      }
+                    }}
+                  >
+                    ✕
+                  </button>
+                </div>
               </div>
             </div>
           );
@@ -372,26 +412,101 @@ export function TiersClient({ plans, janetServices, tierInclusions, featureKeys 
 
       {/* Editor below the card row */}
       {expandedTier && (() => {
-        const tier = expandedTier as TierName;
-        const plan = getPlan(tier);
+        const plan = getPlan(expandedTier);
         return (
           <TierEditor
-            tier={tier}
+            tier={expandedTier}
             plan={plan}
             allServices={localServices}
             inclusions={plan ? getInclusions(plan.id) : []}
             featureKeys={localFeatureKeys}
             isPending={isPending}
-            onPlanChange={(field, value) => handlePlanChange(tier, field, value)}
+            onPlanChange={(field, value) => handlePlanChange(expandedTier, field, value)}
             onInclusionChange={handleInclusionChange}
             onToggleInclusion={handleToggleInclusion}
-            onSave={() => handleSave(tier)}
+            onSave={() => handleSave(expandedTier)}
             onCancel={() => setExpandedTier(null)}
             onAddCustomFlag={handleAddFeatureKey}
             error={error}
           />
         );
       })()}
+
+      {/* Add Tier modal */}
+      {showAddTierModal && (
+        <>
+          <div className="panel-overlay" onClick={() => setShowAddTierModal(false)} />
+          <div className="tier-modal">
+            <div className="panel-header">
+              <div className="panel-title">Add New Tier</div>
+              <button
+                className="panel-close"
+                onClick={() => setShowAddTierModal(false)}
+                aria-label="Close"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="form-field">
+              <label>Display name</label>
+              <input
+                type="text"
+                value={newTierName}
+                placeholder="e.g. Premium"
+                onChange={(e) => setNewTierName(e.target.value)}
+                autoFocus
+              />
+            </div>
+            <div className="form-field">
+              <label>Tier slug</label>
+              <input
+                type="text"
+                value={newTierSlug}
+                placeholder="e.g. premium"
+                onChange={(e) => setNewTierSlug(e.target.value)}
+              />
+            </div>
+            <div className="form-field">
+              <label>Monthly price ($)</label>
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                value={newTierPrice}
+                placeholder="0.00"
+                onChange={(e) => setNewTierPrice(e.target.value)}
+              />
+            </div>
+            <div className="form-field">
+              <label>Annual discount %</label>
+              <input
+                type="number"
+                min="0"
+                max="100"
+                step="0.01"
+                value={newTierDiscount}
+                onChange={(e) => setNewTierDiscount(e.target.value)}
+              />
+            </div>
+            <div className="editor-actions" style={{ marginTop: 20 }}>
+              <button
+                className="btn-outline btn-sm"
+                onClick={() => setShowAddTierModal(false)}
+                disabled={isPending}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn-primary btn-sm"
+                disabled={isPending || !newTierName.trim() || !newTierSlug.trim()}
+                onClick={handleAddTier}
+              >
+                {isPending ? "Creating…" : "Create tier"}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
 
       {showJanetPanel && (
         <>
@@ -429,7 +544,7 @@ export function TiersClient({ plans, janetServices, tierInclusions, featureKeys 
 // ─── TierEditor ──────────────────────────────────────────────────────────────
 
 type TierEditorProps = {
-  tier: TierName;
+  tier: string;
   plan: Plan | undefined;
   allServices: JanetService[];
   inclusions: TierInclusion[];
@@ -468,25 +583,10 @@ function TierEditor({
   const [customFlagKey, setCustomFlagKey] = useState("");
   const [customFlagLabel, setCustomFlagLabel] = useState("");
 
-  const tierLabels: Record<TierName, string> = {
-    core: "Core",
-    clinical: "Clinical",
-    elite: "Elite",
-  };
-
-  const tierPriceColors: Record<TierName, string> = {
-    core: "#1A3A4A",
-    clinical: "#2F6F8F",
-    elite: "#5B21B6",
-  };
-
   const coreFlags = featureKeys.filter((f) => f.tier_affinity === "core" && f.is_active);
-  const clinicalFlags = featureKeys.filter(
-    (f) => f.tier_affinity === "clinical" && f.is_active,
-  );
+  const clinicalFlags = featureKeys.filter((f) => f.tier_affinity === "clinical" && f.is_active);
   const eliteFlags = featureKeys.filter((f) => f.tier_affinity === "elite" && f.is_active);
 
-  // Margin calculation
   const totalInternalCostCentsPerMo = inclusions.reduce((sum, inc) => {
     const mult = FREQ_MULTIPLIER[inc.frequency] ?? 1;
     return sum + inc.wholesale_cost_cents * inc.quantity * mult;
@@ -504,11 +604,6 @@ function TierEditor({
       ? ((grossMarginCents / monthlyPriceCents) * 100).toFixed(0)
       : "0";
 
-  const inclusionCount = inclusions.length;
-  const annualDisplay = plan
-    ? calcAnnualPrice(plan.base_price_cents, plan.annual_discount_pct)
-    : "—";
-
   if (!plan) {
     return (
       <div className="tier-editor" style={{ color: "#9AABBA", fontSize: 13 }}>
@@ -517,220 +612,217 @@ function TierEditor({
     );
   }
 
+  const displayName = plan.name;
+  const isKnownTier = tier === "core" || tier === "clinical" || tier === "elite";
+
   return (
     <div className="tier-editor">
-      <div className="editor-title">Editing: {tierLabels[tier]} tier</div>
+      <div className="editor-title">Editing: {displayName} tier</div>
 
       {error && <div className="error-banner crud-error">{error}</div>}
 
-          {/* Pricing */}
-          <div className="editor-section">
-            <div className="editor-section-title">Pricing</div>
-            <div className="pricing-grid">
-              <div className="form-field">
-                <label>Monthly price ($)</label>
-                <input
-                  type="number"
-                  min="0"
-                  value={plan.base_price_cents / 100}
-                  onChange={(e) =>
-                    onPlanChange("base_price_cents", Math.round(Number(e.target.value) * 100))
-                  }
-                />
-              </div>
-              <div className="form-field">
-                <label>Annual discount %</label>
-                <input
-                  type="number"
-                  min="0"
-                  max="100"
-                  step="0.01"
-                  value={plan.annual_discount_pct}
-                  onChange={(e) =>
-                    onPlanChange("annual_discount_pct", Number(e.target.value))
-                  }
-                />
-              </div>
-              <div className="form-field">
-                <label>Annual price (calc)</label>
-                <input
-                  type="text"
-                  value={calcAnnualPrice(plan.base_price_cents, plan.annual_discount_pct)}
-                  readOnly
-                />
-              </div>
-              <div className="form-field">
-                <label>Setup fee ($)</label>
-                <input
-                  type="number"
-                  min="0"
-                  value={plan.setup_fee_cents / 100}
-                  onChange={(e) =>
-                    onPlanChange("setup_fee_cents", Math.round(Number(e.target.value) * 100))
-                  }
-                />
-              </div>
-              <div className="form-field">
-                <label>Min commitment (mo)</label>
-                <input
-                  type="number"
-                  min="0"
-                  value={plan.minimum_commitment_months}
-                  onChange={(e) =>
-                    onPlanChange("minimum_commitment_months", Number(e.target.value))
-                  }
-                />
-              </div>
-            </div>
-
-            <div className="form-field">
-              <label>Stripe Monthly Price ID</label>
-              <input
-                type="text"
-                value={plan.stripe_price_id_monthly ?? ""}
-                onChange={(e) => onPlanChange("stripe_price_id_monthly", e.target.value)}
-              />
-            </div>
-            <div className="form-field" style={{ marginTop: 10 }}>
-              <label>Stripe Annual Price ID</label>
-              <input
-                type="text"
-                value={plan.stripe_price_id_annual ?? ""}
-                onChange={(e) => onPlanChange("stripe_price_id_annual", e.target.value)}
-              />
-            </div>
-            <div className="form-field wide" style={{ marginTop: 10 }}>
-              <label>Public description</label>
-              <textarea
-                value={plan.public_description ?? ""}
-                onChange={(e) => onPlanChange("public_description", e.target.value)}
-              />
-            </div>
+      {/* Pricing */}
+      <div className="editor-section">
+        <div className="editor-section-title">Pricing</div>
+        <div className="pricing-grid">
+          <div className="form-field">
+            <label>Monthly price ($)</label>
+            <input
+              type="number"
+              min="0"
+              value={plan.base_price_cents / 100}
+              onChange={(e) =>
+                onPlanChange("base_price_cents", Math.round(Number(e.target.value) * 100))
+              }
+            />
           </div>
+          <div className="form-field">
+            <label>Annual discount %</label>
+            <input
+              type="number"
+              min="0"
+              max="100"
+              step="0.01"
+              value={plan.annual_discount_pct}
+              onChange={(e) => onPlanChange("annual_discount_pct", Number(e.target.value))}
+            />
+          </div>
+          <div className="form-field">
+            <label>Annual price (calc)</label>
+            <input
+              type="text"
+              value={calcAnnualPrice(plan.base_price_cents, plan.annual_discount_pct)}
+              readOnly
+            />
+          </div>
+          <div className="form-field">
+            <label>Setup fee ($)</label>
+            <input
+              type="number"
+              min="0"
+              value={plan.setup_fee_cents / 100}
+              onChange={(e) =>
+                onPlanChange("setup_fee_cents", Math.round(Number(e.target.value) * 100))
+              }
+            />
+          </div>
+          <div className="form-field">
+            <label>Min commitment (mo)</label>
+            <input
+              type="number"
+              min="0"
+              value={plan.minimum_commitment_months}
+              onChange={(e) =>
+                onPlanChange("minimum_commitment_months", Number(e.target.value))
+              }
+            />
+          </div>
+        </div>
 
-          <hr className="editor-divider" />
+        <div className="form-field">
+          <label>Stripe Monthly Price ID</label>
+          <input
+            type="text"
+            value={plan.stripe_price_id_monthly ?? ""}
+            onChange={(e) => onPlanChange("stripe_price_id_monthly", e.target.value)}
+          />
+        </div>
+        <div className="form-field" style={{ marginTop: 10 }}>
+          <label>Stripe Annual Price ID</label>
+          <input
+            type="text"
+            value={plan.stripe_price_id_annual ?? ""}
+            onChange={(e) => onPlanChange("stripe_price_id_annual", e.target.value)}
+          />
+        </div>
+        <div className="form-field wide" style={{ marginTop: 10 }}>
+          <label>Public description</label>
+          <textarea
+            value={plan.public_description ?? ""}
+            onChange={(e) => onPlanChange("public_description", e.target.value)}
+          />
+        </div>
+      </div>
 
-          {/* Included Janet Services */}
-          <div className="editor-section">
-            <div className="editor-section-title">Included Janet services</div>
-            <table className="inclusion-table">
-              <thead>
-                <tr>
-                  <th style={{ width: 32 }}></th>
-                  <th>Service name</th>
-                  <th>Qty</th>
-                  <th>Frequency</th>
-                  <th>Wholesale $</th>
-                  <th>Retail $</th>
-                  <th>Visible</th>
+      <hr className="editor-divider" />
+
+      {/* Included Janet Services */}
+      <div className="editor-section">
+        <div className="editor-section-title">Included Janet services</div>
+        <table className="inclusion-table">
+          <thead>
+            <tr>
+              <th style={{ width: 32 }}></th>
+              <th>Service name</th>
+              <th>Qty</th>
+              <th>Frequency</th>
+              <th>Wholesale $</th>
+              <th>Retail $</th>
+              <th>Visible</th>
+            </tr>
+          </thead>
+          <tbody>
+            {allServices.map((svc) => {
+              const inc = inclusions.find((i) => i.janet_service_id === svc.id);
+              const isChecked = !!inc;
+              return (
+                <tr key={svc.id} className={isChecked ? "" : "disabled-row"}>
+                  <td>
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={(e) => onToggleInclusion(plan.id, svc.id, e.target.checked)}
+                    />
+                  </td>
+                  <td>{svc.name}</td>
+                  <td>
+                    <input
+                      type="number"
+                      min="1"
+                      value={inc?.quantity ?? 1}
+                      disabled={!isChecked}
+                      onChange={(e) =>
+                        onInclusionChange(plan.id, svc.id, "quantity", Number(e.target.value))
+                      }
+                    />
+                  </td>
+                  <td>
+                    <select
+                      disabled={!isChecked}
+                      value={inc?.frequency ?? "monthly"}
+                      onChange={(e) =>
+                        onInclusionChange(plan.id, svc.id, "frequency", e.target.value)
+                      }
+                    >
+                      <option value="monthly">monthly</option>
+                      <option value="quarterly">quarterly</option>
+                      <option value="annually">annually</option>
+                      <option value="once_off">once off</option>
+                      <option value="per_participant">per participant</option>
+                    </select>
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      min="0"
+                      value={inc ? inc.wholesale_cost_cents / 100 : 0}
+                      disabled={!isChecked}
+                      onChange={(e) =>
+                        onInclusionChange(
+                          plan.id,
+                          svc.id,
+                          "wholesale_cost_cents",
+                          Math.round(Number(e.target.value) * 100),
+                        )
+                      }
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      min="0"
+                      value={inc ? inc.retail_value_cents / 100 : 0}
+                      disabled={!isChecked}
+                      onChange={(e) =>
+                        onInclusionChange(
+                          plan.id,
+                          svc.id,
+                          "retail_value_cents",
+                          Math.round(Number(e.target.value) * 100),
+                        )
+                      }
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="checkbox"
+                      checked={inc?.is_visible_to_customer ?? true}
+                      disabled={!isChecked}
+                      onChange={(e) =>
+                        onInclusionChange(
+                          plan.id,
+                          svc.id,
+                          "is_visible_to_customer",
+                          e.target.checked,
+                        )
+                      }
+                    />
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {allServices.map((svc) => {
-                  const inc = inclusions.find((i) => i.janet_service_id === svc.id);
-                  const isChecked = !!inc;
-                  return (
-                    <tr key={svc.id} className={isChecked ? "" : "disabled-row"}>
-                      <td>
-                        <input
-                          type="checkbox"
-                          checked={isChecked}
-                          onChange={(e) =>
-                            onToggleInclusion(plan.id, svc.id, e.target.checked)
-                          }
-                        />
-                      </td>
-                      <td>{svc.name}</td>
-                      <td>
-                        <input
-                          type="number"
-                          min="1"
-                          value={inc?.quantity ?? 1}
-                          disabled={!isChecked}
-                          onChange={(e) =>
-                            onInclusionChange(
-                              plan.id,
-                              svc.id,
-                              "quantity",
-                              Number(e.target.value),
-                            )
-                          }
-                        />
-                      </td>
-                      <td>
-                        <select
-                          disabled={!isChecked}
-                          value={inc?.frequency ?? "monthly"}
-                          onChange={(e) =>
-                            onInclusionChange(plan.id, svc.id, "frequency", e.target.value)
-                          }
-                        >
-                          <option value="monthly">monthly</option>
-                          <option value="quarterly">quarterly</option>
-                          <option value="annually">annually</option>
-                          <option value="once_off">once off</option>
-                          <option value="per_participant">per participant</option>
-                        </select>
-                      </td>
-                      <td>
-                        <input
-                          type="number"
-                          min="0"
-                          value={inc ? inc.wholesale_cost_cents / 100 : 0}
-                          disabled={!isChecked}
-                          onChange={(e) =>
-                            onInclusionChange(
-                              plan.id,
-                              svc.id,
-                              "wholesale_cost_cents",
-                              Math.round(Number(e.target.value) * 100),
-                            )
-                          }
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="number"
-                          min="0"
-                          value={inc ? inc.retail_value_cents / 100 : 0}
-                          disabled={!isChecked}
-                          onChange={(e) =>
-                            onInclusionChange(
-                              plan.id,
-                              svc.id,
-                              "retail_value_cents",
-                              Math.round(Number(e.target.value) * 100),
-                            )
-                          }
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="checkbox"
-                          checked={inc?.is_visible_to_customer ?? true}
-                          disabled={!isChecked}
-                          onChange={(e) =>
-                            onInclusionChange(
-                              plan.id,
-                              svc.id,
-                              "is_visible_to_customer",
-                              e.target.checked,
-                            )
-                          }
-                        />
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
 
-          <hr className="editor-divider" />
+      <hr className="editor-divider" />
 
-          {/* Feature Flags */}
-          <div className="editor-section">
-            <div className="editor-section-title">Feature flags</div>
+      {/* Feature Flags */}
+      <div className="editor-section">
+        <div className="editor-section-title">Feature flags</div>
+
+        {isKnownTier ? (
+          <>
             <p style={{ fontSize: 13, color: "#6B7C85", margin: "0 0 14px" }}>
               Access is granted by tier hierarchy. Clinical users inherit all Core flags.{" "}
               <strong style={{ color: "#1A3A4A" }}>
@@ -750,20 +842,33 @@ function TierEditor({
               </div>
             </div>
 
-            {/* Clinical flags */}
             {tier === "core" && (
-              <div className="flag-grid-group">
-                <div className="editor-section-title not-available">
-                  Clinical — not available on this tier
+              <>
+                <div className="flag-grid-group">
+                  <div className="editor-section-title not-available">
+                    Clinical — not available on this tier
+                  </div>
+                  <div className="flag-grid" style={{ opacity: 0.4 }}>
+                    {clinicalFlags.map((f) => (
+                      <label key={f.key} className="flag-item disabled">
+                        <input type="checkbox" disabled readOnly /> {f.label}
+                      </label>
+                    ))}
+                  </div>
                 </div>
-                <div className="flag-grid" style={{ opacity: 0.4 }}>
-                  {clinicalFlags.map((f) => (
-                    <label key={f.key} className="flag-item disabled">
-                      <input type="checkbox" disabled readOnly /> {f.label}
-                    </label>
-                  ))}
+                <div className="flag-grid-group">
+                  <div className="editor-section-title not-available">
+                    Elite — not available on this tier
+                  </div>
+                  <div className="flag-grid" style={{ opacity: 0.4 }}>
+                    {eliteFlags.map((f) => (
+                      <label key={f.key} className="flag-item disabled">
+                        <input type="checkbox" disabled readOnly /> {f.label}
+                      </label>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              </>
             )}
 
             {tier === "clinical" && (
@@ -845,64 +950,53 @@ function TierEditor({
                 </div>
               </>
             )}
+          </>
+        ) : (
+          <p style={{ fontSize: 13, color: "#6B7C85", margin: "0 0 14px" }}>
+            Feature flag hierarchy is defined for Core, Clinical, and Elite tiers.{" "}
+            Custom tiers inherit no flags by default — use the Feature Keys panel to
+            assign flags to this tier.
+          </p>
+        )}
+      </div>
 
-            {tier === "core" && (
-              <div className="flag-grid-group">
-                <div className="editor-section-title not-available">
-                  Elite — not available on this tier
-                </div>
-                <div className="flag-grid" style={{ opacity: 0.4 }}>
-                  {eliteFlags.map((f) => (
-                    <label key={f.key} className="flag-item disabled">
-                      <input type="checkbox" disabled readOnly /> {f.label}
-                    </label>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+      {/* Margin summary */}
+      <div className="margin-card">
+        <div className="margin-card-title">Margin summary — {displayName} tier</div>
+        <div className="margin-row">
+          <span className="label">Janet services internal cost/mo</span>
+          <span className="val">{centsToDisplay(totalInternalCostCentsPerMo)}</span>
+        </div>
+        <div className="margin-row">
+          <span className="label">Janet services retail value/mo</span>
+          <span className="val">{centsToDisplay(totalRetailValueCentsPerMo)}</span>
+        </div>
+        <div className="margin-row">
+          <span className="label">Monthly price</span>
+          <span className="val">{centsToDisplay(monthlyPriceCents)}</span>
+        </div>
+        <div className="margin-row">
+          <span className="label">Gross margin</span>
+          <span className={`val${grossMarginCents >= 0 ? " success" : ""}`}>
+            {centsToDisplay(grossMarginCents)} ({grossMarginPct}%)
+          </span>
+        </div>
+        <div className="margin-row note">
+          <span>
+            Supplier products are not bundled into tiers — available a la carte to patients
+            or via B2B plan inclusions.
+          </span>
+        </div>
+      </div>
 
-          {/* Margin summary */}
-          <div className="margin-card">
-            <div className="margin-card-title">Margin summary — {tierLabels[tier]} tier</div>
-            <div className="margin-row">
-              <span className="label">Janet services internal cost/mo</span>
-              <span className="val">{centsToDisplay(totalInternalCostCentsPerMo)}</span>
-            </div>
-            <div className="margin-row">
-              <span className="label">Janet services retail value/mo</span>
-              <span className="val">{centsToDisplay(totalRetailValueCentsPerMo)}</span>
-            </div>
-            <div className="margin-row">
-              <span className="label">Monthly price</span>
-              <span className="val">{centsToDisplay(monthlyPriceCents)}</span>
-            </div>
-            <div className="margin-row">
-              <span className="label">Gross margin</span>
-              <span className={`val${grossMarginCents >= 0 ? " success" : ""}`}>
-                {centsToDisplay(grossMarginCents)} ({grossMarginPct}%)
-              </span>
-            </div>
-            <div className="margin-row note">
-              <span>
-                Supplier products are not bundled into tiers — available a la carte to patients
-                or via B2B plan inclusions.
-              </span>
-            </div>
-          </div>
-
-          <div className="editor-actions">
-            <button className="btn-outline btn-sm" onClick={onCancel} disabled={isPending}>
-              Cancel
-            </button>
-            <button
-              className="btn-primary btn-sm"
-              onClick={onSave}
-              disabled={isPending}
-            >
-              {isPending ? "Saving…" : "Save changes"}
-            </button>
-          </div>
+      <div className="editor-actions">
+        <button className="btn-outline btn-sm" onClick={onCancel} disabled={isPending}>
+          Cancel
+        </button>
+        <button className="btn-primary btn-sm" onClick={onSave} disabled={isPending}>
+          {isPending ? "Saving…" : "Save changes"}
+        </button>
+      </div>
     </div>
   );
 }
@@ -960,12 +1054,20 @@ function JanetServicesPanel({
                 />
               </td>
               <td>
-                <input
+                <select
                   className="panel-input"
                   value={svc.unit_type}
-                  onChange={(e) => onUpdate(svc.id, "unit_type", e.target.value)}
-                  onBlur={() => onSave(svc)}
-                />
+                  onChange={(e) => {
+                    onUpdate(svc.id, "unit_type", e.target.value);
+                    onSave({ ...svc, unit_type: e.target.value });
+                  }}
+                >
+                  <option value="per_month">per_month</option>
+                  <option value="per_session">per_session</option>
+                  <option value="per_year">per_year</option>
+                  <option value="once_off">once_off</option>
+                  <option value="per_patient">per_patient</option>
+                </select>
               </td>
               <td>
                 <input
@@ -1069,12 +1171,7 @@ function FeatureKeysPanel({ featureKeys, onClose, onAdd, onDeactivate }: Feature
         <select
           value={newAffinity}
           onChange={(e) => setNewAffinity(e.target.value)}
-          style={{
-            padding: "6px 8px",
-            border: "1px solid #D4E0E8",
-            borderRadius: 5,
-            fontSize: 13,
-          }}
+          style={{ padding: "6px 8px", border: "1px solid #D4E0E8", borderRadius: 5, fontSize: 13 }}
         >
           <option value="core">core</option>
           <option value="clinical">clinical</option>
@@ -1097,13 +1194,7 @@ function FeatureKeysPanel({ featureKeys, onClose, onAdd, onDeactivate }: Feature
       {(["core", "clinical", "elite"] as const).map((affinityTier) => (
         <div key={affinityTier} style={{ marginBottom: 20 }}>
           <div
-            className={`editor-section-title ${
-              affinityTier === "core"
-                ? "inherited"
-                : affinityTier === "clinical"
-                  ? "this-tier"
-                  : "this-tier"
-            }`}
+            className="editor-section-title this-tier"
             style={{ marginBottom: 8 }}
           >
             {affinityTier.charAt(0).toUpperCase() + affinityTier.slice(1)}

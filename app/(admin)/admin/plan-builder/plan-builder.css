@@ -629,3 +629,30 @@
   justify-content: flex-end;
   margin-top: 18px;
 }
+
+/* Org mode toggle in New Client modal */
+.pb-mode-toggle {
+  display: inline-flex;
+  background: #EDF1F4;
+  border-radius: 7px;
+  padding: 3px;
+  gap: 3px;
+}
+
+.pb-mode-btn {
+  padding: 5px 14px;
+  border-radius: 5px;
+  border: none;
+  background: transparent;
+  color: #6B7C85;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.pb-mode-btn.active {
+  background: #fff;
+  color: #2F6F8F;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}

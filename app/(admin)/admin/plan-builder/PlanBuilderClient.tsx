@@ -108,14 +108,14 @@ export function PlanBuilderClient({
   const [inlineWarning, setInlineWarning] = useState<string | null>(null);
 
   // New client form state
-  const [newOrgId, setNewOrgId] = useState("");
-  const [newPlanName, setNewPlanName] = useState("");
+  const [newClientName, setNewClientName] = useState("");
+  const [localOrgs, setLocalOrgs] = useState<Org[]>(orgs);
 
   const thresholdAbs = getSetting(platformSettings, "suspicion_seat_threshold", 500);
   const thresholdPct = getSetting(platformSettings, "suspicion_pct_threshold", 50);
   const maxSeatsDefault = getSetting(platformSettings, "max_seats_per_tier_default", 10000);
 
-  const selectedOrg = orgs.find((o) => o.id === selectedOrgId) ?? null;
+  const selectedOrg = localOrgs.find((o) => o.id === selectedOrgId) ?? null;
   const selectedPlan = b2bPlans.find((p) => p.org_id === selectedOrgId) ?? null;
   const planAllocations = allocations.filter(
     (a) => a.b2b_plan_id === selectedPlan?.id
@@ -297,25 +297,38 @@ export function PlanBuilderClient({
   // ── Create plan ────────────────────────────────────────────────────────────
 
   async function handleCreatePlan() {
-    const orgId = newOrgId || selectedOrgId;
-    if (!orgId || !newPlanName.trim()) return;
+    if (!newClientName.trim()) return;
     setSaving(true);
     setError(null);
     try {
+      // Always create a new org
+      const orgRes = await fetch("/api/admin/orgs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: newClientName.trim() }),
+      });
+      if (!orgRes.ok) {
+        const j = await orgRes.json().catch(() => ({}));
+        throw new Error((j as { error?: string }).error ?? "Create org failed");
+      }
+      const newOrg = (await orgRes.json()) as Org;
+      setLocalOrgs((prev) => [...prev, newOrg]);
+
+      // Then create the plan for it (name defaults to org name)
       const res = await fetch("/api/admin/b2b-plans", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ org_id: orgId, name: newPlanName }),
+        body: JSON.stringify({ org_id: newOrg.id, name: newClientName.trim() }),
       });
       if (!res.ok) {
         const j = await res.json().catch(() => ({}));
-        throw new Error((j as { error?: string }).error ?? "Create failed");
+        throw new Error((j as { error?: string }).error ?? "Create plan failed");
       }
       const created = (await res.json()) as B2BPlan;
       setB2bPlans((prev) => [created, ...prev]);
       setShowNewClientForm(false);
-      setNewPlanName("");
-      handleSelectOrg(orgId);
+      setNewClientName("");
+      handleSelectOrg(newOrg.id);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Unknown error");
     } finally {
@@ -513,7 +526,7 @@ export function PlanBuilderClient({
               + New Client
             </button>
           </div>
-          {orgs.map((org) => {
+          {localOrgs.map((org) => {
             const plan = b2bPlans.find((p) => p.org_id === org.id);
             const mo = orgMonthly(plan);
             return (
@@ -543,9 +556,9 @@ export function PlanBuilderClient({
               </div>
             );
           })}
-          {orgs.length === 0 && (
+          {localOrgs.length === 0 && (
             <div style={{ padding: "20px", color: "#9AABBA", fontSize: 13 }}>
-              No organisations yet.
+              No organisations yet. Click <strong>+ New Client</strong> to create one.
             </div>
           )}
         </div>
@@ -559,12 +572,31 @@ export function PlanBuilderClient({
               <p>No plan yet for {selectedOrg.name}.</p>
               <button
                 className="pb-create-plan-btn"
-                onClick={() => {
-                  setNewOrgId(selectedOrg.id);
-                  setShowNewClientForm(true);
+                disabled={saving}
+                onClick={async () => {
+                  setSaving(true);
+                  setError(null);
+                  try {
+                    const res = await fetch("/api/admin/b2b-plans", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ org_id: selectedOrg.id, name: selectedOrg.name }),
+                    });
+                    if (!res.ok) {
+                      const j = await res.json().catch(() => ({}));
+                      throw new Error((j as { error?: string }).error ?? "Create plan failed");
+                    }
+                    const created = (await res.json()) as B2BPlan;
+                    setB2bPlans((prev) => [created, ...prev]);
+                    handleSelectOrg(selectedOrg.id);
+                  } catch (e) {
+                    setError(e instanceof Error ? e.message : "Create plan failed");
+                  } finally {
+                    setSaving(false);
+                  }
                 }}
               >
-                Create Plan
+                {saving ? "Creating…" : "Create Plan"}
               </button>
             </div>
           ) : (
@@ -1056,46 +1088,38 @@ export function PlanBuilderClient({
         <div
           className="pb-modal-overlay"
           onClick={(e) => {
-            if (e.target === e.currentTarget) setShowNewClientForm(false);
+            if (e.target === e.currentTarget) {
+              setShowNewClientForm(false);
+              setNewClientName("");
+            }
           }}
         >
           <div className="pb-modal">
-            <h2>Create New Plan</h2>
-            <div className="form-field" style={{ marginBottom: 12 }}>
-              <label>Organisation</label>
-              <select
-                value={newOrgId || selectedOrgId || ""}
-                onChange={(e) => setNewOrgId(e.target.value)}
-              >
-                <option value="">— Select organisation —</option>
-                {orgs
-                  .filter((o) => !b2bPlans.find((p) => p.org_id === o.id))
-                  .map((o) => (
-                    <option key={o.id} value={o.id}>
-                      {o.name}
-                    </option>
-                  ))}
-              </select>
-            </div>
+            <h2>New B2B Client</h2>
             <div className="form-field">
-              <label>Plan name</label>
+              <label>Client / organisation name</label>
               <input
                 type="text"
-                value={newPlanName}
-                placeholder="e.g. Acme 2026"
-                onChange={(e) => setNewPlanName(e.target.value)}
+                value={newClientName}
+                placeholder="e.g. Acme Corp"
+                onChange={(e) => setNewClientName(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleCreatePlan()}
+                autoFocus
               />
             </div>
             <div className="pb-modal-actions">
               <button
                 className="btn-cancel"
-                onClick={() => setShowNewClientForm(false)}
+                onClick={() => {
+                  setShowNewClientForm(false);
+                  setNewClientName("");
+                }}
               >
                 Cancel
               </button>
               <button
                 className="btn-activate"
-                disabled={saving || !newPlanName.trim()}
+                disabled={saving || !newClientName.trim()}
                 onClick={handleCreatePlan}
               >
                 {saving ? "Creating…" : "Create"}

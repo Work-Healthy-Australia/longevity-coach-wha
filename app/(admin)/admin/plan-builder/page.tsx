@@ -33,7 +33,7 @@ export default async function PlanBuilderPage() {
     membersResult,
     memberProductsResult,
   ] = await Promise.all([
-    db.schema("billing").from("organisations").select("id, name, b2b_plan_id").order("name"),
+    db.schema("billing").from("organisations").select("id, name").order("name"),
     db.schema("billing").from("b2b_plans").select("*").order("created_at", { ascending: false }),
     db.schema("billing").from("b2b_plan_tier_allocations").select("*"),
     db.schema("billing").from("b2b_plan_product_inclusions").select("*"),

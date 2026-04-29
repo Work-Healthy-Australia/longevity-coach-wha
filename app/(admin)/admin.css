@@ -7,10 +7,10 @@
 }
 
 .admin-nav {
-  background: #1A3A4A;
+  background: #2B2B2B;
   color: #fff;
-  padding: 0 32px;
-  height: 56px;
+  padding: 0 28px;
+  height: 52px;
   display: flex;
   align-items: center;
   gap: 32px;
@@ -23,7 +23,7 @@
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.3px;
-  color: #fff;
+  color: #F28C38;
   white-space: nowrap;
 }
 

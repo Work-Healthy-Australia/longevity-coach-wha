@@ -15,8 +15,7 @@ export default async function AdminTiersPage() {
         .schema("billing")
         .from("plans")
         .select("*")
-        .in("tier", ["core", "clinical", "elite"])
-        .order("tier"),
+        .order("base_price_cents"),
       admin
         .schema("billing")
         .from("janet_services")
@@ -33,11 +32,15 @@ export default async function AdminTiersPage() {
         .order("label"),
     ]);
 
-  // Sort plans by tier order since raw order() with CASE isn't supported in supabase-js
-  const tierOrder: Record<string, number> = { core: 1, clinical: 2, elite: 3 };
-  const plans = ((plansResult.data ?? []) as Plan[]).sort(
-    (a, b) => (tierOrder[a.tier] ?? 9) - (tierOrder[b.tier] ?? 9),
-  );
+  // One plan per tier slug — keep the row with the highest base_price_cents
+  // (guards against legacy duplicate rows from earlier migrations)
+  const allPlans = (plansResult.data ?? []) as Plan[];
+  const seenTiers = new Set<string>();
+  const plans = allPlans.filter((p) => {
+    if (seenTiers.has(p.tier)) return false;
+    seenTiers.add(p.tier);
+    return true;
+  });
 
   return (
     <div className="tiers-page">
