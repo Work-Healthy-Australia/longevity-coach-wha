@@ -1,4 +1,4 @@
--- 0052_erasure_log_and_data_no_training.sql
+-- 0054_erasure_log_and_data_no_training.sql
 -- Right-to-erasure foundation: an append-only audit table that records every
 -- deletion request and its outcome, plus FK relaxations on existing audit
 -- tables so the audit trail survives a hard-delete of auth.users.

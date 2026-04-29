@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { signOut } from "../(auth)/actions";
 import { SupportFAB } from "./_components/support-fab";
+import { MobileNav } from "./_components/mobile-nav";
 
 export default async function AppLayout({
   children,
@@ -27,6 +28,15 @@ export default async function AppLayout({
 
   const isAdmin = profile?.is_admin ?? false;
 
+  const navItems = [
+    { href: "/dashboard", label: "Dashboard" },
+    { href: "/report", label: "My Report" },
+    { href: "/labs", label: "Labs" },
+    { href: "/uploads", label: "Documents" },
+    { href: "/account", label: "Account" },
+    ...(isAdmin ? [{ href: "/admin", label: "Admin" }] : []),
+  ];
+
   return (
     <div style={{ minHeight: "100dvh", background: "#F4F7F9" }}>
       <header
@@ -48,15 +58,8 @@ export default async function AppLayout({
             priority
           />
         </Link>
-        <nav style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          {[
-            { href: "/dashboard", label: "Dashboard" },
-            { href: "/report", label: "My Report" },
-            { href: "/labs", label: "Labs" },
-            { href: "/uploads", label: "Documents" },
-            { href: "/account", label: "Account" },
-            ...(isAdmin ? [{ href: "/admin", label: "Admin" }] : []),
-          ].map(({ href, label }) => (
+        <nav className="desktop-nav" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          {navItems.map(({ href, label }) => (
             <Link
               key={href}
               href={href}
@@ -89,6 +92,7 @@ export default async function AppLayout({
             </button>
           </form>
         </nav>
+        <MobileNav items={navItems} signOutAction={signOut} />
       </header>
       <main style={{ maxWidth: 960, margin: "0 auto", padding: "32px 24px" }}>
         {children}
