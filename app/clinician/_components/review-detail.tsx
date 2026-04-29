@@ -190,7 +190,7 @@ function ProgramTab({
     <div className="cw-program">
       {review.program_sent_at && (
         <div className="cw-success">
-          Sent to patient on {new Date(review.program_sent_at).toLocaleString()}.
+          <span suppressHydrationWarning>Sent to patient on {new Date(review.program_sent_at).toLocaleString()}.</span>
         </div>
       )}
       <form action={saveAction}>
