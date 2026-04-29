@@ -23,16 +23,16 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 | # | Epic | Pipeline | Estimate | Open bugs | Closed bugs |
 |---|---|---|---:|---:|---:|
 | 1 | The Front Door | `●●●●●` | 100% | 0 | 3 |
-| 2 | The Intake | `●●●◐○` | 99% | 0 | 0 |
+| 2 | The Intake | `●●●●○` | 100% | 0 | 0 |
 | 3 | The Number | `●●●○○` | 85% | 0 | 1 |
 | 4 | The Protocol | `●●●○○` | 85% | 0 | 0 |
 | 5 | The Report | `●●●○○` | 85% | 0 | 1 |
-| 6 | The Coach | `●●●○○` | 95% | 0 | 1 |
-| 7 | The Daily Return | `●●●○○` | 92% | 0 | 0 |
+| 6 | The Coach | `●●●◐○` | 97% | 0 | 1 |
+| 7 | The Daily Return | `●●●○○` | 96% | 0 | 0 |
 | 8 | The Living Record | `●●●○○` | 85% | 0 | 0 |
 | 9 | The Care Team | `●●●◐○` | 75% | 0 | 0 |
 | 10 | The Knowledge Engine | `●●◐○○` | 70% | 0 | 1 |
-| 11 | The Trust Layer | `●●●○○` | 95% | 0 | 1 |
+| 11 | The Trust Layer | `●●●○○` | 96% | 0 | 1 |
 | 12 | The Distribution | `●●◐○○` | 60% | 0 | 0 |
 | 13 | The Business Model | `●●◐○○` | 50% | 0 | 0 |
 | 14 | The Platform Foundation | `●●○○○` | 65% | 0 | 0 |
@@ -72,8 +72,8 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 2: The Intake
 
-`●●●◐○` Planned · Feature Complete · Unit Tested · ◐ Regression Tested · ○ User Reviewed
-**Estimate: 99%** — questionnaire + uploads + Janet document analyser + SHA-256 deduplication + Janet → `lab_results` structured writer + per-relative family-history card model all live. Only outstanding item is the E2E Playwright test of the full onboarding flow.
+`●●●●○` Planned · Feature Complete · Unit Tested · Regression Tested · ○ User Reviewed
+**Estimate: 100%** — questionnaire + uploads + Janet document analyser + SHA-256 deduplication + Janet → `lab_results` structured writer + per-relative family-history card model all live. **E2E Playwright test shipped 2026-04-29.**
 
 **Shipped:**
 - Six-step questionnaire (basics, medical, family, lifestyle, goals, consent) with save-and-resume.
@@ -87,9 +87,9 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - 7 onboarding-action integration tests passing (Vitest with mocked Supabase).
 - Unit tests for `hashFile` and `checkDuplicate`.
 - **Per-relative family-history card model** (2026-04-29) — replaced the per-condition multiselects + separate "Deaths in the family" step with a single unified per-relative step. Each card collects relationship + alive/dead + age + cause-of-death + smoking + alcohol + per-condition age-of-onset list. Six-step questionnaire (was seven). Hydration shim migrates legacy data on every form load; old JSONB keys orphan and get stripped on next save by `stripUnknownKeys`. New `aggregateConditionFromMembers()` derives the engine's `FamilyHistory` shape (`first_degree`, `second_degree`, `age_onset`, `multiple`). **Latent bug fix:** `metabolic.ts:132`'s `multiple` flag now actually fires when ≥ 2 first-degree relatives have diabetes (was silently always false). 41 new tests (14 family-aggregation + 18 migrate-family + 6 family-members-field + 3 integration). Engine itself untouched.
+- **E2E Playwright test** (2026-04-29) — `tests/e2e/onboarding.spec.ts`: 3 tests covering page load, full 6-step walkthrough with submit + redirect, and save-and-resume draft persistence. Requires `TEST_EMAIL`/`TEST_PASSWORD` env vars.
 
-**Outstanding:**
-- E2E Playwright test of the full onboarding flow with a seeded test user fixture.
+**Outstanding:** none — user review pending.
 
 **Open bugs:** none.
 **Closed bugs:** 0.
@@ -176,8 +176,8 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 6: The Coach
 
-`●●●○○` Planned · Feature Complete · Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 95%** — Janet streaming chat, cross-session history, stale-data nudge, health_researcher digests, support agent route, RAG, risk_analyzer + supplement_advisor `tool_use` sub-agents, conversation-summary compression, and eval suites all shipped. Remaining work is end-to-end regression suite and user review.
+`●●●◐○` Planned · Feature Complete · Unit Tested · ◐ Regression Tested · ○ User Reviewed
+**Estimate: 97%** — Janet streaming chat, cross-session history, stale-data nudge, health_researcher digests, support agent route, RAG, risk_analyzer + supplement_advisor `tool_use` sub-agents, conversation-summary compression, eval suites, and **E2E Playwright test** all shipped.
 
 **Shipped:**
 - Janet agent at `lib/ai/agents/janet.ts` (Claude Sonnet 4.6, streaming).
@@ -195,9 +195,9 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - **supplement_advisor as real-time `tool_use` sub-agent** (2026-04-28) — `lib/ai/tools/sage-tool.ts`; Janet invokes supplement_advisor mid-conversation for supplement questions. Unit tests in `tests/unit/ai/tools/sage-tool.test.ts`.
 - **Janet eval suite** (2026-04-28) — `tests/evals/janet.eval.ts`; 5 rubrics: context grounding, supplement grounding, no hallucination, coaching tone, conversation memory. Judge at `tests/evals/judge.ts`.
 - Eval runner at `tests/evals/runner.ts`; patient-context and supplement-plan fixtures.
+- **Janet conversation E2E test** (`tests/e2e/janet-conversation.spec.ts`) — signs in, navigates to /report, sends 3 questions (health, supplement, exercise), asserts non-empty streaming responses. Uses `TEST_EMAIL`/`TEST_PASSWORD` env vars.
 
 **Outstanding:**
-- End-to-end regression Playwright test of the full Janet conversation loop.
 - Latency benchmarking under load (three-LLM-call turns when both risk_analyzer and supplement_advisor are invoked).
 - PT Coach `tool_use` integration (Phase 3, after PT Coach agent is built).
 - Clinical review of sub-agent prompts for appropriate medical language.
@@ -212,7 +212,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 7: The Daily Return
 
 `●●●○○` Planned · Feature Complete · Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 92%** — daily check-in UI, streak math, Mon-Sun dot strip with rest-day support, steps + water capture, risk_analyzer trigger, and journal quick-link all shipped; remaining work is personalised goals, reminders, and weekly digest.
+**Estimate: 96%** — daily check-in UI, streak math, Mon-Sun dot strip with rest-day support, steps + water capture, risk_analyzer trigger, journal quick-link, and **personalised daily goals** all shipped; remaining work is reminders and weekly digest.
 
 **Shipped:**
 - Drip-email cron at `app/api/cron/drip-emails/route.ts`.
@@ -229,9 +229,9 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - **Rest-day streak dots** (2026-04-29, #47) — `streakDots()` delegates to `calculateStreak()` which has rest-day tolerance; days in a 1–2 day rest gap render at 25% opacity, distinct from logged and missed. 4 new test cases.
 - **Journal quick-link** (2026-04-29, #47) — `/journal` tile added to the dashboard quick-links grid.
 - **Janet latency logging** (2026-04-29, #47) — `agent-factory` `onFinish` now emits `tools_invoked` alongside `patient_context_ms` / `total_ms`.
+- **Personalised daily goals** (2026-04-29) — `deriveGoals()` enriched with risk-profile-aware logic: steps (6k–10k based on MSK/CV risk), sleep (7.5–8.5h based on neuro/metabolic risk), water (weight-derived + metabolic bonus), meditation (10–15 min based on questionnaire stress level + neuro risk). New `extractGoalInputs()` helper reads weight and stress from questionnaire JSONB responses. Dashboard now calls `deriveGoals()` instead of hardcoding targets; check-in and insights pages wired identically. 28 unit tests (was 10) covering all risk thresholds, `extractGoalInputs`, and edge cases.
 
 **Outstanding:**
-- Personalised daily goals tied to risk profile (currently goals are static defaults like 8 hours sleep, 8000 steps).
 - Push / SMS / email reminder for the daily check-in.
 - Weekly insights digest from check-in patterns.
 - Health journal full UI (quick-link exists, page not yet built).
@@ -352,7 +352,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 11: The Trust Layer
 
 `●●●○○` Planned · Feature Complete · Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 95%** — RLS + PII boundary + consent records shipped and verified at the schema level, with the pgTAP RLS suite now running in CI on every PR; **export-everything bundle shipped 2026-04-28**; **right-to-erasure flow + "we never train on your data" clause shipped 2026-04-29** across three waves (PRs #46, #48, #50). Remaining trust surfaces (deceased flow, pause/freeze copy refinement, quarterly audit cadence) still outstanding.
+**Estimate: 96%** — RLS + PII boundary + consent records shipped and verified at the schema level, with the pgTAP RLS suite now running in CI on every PR; **export-everything bundle shipped 2026-04-28**; **right-to-erasure flow + "we never train on your data" clause shipped 2026-04-29** across three waves (PRs #46, #48, #50). **Erasure flow smoke-tested end-to-end** with a disposable test user (2026-04-29). Remaining trust surfaces (deceased flow, pause/freeze copy refinement, quarterly audit cadence) still outstanding.
 
 **Shipped:**
 - RLS on every table across `public`, `biomarkers`, `clinical`, `programs`, `billing` schemas.
@@ -366,12 +366,12 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
   - Wave 1 (#46): migration `0052_erasure_log_and_data_no_training.sql` — new append-only `public.erasure_log` audit table (admin-select RLS, service-role-insert), `profiles.erased_at` soft-delete marker, FK relaxation on `consent_records.user_uuid` and `export_log.user_uuid` from `ON DELETE CASCADE` to `ON DELETE SET NULL` so the audit trail outlives a hard-delete. `data_no_training` consent policy registered (`lib/consent/policies.ts`, version `2026-04-29-1`).
   - Wave 2 (#48): cascade engine at `lib/erasure/plan.ts` (24-table data module with per-column scrub modes — `null` / `erased_sentinel` / `empty_jsonb`) + `lib/erasure/execute.ts` (orchestrator). Rewritten `deleteAccount` server action at `app/(app)/account/actions.ts` — 11 numbered steps: confirmation → auth → idempotency lookup against `erasure_log` → request metadata → Stripe cancel (hard-blocks on failure) → storage cleanup → cascade → audit log insert → `profiles.erased_at` stamp → hard-delete (`ENABLE_HARD_DELETE` defaults to true) or sign-out → redirect. Old `app/api/account/route.ts` backdoor deleted. 9 integration tests + 10 unit tests lock the invariants (24-entry coverage, idempotency short-circuit, Stripe-fail abort, payload exactness, happy-path full run).
   - Wave 3 (#50): UX surfaces — fourth onboarding consent toggle wires `data_no_training`; new `/legal/data-handling` static page with named-processors table (Anthropic, Resend, Stripe, Supabase, Vercel); `/account` "How we use your data" card showing acceptance state per current policy version; hardened delete-account button with type-`DELETE` text input replacing the Wave 2 placeholder. Footer link added site-wide on public pages.
+- **Erasure flow smoke test** (2026-04-29) — full end-to-end walkthrough with a disposable test user created via Supabase admin API: signup → onboarding → type-DELETE confirmation → account deleted → `erasure_log` row confirmed → `auth.users` hard-delete verified → audit row survives (FK `ON DELETE SET NULL`). `/legal/data-handling` page verified (4 sections, named-processors table, no console errors). Footer "Data handling" link confirmed on `/` and `/pricing`.
 
 **Outstanding:**
 - Pause / freeze account flow (refinement — basic pause already shipped).
 - Deceased-flag flow with warm copy path (not a checkbox).
 - Quarterly trust audit cadence (logs scrub, signed-URL TTL check, deceased-flow walk-through).
-- Real user-review of the erasure flow (someone running it end-to-end with a disposable account on staging).
 
 **Open bugs:** none.
 

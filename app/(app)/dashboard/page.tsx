@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { calculateStreak } from "@/lib/streaks";
+import { deriveGoals, extractGoalInputs } from "@/lib/goals/derive";
 import { dismissAlert } from "./_actions/dismiss-alert";
 import "./dashboard.css";
 
@@ -161,6 +162,20 @@ export default async function DashboardPage() {
       ? Math.round((adherenceDays / 7) * 100)
       : null;
 
+  // Personalised daily goals from risk profile + questionnaire data
+  const { weightKg, stressLevel } = extractGoalInputs(
+    (assessment?.responses ?? null) as Record<string, unknown> | null,
+  );
+  const goals = deriveGoals({
+    cvRisk: risk?.cv_risk ?? null,
+    metabolicRisk: risk?.metabolic_risk ?? null,
+    neuroRisk: risk?.neuro_risk ?? null,
+    mskRisk: risk?.msk_risk ?? null,
+    oncoRisk: risk?.onco_risk ?? null,
+    weightKg,
+    stressLevel,
+  });
+
   // Top risk domain: the highest numeric value across the five domains.
   const topRisk = risk
     ? RISK_DOMAINS.map((d) => ({ ...d, value: risk[d.key as keyof typeof risk] as number | null }))
@@ -225,6 +240,9 @@ export default async function DashboardPage() {
                 View →
               </Link>
             )}
+            <Link href="/alerts" className="lc-alert-view">
+              All alerts
+            </Link>
             <form action={dismissAlert}>
               <input type="hidden" name="id" value={latestAlert.id} />
               <button type="submit" className="lc-alert-dismiss" aria-label="Dismiss alert">
@@ -241,7 +259,7 @@ export default async function DashboardPage() {
           label="Sleep"
           value={todayLog?.sleep_hours ?? null}
           unit="hrs"
-          target={8}
+          target={goals.sleepHours}
           icon="sleep"
         />
         <TodayTile
@@ -255,7 +273,7 @@ export default async function DashboardPage() {
           label="Steps"
           value={todayLog?.steps ?? null}
           unit=""
-          target={8000}
+          target={goals.steps}
           icon="steps"
         />
         <TodayTile
@@ -263,8 +281,8 @@ export default async function DashboardPage() {
           value={
             todayLog?.water_ml != null ? Math.round(todayLog.water_ml / 250) : null
           }
-          unit="/10"
-          target={10}
+          unit={`/${goals.waterGlasses}`}
+          target={goals.waterGlasses}
           icon="water"
         />
       </section>

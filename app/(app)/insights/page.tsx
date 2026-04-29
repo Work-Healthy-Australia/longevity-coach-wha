@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { generateWeeklyInsights } from '@/lib/insights/weekly';
-import { deriveGoals } from '@/lib/goals/derive';
+import { deriveGoals, extractGoalInputs } from '@/lib/goals/derive';
 import './insights.css';
 
 export const metadata = { title: 'Insights · Longevity Coach' };
@@ -37,7 +37,7 @@ export default async function InsightsPage() {
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-  const [{ data: logsData }, { data: riskData }, { data: updatesData }] = await Promise.all([
+  const [{ data: logsData }, { data: riskData }, { data: updatesData }, { data: assessmentData }] = await Promise.all([
     supabase
       .schema('biomarkers' as never)
       .from('daily_logs')
@@ -47,7 +47,7 @@ export default async function InsightsPage() {
       .order('log_date', { ascending: true }),
     supabase
       .from('risk_scores')
-      .select('cv_risk, metabolic_risk, neuro_risk, msk_risk')
+      .select('cv_risk, metabolic_risk, neuro_risk, onco_risk, msk_risk')
       .eq('user_uuid', user!.id)
       .order('computed_at', { ascending: false })
       .limit(1)
@@ -57,15 +57,27 @@ export default async function InsightsPage() {
       .select('id, title, content, category, source, evidence_level, posted_date')
       .order('posted_date', { ascending: false })
       .limit(12),
+    supabase
+      .from('health_profiles')
+      .select('responses')
+      .eq('user_uuid', user!.id)
+      .not('completed_at', 'is', null)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle(),
   ]);
 
+  const { weightKg, stressLevel } = extractGoalInputs(
+    (assessmentData?.responses ?? null) as Record<string, unknown> | null,
+  );
   const goals = deriveGoals({
     cvRisk: riskData?.cv_risk ?? null,
     metabolicRisk: riskData?.metabolic_risk ?? null,
     neuroRisk: riskData?.neuro_risk ?? null,
     mskRisk: riskData?.msk_risk ?? null,
-    weightKg: null,
-    stressAnxietyIndicator: false,
+    oncoRisk: riskData?.onco_risk ?? null,
+    weightKg,
+    stressLevel,
   });
 
   const logs = (logsData ?? []) as import('@/lib/insights/weekly').DailyLogRow[];

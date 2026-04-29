@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { CheckInForm, type LogEntry } from "./_components/check-in-form";
-import { deriveGoals } from "@/lib/goals/derive";
+import { deriveGoals, extractGoalInputs } from "@/lib/goals/derive";
 import "./check-in.css";
 
 export const metadata = { title: "Daily check-in · Longevity Coach" };
@@ -14,28 +14,35 @@ export default async function CheckInPage() {
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-  const [{ data: riskData }, { data: profileData }] = await Promise.all([
+  const [{ data: riskData }, { data: assessmentData }] = await Promise.all([
     supabase
       .from('risk_scores')
-      .select('cv_risk, metabolic_risk, neuro_risk, msk_risk')
+      .select('cv_risk, metabolic_risk, neuro_risk, onco_risk, msk_risk')
       .eq('user_uuid', user!.id)
       .order('computed_at', { ascending: false })
       .limit(1)
       .maybeSingle(),
     supabase
-      .from('profiles')
-      .select('daily_goals')
-      .eq('id', user!.id)
-      .single(),
+      .from('health_profiles')
+      .select('responses')
+      .eq('user_uuid', user!.id)
+      .not('completed_at', 'is', null)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle(),
   ]);
 
+  const { weightKg, stressLevel } = extractGoalInputs(
+    (assessmentData?.responses ?? null) as Record<string, unknown> | null,
+  );
   const goals = deriveGoals({
     cvRisk: riskData?.cv_risk ?? null,
     metabolicRisk: riskData?.metabolic_risk ?? null,
     neuroRisk: riskData?.neuro_risk ?? null,
     mskRisk: riskData?.msk_risk ?? null,
-    weightKg: null, // not in profiles yet
-    stressAnxietyIndicator: false, // questionnaire parsing deferred
+    oncoRisk: riskData?.onco_risk ?? null,
+    weightKg,
+    stressLevel,
   });
 
   const { data: recentLogs } = await supabase
