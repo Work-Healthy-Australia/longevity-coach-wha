@@ -4,6 +4,30 @@ Append-only log of automated epic-status sync runs.
 
 ---
 
+## 2026-04-30 — 08:30 AEST
+
+```
+── Epic Status Update — longevity-coach-wha ──────────
+Date:     2026-04-30 (Mac on Asia/Ho_Chi_Minh, UTC+7)
+Mode:     UPDATE
+Epics:    14 total
+Changed:
+  Epic 3  (Number)         ●●◐○○ -> ●●●○○   Unit Tested confirmed (34 bio-age + 16 format-driver tests)
+  Epic 4  (Protocol)       ●●◐○○ -> ●●●○○   Unit Tested confirmed (supplement-protocol integration + eval suite)
+  Epic 8  (Living Record)  ●●◐○○ -> ●●●○○   Unit Tested confirmed (53 tests: labs/trends/alerts); 75% -> 80%
+
+No new feature commits on main since 2026-04-29 sync.
+In-flight: origin/feat/260429-agent-complete carries Chef meal-plan pipeline
+  (commit 1f13d35, 2026-04-29) — not yet merged; will affect Epics 6/7 on merge.
+
+Flags:    none — all referenced paths verified on disk
+Written:  docs/product/epic-status.md
+PR:       pending (to be opened by this run)
+──────────────────────────────────────────────────────
+```
+
+---
+
 ## 2026-04-29 — 08:30 AEST
 
 ```

@@ -1,6 +1,6 @@
 # Longevity Coach — Epic Status Dashboard
 
-Last updated **2026-04-29** (08:30 AEST automated sync).
+Last updated **2026-04-30** (08:30 AEST automated sync).
 
 Companion to [epics.md](./epics.md) (strategy, stable) and [product.md](./product.md) (vision). This file is the **at-a-glance status** of each epic: how far through the build pipeline, what's still outstanding, what's broken right now.
 
@@ -24,12 +24,12 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 |---|---|---|---:|---:|---:|
 | 1 | The Front Door | `●●●●●` | 100% | 0 | 3 |
 | 2 | The Intake | `●●●◐○` | 99% | 0 | 0 |
-| 3 | The Number | `●●◐○○` | 90% | 0 | 1 |
-| 4 | The Protocol | `●●◐○○` | 60% | 0 | 0 |
+| 3 | The Number | `●●●○○` | 90% | 0 | 1 |
+| 4 | The Protocol | `●●●○○` | 60% | 0 | 0 |
 | 5 | The Report | `●●○○○` | 65% | 0 | 1 |
 | 6 | The Coach | `●●●◐○` | 98% | 0 | 1 |
 | 7 | The Daily Return | `●●●○○` | 92% | 0 | 0 |
-| 8 | The Living Record | `●●◐○○` | 75% | 0 | 0 |
+| 8 | The Living Record | `●●●○○` | 80% | 0 | 0 |
 | 9 | The Care Team | `●◐○○○` | 25% | 0 | 0 |
 | 10 | The Knowledge Engine | `●◐◐○○` | 60% | 0 | 1 |
 | 11 | The Trust Layer | `●●●○○` | 90% | 0 | 1 |
@@ -98,8 +98,8 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 3: The Number
 
-`●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 90%** — risk_analyzer pipeline ships risk narratives end-to-end with deterministic engine ported and bio-age input coverage at 100% (11/11). Risk-driver display strings cleaned of legacy factor names and redundant domain prefixes (2026-04-29). BMI labelling clarified across domains. GP-panel review still outstanding.
+`●●●○○` Planned · Feature Complete · Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 90%** — risk_analyzer pipeline ships risk narratives end-to-end with deterministic engine ported and bio-age input coverage at 100% (11/11). Risk-driver display strings cleaned of legacy factor names and redundant domain prefixes (2026-04-29). BMI labelling clarified across domains. Unit tests confirmed across bio-age-inputs (34 tests), format-driver (16 tests), scorer/assemble/gp-panel-pack. GP-panel review and per-domain CI regression still outstanding.
 
 **Shipped:**
 - risk_analyzer pipeline at `lib/ai/pipelines/risk-narrative.ts`.
@@ -127,8 +127,8 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 4: The Protocol
 
-`●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 60%** — supplement_advisor pipeline ships a 30-day protocol after every risk_analyzer run; supplement_advisor eval suite shipped 2026-04-28 with 4 rubrics. No deterministic supplement catalog yet — items are LLM-derived.
+`●●●○○` Planned · Feature Complete · Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 60%** — supplement_advisor pipeline ships a 30-day protocol after every risk_analyzer run; supplement_advisor eval suite shipped 2026-04-28 with 4 rubrics. Unit tests confirmed via `tests/integration/ai/supplement-protocol.test.ts` and eval suite runner. No deterministic supplement catalog yet — items are LLM-derived.
 
 **Shipped:**
 - supplement_advisor pipeline at `lib/ai/pipelines/supplement-protocol.ts`.
@@ -247,8 +247,8 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 8: The Living Record
 
-`●●◐○○` Planned · Feature Complete (member labs surface) · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 75%** — five member-visible surfaces shipped: `/labs` (Lab Results UI), `/trends` (Daily-log trends), the alerts surface (`member_alerts` + dashboard chip + repeat-test cron + upload-flow lab-alert hook), the **Janet → `lab_results` structured writer**, and **`/simulator`** (real-time risk simulator with LDL/HbA1c/hsCRP/**Systolic BP**/Weight sliders running the deterministic risk engine in-browser via `useDeferredValue`, side-by-side baseline-vs-simulated display, empty-state CTA). Lab-alert path is now live — fires the moment any Janet-extracted biomarker is `low`/`high`/`critical`. SBP slider added 2026-04-29 with AHA-aligned numeric scoring bands. **Repeat-tests cron now registered in `vercel.json`** and **simulator E2E smoke test** landed 2026-04-29.
+`●●●○○` Planned · Feature Complete (member labs surface) · Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 80%** — five member-visible surfaces shipped: `/labs` (Lab Results UI), `/trends` (Daily-log trends), the alerts surface (`member_alerts` + dashboard chip + repeat-test cron + upload-flow lab-alert hook), the **Janet → `lab_results` structured writer**, and **`/simulator`** (real-time risk simulator with LDL/HbA1c/hsCRP/**Systolic BP**/Weight sliders running the deterministic risk engine in-browser via `useDeferredValue`, side-by-side baseline-vs-simulated display, empty-state CTA). Lab-alert path is now live — fires the moment any Janet-extracted biomarker is `low`/`high`/`critical`. SBP slider added 2026-04-29 with AHA-aligned numeric scoring bands. **Repeat-tests cron now registered in `vercel.json`** and **simulator E2E smoke test** landed 2026-04-29. Unit tests confirmed: 23 (labs helpers), 10 (trends), 20 (alerts evaluators) — 53 tests total across the member-facing surfaces (2026-04-30 audit).
 
 **Shipped:**
 - `biomarkers` schema with `lab_results`, `wearable_summaries`, `daily_logs` tables (migrations `0009`, `0010`).
