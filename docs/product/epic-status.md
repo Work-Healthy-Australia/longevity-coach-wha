@@ -1,6 +1,6 @@
 # Longevity Coach — Epic Status Dashboard
 
-Last updated **2026-04-29**.
+Last updated **2026-04-29** (08:30 AEST automated sync).
 
 Companion to [epics.md](./epics.md) (strategy, stable) and [product.md](./product.md) (vision). This file is the **at-a-glance status** of each epic: how far through the build pipeline, what's still outstanding, what's broken right now.
 
@@ -24,18 +24,18 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 |---|---|---|---:|---:|---:|
 | 1 | The Front Door | `●●●●●` | 100% | 0 | 3 |
 | 2 | The Intake | `●●●◐○` | 99% | 0 | 0 |
-| 3 | The Number | `●●◐○○` | 85% | 0 | 1 |
+| 3 | The Number | `●●◐○○` | 90% | 0 | 1 |
 | 4 | The Protocol | `●●◐○○` | 60% | 0 | 0 |
 | 5 | The Report | `●●○○○` | 65% | 0 | 1 |
-| 6 | The Coach | `●●◐○○` | 90% | 0 | 1 |
-| 7 | The Daily Return | `●●◐○○` | 70% | 0 | 0 |
-| 8 | The Living Record | `●●◐○○` | 70% | 0 | 0 |
-| 9 | The Care Team | `●○○○○` | 5% | 0 | 0 |
+| 6 | The Coach | `●●●◐○` | 98% | 0 | 1 |
+| 7 | The Daily Return | `●●●○○` | 92% | 0 | 0 |
+| 8 | The Living Record | `●●◐○○` | 75% | 0 | 0 |
+| 9 | The Care Team | `●◐○○○` | 25% | 0 | 0 |
 | 10 | The Knowledge Engine | `●◐◐○○` | 60% | 0 | 1 |
-| 11 | The Trust Layer | `●●◐○○` | 65% | 0 | 1 |
-| 12 | The Distribution | `●◐○○○` | 20% | 0 | 0 |
-| 13 | The Business Model | `●○○○○` | 0% | 0 | 0 |
-| 14 | The Platform Foundation | `●◐○○○` | 45% | 0 | 0 |
+| 11 | The Trust Layer | `●●●○○` | 90% | 0 | 1 |
+| 12 | The Distribution | `●◐○○○` | 35% | 0 | 0 |
+| 13 | The Business Model | `●○○○○` | 5% | 0 | 0 |
+| 14 | The Platform Foundation | `●◐○○○` | 60% | 0 | 0 |
 
 **Bug totals:** 0 open, 8 closed. (Bug log: forthcoming `qa/QA-bugs.md`.)
 
@@ -99,7 +99,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 3: The Number
 
 `●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 70%** — risk_analyzer pipeline ships risk narratives end-to-end. Deterministic risk engine ported from Base44 and unit tested; engine output now feeds risk_analyzer for higher-confidence narratives. BUG-003 closed. GP-panel review still outstanding.
+**Estimate: 90%** — risk_analyzer pipeline ships risk narratives end-to-end with deterministic engine ported and bio-age input coverage at 100% (11/11). Risk-driver display strings cleaned of legacy factor names and redundant domain prefixes (2026-04-29). BMI labelling clarified across domains. GP-panel review still outstanding.
 
 **Shipped:**
 - risk_analyzer pipeline at `lib/ai/pipelines/risk-narrative.ts`.
@@ -110,9 +110,11 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - **Deterministic risk engine ported** from Base44 to `lib/risk/` (migration `0034_risk_scores_unique_and_array_fixes.sql`) — five scoring domains (CV, metabolic, brain, cancer, MSK), biological age estimator, confidence levels based on data completeness, modifiable-risk-factor ranking, 6-month projected improvement.
 - Unit tests: `tests/unit/risk/scorer.test.ts`, `tests/unit/risk/_gp-panel-pack.test.ts`, `tests/unit/risk/assemble.test.ts` (snapshot coverage).
 - **Check-in → risk_analyzer trigger** (2026-04-28) — daily check-in submission fires a background risk_analyzer pipeline refresh, completing the data loop: questionnaire → check-in → risk_analyzer → dashboard.
+- **Bio-age input coverage closed** (2026-04-29, commit `c4d6ad7`) — all 5 outstanding gaps wired (VO₂max + waist on onboarding, HRV + RHR + deep-sleep% on /check-in, imaging biomarkers via Janet → `lab_results`). Coverage 7/11 → 11/11. Migration `0046_daily_logs_deep_sleep_pct.sql` (renumbered from 0041) adds `deep_sleep_pct numeric(5,2)`. 34 new tests across `bio-age-inputs`, `validation-extended`, `basics-vo2max-waist`.
+- **BMI factor labelling** (2026-04-29, commit `3663e19`) — clarified BMI factor names across domains so the metabolic and oncological surfaces no longer collide.
+- **Top-risk-drivers display cleanup** (2026-04-29, commits `6ab5d03` + `e39e94c`) — `lib/risk/format-driver.ts` exports `formatRiskDriver()` (writer-side, drops redundant domain prefix) and `cleanLegacyDriver()` (display-time defensive cleaner that also rewrites legacy factor names like `BMI_onco` → `BMI (cancer risk)`). Onboarding action persists clean strings going forward; `/report` pipes existing rows through the cleaner so no DB rewrite is needed. 16 unit tests in `tests/unit/risk/format-driver.test.ts`.
 
 **Outstanding:**
-- risk_analyzer narrative quality: currently reads raw `engine_output`; narrative tone and domain weighting still tuned via risk_analyzer prompt, not the engine.
 - GP-panel review of 10 sample narratives.
 - Per-domain regression tests in CI (currently unit only).
 
@@ -176,8 +178,8 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 6: The Coach
 
-`●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 90%** — Janet streaming chat, cross-session history, stale-data nudge, health_researcher digests, support agent route, RAG, risk_analyzer + supplement_advisor `tool_use` sub-agents, conversation-summary compression, and eval suites all shipped. Remaining work is end-to-end regression suite and user review.
+`●●●◐○` Planned · Feature Complete · Unit Tested · ◐ Regression Tested · ○ User Reviewed
+**Estimate: 98%** — Janet streaming chat, cross-session history, stale-data nudge, health_researcher digests, support agent route, RAG, risk_analyzer + supplement_advisor + **PT Coach** `tool_use` sub-agents, conversation-summary compression, eval suites, and **Janet E2E conversation loop** all shipped. Latency instrumentation now records `patient_context_ms` + `total_ms` per turn. Remaining work is full load-time latency benchmarking and clinical review of sub-agent prompts.
 
 **Shipped:**
 - Janet agent at `lib/ai/agents/janet.ts` (Claude Sonnet 4.6, streaming).
@@ -195,12 +197,15 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - **supplement_advisor as real-time `tool_use` sub-agent** (2026-04-28) — `lib/ai/tools/sage-tool.ts`; Janet invokes supplement_advisor mid-conversation for supplement questions. Unit tests in `tests/unit/ai/tools/sage-tool.test.ts`.
 - **Janet eval suite** (2026-04-28) — `tests/evals/janet.eval.ts`; 5 rubrics: context grounding, supplement grounding, no hallucination, coaching tone, conversation memory. Judge at `tests/evals/judge.ts`.
 - Eval runner at `tests/evals/runner.ts`; patient-context and supplement-plan fixtures.
+- **PT Coach as real-time `tool_use` sub-agent** (2026-04-29, commit `52cd249`) — `lib/ai/tools/pt-coach-tool.ts`; Janet invokes PT Coach mid-conversation for exercise/training-plan questions. Real-time PT Coach agent at `lib/ai/agents/pt-coach.ts` and member-facing chat route at `app/api/chat/pt-coach/route.ts` (slug `pt_coach_live`). PT plan pipeline worker at `lib/ai/pipelines/pt-plan.ts` (cron `/api/cron/pt-plan`, migration `0041_training_plans_plan_name.sql`). `ptPlan` added as parallel read on `PatientContext`.
+- **Janet E2E conversation loop test** (2026-04-29, commit `52cd249`) — `tests/e2e/janet-conversation.spec.ts` exercises the full Janet conversation loop in Playwright.
+- **Latency instrumentation** (2026-04-29, commit `52cd249`) — `janet.ts` now records `patient_context_ms` and `total_ms` per turn for performance observability.
+- **PT Coach + supplement-advisor grounding rubrics** added to Janet eval suite (Wave 2, 2026-04-29).
 
 **Outstanding:**
-- End-to-end regression Playwright test of the full Janet conversation loop.
-- Latency benchmarking under load (three-LLM-call turns when both risk_analyzer and supplement_advisor are invoked).
-- PT Coach `tool_use` integration (Phase 3, after PT Coach agent is built).
+- Full latency benchmarking under load (three-LLM-call turns when both risk_analyzer and supplement_advisor are invoked) — instrumentation is now live; load test pending.
 - Clinical review of sub-agent prompts for appropriate medical language.
+- User review with real members.
 
 **Open bugs:**
 - **BUG-004** (P2): Closed — pgvector enabled, migrations applied, RAG layer active.
@@ -211,8 +216,8 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 7: The Daily Return
 
-`●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 70%** — daily check-in UI, streak math, Mon-Sun dot strip, steps + water capture, and risk_analyzer trigger all shipped; remaining work is personalised goals, reminders, weekly digest, and journal.
+`●●●○○` Planned · Feature Complete · Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 92%** — daily check-in UI, streak math (with rest-day mechanic), personalised daily goals, weekly insights digest, and health journal all shipped 2026-04-29 (Wave 3). Bio-age coverage adds optional HRV / resting HR / deep-sleep% on /check-in. Only outstanding feature is push / SMS / email reminder for the daily check-in.
 
 **Shipped:**
 - Drip-email cron at `app/api/cron/drip-emails/route.ts`.
@@ -226,13 +231,14 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - New dashboard surface: streak hero, today-strip (sleep/energy/steps/water with progress bars), single-action picker, three big numbers (bio age, top risk, supplement adherence), what's-new row, quick links, coming-soon shelf.
 - Migration `0020_expose_schemas_to_postgrest.sql` + Supabase Cloud API config to expose `biomarkers` and `billing` schemas.
 - **Check-in → risk_analyzer trigger** (2026-04-28) — `app/(app)/check-in/actions.ts` fires the risk_analyzer pipeline in the background on each check-in submit. Completes the data loop: questionnaire → daily check-in → risk_analyzer risk refresh → dashboard.
+- **Personalised daily goals** (2026-04-29, commit `e589d8d`, Wave 3) — `lib/goals/derive.ts` `deriveGoals()` pure function ties goals to the patient's risk profile (steps, water, sleep target, meditation). Migration `0043_daily_goals.sql` ships the `daily_goals` table. Goals surface on the /check-in page. 9 unit tests in `tests/unit/goals/derive.test.ts`.
+- **Weekly insights digest** (2026-04-29, commit `e589d8d`, Wave 3) — `lib/insights/weekly.ts` runs pattern detection over the last 7 days of check-ins; new `/insights` page at `app/(app)/insights/page.tsx`. 18 unit tests in `tests/unit/insights/weekly.test.ts`.
+- **Health journal** (2026-04-29, commit `e589d8d`, Wave 3) — migration `0044_journal.sql` adds the `journal_entries` table; `/journal` page lets members write free-form notes. Janet reads recent journal entries via `PatientContext` (`journal_entries` parallel load).
+- **Rest-day streak mechanic** (2026-04-29, commit `e589d8d`, Wave 3) — `lib/streaks/index.ts` implements the policy: 1–2 missed days = "rest" (streak protected for travel and grief), 3+ missed days = streak reset. 16 unit tests in `tests/unit/dashboard/streak-rest-day.test.ts`. Used on the dashboard hero.
+- **HRV / resting HR / deep-sleep% on check-in** (2026-04-29, commit `c4d6ad7`) — three new optional check-in fields with range validation; HRV (5–200 ms), resting HR (30–150 bpm), deep sleep % (0–60). HRV + RHR columns already existed on `biomarkers.daily_logs`; deep-sleep% added by migration `0046_daily_logs_deep_sleep_pct.sql`.
 
 **Outstanding:**
-- Personalised daily goals tied to risk profile (currently goals are static defaults like 8 hours sleep, 8000 steps).
-- Rest-day mechanic for travel and grief.
 - Push / SMS / email reminder for the daily check-in.
-- Weekly insights digest from check-in patterns.
-- Health journal for free-form notes.
 
 **Open bugs:** none.
 **Closed bugs:** 0.
@@ -242,7 +248,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 8: The Living Record
 
 `●●◐○○` Planned · Feature Complete (member labs surface) · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 70%** — five member-visible surfaces shipped: `/labs` (Lab Results UI), `/trends` (Daily-log trends), the alerts surface (`member_alerts` + dashboard chip + repeat-test cron + upload-flow lab-alert hook), the **Janet → `lab_results` structured writer**, and **`/simulator`** (real-time risk simulator with LDL/HbA1c/hsCRP/**Systolic BP**/Weight sliders running the deterministic risk engine in-browser via `useDeferredValue`, side-by-side baseline-vs-simulated display, empty-state CTA). Lab-alert path is now live — fires the moment any Janet-extracted biomarker is `low`/`high`/`critical`. SBP slider added 2026-04-29 with AHA-aligned numeric scoring bands.
+**Estimate: 75%** — five member-visible surfaces shipped: `/labs` (Lab Results UI), `/trends` (Daily-log trends), the alerts surface (`member_alerts` + dashboard chip + repeat-test cron + upload-flow lab-alert hook), the **Janet → `lab_results` structured writer**, and **`/simulator`** (real-time risk simulator with LDL/HbA1c/hsCRP/**Systolic BP**/Weight sliders running the deterministic risk engine in-browser via `useDeferredValue`, side-by-side baseline-vs-simulated display, empty-state CTA). Lab-alert path is now live — fires the moment any Janet-extracted biomarker is `low`/`high`/`critical`. SBP slider added 2026-04-29 with AHA-aligned numeric scoring bands. **Repeat-tests cron now registered in `vercel.json`** and **simulator E2E smoke test** landed 2026-04-29.
 
 **Shipped:**
 - `biomarkers` schema with `lab_results`, `wearable_summaries`, `daily_logs` tables (migrations `0009`, `0010`).
@@ -253,10 +259,10 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - **Dashboard tile** replaced "Coming soon · Lab Results" with live `<QuickTile>` showing biomarker count + latest test date.
 - **`/trends` page** (2026-04-28) — 30-day sparklines for Sleep, Energy, Mood, Steps, Water from `biomarkers.daily_logs`. Empty-state CTA pointing to `/check-in`. `lib/trends/` pure helpers (`buildTrendSeries`, `summariseTrend`, `ML_PER_GLASS`) sourced off generated DB types. 10 unit tests. Dashboard quick-link tile.
 - **Member alerts surface** (2026-04-28) — `public.member_alerts` table (migration 0031, append-mostly, RLS owner-select + owner-update, service-role-only insert, unique partial index for idempotent re-runs). `lib/alerts/` pure evaluators (`evaluateLabAlerts`, `evaluateRepeatTests` with whole-token matching against a `SCREENING_KEYWORDS` map, `chipPayload`). Daily cron `/api/cron/repeat-tests` (Bearer-secret gated). Upload-flow lab-alert hook (defensive — no-op until Janet → `lab_results` writer lands). Dashboard hero chip with three severity tones (info/attention/urgent), `View →` link, dismiss server action. 20 unit tests.
+- **`vercel.json` cron registration** for `/api/cron/repeat-tests` (2026-04-29, commit `62b52fd`, Wave 1) — daily 0 6 * * * schedule registered.
+- **Risk simulator E2E smoke test** (2026-04-29, commit `9df6f0c`, Wave 4) — `tests/e2e/simulator.spec.ts` exercises slider-move → risk score change assertion.
 
 **Outstanding:**
-- B6 — risk simulator ("if I lower my LDL to X, my CV risk drops to Y").
-- `vercel.json` cron registration for `/api/cron/repeat-tests` (operator step).
 - Snooze / dismiss-suppression mechanism on alerts.
 - Auto-resolve when next reading is back in range.
 - `/alerts` index / triage page.
@@ -273,21 +279,24 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 9: The Care Team
 
-`●○○○○` Planned · ○ Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 5%** — schema shipped (clinical and program tables), no UI, no clinician role assignment flow.
+`●◐○○○` Planned · ◐ Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 25%** — schema and pipeline backbone shipped (clinical/program tables, periodic-review schema expanded, Janet-Clinician brief pipeline + cron, secure-messaging spec). No clinician-facing UI yet; no care-team invitation flow.
 
 **Shipped:**
 - `clinical` schema (migrations `0011_clinical_schema.sql`).
 - `programs` schema (`0012_programs_schema.sql`).
 - `care_notes`, `periodic_reviews`, `patient_assignments`, `coach_suggestions` tables.
+- **Janet-Clinician brief pipeline** (2026-04-29, commit `52cd249`, Wave 2) — `lib/ai/pipelines/clinician-brief.ts` (242 lines) generates a monthly auto-clinical brief + 30-day plan suggestion per assignment; pipeline endpoint at `app/api/pipelines/clinician-brief/route.ts` (`x-pipeline-secret` gated); cron at `app/api/cron/clinician-briefs/route.ts`. Migration `0042_periodic_reviews_expand.sql` adds the columns the brief writes to.
+- **Janet secure-messaging spec** (2026-04-29) — design reference at `docs/engineering/changes/2026-04-29-plan-engineering-completeness/janet-secure-messaging-spec.md` (468 lines) for member↔clinician messaging routing.
 
 **Outstanding:**
-- Clinician portal pages.
-- Care-team invitation + per-patient permission management.
-- Janet-Clinician brief pipeline (monthly cron).
+- Clinician portal pages (patient list, patient detail, alerts).
+- Care-team invitation + per-patient permission management UI.
+- Vercel weekly cron schedule entry for `/api/cron/clinician-briefs` (the route is live; cron schedule confirmation needed).
 - In-platform appointment booking (calendar + Stripe).
 - Clinical notes UI (private to care team).
 - Periodic-review record UI.
+- Janet secure-messaging implementation (spec only at this point).
 - Community feed and challenges (deferred sub-epic).
 
 **Open bugs:** none.
@@ -327,8 +336,8 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 11: The Trust Layer
 
-`●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 65%** — RLS + PII boundary + consent records shipped and verified at the schema level, with the pgTAP RLS suite now running in CI on every PR; **export-everything bundle shipped 2026-04-28**. Remaining trust surfaces (deceased flow, ToS clause, pause/freeze, right-to-erasure) are not built.
+`●●●○○` Planned · Feature Complete · Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 90%** — RLS + PII boundary + consent records + pgTAP RLS CI suite + export-everything bundle were already live; **right-to-erasure, pause/freeze, and ToS data-use clause shipped 2026-04-29 (Wave 4)**. Remaining trust surfaces are deceased-flag flow with warm copy path and quarterly trust audit cadence.
 
 **Shipped:**
 - RLS on every table across `public`, `biomarkers`, `clinical`, `programs`, `billing` schemas.
@@ -338,13 +347,14 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - Service-role admin client used only in webhook routes, pipeline workers, and PDF generation.
 - pgTAP RLS test suite at `supabase/tests/rls.sql` with 20 assertions, executed in CI via the `pgtap` job in `.github/workflows/ci.yml`.
 - **Export-everything bundle** at `GET /api/export` — ZIP with one JSON file per patient-facing table (profile, health_profiles, risk_scores, supplement_plans, lab_results, daily_logs, consent_records), latest PDF report, and `manifest.json`. Soft 10000-row cap per table with truncation flag. Audit row per export in `public.export_log` (migration `0026`, append-only, owner-select RLS, service-role-only insert). Surfaced via `/account` page (2026-04-28).
+- **Right-to-erasure** (2026-04-29, commit `9df6f0c`, Wave 4) — `DELETE /api/account` scrubs PII, removes uploads, and hard-deletes behind the `ENABLE_HARD_DELETE` env var. Two-step confirmation modal in `app/(app)/account/_components/delete-account-button.tsx`. Action handlers in `app/(app)/account/actions.ts`.
+- **Pause / freeze account** (2026-04-29, commit `9df6f0c`, Wave 4) — migration `0045_profile_pause.sql` adds the `paused_at` column on `profiles`. `proxy.ts` redirects paused users to `/account?paused=true`. Pause and resume actions in `app/(app)/account/pause-actions.ts`.
+- **ToS data-use disclosure in onboarding** (2026-04-29, commit `9df6f0c`, Wave 4) — "we never train on your data" clause surfaced inside the onboarding consent step (`app/(app)/onboarding/onboarding-client.tsx`).
 
 **Outstanding:**
-- "We never train on your data" clause in ToS, surfaced in onboarding.
-- Right-to-erasure flow (single-row scrub since PII is single-table).
-- Pause / freeze account flow.
 - Deceased-flag flow with warm copy path (not a checkbox).
 - Quarterly trust audit cadence (logs scrub, signed-URL TTL check, deceased-flow walk-through).
+- Regression coverage of the erasure / pause flows in CI.
 
 **Open bugs:** none.
 
@@ -356,7 +366,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 12: The Distribution
 
 `●◐○○○` Planned · ◐ Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 20%** — admin area secured with proper `is_admin` gate, invite/revoke flow shipped 2026-04-28; corporate and marketplace not built.
+**Estimate: 35%** — admin area secured with proper `is_admin` gate, invite/revoke flow shipped 2026-04-28; **feature-flag resolver, pricing calculators, organisation-addons Stripe linkage, and corporate-invites table all shipped 2026-04-29 (billing waves 1–2)**. Corporate UI (CSV upload, team challenges, aggregate reporting) and supplement marketplace not built.
 
 **Shipped:**
 - `app/(admin)/admin.css` styling.
@@ -368,12 +378,15 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - **Admin access control** (2026-04-28) — `proxy.ts` now checks `is_admin` before serving any `/admin/*` route. Regular members cannot reach admin pages even if they know the URL.
 - **Admin management page** at `/admin/admins` (2026-04-28) — invite a new admin by email (existing account gets immediate access; new account receives a Supabase invite email and becomes admin on signup); revoke access; view pending invites. Migration `0032_seed_admins.sql` seeds the two existing team accounts. Migration `0033_admin_invites.sql` adds the `admin_invites` pending-invite table.
 - **Admin-only nav link** — "Admin" link in the top nav visible only to `is_admin` users.
+- **Feature-flag resolver** (2026-04-29, commit `4fc3af7`, billing wave 2) — `lib/features/resolve.ts` `canAccess(userId, featureKey, supabase)` implements the four-path resolution from `docs/features/pricing/system-design.md`: admin → org_addon → org plan tier → sub_addon → user plan tier → locked. 12 unit tests in `tests/unit/features/resolve.test.ts`.
+- **Pricing calculators** (2026-04-29, commit `4fc3af7`, billing wave 2) — `lib/pricing/calculate.ts` exports `calculateTotal` and `calculateOrgTotal` (D2 FLAT — org total does NOT multiply by `seat_count`, per James 2026-04-29) plus a cents helper. 7 unit tests.
+- **Organisation-addons Stripe linkage** (2026-04-29, commit `f742f17`, billing wave 1) — migration `0047_billing_org_addons_stripe_item_and_invites.sql` adds `stripe_subscription_id`, `stripe_subscription_item_id`, `status`, `updated_at` to `billing.organisation_addons` (D4: flat one-Stripe-item-per-add-on).
+- **Corporate-invites table** (2026-04-29, commit `f742f17`, billing wave 1) — same migration ships `billing.org_invites` for D3 (email + CSV bulk corporate invites). Foundation for the corporate CSV upload UI.
 
 **Outstanding:**
 - Admin CRM: MRR, active members, churn, pipeline runs in last 24h.
-- Corporate account management (employee CSV upload, invitations, team challenges, aggregate reporting).
+- Corporate UI: employee CSV upload, team challenges, aggregate reporting (table + resolver are ready; UI not built).
 - Supplement marketplace integration (auto-replenishment, in-app purchase from protocol page).
-- Pricing tiers (individual / family / clinical / corporate) wired to entitlements.
 - Sign-in-with-Vercel for clinician partners.
 - Audit log for admin-configuration changes (who changed agent settings and when).
 
@@ -385,11 +398,12 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 13: The Business Model
 
 `●○○○○` Planned · ○ Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 0%** — designed 2026-04-28; no provider-ecosystem code yet. The B2C revenue stream is shipped via Epic 1 (Stripe checkout). The adjacent `billing` schema (`suppliers`, `products`, `plans`, `add_ons`, `organisations`) already exists from Epic 12 work.
+**Estimate: 5%** — designed 2026-04-28; no provider-ecosystem code yet. B2C revenue rail shipped via Epic 1; B2B revenue plumbing (feature-flag resolver, organisation-addons Stripe linkage, flat per-add-on pricing math) shipped 2026-04-29 via Epic 12 billing waves.
 
 **Shipped:**
 - B2C subscription rail (Stripe checkout + webhook lifecycle) — see Epic 1.
 - `billing` schema scaffolding (`suppliers`, `products`, `plans`, `add_ons`, `organisations`) — migration `0013_billing_schema.sql`.
+- B2B revenue plumbing (2026-04-29) — flat per-add-on pricing math (`calculateOrgTotal`), per-add-on Stripe-item linkage on `billing.organisation_addons`, `billing.org_invites` table for corporate CSV onboarding. See Epic 12 for detail.
 
 **Outstanding:**
 - `provider_partners` table — admin-managed; contract terms, margin %, region, status.
@@ -413,7 +427,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 14: The Platform Foundation
 
 `●◐○○○` Planned · ◐ Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 45%** — substantial pieces already shipped via the existing `.claude/rules/` discipline (RLS, PII boundary, secret-key naming, pipeline auth, migration hygiene). CI Vitest+pgTAP and Gitleaks secret scanning shipped 2026-04-28. The remaining operational layer (Sentry, cost monitoring, DR drill, pen-test cadence) is unbuilt.
+**Estimate: 60%** — substantial pieces shipped via the existing `.claude/rules/` discipline (RLS, PII boundary, secret-key naming, pipeline auth, migration hygiene). CI Vitest+pgTAP and Gitleaks secret scanning live since 2026-04-28; **Playwright E2E + Lighthouse CI jobs and migration prefix collisions resolved 2026-04-29 (Wave 1)**. Latency instrumentation in Janet provides foundation for observability. The remaining operational layer (Sentry, cost monitoring, DR drill, pen-test cadence) is unbuilt.
 
 **Shipped:**
 - RLS on every table across `public`, `biomarkers`, `clinical`, `programs`, `billing` schemas.
@@ -429,9 +443,11 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - Supabase Storage MIME whitelist + 50 MB cap on uploads.
 - Encryption at rest (Supabase default) + TLS in transit.
 - **Gitleaks secret-scan workflow** at `.github/workflows/secrets.yml` — runs on every PR and every push to `main`; fails the check on a hit. Default ruleset extended via `.gitleaks.toml` (2026-04-28).
+- **Playwright E2E + Lighthouse CI jobs** (2026-04-29, commit `62b52fd`, Wave 1) — added to `.github/workflows/ci.yml`, gated on build. `.lighthouserc.json` targets `/`, `/dashboard`, `/report`. Live QA on every PR.
+- **Migration filename collisions resolved** (2026-04-29, commits `62b52fd` + `f742f17` + `4fc3af7`) — Wave 1 renamed `0031_patient_uploads_file_hash.sql` → `0039` and `0032_seed_admins.sql` → `0040`. Billing waves renumbered `0041_daily_logs_deep_sleep_pct.sql` → `0046` and `0044_billing_org_addons_stripe_item_and_invites.sql` → `0047` to clear collisions with Wave 2's `0041_training_plans_plan_name.sql` / `0042_periodic_reviews_expand.sql` and Wave 3's `0043_daily_goals.sql` / `0044_journal.sql`. Migration history is now monotonic.
+- **Latency instrumentation in Janet** (2026-04-29, commit `52cd249`, Wave 2) — `patient_context_ms` + `total_ms` recorded per turn — foundation for observability work.
 
 **Outstanding:**
-- CI workflow file extension — Playwright + Lighthouse on every PR (Vitest + pgTAP already running).
 - Sentry / Highlight / equivalent error monitoring + alert routing.
 - Anthropic API spend dashboard + 80%-of-budget alert.
 - Supabase storage quota alert.
@@ -444,7 +460,6 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - AHPRA breach-notification protocol document.
 - Data residency confirmation per region.
 - Architecture-level enforcement of "we never train on patient data" (no training endpoints, no model fine-tune jobs, no third-party data shares).
-- **Migration filename collisions** at `0031_*.sql` (member_alerts vs patient_uploads_file_hash) and `0032_*.sql` (lab_results_idempotency vs seed_admins). Both pairs landed via parallel branches; all four are applied to the production DB and Supabase tracks them by name so the chain is functional. Cosmetic only — worth a one-shot renumber to keep history monotonic before Epic 14 hits "Regression Tested" status.
 
 **Open bugs:** none directly.
 **Closed bugs:** 0.
