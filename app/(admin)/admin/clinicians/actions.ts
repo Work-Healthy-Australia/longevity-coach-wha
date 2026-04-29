@@ -5,10 +5,7 @@ import { randomBytes } from "node:crypto";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
-import {
-  sendClinicianInviteEmail,
-  sendClinicianPromotedEmail,
-} from "@/lib/email/clinician-invite";
+import { sendClinicianPromotedEmail } from "@/lib/email/clinician-invite";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { loose } from "@/lib/supabase/loose-table";
 import { createClient } from "@/lib/supabase/server";
@@ -104,9 +101,7 @@ export async function inviteClinician(
     return { success: `${role} access granted to ${lower}.` };
   }
 
-  // New user — record a single-use token in clinician_invites and send the
-  // Supabase invite. The token is the audit anchor; status flips to 'accepted'
-  // when the user signs up via the invite link.
+  // New user — record the audit token then send via Supabase (uses custom SMTP).
   const token = randomBytes(24).toString("hex");
   const { error: insertError } = await loose(admin)
     .from("clinician_invites")
@@ -123,8 +118,6 @@ export async function inviteClinician(
     );
   if (insertError) return { error: "Failed to record invite." };
 
-  // Send invite via Supabase — uses the template configured in the Supabase
-  // dashboard (Authentication → Email Templates → Invite User).
   const { error: inviteError } = await admin.auth.admin.inviteUserByEmail(lower, {
     redirectTo: `${siteUrl}/auth/callback`,
     data: { invited_as: role, clinician_invite_token: token },

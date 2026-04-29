@@ -1,6 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { loose } from "@/lib/supabase/loose-table";
 
+import "../_components/crud.css";
 import { CliniciansClient, type ClinicianRow, type InviteRow } from "./CliniciansClient";
 
 export const metadata = { title: "Clinicians · Admin · Longevity Coach" };
