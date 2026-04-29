@@ -1,0 +1,95 @@
+.account-billing {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+}
+
+.account-billing h1 {
+  font-size: 32px;
+  margin-bottom: 24px;
+}
+
+.billing-section {
+  background: #fff;
+  border: 1px solid #e0ddd2;
+  border-radius: 10px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+}
+
+.billing-section h2 {
+  font-size: 17px;
+  margin-bottom: 12px;
+}
+
+.billing-plan strong {
+  font-size: 18px;
+}
+
+.billing-error {
+  background: #fee;
+  color: #a00;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.muted {
+  color: #777;
+  font-size: 14px;
+}
+
+.addon-list,
+.product-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.addon-list li,
+.product-list li {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #f3f0e5;
+}
+
+.addon-list li:last-child,
+.product-list li:last-child {
+  border-bottom: 0;
+}
+
+.product-cat {
+  text-transform: capitalize;
+  font-size: 12px;
+}
+
+.billing-section button {
+  background: #1a1a1a;
+  color: #fff;
+  border: 0;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.billing-section button:disabled {
+  background: #888;
+  cursor: not-allowed;
+}
+
+.orders {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.orders th,
+.orders td {
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 1px solid #f3f0e5;
+}
