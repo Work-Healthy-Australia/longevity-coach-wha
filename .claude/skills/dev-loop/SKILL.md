@@ -5,6 +5,8 @@ description: Full accurate development loop for Longevity Coach: assess → rese
 
 This skill runs the full development loop from a vague instruction or user story to a documented, tested, merged change. It is the standard way to ship work on this project.
 
+**Core principle: wave-based delivery.** Every plan is broken into waves. Each wave is independently deployable and produces something James can see in production without waiting for the rest. After each wave passes QA, push and merge — do not hold changes back for the next wave.
+
 ---
 
 ## Overview
@@ -12,13 +14,15 @@ This skill runs the full development loop from a vague instruction or user story
 ```
 ASSESS
   └── RESEARCH
-        └── PLAN
+        └── PLAN (decompose into waves)
               └── REVIEW PLAN
-                    └── SUBAGENT DELEGATION (parallel or sequential)
-                          Each subagent: PLAN → EXECUTE → TEST → HANDOFF
-                    └── COLLECT HANDOFFS
-                          └── QA REPORT
-                                └── DOCUMENT CHANGE
+                    └── FOR EACH WAVE:
+                          SUBAGENT DELEGATION (parallel or sequential within wave)
+                            Each subagent: PLAN → EXECUTE → TEST → HANDOFF
+                          COLLECT HANDOFFS
+                          QA REPORT (wave-scoped)
+                          pnpm build → if PASS → push branch → merge PR
+                    └── DOCUMENT CHANGE (after all waves)
 ```
 
 ---
@@ -55,7 +59,7 @@ Steps:
 
 ## Phase 3 — Plan
 
-**Goal:** Produce a detailed, task-by-task implementation plan that can be executed by subagents.
+**Goal:** Produce a wave-by-wave implementation plan. Each wave is a closed, functional slice that can be built, reviewed by James, and merged independently.
 
 Write the plan to:
 ```
@@ -63,6 +67,16 @@ docs/engineering/changes/<change-name>/PLAN.md
 ```
 
 Name the change folder using kebab-case with the date prefix: `YYYY-MM-DD-<description>` (e.g. `2026-04-28-risk-engine-port`).
+
+### Wave decomposition rules
+
+When breaking work into waves, each wave must satisfy all of:
+- **Closed:** the wave neither breaks existing functionality nor leaves the app in a partially-functional state. A user navigating the app mid-delivery must never hit a dead end or error caused by an incomplete wave.
+- **Functional:** something new or improved is visible or testable after the wave lands. "Migrations only" is acceptable as Wave 1 if and only if they are non-breaking.
+- **Independently mergeable:** the wave can be pushed to main and deployed to production without the subsequent waves. It is not a stepping stone that only makes sense after Wave N+1.
+- **Time-boxed:** a single wave should be completable in one session. If a wave would take more than one session, split it further.
+
+Aim for 2–4 waves per feature. If you cannot close a wave in a session, you have planned it too large.
 
 **Plan structure:**
 
@@ -82,14 +96,23 @@ One paragraph: what is being built, why, and what done looks like.
 ## Data model changes
 List any new tables, columns, or JSONB keys. For each: is it PII? typed column? JSONB? Who writes to it?
 
-## Tasks
-### Task 1 — <name>
-Files affected: list
-What to build: detailed description
-Acceptance criteria: bullet list (testable)
-Rules to apply: list relevant .claude/rules/ files
+## Waves
 
-### Task 2 — ...
+### Wave 1 — <name>
+**What James can see after this wave merges:** one sentence description of the visible/testable outcome.
+Tasks:
+  #### Task 1.1 — <name>
+  Files affected: list
+  What to build: detailed description
+  Acceptance criteria: bullet list (testable)
+  Rules to apply: list relevant .claude/rules/ files
+
+  #### Task 1.2 — ...
+
+### Wave 2 — <name>
+**What James can see after this wave merges:** ...
+Tasks:
+  #### Task 2.1 — ...
 ```
 
 Each task must be self-contained enough for a subagent to execute without reading the full plan.
@@ -119,11 +142,11 @@ If the reviewer finds issues, revise the plan and re-review.
 
 ---
 
-## Phase 5 — Subagent Delegation
+## Phase 5 — Subagent Delegation (per wave)
 
-**Goal:** Implement each plan task using an isolated subagent that cannot pollute the coordinator's context.
+**Goal:** Implement each wave's tasks using isolated subagents, then ship the wave to production before starting the next wave.
 
-Dispatch tasks **sequentially** unless they are truly independent (no shared files, no migration dependency). When in doubt, run sequentially.
+Work through waves one at a time. Within a wave, dispatch tasks **sequentially** unless they are truly independent (no shared files, no migration dependency). When in doubt, run sequentially.
 
 ### Each subagent receives
 
@@ -164,9 +187,9 @@ Only mark a task complete in TodoWrite when both reviews are ✅.
 
 ---
 
-## Phase 6 — Collect Handoffs
+## Phase 6 — Collect Handoffs (per wave)
 
-**Goal:** Synthesise what was built across all tasks before writing the documentation.
+**Goal:** Synthesise what was built across all tasks in the wave before running QA.
 
 For each completed task, record:
 - Files created or modified
@@ -177,19 +200,19 @@ For each completed task, record:
 
 ---
 
-## Phase 7 — QA Report
+## Phase 7 — QA Report and Merge (per wave)
 
-**Goal:** Independent quality gate across the full change, not just per-task.
+**Goal:** Independent quality gate for the wave, then push and merge before starting the next wave.
 
-Dispatch a final QA subagent with:
-- The full `PLAN.md`
-- All handoff summaries from Phase 6
+Dispatch a QA subagent with:
+- The wave's tasks from `PLAN.md`
+- All handoff summaries from Phase 6 for this wave
 - Instruction to run `pnpm build` and `pnpm test` and report results
 
-The QA subagent writes `docs/engineering/changes/<change-name>/QA_REPORT.md`:
+The QA subagent writes `docs/engineering/changes/<change-name>/QA_REPORT_wave<N>.md`:
 
 ```markdown
-# QA Report: <change name>
+# QA Report: <change name> — Wave N
 Date: YYYY-MM-DD
 Reviewer: QA subagent
 
@@ -213,7 +236,19 @@ pnpm test: PASS (N tests) / FAIL
 APPROVED / BLOCKED (reason)
 ```
 
-Do not proceed to documentation if the verdict is BLOCKED. Fix the issues first.
+If verdict is **BLOCKED**: fix the issues, re-run `pnpm build` and `pnpm test`, re-review. Do not proceed until APPROVED.
+
+If verdict is **APPROVED**:
+1. Run `pnpm build` one final time to confirm clean output.
+2. Start the local dev server: `pnpm dev`.
+3. **Pause and ask the user to verify the wave's changes in their browser.** State clearly what to look at — the routes, flows, or UI elements that this wave touched. Do not proceed until the user explicitly confirms ("looks good", "approved", "ship it", or equivalent).
+4. If the user reports an issue: stop the dev server, fix the issue, re-run `pnpm build`, re-run QA, then restart this verification step.
+5. Once the user confirms: stop the dev server, push the branch: `git push origin <branch>`.
+6. Create a PR scoped to this wave's changes — title must name the wave (e.g. "Wave 1: risk score schema and seed data").
+7. Merge the PR.
+8. Confirm the merge succeeded, then start Wave N+1.
+
+**Never batch multiple waves into a single PR.** Each wave is its own PR, reviewed and merged independently.
 
 ---
 
@@ -289,5 +324,9 @@ docs/engineering/changes/<change-name>/
 - Never start implementation before the plan reviewer approves
 - Never mark a task done before both spec and quality reviews pass
 - Never store PII outside `profiles`
-- Never proceed to documentation if QA verdict is BLOCKED
+- Never proceed to the next wave if the current wave's QA verdict is BLOCKED
+- Never batch multiple waves into a single PR — each wave is its own PR and merge
+- Never push or merge a wave without first starting `pnpm dev` and getting explicit user confirmation that the changes look correct in the browser
+- Never hold a passing wave back waiting for the next wave to be ready
+- Each wave must leave the app fully functional — no broken states between waves
 - The EXECUTIVE_SUMMARY must be readable by a non-technical product owner — no code, no jargon

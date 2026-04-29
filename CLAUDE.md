@@ -83,6 +83,19 @@ If a key is absent, the feature it gates should silently no-op — never hard-er
 4. **Before shipping a feature** — run `pnpm build` and `pnpm test` locally. Build must be clean; no TypeScript errors.
 5. **New agent or pipeline worker** — read `.claude/rules/ai-agents.md` and `docs/architecture/agent-system.md` before writing any AI code.
 
+### Mandatory: use dev-loop for any logic-affecting change
+
+Any change that adds new logic, modifies existing behaviour, or touches app functionality **must** go through the `dev-loop` skill. This applies to:
+- New or modified server actions, API routes, and middleware
+- Business logic in `lib/` (risk engine, supplements, email, uploads, AI agents)
+- Database schema changes (migrations, RLS policies, triggers)
+- Onboarding flow, auth flow, or any user-facing state transition
+- Stripe or Supabase integration code
+
+Pure copy, style, or static asset changes do not require dev-loop.
+
+The dev-loop enforces wave-based delivery: each wave must be independently buildable, deployable, and reviewable by James without waiting for the full feature to be complete. After each wave passes `pnpm build` and QA, push the branch and merge — do not batch multiple waves into a single PR.
+
 ---
 
 ## Superpowers skill output — migration rule
