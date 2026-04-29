@@ -46,6 +46,25 @@ export function SuppliersClient({ initialRows }: { initialRows: SupplierRow[] })
         { header: "ABN / ID", cell: (r) => r.external_identifier ?? "—" },
       ]}
       onPatch={(id, body) => putJson(`/api/admin/suppliers/${id}`, body)}
+      onUpdate={async (id, form) => {
+        const fd = new FormData(form);
+        await putJson(`/api/admin/suppliers/${id}`, {
+          name: String(fd.get("name") ?? ""),
+          contact_email: (fd.get("contact_email") as string) || null,
+          contact_phone: (fd.get("contact_phone") as string) || null,
+          address: (fd.get("address") as string) || null,
+          external_identifier: (fd.get("external_identifier") as string) || null,
+        });
+      }}
+      editForm={(row) => (
+        <>
+          <label>Name<input name="name" defaultValue={row.name} required /></label>
+          <label>Contact email<input name="contact_email" type="email" defaultValue={row.contact_email ?? ""} /></label>
+          <label>Contact phone<input name="contact_phone" defaultValue={row.contact_phone ?? ""} /></label>
+          <label>Address<input name="address" defaultValue={row.address ?? ""} /></label>
+          <label>External identifier (ABN / provider #)<input name="external_identifier" defaultValue={row.external_identifier ?? ""} /></label>
+        </>
+      )}
       onCreate={async (form) => {
         const fd = new FormData(form);
         await postJson("/api/admin/suppliers", {
