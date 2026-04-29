@@ -47,7 +47,7 @@ Each object in "supplements" MUST use these exact field names:
 
 No text outside the JSON object.',
   0.70,
-  3000,
+  6000,
   true
 )
 ON CONFLICT (slug) DO UPDATE SET
@@ -55,4 +55,5 @@ ON CONFLICT (slug) DO UPDATE SET
   display_name  = EXCLUDED.display_name,
   description   = EXCLUDED.description,
   system_prompt = EXCLUDED.system_prompt,
+  max_tokens    = EXCLUDED.max_tokens,
   updated_at    = now();
