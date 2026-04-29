@@ -70,6 +70,10 @@ export interface PatientContext {
     exercises: unknown[];
     notes: string | null;
   } | null;
+  journalEntries: Array<{
+    body: string;
+    createdAt: string;
+  }>;
   recentConversation: ConversationTurn[];
   knowledgeChunks: string[];
   conversationSummary: string | null;
@@ -86,7 +90,7 @@ export async function loadPatientContext(
 ): Promise<PatientContext> {
   const admin = createAdminClient();
 
-  const [profileResult, riskResult, healthResult, uploadsResult, supplementResult, ptPlanResult, conversationResult, knowledgeChunks, recentDigestsResult, conversationSummaryResult] =
+  const [profileResult, riskResult, healthResult, uploadsResult, supplementResult, ptPlanResult, journalResult, conversationResult, knowledgeChunks, recentDigestsResult, conversationSummaryResult] =
     await Promise.all([
       // Profile (PII layer — demographics only, no clinical data)
       admin
@@ -142,6 +146,15 @@ export async function loadPatientContext(
         .limit(1)
         .maybeSingle(),
 
+      // Last 3 journal entries for Janet context
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (admin as any)
+        .from('journal_entries')
+        .select('body, created_at')
+        .eq('user_uuid', userId)
+        .order('created_at', { ascending: false })
+        .limit(3),
+
       // Last 20 conversation turns for the specified agent
       options.includeConversation !== false
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -188,6 +201,7 @@ export async function loadPatientContext(
   const uploads = uploadsResult.data ?? [];
   const supplement = supplementResult.data;
   const ptPlan = ptPlanResult.data;
+  const journalEntries = (journalResult.data ?? []) as Array<{ body: string; created_at: string }>;
   const conversation = conversationResult.data ?? [];
 
   return {
@@ -254,6 +268,8 @@ export async function loadPatientContext(
           notes: (ptPlan as unknown as { notes: string | null }).notes ?? null,
         }
       : null,
+
+    journalEntries: journalEntries.map(e => ({ body: e.body, createdAt: e.created_at })),
 
     // Conversation is returned in chronological order (reversed from query)
     recentConversation: [...conversation].reverse() as ConversationTurn[],
@@ -330,6 +346,11 @@ export function summariseContext(ctx: PatientContext): string {
     lines.push(`PT plan: active from ${ctx.ptPlan.planStartDate ?? 'unknown'} — ${ctx.ptPlan.planName ?? 'unnamed'}`);
   } else {
     lines.push(`PT plan: not yet generated`);
+  }
+
+  if (ctx.journalEntries.length > 0) {
+    lines.push(`\n## Recent journal entries`);
+    ctx.journalEntries.forEach(e => lines.push(`  [${e.createdAt.slice(0, 10)}] ${e.body.slice(0, 200)}`));
   }
 
   if (ctx.conversationSummary) {
