@@ -75,4 +75,12 @@ describe("applyOverrides", () => {
     const result = applyOverrides(base, { hsCRP: 0 });
     expect(result.biomarkers?.blood_panel?.hsCRP).toBe(0);
   });
+
+  it("applies systolic_bp_mmHg to demographics", () => {
+    const base: PatientInput = { demographics: { age: 50, sex: "male" } };
+    const result = applyOverrides(base, { systolic_bp_mmHg: 145 });
+    expect(result.demographics?.systolic_bp_mmHg).toBe(145);
+    expect(result.demographics?.age).toBe(50);
+    expect(result.demographics?.sex).toBe("male");
+  });
 });

@@ -1236,13 +1236,13 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 | # | Epic | Pipeline | Estimate | Open bugs | Closed bugs |
 |---|---|---|---:|---:|---:|
 | 1 | The Front Door | `●●●●●` | 100% | 0 | 3 |
-| 2 | The Intake | `●●●◐○` | 95% | 0 | 0 |
+| 2 | The Intake | `●●●◐○` | 97% | 0 | 0 |
 | 3 | The Number | `●●◐○○` | 70% | 0 | 1 |
 | 4 | The Protocol | `●●◐○○` | 60% | 0 | 0 |
-| 5 | The Report | `●◐○○○` | 35% | 1 (P3) | 0 |
+| 5 | The Report | `●●○○○` | 65% | 0 | 1 |
 | 6 | The Coach | `●●◐○○` | 90% | 0 | 1 |
 | 7 | The Daily Return | `●●◐○○` | 70% | 0 | 0 |
-| 8 | The Living Record | `●●◐○○` | 25% | 0 | 0 |
+| 8 | The Living Record | `●●◐○○` | 65% | 0 | 0 |
 | 9 | The Care Team | `●○○○○` | 5% | 0 | 0 |
 | 10 | The Knowledge Engine | `●◐◐○○` | 60% | 0 | 1 |
 | 11 | The Trust Layer | `●●◐○○` | 65% | 0 | 1 |
@@ -1250,7 +1250,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 | 13 | The Business Model | `●○○○○` | 0% | 0 | 0 |
 | 14 | The Platform Foundation | `●◐○○○` | 45% | 0 | 0 |
 
-**Bug totals:** 1 open, 7 closed. (Bug log: forthcoming `qa/QA-bugs.md`.)
+**Bug totals:** 0 open, 8 closed. (Bug log: forthcoming `qa/QA-bugs.md`.)
 
 ---
 
@@ -1379,10 +1379,10 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - "What changed since last report" diff when run twice.
 - Visual regression coverage (Chromatic) on `/report` and the PDF.
 
-**Open bugs:**
-- **BUG-005** (P3): Branded PDF route at `/api/report/pdf` returns an unstyled skeleton — no logo, no domain colours, no supplement table. Members cannot share a credible PDF with their GP yet.
+**Open bugs:** none.
 
-**Closed bugs:** 0.
+**Closed bugs:**
+- **BUG-005** (CLOSED 2026-04-29): Branded PDF was returning an unstyled skeleton. Resolved as part of the P0 Vietnam MVP wave (commit `f1fe816`, 2026-04-28); bug entry was simply not closed at the time. PDF now includes logo, cover page, big-number summary, domain colour swatches, supplement table with tier colours, footer disclaimer.
 
 ---
 

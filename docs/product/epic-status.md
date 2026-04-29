@@ -24,12 +24,12 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 |---|---|---|---:|---:|---:|
 | 1 | The Front Door | `●●●●●` | 100% | 0 | 3 |
 | 2 | The Intake | `●●●◐○` | 97% | 0 | 0 |
-| 3 | The Number | `●●◐○○` | 70% | 0 | 1 |
+| 3 | The Number | `●●◐○○` | 75% | 0 | 1 |
 | 4 | The Protocol | `●●◐○○` | 60% | 0 | 0 |
-| 5 | The Report | `●◐○○○` | 35% | 1 (P3) | 0 |
+| 5 | The Report | `●●○○○` | 65% | 0 | 1 |
 | 6 | The Coach | `●●◐○○` | 90% | 0 | 1 |
 | 7 | The Daily Return | `●●◐○○` | 70% | 0 | 0 |
-| 8 | The Living Record | `●●◐○○` | 65% | 0 | 0 |
+| 8 | The Living Record | `●●◐○○` | 70% | 0 | 0 |
 | 9 | The Care Team | `●○○○○` | 5% | 0 | 0 |
 | 10 | The Knowledge Engine | `●◐◐○○` | 60% | 0 | 1 |
 | 11 | The Trust Layer | `●●◐○○` | 65% | 0 | 1 |
@@ -37,7 +37,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 | 13 | The Business Model | `●○○○○` | 0% | 0 | 0 |
 | 14 | The Platform Foundation | `●◐○○○` | 45% | 0 | 0 |
 
-**Bug totals:** 1 open, 7 closed. (Bug log: forthcoming `qa/QA-bugs.md`.)
+**Bug totals:** 0 open, 8 closed. (Bug log: forthcoming `qa/QA-bugs.md`.)
 
 ---
 
@@ -99,7 +99,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 3: The Number
 
 `●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 70%** — Atlas pipeline ships risk narratives end-to-end. Deterministic risk engine ported from Base44 and unit tested; engine output now feeds Atlas for higher-confidence narratives. BUG-003 closed. GP-panel review still outstanding.
+**Estimate: 75%** — Atlas pipeline ships risk narratives end-to-end. Deterministic risk engine ported from Base44 and unit tested; engine output now feeds Atlas for higher-confidence narratives. BUG-003 closed. **Numeric systolic BP scoring shipped 2026-04-29** (AHA-aligned bands replacing the binary `hypertension` flag while preserving zero-regression fallback). GP-panel review still outstanding.
 
 **Shipped:**
 - Atlas pipeline at `lib/ai/pipelines/risk-narrative.ts`.
@@ -150,27 +150,27 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 5: The Report
 
-`●◐○○○` Planned · ◐ Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 35%** — `/report` page shipped with all in-app surfaces; the branded PDF route exists but renders an unstyled skeleton.
+`●●○○○` Planned · Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 65%** — `/report` page + branded PDF both shipped. PDF includes logo, cover page, big-number summary, domain-coloured swatches, supplement table with tier colours and overflow handling, footer disclaimer.
 
 **Shipped:**
 - `/report` page (`app/(app)/report/page.tsx`) showing risk narrative, domain scores, supplement protocol, Janet chat panel.
 - `app/(app)/report/report.css` styling.
 - `app/(app)/report/_components/janet-chat.tsx` streaming chat client component.
-- PDF endpoint scaffold at `app/api/report/pdf/route.tsx`.
-- `lib/pdf/report-doc.tsx` skeleton.
+- PDF endpoint at `app/api/report/pdf/route.tsx`.
+- **Branded PDF** at `lib/pdf/report-doc.tsx` (442 lines) — logo header, cover page, big-number summary, domain colour swatches, supplement table with tier colours (max 12 visible + overflow count), AHPRA-compliant footer disclaimer.
 
 **Outstanding:**
-- Branded PDF: logo header, domain colour swatches, narrative typography, supplement table, footer disclaimer.
 - Last-updated timestamp prominent on `/report`.
 - Regenerate-on-demand button.
 - "What changed since last report" diff when run twice.
 - Visual regression coverage (Chromatic) on `/report` and the PDF.
+- Unit-test coverage on the PDF render path.
 
-**Open bugs:**
-- **BUG-005** (P3): Branded PDF route at `/api/report/pdf` returns an unstyled skeleton — no logo, no domain colours, no supplement table. Members cannot share a credible PDF with their GP yet.
+**Open bugs:** none.
 
-**Closed bugs:** 0.
+**Closed bugs:**
+- **BUG-005** (CLOSED 2026-04-29): Branded PDF route at `/api/report/pdf` was returning an unstyled skeleton. Resolved as part of the P0 Vietnam MVP wave (commit `f1fe816`, 2026-04-28) — the bug entry was simply not closed at the time. PDF now includes logo, cover page, big-number summary, domain colour swatches, supplement table with tier colours, footer disclaimer. Verified by inspection 2026-04-29.
 
 ---
 
@@ -242,7 +242,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 8: The Living Record
 
 `●●◐○○` Planned · Feature Complete (member labs surface) · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 65%** — five member-visible surfaces shipped: `/labs` (Lab Results UI), `/trends` (Daily-log trends), the alerts surface (`member_alerts` + dashboard chip + repeat-test cron + upload-flow lab-alert hook), the **Janet → `lab_results` structured writer**, and **`/simulator`** (real-time risk simulator with LDL/HbA1c/hsCRP/Weight sliders running the deterministic risk engine in-browser via `useDeferredValue`, side-by-side baseline-vs-simulated display, empty-state CTA). Lab-alert path is now live — fires the moment any Janet-extracted biomarker is `low`/`high`/`critical`.
+**Estimate: 70%** — five member-visible surfaces shipped: `/labs` (Lab Results UI), `/trends` (Daily-log trends), the alerts surface (`member_alerts` + dashboard chip + repeat-test cron + upload-flow lab-alert hook), the **Janet → `lab_results` structured writer**, and **`/simulator`** (real-time risk simulator with LDL/HbA1c/hsCRP/**Systolic BP**/Weight sliders running the deterministic risk engine in-browser via `useDeferredValue`, side-by-side baseline-vs-simulated display, empty-state CTA). Lab-alert path is now live — fires the moment any Janet-extracted biomarker is `low`/`high`/`critical`. SBP slider added 2026-04-29 with AHA-aligned numeric scoring bands.
 
 **Shipped:**
 - `biomarkers` schema with `lab_results`, `wearable_summaries`, `daily_logs` tables (migrations `0009`, `0010`).

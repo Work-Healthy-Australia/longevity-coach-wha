@@ -1,6 +1,11 @@
 import type { PatientInput } from "@/lib/risk/types";
 
-export type SimulatorMetric = "ldl" | "hba1c" | "hsCRP" | "weight_kg";
+export type SimulatorMetric =
+  | "ldl"
+  | "hba1c"
+  | "hsCRP"
+  | "weight_kg"
+  | "systolic_bp_mmHg";
 
 export type SimulatorOverrides = Partial<Record<SimulatorMetric, number>>;
 

@@ -38,8 +38,15 @@ export function applyOverrides(
 
   if (overrides.weight_kg !== undefined) {
     next.demographics = {
-      ...(base.demographics ?? {}),
+      ...(next.demographics ?? base.demographics ?? {}),
       weight_kg: overrides.weight_kg,
+    };
+  }
+
+  if (overrides.systolic_bp_mmHg !== undefined) {
+    next.demographics = {
+      ...(next.demographics ?? base.demographics ?? {}),
+      systolic_bp_mmHg: overrides.systolic_bp_mmHg,
     };
   }
 

@@ -19,6 +19,7 @@ const POPULATION_DEFAULTS: Record<SimulatorMetric, number> = {
   ldl: 130,
   hba1c: 5.4,
   hsCRP: 1.5,
+  systolic_bp_mmHg: 125,
   weight_kg: 75,
 };
 
@@ -52,6 +53,16 @@ const SLIDERS: SliderConfig[] = [
     step: 0.1,
     defaultValue: 1.5,
     optimalText: "Optimal: < 1.0 mg/L",
+  },
+  {
+    metric: "systolic_bp_mmHg",
+    label: "Systolic BP",
+    unit: "mmHg",
+    min: 90,
+    max: 200,
+    step: 1,
+    defaultValue: 125,
+    optimalText: "Optimal: < 120 mmHg",
   },
   {
     metric: "weight_kg",
@@ -108,6 +119,7 @@ export default async function SimulatorPage() {
     ldl: bp?.ldl ?? POPULATION_DEFAULTS.ldl,
     hba1c: bp?.hba1c ?? POPULATION_DEFAULTS.hba1c,
     hsCRP: bp?.hsCRP ?? POPULATION_DEFAULTS.hsCRP,
+    systolic_bp_mmHg: dem?.systolic_bp_mmHg ?? POPULATION_DEFAULTS.systolic_bp_mmHg,
     weight_kg: dem?.weight_kg ?? POPULATION_DEFAULTS.weight_kg,
   };
 
@@ -115,6 +127,7 @@ export default async function SimulatorPage() {
     ldl: bp?.ldl == null,
     hba1c: bp?.hba1c == null,
     hsCRP: bp?.hsCRP == null,
+    systolic_bp_mmHg: dem?.systolic_bp_mmHg == null,
     weight_kg: dem?.weight_kg == null,
   };
 

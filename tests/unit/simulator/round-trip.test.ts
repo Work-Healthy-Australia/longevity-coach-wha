@@ -52,4 +52,14 @@ describe("simulator round-trip with scoreRisk", () => {
       baseline.domains.metabolic.score,
     );
   });
+
+  it("SBP up → cardiovascular domain score up", () => {
+    const baseline: PatientInput = {
+      demographics: { age: 50, sex: "male", height_cm: 175, weight_kg: 75, systolic_bp_mmHg: 110 },
+      medical_history: { conditions: [], medications: [] },
+    };
+    const baselineResult = scoreRisk(baseline);
+    const simulatedResult = scoreRisk(applyOverrides(baseline, { systolic_bp_mmHg: 175 }));
+    expect(simulatedResult.domains.cardiovascular.score).toBeGreaterThan(baselineResult.domains.cardiovascular.score);
+  });
 });
