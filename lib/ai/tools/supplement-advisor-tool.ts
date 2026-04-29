@@ -49,7 +49,7 @@ function buildSupplementAdvisorPrompt(ctx: PatientContext, focus?: string): stri
 export function supplementAdvisorTool(ctx: PatientContext): Tool {
   return {
     description:
-      "Get a specialist explanation of this patient's supplement protocol. Returns a rationale for the top supplements linked to their specific risk drivers. Call this when the patient asks why they are taking a specific supplement, or asks for a deep-dive on their protocol.",
+      "Runs a dedicated specialist pipeline to provide deep analytical synthesis of this patient's supplement protocol. Call this ONLY for requests that explicitly require a level of analytical depth beyond what the protocol data visible in your context already provides — e.g. full mechanism explanations, cross-domain interaction analysis, or comparison of protocol options. For routine questions ('what supplements am I on?', 'why do I take X?', 'summarise my protocol'), read from the supplement data already in your Patient context instead of calling this tool.",
     inputSchema: zodSchema(
       z.object({
         focus: z

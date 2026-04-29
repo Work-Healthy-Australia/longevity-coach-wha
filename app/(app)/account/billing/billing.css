@@ -1,18 +1,39 @@
 .account-billing {
+  --lc-primary: #2F6F8F;
+  --lc-primary-700: #245672;
+  --lc-primary-50: #EEF3F6;
+  --lc-line: #E3E8EC;
+  --lc-line-soft: #EDF1F4;
+  --lc-ink: #2B2B2B;
+  --lc-ink-soft: #4B4B4B;
+  --lc-grey: #8A9AA5;
+  --lc-surface: #FFFFFF;
+  --lc-canvas: #FAFAF7;
+  --lc-success: #2A7A5C;
+  --lc-success-50: #E6F4EE;
+  --lc-warning: #B5722F;
+  --lc-warning-50: #FAEFE0;
+  --lc-danger: #B5452F;
+  --lc-danger-50: #FBEAE5;
+
   max-width: 880px;
   margin: 0 auto;
   padding: 32px 24px 80px;
+  font-family: var(--font-lc-sans), system-ui, sans-serif;
+  color: var(--lc-ink);
 }
 
 .account-billing h1 {
-  font-size: 32px;
-  margin-bottom: 24px;
+  font-family: var(--font-lc-serif), Georgia, serif;
+  font-weight: 400;
+  font-size: 28px;
+  margin: 0 0 24px;
 }
 
 .billing-section {
-  background: #fff;
-  border: 1px solid #e0ddd2;
-  border-radius: 10px;
+  background: var(--lc-surface);
+  border: 1px solid var(--lc-line);
+  border-radius: 14px;
   padding: 20px 24px;
   margin-bottom: 20px;
 }
@@ -27,15 +48,15 @@
 }
 
 .billing-error {
-  background: #fee;
-  color: #a00;
+  background: var(--lc-danger-50);
+  color: var(--lc-danger);
   padding: 12px;
   border-radius: 6px;
   margin-bottom: 16px;
 }
 
-.muted {
-  color: #777;
+.billing-muted {
+  color: var(--lc-grey);
   font-size: 14px;
 }
 
@@ -53,7 +74,7 @@
   gap: 12px;
   align-items: center;
   padding: 10px 0;
-  border-bottom: 1px solid #f3f0e5;
+  border-bottom: 1px solid var(--lc-line-soft);
 }
 
 .addon-list li:last-child,
@@ -67,7 +88,7 @@
 }
 
 .billing-section button {
-  background: #1a1a1a;
+  background: var(--lc-primary);
   color: #fff;
   border: 0;
   padding: 6px 12px;
@@ -76,8 +97,12 @@
   font-size: 13px;
 }
 
+.billing-section button:hover {
+  background: var(--lc-primary-700);
+}
+
 .billing-section button:disabled {
-  background: #888;
+  background: var(--lc-grey);
   cursor: not-allowed;
 }
 
@@ -91,5 +116,5 @@
 .orders td {
   text-align: left;
   padding: 8px 12px;
-  border-bottom: 1px solid #f3f0e5;
+  border-bottom: 1px solid var(--lc-line-soft);
 }

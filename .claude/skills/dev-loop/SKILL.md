@@ -63,10 +63,10 @@ Steps:
 
 Write the plan to:
 ```
-docs/engineering/changes/<change-name>/PLAN.md
+docs/engineering/changes/<YYYY-MM-DD>/<slug>/PLAN.md
 ```
 
-Name the change folder using kebab-case with the date prefix: `YYYY-MM-DD-<description>` (e.g. `2026-04-28-risk-engine-port`).
+Top-level folder is the date in `YYYY-MM-DD`; nested subfolder is a kebab-case slug describing the change (e.g. `docs/engineering/changes/2026-04-28/risk-engine-port/PLAN.md`). The date folder groups everything that landed that day; each slug subfolder owns the artefacts for one change.
 
 ### Wave decomposition rules
 
@@ -209,7 +209,7 @@ Dispatch a QA subagent with:
 - All handoff summaries from Phase 6 for this wave
 - Instruction to run `pnpm build` and `pnpm test` and report results
 
-The QA subagent writes `docs/engineering/changes/<change-name>/QA_REPORT_wave<N>.md`:
+The QA subagent writes `docs/engineering/changes/<YYYY-MM-DD>/<slug>/QA_REPORT_wave<N>.md`:
 
 ```markdown
 # QA Report: <change name> — Wave N
@@ -258,7 +258,7 @@ If verdict is **APPROVED**:
 
 Write the following three files into the change folder:
 
-### `docs/engineering/changes/<change-name>/CHANGELOG.md`
+### `docs/engineering/changes/<YYYY-MM-DD>/<slug>/CHANGELOG.md`
 
 ```markdown
 # Changelog: <change name>
@@ -281,7 +281,7 @@ Any tasks that were cut, changed in scope, or implemented differently than plann
 Anything deliberately left out with a note on when it should be addressed.
 ```
 
-### `docs/engineering/changes/<change-name>/EXECUTIVE_SUMMARY.md`
+### `docs/engineering/changes/<YYYY-MM-DD>/<slug>/EXECUTIVE_SUMMARY.md`
 
 ```markdown
 # Executive Summary: <change name>
@@ -310,7 +310,7 @@ For each user story that is now fully implemented, update the relevant phase doc
 ## Change folder final structure
 
 ```
-docs/engineering/changes/<change-name>/
+docs/engineering/changes/<YYYY-MM-DD>/<slug>/
   PLAN.md              Written in Phase 3, revised through Phase 4
   CHANGELOG.md         Written in Phase 8
   QA_REPORT.md         Written in Phase 7

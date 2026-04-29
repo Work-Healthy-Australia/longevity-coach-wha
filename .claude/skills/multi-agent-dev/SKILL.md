@@ -11,7 +11,7 @@ For the full reference, invoke `superpowers:subagent-driven-development`. The in
 
 ## When to use
 
-- You have a written plan (in `docs/engineering/changes/<change>/PLAN.md` or equivalent)
+- You have a written plan (in `docs/engineering/changes/<YYYY-MM-DD>/<slug>/PLAN.md` or equivalent)
 - Tasks are mostly independent of each other
 - You want review gates between tasks, not just at the end
 
@@ -73,7 +73,7 @@ In addition to general quality, the code quality reviewer must confirm:
 Run `superpowers:finishing-a-development-branch` and then write the handoff documents into the change folder:
 
 ```
-docs/engineering/changes/<change-name>/
+docs/engineering/changes/<YYYY-MM-DD>/<slug>/
   PLAN.md              (already written before this skill ran)
   CHANGELOG.md         (what was actually built, diff from plan)
   QA_REPORT.md         (test results, reviewer findings, any deferred issues)

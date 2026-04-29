@@ -126,27 +126,27 @@ export function BillingClient({
               <strong>{planName}</strong>
             </div>
             {currentPeriodEnd && (
-              <div className="muted">
+              <div className="billing-muted">
                 <span suppressHydrationWarning>Renews {new Date(currentPeriodEnd).toLocaleDateString()}</span>
                 {cancelAtPeriodEnd && " (cancellation pending)"}
               </div>
             )}
           </div>
         ) : (
-          <div className="muted">No active subscription. <a href="/pricing">Choose a plan</a>.</div>
+          <div className="billing-muted">No active subscription. <a href="/pricing">Choose a plan</a>.</div>
         )}
       </section>
 
       <section className="billing-section">
         <h2>Active add-ons</h2>
         {activeAddons.length === 0 ? (
-          <div className="muted">No active add-ons.</div>
+          <div className="billing-muted">No active add-ons.</div>
         ) : (
           <ul className="addon-list">
             {activeAddons.map((row) => (
               <li key={row.id}>
                 <span>{row.plan_addons.name}</span>
-                <span className="muted">
+                <span className="billing-muted">
                   {centsToDollarsString(row.plan_addons.price_monthly_cents)}/mo
                 </span>
                 <button type="button" disabled={pending} onClick={() => handleRemove(row.id)}>
@@ -161,16 +161,16 @@ export function BillingClient({
       <section className="billing-section">
         <h2>Available add-ons</h2>
         {availableAddons.length === 0 ? (
-          <div className="muted">No additional add-ons available.</div>
+          <div className="billing-muted">No additional add-ons available.</div>
         ) : (
           <ul className="addon-list">
             {availableAddons.map((a) => (
               <li key={a.id}>
                 <span>
                   {a.name}
-                  {a.description && <span className="muted"> — {a.description}</span>}
+                  {a.description && <span className="billing-muted"> — {a.description}</span>}
                 </span>
-                <span className="muted">{centsToDollarsString(a.price_monthly_cents)}/mo</span>
+                <span className="billing-muted">{centsToDollarsString(a.price_monthly_cents)}/mo</span>
                 <button type="button" disabled={pending} onClick={() => handleAdd(a.id)}>
                   Add
                 </button>
@@ -183,7 +183,7 @@ export function BillingClient({
       <section className="billing-section">
         <h2>Order a test</h2>
         {products.length === 0 ? (
-          <div className="muted">No products in catalog.</div>
+          <div className="billing-muted">No products in catalog.</div>
         ) : (
           <ul className="product-list">
             {products.map((p) => (
@@ -205,7 +205,7 @@ export function BillingClient({
       <section className="billing-section">
         <h2>Order history</h2>
         {orders.length === 0 ? (
-          <div className="muted">No previous orders.</div>
+          <div className="billing-muted">No previous orders.</div>
         ) : (
           <table className="orders">
             <thead>
