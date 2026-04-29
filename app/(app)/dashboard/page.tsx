@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { calculateStreak } from "@/lib/streaks";
 import { dismissAlert } from "./_actions/dismiss-alert";
 import "./dashboard.css";
 
@@ -140,11 +141,12 @@ export default async function DashboardPage() {
   const supplementItems =
     Array.isArray(supplement?.items) ? (supplement!.items as SupplementItem[]) : [];
 
-  // Streak: consecutive days with a daily_log going back from today (or
-  // yesterday). UTC throughout — matches the writer in check-in actions.
+  // Streak: rest-day tolerant — 1–2 consecutive missed days count as rest
+  // (streak continues); 3+ consecutive missed days reset the streak.
   const todayStr = new Date().toISOString().slice(0, 10);
   const todayLog = logs.find((l) => l.log_date === todayStr) ?? null;
-  const streak = computeStreak(logs.map((l) => l.log_date));
+  const streakResult = calculateStreak(logs.map((l) => l.log_date), todayStr);
+  const streak = streakResult.currentStreak;
 
   // Sleep summary: "slept well N of last 7 nights" — well = 7+ hours.
   const lastSeven = logs.slice(0, 7);

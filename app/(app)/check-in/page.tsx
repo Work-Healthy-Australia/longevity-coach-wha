@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { CheckInForm, type LogEntry } from "./_components/check-in-form";
+import { deriveGoals } from "@/lib/goals/derive";
 import "./check-in.css";
 
 export const metadata = { title: "Daily check-in · Longevity Coach" };
@@ -12,6 +13,30 @@ export default async function CheckInPage() {
 
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+  const [{ data: riskData }, { data: profileData }] = await Promise.all([
+    supabase
+      .from('risk_scores')
+      .select('cv_risk, metabolic_risk, neuro_risk, msk_risk')
+      .eq('user_uuid', user!.id)
+      .order('computed_at', { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+    supabase
+      .from('profiles')
+      .select('daily_goals')
+      .eq('id', user!.id)
+      .single(),
+  ]);
+
+  const goals = deriveGoals({
+    cvRisk: riskData?.cv_risk ?? null,
+    metabolicRisk: riskData?.metabolic_risk ?? null,
+    neuroRisk: riskData?.neuro_risk ?? null,
+    mskRisk: riskData?.msk_risk ?? null,
+    weightKg: null, // not in profiles yet
+    stressAnxietyIndicator: false, // questionnaire parsing deferred
+  });
 
   const { data: recentLogs } = await supabase
     .schema("biomarkers" as never)
@@ -31,6 +56,16 @@ export default async function CheckInPage() {
       <p className="checkin-lede">
         A quick log each day helps Janet track your progress.
       </p>
+
+      <div className="checkin-goals">
+        <h2>Today&apos;s targets</h2>
+        <ul>
+          <li>Steps: <strong>{goals.steps.toLocaleString()}</strong></li>
+          <li>Sleep: <strong>{goals.sleepHours}h</strong></li>
+          <li>Water: <strong>{goals.waterGlasses} glasses</strong></li>
+          {goals.meditationMin && <li>Meditation: <strong>{goals.meditationMin} min</strong></li>}
+        </ul>
+      </div>
 
       <CheckInForm todayEntry={todayEntry} />
 

@@ -9,12 +9,15 @@ const DomainHighlightSchema = z.object({
   note: z.string(),
 });
 
+// String length constraints are intentionally omitted — LLMs cannot reliably count
+// characters, so minLength/maxLength in JSON Schema causes occasional parse failures.
+// Array maxItems are kept because object-count instructions are reliably followed.
 const ClinicianBriefOutputSchema = z.object({
-  janet_brief: z.string().min(100).max(1200),
+  janet_brief: z.string(),
   domain_highlights: z.array(DomainHighlightSchema).max(5),
   suggested_focus: z.array(z.string()).max(5),
-  adherence_signals: z.string().max(400),
-  data_coverage_note: z.string().max(300),
+  adherence_signals: z.string(),
+  data_coverage_note: z.string(),
 });
 
 type ClinicianBriefOutput = z.infer<typeof ClinicianBriefOutputSchema>;

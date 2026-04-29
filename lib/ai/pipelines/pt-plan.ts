@@ -14,7 +14,9 @@ const PtPlanItemSchema = z.object({
 
 const PtPlanOutputSchema = z.object({
   plan_name: z.string(),
-  exercises: z.array(PtPlanItemSchema).min(7).max(60),
+  // .min(7) removed — array minItems in JSON Schema is violated when the model generates
+  // fewer items (e.g. sparse patients), causing a hard parse failure. Use prompt guidance instead.
+  exercises: z.array(PtPlanItemSchema).max(60),
   generated_at: z.string(),
   msk_considerations: z.string(),
 });
