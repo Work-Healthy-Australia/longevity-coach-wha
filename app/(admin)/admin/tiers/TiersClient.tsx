@@ -318,30 +318,80 @@ export function TiersClient({ plans, janetServices, tierInclusions, featureKeys 
 
       {error && <div className="error-banner">{error}</div>}
 
-      {TIER_ORDER.map((tier) => {
+      {/* Horizontal tier card row */}
+      <div className="tier-cards">
+        {TIER_ORDER.map((tier) => {
+          const plan = getPlan(tier);
+          const inclCount = plan ? getInclusions(plan.id).length : 0;
+          const annualDisplay = plan
+            ? calcAnnualPrice(plan.base_price_cents, plan.annual_discount_pct)
+            : "—";
+          const isEditing = expandedTier === tier;
+          const tierPriceColors: Record<TierName, string> = {
+            core: "#1A3A4A",
+            clinical: "#2F6F8F",
+            elite: "#5B21B6",
+          };
+          const tierLabels: Record<TierName, string> = {
+            core: "Core",
+            clinical: "Clinical",
+            elite: "Elite",
+          };
+          return (
+            <div key={tier} className={`tier-card${isEditing ? " editing" : ""}`}>
+              <div className="tier-card-name">{tierLabels[tier]}</div>
+              {plan ? (
+                <div
+                  className="tier-card-price"
+                  style={{ color: tierPriceColors[tier] }}
+                >
+                  {centsToDisplay(plan.base_price_cents)}
+                  <span style={{ fontSize: 14, fontWeight: 400, color: "#9AABBA" }}>/mo</span>
+                </div>
+              ) : (
+                <div className="tier-card-price" style={{ color: "#9AABBA" }}>—</div>
+              )}
+              <div className="tier-card-meta">
+                {inclCount} inclusion{inclCount !== 1 ? "s" : ""} · Annual: {annualDisplay}
+              </div>
+              <div style={{ display: "flex", gap: 8, alignItems: "center", justifyContent: "space-between" }}>
+                <span className={`pill ${plan?.is_active ? "pill-green" : "pill-grey"}`}>
+                  {plan?.is_active ? "Active" : "Inactive"}
+                </span>
+                <button
+                  className={isEditing ? "btn-primary btn-xs" : "btn-outline btn-xs"}
+                  onClick={() => handleToggleExpand(tier)}
+                >
+                  {isEditing ? "Editing ▾" : "Edit tier"}
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Editor below the card row */}
+      {expandedTier && (() => {
+        const tier = expandedTier as TierName;
         const plan = getPlan(tier);
-        const isExpanded = expandedTier === tier;
         return (
-          <TierCard
-            key={tier}
+          <TierEditor
             tier={tier}
             plan={plan}
-            isExpanded={isExpanded}
             allServices={localServices}
             inclusions={plan ? getInclusions(plan.id) : []}
             featureKeys={localFeatureKeys}
             isPending={isPending}
-            onToggle={() => handleToggleExpand(tier)}
             onPlanChange={(field, value) => handlePlanChange(tier, field, value)}
             onInclusionChange={handleInclusionChange}
             onToggleInclusion={handleToggleInclusion}
             onSave={() => handleSave(tier)}
             onCancel={() => setExpandedTier(null)}
             onAddCustomFlag={handleAddFeatureKey}
-            error={isExpanded ? error : null}
+            error={error}
           />
         );
-      })}
+      })()}
 
       {showJanetPanel && (
         <>
@@ -376,17 +426,15 @@ export function TiersClient({ plans, janetServices, tierInclusions, featureKeys 
   );
 }
 
-// ─── TierCard ────────────────────────────────────────────────────────────────
+// ─── TierEditor ──────────────────────────────────────────────────────────────
 
-type TierCardProps = {
+type TierEditorProps = {
   tier: TierName;
   plan: Plan | undefined;
-  isExpanded: boolean;
   allServices: JanetService[];
   inclusions: TierInclusion[];
   featureKeys: FeatureKey[];
   isPending: boolean;
-  onToggle: () => void;
   onPlanChange: (field: keyof Plan, value: unknown) => void;
   onInclusionChange: (
     planId: string,
@@ -401,15 +449,13 @@ type TierCardProps = {
   error: string | null;
 };
 
-function TierCard({
+function TierEditor({
   tier,
   plan,
-  isExpanded,
   allServices,
   inclusions,
   featureKeys,
   isPending,
-  onToggle,
   onPlanChange,
   onInclusionChange,
   onToggleInclusion,
@@ -417,7 +463,7 @@ function TierCard({
   onCancel,
   onAddCustomFlag,
   error,
-}: TierCardProps) {
+}: TierEditorProps) {
   const [showCustomFlagForm, setShowCustomFlagForm] = useState(false);
   const [customFlagKey, setCustomFlagKey] = useState("");
   const [customFlagLabel, setCustomFlagLabel] = useState("");
@@ -463,44 +509,19 @@ function TierCard({
     ? calcAnnualPrice(plan.base_price_cents, plan.annual_discount_pct)
     : "—";
 
-  return (
-    <div className="tier-card">
-      <div
-        className={`tier-card-header${isExpanded ? " expanded" : ""}`}
-        onClick={onToggle}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => e.key === "Enter" && onToggle()}
-        aria-expanded={isExpanded}
-      >
-        <span className={`tier-card-chevron${isExpanded ? " open" : ""}`}>&#9654;</span>
-        <span className={`tier-badge tier-${tier}`}>{tierLabels[tier]}</span>
-        <span className="tier-card-name">{plan ? plan.name : `${tierLabels[tier]} (no plan)`}</span>
-        <span className="tier-card-meta">
-          {inclusionCount} inclusion{inclusionCount !== 1 ? "s" : ""} · Annual: {annualDisplay}
-        </span>
-        {plan && (
-          <span className="tier-card-price" style={{ color: tierPriceColors[tier] }}>
-            {centsToDisplay(plan.base_price_cents)}
-            <span style={{ fontSize: 13, fontWeight: 400, color: "#9AABBA" }}>/mo</span>
-          </span>
-        )}
-        <button
-          className={isExpanded ? "btn-primary btn-xs" : "btn-outline btn-xs"}
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggle();
-          }}
-        >
-          {isExpanded ? "Editing ▾" : "Edit tier"}
-        </button>
+  if (!plan) {
+    return (
+      <div className="tier-editor" style={{ color: "#9AABBA", fontSize: 13 }}>
+        No plan found for tier <strong>{tier}</strong>. Seed the plans table first.
       </div>
+    );
+  }
 
-      {isExpanded && plan && (
-        <div className="tier-editor">
-          <div className="editor-title">Editing: {tierLabels[tier]} tier</div>
+  return (
+    <div className="tier-editor">
+      <div className="editor-title">Editing: {tierLabels[tier]} tier</div>
 
-          {error && <div className="error-banner crud-error">{error}</div>}
+      {error && <div className="error-banner crud-error">{error}</div>}
 
           {/* Pricing */}
           <div className="editor-section">
@@ -883,13 +904,6 @@ function TierCard({
             </button>
           </div>
         </div>
-      )}
-
-      {isExpanded && !plan && (
-        <div className="tier-editor" style={{ color: "#9AABBA", fontSize: 13 }}>
-          No plan found for tier <strong>{tier}</strong>. Create a plan in the Plans section first.
-        </div>
-      )}
     </div>
   );
 }

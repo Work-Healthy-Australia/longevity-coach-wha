@@ -72,61 +72,47 @@
   padding: 4px 10px;
 }
 
-/* Tier card */
+/* Tier cards — horizontal row */
+.tier-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 0;
+}
+
 .tier-card {
   background: #fff;
   border: 1px solid #D4E0E8;
   border-radius: 10px;
-  margin-bottom: 16px;
-  overflow: hidden;
-}
-
-.tier-card-header {
+  padding: 18px 20px;
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 16px;
-  padding: 18px 24px;
-  cursor: pointer;
-  border-bottom: 1px solid transparent;
-  transition: background 0.1s;
+  flex-direction: column;
+  gap: 4px;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-.tier-card-header:hover {
-  background: #F8FAFB;
-}
-
-.tier-card-header.expanded {
-  border-bottom-color: #D4E0E8;
-}
-
-.tier-card-chevron {
-  font-size: 11px;
-  color: #9AABBA;
-  transition: transform 0.2s;
-  flex-shrink: 0;
-}
-
-.tier-card-chevron.open {
-  transform: rotate(90deg);
+.tier-card.editing {
+  border-color: #2F6F8F;
+  box-shadow: 0 0 0 3px #DDE8EE;
 }
 
 .tier-card-name {
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 700;
   color: #1A3A4A;
-  flex: 1;
+  margin-bottom: 2px;
 }
 
 .tier-card-price {
-  font-size: 16px;
-  font-weight: 700;
-  color: #1A3A4A;
+  font-size: 20px;
+  font-weight: 800;
+  color: #2F6F8F;
 }
 
 .tier-card-meta {
   font-size: 12px;
   color: #9AABBA;
+  margin: 2px 0 10px;
 }
 
 /* Tier badges */
@@ -154,10 +140,14 @@
   color: #5B21B6;
 }
 
-/* Inline editor */
+/* Inline editor — renders below the tier-cards row */
 .tier-editor {
+  margin-top: 16px;
+  background: #fff;
+  border: 1px solid #D4E0E8;
+  border-radius: 10px;
   padding: 24px;
-  border-top: 1px solid #D4E0E8;
+  border-top: 3px solid #2F6F8F;
 }
 
 .editor-title {
