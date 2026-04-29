@@ -30,7 +30,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 | 6 | The Coach | `●●●○○` | 95% | 0 | 1 |
 | 7 | The Daily Return | `●●●○○` | 90% | 0 | 0 |
 | 8 | The Living Record | `●●●○○` | 85% | 0 | 0 |
-| 9 | The Care Team | `●●○○○` | 30% | 0 | 0 |
+| 9 | The Care Team | `●●●◐○` | 75% | 0 | 0 |
 | 10 | The Knowledge Engine | `●◐◐○○` | 60% | 0 | 1 |
 | 11 | The Trust Layer | `●●●○○` | 90% | 0 | 1 |
 | 12 | The Distribution | `●●◐○○` | 55% | 0 | 0 |
@@ -273,25 +273,44 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 9: The Care Team
 
-`●○○○○` Planned · ○ Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 5%** — schema shipped (clinical and program tables), no UI, no clinician role assignment flow.
+`●●●◐○` Planned · Feature Complete · Unit Tested · ◐ Regression Tested · ○ User Reviewed
+**Estimate: 75%** — Plan B Wave-2-9 (2026-04-29) shipped the clinician portal end-to-end on top of the existing schema: role expansion, role-gated routes, patient consent surface, admin clinician invite (branded email), three-pane review workspace, schedule, profile editor, and the janet_clinician real-time agent with the `submit_30_day_program` tool replacing the Base44 PROGRAM_READY text sentinel (per C6). Decisions C1–C6 RESOLVED 2026-04-29 with default proposals — see `docs/architecture/clinician-portal-decisions.md`. What's left is real clinician pilot use plus the deferred items below.
 
 **Shipped:**
 - `clinical` schema (migrations `0011_clinical_schema.sql`).
 - `programs` schema (`0012_programs_schema.sql`).
 - `care_notes`, `periodic_reviews`, `patient_assignments`, `coach_suggestions` tables.
+- **Janet-Clinician Brief pipeline** (monthly cron via `vercel.json`) — `lib/ai/pipelines/clinician-brief.ts`; populates `periodic_reviews.janet_brief` with structured patient summary before the clinician opens the review.
+- **Role expansion** (migration `0048`) — `profiles.role` extended with `clinician`, `coach`, `health_manager`. `proxy.ts` gates `/clinician` and `/coach` paths; non-admins must hold the matching role.
+- **Schema for the portal** (migration `0048` + `0050`) — `clinician_profiles`, `clinician_invites`, columns added to existing `appointments` (`video_link`, `patient_notes`, `clinician_notes`).
+- **Periodic review workspace columns** (migration `0049`) — `program_30_day`, `program_sent_at`, `clinician_conversation_id` + clinician-can-update RLS via `patient_assignments`.
+- **`janet_clinician` agent definition** (migration `0051`) — sonnet-4-6, clinician-colleague persona, instructed to call the submit tool.
+- **Patient consent surface** at `/account` — "Care team access" form nominating a clinician by email; writes append-only `consent_records` row (new `care_team_access` policy) paired with the `patient_assignments` row.
+- **Admin clinician invite** at `/admin/clinicians` — existing user → role updated in place + clinician_profiles row + branded notification email; new user → single-use 14-day token in `clinician_invites` + branded Resend invite (replaces Supabase's default template).
+- **`/clinician` review workspace** — two-pane layout, queue grouped by status (awaiting / in_review / program_ready / sent_to_patient), urgent flag for `needs_attention` or stress ≥ 8; right pane: Patient card (Janet brief + structured fields), live Janet chat, 30-Day Program tab with Save draft + Approve & send.
+- **`/clinician/schedule`** — upcoming/past toggle, expandable appointment rows, status transitions, post-session notes.
+- **`/clinician/profile`** — full self-service editor (specialties, languages, bio, contact, working hours, lunch break, session duration, timezone, active flag).
+- **`janet_clinician` real-time agent** — `lib/ai/agents/janet-clinician.ts` + `lib/ai/tools/submit-program-tool.ts`; the submit tool writes `program_30_day` and flips `review_status` to `program_ready` (per C6 — replaces text sentinel). `POST /api/clinician/chat` gates on admin OR (clinician AND assigned via `patient_assignments`).
+- **Patient program-delivery email** — `lib/email/program-delivery.ts`; clicking Approve & send sends a branded Resend message with the program body to the patient's auth email; non-fatal if Resend fails (status transition still holds, program visible in-app).
 
 **Outstanding:**
-- Clinician portal pages.
-- Care-team invitation + per-patient permission management.
-- Janet-Clinician brief pipeline (monthly cron).
-- In-platform appointment booking (calendar + Stripe).
-- Clinical notes UI (private to care team).
-- Periodic-review record UI.
+- Real clinician pilot use (User Reviewed gate) — schema, UI, and AI loop are live but no actual clinician has run a monthly review end-to-end yet.
+- Patient-side appointment booking (deferred per C3 to Phase 5+ — clinician-initiated only in v1).
+- Clinical notes UI (`care_notes` writes from the workspace — currently `appointments.notes` is the only writable surface).
+- Janet chat persistence (each tab open starts fresh; `clinician_conversation_id` column is in place but not yet populated).
 - Community feed and challenges (deferred sub-epic).
 
 **Open bugs:** none.
 **Closed bugs:** 0.
+
+**Recently shipped (Plan B Wave-2-9, 2026-04-29):**
+- [#34](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/34) — clinician portal C1–C6 decisions resolved
+- [#35](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/35) — foundation: role expansion + schema + proxy gates
+- [#36](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/36) — patient consent + admin clinician invite
+- [#37](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/37) — review workspace + schedule + profile
+- [#41](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/41) — branded Resend clinician invite email
+- [#42](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/42) — janet_clinician real-time agent + submit_30_day_program tool
+- [#43](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/43) — patient program-delivery email on Approve & send
 
 ---
 
