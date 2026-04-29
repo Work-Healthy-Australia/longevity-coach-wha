@@ -7,19 +7,71 @@ import remarkBreaks from 'remark-breaks';
 
 export const REMARK_PLUGINS = [remarkGfm, remarkBreaks];
 
+const isExternalHref = (href?: string) =>
+  !!href && /^(https?:)?\/\//.test(href);
+
 export const MD_COMPONENTS: React.ComponentProps<typeof ReactMarkdown>['components'] = {
-  a:          ({ href, children }) => <a href={href} target="_blank" rel="noopener noreferrer" className="md-a">{children}</a>,
-  code:       ({ children }) => <code className="md-code">{children}</code>,
+  a: ({ href, children }) => {
+    const external = isExternalHref(href);
+    return (
+      <a
+        href={href}
+        className="md-a"
+        {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+      >
+        {children}
+      </a>
+    );
+  },
+  code: ({ className, children, ...rest }) => {
+    const isBlock = /language-/.test(className ?? '');
+    return (
+      <code className={`${isBlock ? 'md-code-block' : 'md-code'} ${className ?? ''}`.trim()} {...rest}>
+        {children}
+      </code>
+    );
+  },
   pre:        ({ children }) => <pre className="md-pre">{children}</pre>,
   p:          ({ children }) => <p className="md-p">{children}</p>,
-  ul:         ({ children }) => <ul className="md-ul">{children}</ul>,
+  ul:         ({ children, className }) => (
+    <ul className={`md-ul ${className?.includes('contains-task-list') ? 'md-tasklist' : ''}`.trim()}>
+      {children}
+    </ul>
+  ),
   ol:         ({ children }) => <ol className="md-ol">{children}</ol>,
-  li:         ({ children }) => <li className="md-li">{children}</li>,
+  li:         ({ children, className }) => (
+    <li className={`md-li ${className?.includes('task-list-item') ? 'md-task' : ''}`.trim()}>
+      {children}
+    </li>
+  ),
   blockquote: ({ children }) => <blockquote className="md-blockquote">{children}</blockquote>,
+  strong:     ({ children }) => <strong className="md-strong">{children}</strong>,
+  em:         ({ children }) => <em className="md-em">{children}</em>,
+  del:        ({ children }) => <del className="md-del">{children}</del>,
+  hr:         () => <hr className="md-hr" />,
+  table:      ({ children }) => (
+    <div className="md-table-wrap">
+      <table className="md-table">{children}</table>
+    </div>
+  ),
+  thead:      ({ children }) => <thead className="md-thead">{children}</thead>,
+  tbody:      ({ children }) => <tbody className="md-tbody">{children}</tbody>,
+  tr:         ({ children }) => <tr className="md-tr">{children}</tr>,
+  th:         ({ children, style }) => <th className="md-th" style={style}>{children}</th>,
+  td:         ({ children, style }) => <td className="md-td" style={style}>{children}</td>,
+  input:      (props) =>
+    props.type === 'checkbox' ? (
+      <input {...props} disabled className="md-checkbox" />
+    ) : (
+      <input {...props} />
+    ),
   // Flatten headings — too large for chat bubbles
   h1: ({ children }) => <p className="md-heading">{children}</p>,
   h2: ({ children }) => <p className="md-heading">{children}</p>,
   h3: ({ children }) => <p className="md-heading">{children}</p>,
+  h4: ({ children }) => <p className="md-heading">{children}</p>,
+  h5: ({ children }) => <p className="md-heading">{children}</p>,
+  h6: ({ children }) => <p className="md-heading">{children}</p>,
 };
 
 /**
@@ -90,21 +142,13 @@ export function AssistantBubble({
     };
   }, [isStreaming]);
 
-  if (!isStreaming) {
-    return (
-      <div className="md-body">
-        <ReactMarkdown components={MD_COMPONENTS} remarkPlugins={REMARK_PLUGINS}>
-          {text}
-        </ReactMarkdown>
-      </div>
-    );
-  }
+  const content = isStreaming ? displayed.join('') : text;
 
   return (
-    <span>
-      {displayed.map((word, i) => (
-        <span key={i} className="chat-chunk">{word}</span>
-      ))}
-    </span>
+    <div className="md-body">
+      <ReactMarkdown components={MD_COMPONENTS} remarkPlugins={REMARK_PLUGINS}>
+        {content}
+      </ReactMarkdown>
+    </div>
   );
 }

@@ -1,7 +1,23 @@
 /* Admin shell */
 .admin-shell {
+  --adm-primary: #2F6F8F;
+  --adm-primary-dark: #1A3A4A;
+  --adm-ink: #1A3A4A;
+  --adm-ink-soft: #6B7C85;
+  --adm-ink-muted: #9AABBA;
+  --adm-line: #D4E0E8;
+  --adm-line-soft: #E8EFF4;
+  --adm-surface: #FFFFFF;
+  --adm-bg: #F0F4F7;
+  --adm-accent: #F28C38;
+  --adm-success-bg: #D1FAE5;
+  --adm-success-text: #065F46;
+  --adm-warning-bg: #FEF3C7;
+  --adm-warning-text: #92400E;
+  --adm-danger-bg: #FEE2E2;
+  --adm-danger-text: #991B1B;
   min-height: 100vh;
-  background: #F0F4F7;
+  background: var(--adm-bg);
   display: flex;
   flex-direction: column;
 }
@@ -23,7 +39,7 @@
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.3px;
-  color: #F28C38;
+  color: var(--adm-accent);
   white-space: nowrap;
 }
 
@@ -73,7 +89,7 @@
 .admin-overview-title {
   font-size: 22px;
   font-weight: 700;
-  color: #1A3A4A;
+  color: var(--adm-ink);
   margin: 0;
 }
 
@@ -87,31 +103,31 @@
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.4px;
-  color: #6B7C85;
+  color: var(--adm-ink-soft);
   font-weight: 600;
 }
 
 .admin-range-select {
   font-size: 13px;
   padding: 6px 10px;
-  border: 1px solid #D4E0E8;
+  border: 1px solid var(--adm-line);
   border-radius: 6px;
   background: #fff;
-  color: #1A3A4A;
+  color: var(--adm-ink);
 }
 
 .admin-range-submit {
   font-size: 12px;
   font-weight: 600;
   padding: 6px 12px;
-  background: #2F6F8F;
+  background: var(--adm-primary);
   color: #fff;
   border: none;
   border-radius: 6px;
   cursor: pointer;
 }
 
-.admin-range-submit:hover { background: #1A3A4A; }
+.admin-range-submit:hover { background: var(--adm-ink); }
 
 /* Metric grid (3 x 2) */
 .admin-metric-grid {
@@ -136,7 +152,7 @@
 
 .analytics-card {
   background: #fff;
-  border: 1px solid #D4E0E8;
+  border: 1px solid var(--adm-line);
   border-radius: 10px;
   padding: 20px 24px;
 }
@@ -144,14 +160,14 @@
 .analytics-value {
   font-size: 32px;
   font-weight: 700;
-  color: #1A3A4A;
+  color: var(--adm-ink);
   line-height: 1;
   margin-bottom: 6px;
 }
 
 .analytics-label {
   font-size: 12px;
-  color: #6B7C85;
+  color: var(--adm-ink-soft);
   text-transform: uppercase;
   letter-spacing: 0.4px;
 }
@@ -159,7 +175,7 @@
 /* Cards */
 .admin-card {
   background: #fff;
-  border: 1px solid #D4E0E8;
+  border: 1px solid var(--adm-line);
   border-radius: 10px;
   padding: 24px;
 }
@@ -167,10 +183,10 @@
 .admin-card-title {
   font-size: 14px;
   font-weight: 700;
-  color: #1A3A4A;
+  color: var(--adm-ink);
   margin: 0 0 16px;
   padding-bottom: 10px;
-  border-bottom: 1px solid #E8EFF4;
+  border-bottom: 1px solid var(--adm-line-soft);
 }
 
 /* Table */
@@ -186,14 +202,14 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.4px;
-  color: #6B7C85;
+  color: var(--adm-ink-soft);
   padding: 8px 12px;
-  border-bottom: 2px solid #E8EFF4;
+  border-bottom: 2px solid var(--adm-line-soft);
 }
 
 .admin-table td {
   padding: 12px 12px;
-  border-bottom: 1px solid #F0F4F7;
+  border-bottom: 1px solid var(--adm-bg);
   vertical-align: middle;
 }
 
@@ -204,37 +220,37 @@
 
 .user-name {
   font-weight: 500;
-  color: #1A3A4A;
+  color: var(--adm-ink);
 }
 
 .view-link {
   font-size: 12px;
   font-weight: 600;
-  color: #2F6F8F;
+  color: var(--adm-primary);
   text-decoration: none;
 }
 
 .view-link:hover { text-decoration: underline; }
 
 .muted-cell {
-  color: #9AABBA;
+  color: var(--adm-ink-muted);
   font-size: 12px;
 }
 
 .empty-row {
   text-align: center;
-  color: #9AABBA;
+  color: var(--adm-ink-muted);
   padding: 32px !important;
 }
 
-/* Badges */
+/* Note: .badge is scoped to admin context only. Do not use this class outside admin routes. */
 .badge {
   font-size: 10px;
   font-weight: 600;
   padding: 2px 7px;
   border-radius: 4px;
   background: #E8F3F8;
-  color: #1A3A4A;
+  color: var(--adm-ink);
 }
 
 .admin-badge {
@@ -256,16 +272,16 @@
 .status-trialing { background: #DBEAFE; color: #1E40AF; }
 .status-canceled, .status-cancelled { background: #FEE2E2; color: #991B1B; }
 .status-past_due { background: #FEF3C7; color: #92400E; }
-.status-none { background: #F0F4F7; color: #6B7C85; }
+.status-none { background: var(--adm-bg); color: var(--adm-ink-soft); }
 .status-done { background: #D1FAE5; color: #065F46; }
 .status-pending { background: #FEF3C7; color: #92400E; }
 .status-failed { background: #FEE2E2; color: #991B1B; }
-.status-superseded { background: #F0F4F7; color: #9AABBA; }
+.status-superseded { background: var(--adm-bg); color: var(--adm-ink-muted); }
 
 /* Detail page */
 .back-link a {
   font-size: 13px;
-  color: #2F6F8F;
+  color: var(--adm-primary);
   text-decoration: none;
   font-weight: 500;
 }
@@ -281,13 +297,13 @@
 .detail-name {
   font-size: 24px;
   font-weight: 700;
-  color: #1A3A4A;
+  color: var(--adm-ink);
   margin: 0 0 4px;
 }
 
 .detail-meta {
   font-size: 13px;
-  color: #6B7C85;
+  color: var(--adm-ink-soft);
   margin: 0;
 }
 
@@ -307,13 +323,13 @@
 }
 
 .detail-dl dt {
-  color: #6B7C85;
+  color: var(--adm-ink-soft);
   font-weight: 500;
 }
 
 .detail-dl dd {
   margin: 0;
-  color: #1A3A4A;
+  color: var(--adm-ink);
 }
 
 .detail-bio-age {
@@ -326,13 +342,13 @@
 .detail-bio-number {
   font-size: 40px;
   font-weight: 700;
-  color: #1A3A4A;
+  color: var(--adm-ink);
   line-height: 1;
 }
 
 .detail-bio-label {
   font-size: 12px;
-  color: #6B7C85;
+  color: var(--adm-ink-soft);
   text-transform: uppercase;
   letter-spacing: 0.4px;
 }
@@ -352,7 +368,7 @@
   font-size: 9px;
   text-transform: uppercase;
   letter-spacing: 0.3px;
-  color: #9AABBA;
+  color: var(--adm-ink-muted);
   margin-bottom: 2px;
 }
 
@@ -378,7 +394,7 @@
 .response-details summary {
   cursor: pointer;
   font-size: 12px;
-  color: #2F6F8F;
+  color: var(--adm-primary);
   font-weight: 500;
   display: flex;
   align-items: center;
@@ -388,12 +404,12 @@
 .response-json {
   font-size: 11px;
   line-height: 1.5;
-  background: #F0F4F7;
+  background: var(--adm-bg);
   border-radius: 6px;
   padding: 12px;
   overflow-x: auto;
   margin-top: 8px;
   max-height: 300px;
   overflow-y: auto;
-  color: #1A3A4A;
+  color: var(--adm-ink);
 }

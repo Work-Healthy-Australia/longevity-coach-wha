@@ -1,11 +1,22 @@
 .lc-checkin {
   --lc-primary: #2F6F8F;
   --lc-primary-700: #245672;
+  --lc-primary-50: #EEF3F6;
+  --lc-canvas: #FAFAF7;
+  --lc-surface: #FFFFFF;
   --lc-line: #E3E8EC;
   --lc-line-soft: #EDF1F4;
   --lc-ink: #2B2B2B;
   --lc-ink-soft: #4B4B4B;
   --lc-grey: #8A9AA5;
+  --lc-sage: #6B8E83;
+  --lc-sage-50: #F0F4F2;
+  --lc-success: #2A7A5C;
+  --lc-success-50: #E6F4EE;
+  --lc-warning: #B5722F;
+  --lc-warning-50: #FAEFE0;
+  --lc-danger: #B5452F;
+  --lc-danger-50: #FBEAE5;
 
   max-width: 600px;
   margin: 0 auto;
@@ -38,8 +49,8 @@
   border-radius: 8px;
   font-size: 14px;
 }
-.checkin-banner-success { background: #D1FAE5; color: #065F46; }
-.checkin-banner-error   { background: #FEE2E2; color: #991B1B; }
+.checkin-banner-success { background: var(--lc-success-50); color: var(--lc-success); }
+.checkin-banner-error   { background: var(--lc-danger-50); color: var(--lc-danger); }
 
 .checkin-field {
   display: flex;
@@ -79,7 +90,7 @@
 .checkin-submit:disabled { cursor: not-allowed; opacity: 0.7; }
 
 .checkin-recent { margin-top: 40px; }
-.checkin-recent h2 { font-size: 16px; margin: 0 0 16px; font-weight: 600; }
+.checkin-recent h2 { font-family: var(--font-lc-serif), Georgia, serif; font-weight: 500; font-size: 18px; margin: 0 0 16px; }
 
 .checkin-recent-list {
   display: flex;

@@ -38,9 +38,9 @@ export function CareTeamSection({ clinicians }: { clinicians: AssignedClinician[
               <div>
                 <strong>{c.full_name ?? c.contact_email ?? "Clinician"}</strong>
                 {c.specialties.length > 0 && (
-                  <span className="muted"> — {c.specialties.join(", ")}</span>
+                  <span className="lc-account-muted"> — {c.specialties.join(", ")}</span>
                 )}
-                <div className="muted" suppressHydrationWarning>
+                <div className="lc-account-muted" suppressHydrationWarning>
                   Granted {new Date(c.assigned_at).toLocaleDateString()}
                 </div>
               </div>

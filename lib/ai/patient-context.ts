@@ -382,8 +382,14 @@ export function summariseContext(ctx: PatientContext): string {
   if (ctx.supplementPlan?.items.length) {
     const critical = ctx.supplementPlan.items.filter((s) => s.priority === "critical");
     const high = ctx.supplementPlan.items.filter((s) => s.priority === "high");
+    const daysSince = Math.floor(
+      (Date.now() - new Date(ctx.supplementPlan.createdAt).getTime()) / (1000 * 60 * 60 * 24),
+    );
+    const staleTag = daysSince > 1
+      ? ` ⚠ STALE (${daysSince} days old — threshold: 1 day)`
+      : ` ✓ fresh (generated today)`;
     lines.push(
-      `Supplement protocol: ${ctx.supplementPlan.items.length} supplements (${critical.length} critical, ${high.length} high priority)`,
+      `Supplement protocol: ${ctx.supplementPlan.items.length} supplements (${critical.length} critical, ${high.length} high priority) — generated ${daysSince} day${daysSince === 1 ? '' : 's'} ago${staleTag}`,
     );
   } else {
     lines.push(`Supplement protocol: not yet generated`);

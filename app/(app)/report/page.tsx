@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { cleanLegacyDriver } from "@/lib/risk/format-driver";
 import { JanetChat } from "./_components/janet-chat";
+import { SupplementRefreshButton } from "./_components/supplement-refresh-button";
 import type { UIMessage } from "ai";
 import "./report.css";
 
@@ -91,7 +92,7 @@ export default async function ReportPage() {
   ];
 
   return (
-    <div className="report">
+    <div className="lc-report">
       {/* Bio-age hero */}
       <section className="bio-age-hero">
         {risk?.biological_age != null ? (
@@ -185,6 +186,7 @@ export default async function ReportPage() {
         <div className="card-head">
           <h2>Your supplement protocol</h2>
           <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+            <SupplementRefreshButton hasProtocol={supplements.length > 0} />
             {supplement?.created_at && (
               <span className="badge muted">
                 Updated {formatDate(supplement.created_at)}
@@ -200,8 +202,7 @@ export default async function ReportPage() {
 
         {supplements.length === 0 ? (
           <p className="muted-text">
-            Your supplement protocol is being generated. It will appear here shortly
-            after your assessment is processed.
+            Your supplement protocol hasn&apos;t been generated yet. Click &apos;Generate my protocol&apos; above to get started.
           </p>
         ) : (
           <div className="supplement-list">
@@ -240,7 +241,7 @@ export default async function ReportPage() {
           Janet is your longevity health coach. Ask about your results, supplements,
           lifestyle changes, or anything else on your mind.
         </p>
-        <JanetChat initialMessages={priorTurns} />
+        <JanetChat initialMessages={priorTurns} userId={user.id} />
       </section>
     </div>
   );

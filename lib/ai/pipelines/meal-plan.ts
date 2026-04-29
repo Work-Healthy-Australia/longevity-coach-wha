@@ -8,7 +8,7 @@ import { createPipelineAgent } from '@/lib/ai/agent-factory';
 const MealSchema = z.object({
   name: z.string(),
   meal_type: z.enum(['breakfast', 'lunch', 'dinner', 'snack']),
-  day_of_week: z.number().int().min(1).max(7),
+  day_of_week: z.number().int(),
   macros: z.object({
     calories: z.number(),
     protein_g: z.number(),

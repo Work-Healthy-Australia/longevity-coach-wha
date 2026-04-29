@@ -1,6 +1,22 @@
 .clinician-shell {
+  --clin-primary: #2F6F8F;
+  --clin-primary-700: #245672;
+  --clin-primary-50: #EEF3F6;
+  --clin-nav: #2B2B2B;
+  --clin-ink: #2B2B2B;
+  --clin-ink-soft: #4B4B4B;
+  --clin-grey: #8A9AA5;
+  --clin-line: #E3E8EC;
+  --clin-line-soft: #EDF1F4;
+  --clin-surface: #FFFFFF;
+  --clin-canvas: #FAFAF7;
+  --clin-success: #2A7A5C;
+  --clin-success-50: #E6F4EE;
+  --clin-danger: #B5452F;
+  --clin-danger-50: #FBEAE5;
+
   min-height: 100vh;
-  background: #fafaf7;
+  background: var(--clin-canvas);
   display: flex;
   flex-direction: column;
 }
@@ -10,7 +26,7 @@
   align-items: center;
   gap: 24px;
   padding: 12px 24px;
-  background: #1a1a1a;
+  background: var(--clin-nav);
   color: #fff;
   border-bottom: 1px solid #000;
 }

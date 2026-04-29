@@ -6,20 +6,61 @@ import type { UIMessage } from 'ai';
 import { useState, useEffect, useRef } from 'react';
 import { AssistantBubble } from '@/app/(app)/_components/chat-message';
 
-export function JanetChat({ initialMessages = [] }: { initialMessages?: UIMessage[] }) {
-  const { messages, sendMessage, status } = useChat({
+export function JanetChat({ initialMessages = [], userId }: { initialMessages?: UIMessage[]; userId: string }) {
+  const { messages, sendMessage, status, setMessages } = useChat({
     transport: new DefaultChatTransport({ api: '/api/chat' }),
     messages: initialMessages,
   });
   const [input, setInput] = useState('');
+  const [pendingTask, setPendingTask] = useState<{ label: string; since: string } | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const lastIdx = messages.length - 1;
 
-  // Scroll to bottom when a new message arrives or the typing indicator appears
+  // Scroll to bottom when a new message arrives, a pending task appears, or typing indicator shows
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages.length, status]);
+  }, [messages.length, status, pendingTask]);
+
+  useEffect(() => {
+    function handleTaskStarted(e: Event) {
+      const since = (e as CustomEvent<{ since: string }>).detail?.since;
+      if (!since) return;
+      setPendingTask({ label: 'Generating your supplement protocol in the background…', since });
+    }
+
+    async function handleProtocolReady(e: Event) {
+      const since = (e as CustomEvent<{ since: string }>).detail?.since;
+      if (!since) return;
+
+      setPendingTask(null);
+
+      try {
+        const res = await fetch(`/api/report/supplement-message?since=${encodeURIComponent(since)}`);
+        if (!res.ok) return;
+        const { text } = await res.json() as { text: string | null };
+        if (!text) return;
+
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: `push-supplement-${Date.now()}`,
+            role: 'assistant' as const,
+            parts: [{ type: 'text' as const, text }],
+          },
+        ]);
+      } catch {
+        // Non-fatal: push message is a nice-to-have, not critical
+      }
+    }
+
+    window.addEventListener('supplementTaskStarted', handleTaskStarted);
+    window.addEventListener('supplementProtocolReady', handleProtocolReady);
+    return () => {
+      window.removeEventListener('supplementTaskStarted', handleTaskStarted);
+      window.removeEventListener('supplementProtocolReady', handleProtocolReady);
+    };
+  }, [setMessages]);
 
   return (
     <div className="chat-container">
@@ -66,6 +107,16 @@ export function JanetChat({ initialMessages = [] }: { initialMessages?: UIMessag
             </div>
           </div>
         ))}
+
+        {pendingTask && (
+          <div className="chat-message chat-message-assistant">
+            <div className="chat-avatar">J</div>
+            <div className="chat-bubble chat-bubble-task-pending">
+              <span className="chat-task-label">{pendingTask.label}</span>
+              <span className="chat-task-dots"><span /><span /><span /></span>
+            </div>
+          </div>
+        )}
 
         {status === 'submitted' && (
           <div className="chat-message chat-message-assistant">
