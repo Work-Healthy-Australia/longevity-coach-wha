@@ -3,7 +3,7 @@
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import type { UIMessage } from 'ai';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { AssistantBubble } from '@/app/(app)/_components/chat-message';
 
 export function JanetChat({ initialMessages = [] }: { initialMessages?: UIMessage[] }) {
@@ -12,8 +12,14 @@ export function JanetChat({ initialMessages = [] }: { initialMessages?: UIMessag
     messages: initialMessages,
   });
   const [input, setInput] = useState('');
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   const lastIdx = messages.length - 1;
+
+  // Scroll to bottom when a new message arrives or the typing indicator appears
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages.length, status]);
 
   return (
     <div className="chat-container">
@@ -69,6 +75,7 @@ export function JanetChat({ initialMessages = [] }: { initialMessages?: UIMessag
             </div>
           </div>
         )}
+        <div ref={bottomRef} />
       </div>
 
       <form
