@@ -108,6 +108,8 @@ export const SEED_PATIENT_CONTEXT: PatientContext = {
     createdAt: '2026-04-05T00:00:00.000Z',
   },
 
+  ptPlan: null,
+
   recentConversation: [
     {
       role: 'user',

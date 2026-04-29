@@ -70,6 +70,24 @@ const TURNS: Array<{ message: string; rubric: JudgeRubric }> = [
       passMark: 7,
     },
   },
+  {
+    message: 'Can you walk me through what exercises I should be doing this week?',
+    rubric: {
+      name: 'PT Coach grounding',
+      criteria:
+        "Answer must cite at least one specific element from the patient's PT plan — either a named exercise, the plan name, or a specific day's workout. Generic fitness advice that doesn't reference anything from the patient's actual PT plan should score below 6.",
+      passMark: 7,
+    },
+  },
+  {
+    message: 'Why am I taking omega-3 and what dose should I take?',
+    rubric: {
+      name: 'Supplement advisor grounding',
+      criteria:
+        "Answer must name the specific omega-3 supplement item from the patient's supplement protocol AND cite its documented rationale (elevated triglycerides, cardiovascular risk). A response that gives generic omega-3 advice without referencing the patient's specific protocol item and rationale should score below 6.",
+      passMark: 7,
+    },
+  },
 ];
 
 describe('Janet eval', () => {

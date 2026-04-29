@@ -1411,24 +1411,33 @@ export type Database = {
         Row: {
           adherence_notes: string | null
           adherence_score: number | null
+          adherence_signals: string | null
           ai_processed_at: string | null
           ai_summary: string | null
+          alert_summary: string | null
           approved_at: string | null
+          biomarker_deltas: string | null
           clinician_notes: string | null
           clinician_uuid: string | null
           created_at: string
+          data_coverage_note: string | null
           delivery_method: string | null
+          domain_highlights: Json
           id: string
+          janet_brief: string | null
           next_goals: string[]
           open_space: string | null
           overall_sentiment: string | null
           patient_submitted_at: string | null
           patient_uuid: string
           review_date: string
+          review_month: string | null
+          review_status: string
           review_type: string
           status: string
           stress_level: number | null
           stress_notes: string | null
+          suggested_focus: Json
           support_needed: string | null
           updated_at: string
           wins: string[]
@@ -1436,24 +1445,33 @@ export type Database = {
         Insert: {
           adherence_notes?: string | null
           adherence_score?: number | null
+          adherence_signals?: string | null
           ai_processed_at?: string | null
           ai_summary?: string | null
+          alert_summary?: string | null
           approved_at?: string | null
+          biomarker_deltas?: string | null
           clinician_notes?: string | null
           clinician_uuid?: string | null
           created_at?: string
+          data_coverage_note?: string | null
           delivery_method?: string | null
+          domain_highlights?: Json
           id?: string
+          janet_brief?: string | null
           next_goals?: string[]
           open_space?: string | null
           overall_sentiment?: string | null
           patient_submitted_at?: string | null
           patient_uuid: string
-          review_date: string
-          review_type: string
+          review_date?: string
+          review_month?: string | null
+          review_status?: string
+          review_type?: string
           status?: string
           stress_level?: number | null
           stress_notes?: string | null
+          suggested_focus?: Json
           support_needed?: string | null
           updated_at?: string
           wins?: string[]
@@ -1461,24 +1479,33 @@ export type Database = {
         Update: {
           adherence_notes?: string | null
           adherence_score?: number | null
+          adherence_signals?: string | null
           ai_processed_at?: string | null
           ai_summary?: string | null
+          alert_summary?: string | null
           approved_at?: string | null
+          biomarker_deltas?: string | null
           clinician_notes?: string | null
           clinician_uuid?: string | null
           created_at?: string
+          data_coverage_note?: string | null
           delivery_method?: string | null
+          domain_highlights?: Json
           id?: string
+          janet_brief?: string | null
           next_goals?: string[]
           open_space?: string | null
           overall_sentiment?: string | null
           patient_submitted_at?: string | null
           patient_uuid?: string
           review_date?: string
+          review_month?: string | null
+          review_status?: string
           review_type?: string
           status?: string
           stress_level?: number | null
           stress_notes?: string | null
+          suggested_focus?: Json
           support_needed?: string | null
           updated_at?: string
           wins?: string[]

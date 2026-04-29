@@ -5,11 +5,16 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { compressConversation } from '@/lib/ai/compression';
 import { riskAnalyzerTool } from '@/lib/ai/tools/risk-analyzer-tool';
 import { supplementAdvisorTool } from '@/lib/ai/tools/supplement-advisor-tool';
+import { ptCoachTool } from '@/lib/ai/tools/pt-coach-tool';
 
 export async function streamJanetTurn(userId: string, messages: UIMessage[]) {
+  const t0 = Date.now();
+
   const [ctx] = await Promise.all([
     loadPatientContext(userId, { includeConversation: true, agent: 'janet' }),
   ]);
+
+  const ctxMs = Date.now() - t0;
 
   const agent = createStreamingAgent('janet');
   return agent.stream(messages, {
@@ -17,8 +22,15 @@ export async function streamJanetTurn(userId: string, messages: UIMessage[]) {
     tools: {
       risk_analyzer_summary: riskAnalyzerTool(ctx),
       supplement_advisor_summary: supplementAdvisorTool(ctx),
+      consult_pt_coach: ptCoachTool(ctx),
     },
     onFinish: async ({ text }) => {
+      const totalMs = Date.now() - t0;
+      console.log(JSON.stringify({
+        event: 'janet_turn',
+        patient_context_ms: ctxMs,
+        total_ms: totalMs,
+      }));
       const admin = createAdminClient();
       const lastUserMsg = messages.findLast((m) => m.role === 'user');
       const userText = lastUserMsg?.parts?.find((p) => p.type === 'text')?.text ?? '';
