@@ -194,28 +194,6 @@ export function adaptCancerHistory(
   };
 }
 
-function familyConditionFromMultiselect(
-  relatives: unknown,
-  onsetAge: unknown,
-): FamilyHistory["cardiovascular"] | undefined {
-  if (!Array.isArray(relatives) || relatives.length === 0) return undefined;
-  const list = relatives.filter((r): r is string => typeof r === "string");
-  if (list.includes("None")) return undefined;
-  const firstDegree = list.some((r) => FIRST_DEGREE_RELATIVES.has(r));
-  const secondDegree = list.some((r) => SECOND_DEGREE_RELATIVES.has(r));
-  if (!firstDegree && !secondDegree) return undefined;
-  const out: FamilyHistory["cardiovascular"] = {
-    first_degree: firstDegree,
-    second_degree: secondDegree,
-  };
-  if (typeof onsetAge === "number") out.age_onset = onsetAge;
-  else if (typeof onsetAge === "string" && onsetAge.trim()) {
-    const n = Number(onsetAge);
-    if (Number.isFinite(n)) out.age_onset = n;
-  }
-  return out;
-}
-
 /**
  * Aggregate a per-condition `FamilyHistoryCondition` shape from the new
  * `family_members[]` cards. Pure / deterministic.
@@ -257,50 +235,16 @@ export function buildFamilyHistory(family: Record<string, unknown> | undefined):
   if (!family) return {};
   const fh: FamilyHistory = {};
 
-  // Prefer new per-relative cards if present.
   const membersRaw = (family as { family_members?: unknown }).family_members;
   const members: FamilyMemberCard[] = Array.isArray(membersRaw)
     ? (membersRaw as FamilyMemberCard[])
     : [];
-  const hasNewShape = members.length > 0;
 
-  if (hasNewShape) {
-    const cv = aggregateConditionFromMembers(members, "cardiovascular");
-    if (cv) fh.cardiovascular = cv;
-    const neuro = aggregateConditionFromMembers(members, "neurodegenerative");
-    if (neuro) fh.neurodegenerative = neuro;
-    const dia = aggregateConditionFromMembers(members, "diabetes");
-    if (dia) fh.diabetes = dia;
-    const osteo = aggregateConditionFromMembers(members, "osteoporosis");
-    if (osteo) fh.osteoporosis = osteo;
-  } else {
-    // Legacy fallback — preserved verbatim so existing responses still score.
-    const cv = familyConditionFromMultiselect(
-      family.cardiovascular_relatives,
-      family.cardiovascular_onset_age,
-    );
-    if (cv) fh.cardiovascular = cv;
-
-    const neuro = familyConditionFromMultiselect(
-      family.neurodegenerative_relatives,
-      family.neurodegenerative_onset_age,
-    );
-    if (neuro) fh.neurodegenerative = neuro;
-
-    const dia = familyConditionFromMultiselect(
-      family.diabetes_relatives,
-      family.diabetes_onset_age,
-    );
-    if (dia) fh.diabetes = dia;
-
-    const osteo = familyConditionFromMultiselect(
-      family.osteoporosis_relatives,
-      family.osteoporosis_onset_age,
-    );
-    if (osteo) fh.osteoporosis = osteo;
+  for (const type of ["cardiovascular", "neurodegenerative", "diabetes", "osteoporosis"] as const) {
+    const agg = aggregateConditionFromMembers(members, type);
+    if (agg) fh[type] = agg;
   }
 
-  // Cancer history is independent of cards in either path.
   const cancer = adaptCancerHistory(family.cancer_history as CancerHistoryValue | undefined);
   if (cancer) fh.cancer = cancer;
 

@@ -140,8 +140,8 @@ describe("aggregateConditionFromMembers", () => {
   });
 });
 
-describe("buildFamilyHistory — new shape preferred over legacy", () => {
-  it("uses family_members[] when present (new path wins)", () => {
+describe("buildFamilyHistory — reads only the family_members[] card model", () => {
+  it("uses family_members[] when present", () => {
     const fh = buildFamilyHistory({
       family_members: [
         {
@@ -151,22 +151,15 @@ describe("buildFamilyHistory — new shape preferred over legacy", () => {
           conditions: [{ type: "cardiovascular", age_onset: 50 }],
         },
       ],
-      // legacy keys present too — should be ignored when family_members non-empty
-      cardiovascular_relatives: ["Father"],
-      cardiovascular_onset_age: 99,
     });
     expect(fh.cardiovascular?.first_degree).toBe(true);
     expect(fh.cardiovascular?.age_onset).toBe(50);
     expect(fh.cardiovascular?.multiple).toBe(false);
   });
 
-  it("falls back to legacy multiselect when family_members is empty/absent", () => {
-    const fh = buildFamilyHistory({
-      cardiovascular_relatives: ["Father"],
-      cardiovascular_onset_age: 55,
-    });
-    expect(fh.cardiovascular?.first_degree).toBe(true);
-    expect(fh.cardiovascular?.age_onset).toBe(55);
+  it("returns empty FamilyHistory when family_members is empty/absent", () => {
+    expect(buildFamilyHistory({})).toEqual({});
+    expect(buildFamilyHistory({ family_members: [] })).toEqual({});
   });
 
   it("aggregates all four card conditions independently", () => {

@@ -38,11 +38,16 @@ describe("adaptCancerHistory", () => {
 });
 
 describe("buildFamilyHistory", () => {
-  it("translates multiselect family relatives + onset", () => {
+  it("translates family_members[] cards + per-condition age", () => {
     const fh = buildFamilyHistory({
-      cardiovascular_relatives: ["Father"],
-      cardiovascular_onset_age: 55,
-      neurodegenerative_relatives: ["None"],
+      family_members: [
+        {
+          id: "a",
+          relationship: "father",
+          is_alive: true,
+          conditions: [{ type: "cardiovascular", age_onset: 55 }],
+        },
+      ],
     });
     expect(fh.cardiovascular?.first_degree).toBe(true);
     expect(fh.cardiovascular?.age_onset).toBe(55);
@@ -94,8 +99,14 @@ describe("buildPatientInput → scoreRisk e2e", () => {
         basics: { sex_at_birth: "Male", height_cm: 180, weight_kg: 80 },
         medical: { conditions: ["Hypertension"], medications: "lisinopril" },
         family: {
-          cardiovascular_relatives: ["Father"],
-          cardiovascular_onset_age: 50,
+          family_members: [
+            {
+              id: "f-1",
+              relationship: "father",
+              is_alive: true,
+              conditions: [{ type: "cardiovascular", age_onset: 50 }],
+            },
+          ],
           cancer_history: {
             status: "yes",
             entries: [{ type: "Colorectal", relatives: ["Mother"], onsetAge: 45 }],

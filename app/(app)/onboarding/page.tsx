@@ -48,22 +48,24 @@ export default async function OnboardingPage() {
     (latestDraft?.responses ?? latestCompleted?.responses ?? {}) as ResponsesByStep;
   const isEditing = !latestDraft && !!latestCompleted;
 
-  // Hydrate basics fields from profiles (single source of truth for PII).
-  // stripUnknownKeys drops any keys from older schema versions so a stale
-  // draft can't reintroduce removed fields on the next save.
-  const persistedResponses = stripUnknownKeys(sourceResponses, onboardingQuestionnaire);
-
-  // Hydrate legacy family-history data into the new per-relative card shape.
-  // Idempotent: once `family.family_members[]` is non-empty, the shim
-  // short-circuits so member edits are never overwritten.
-  const familyMembers = hydrateFamilyMembers(persistedResponses);
-  const responsesWithMigration: ResponsesByStep = {
-    ...persistedResponses,
+  // Hydrate legacy family-history data into the new per-relative card shape
+  // BEFORE stripping unknown keys — otherwise the legacy keys (which are no
+  // longer in the schema) would be dropped before the migration shim could
+  // read them. Idempotent: once `family.family_members[]` is non-empty, the
+  // shim short-circuits so member edits are never overwritten.
+  const familyMembers = hydrateFamilyMembers(sourceResponses);
+  const sourceWithMembers: ResponsesByStep = {
+    ...sourceResponses,
     family: {
-      ...((persistedResponses.family as Record<string, unknown>) ?? {}),
+      ...((sourceResponses.family as Record<string, unknown>) ?? {}),
       family_members: familyMembers,
     },
   };
+
+  // stripUnknownKeys drops any keys from older schema versions (including the
+  // now-removed legacy family multiselects and deceased-relatives step) so a
+  // stale draft can't reintroduce removed fields on the next save.
+  const responsesWithMigration = stripUnknownKeys(sourceWithMembers, onboardingQuestionnaire);
 
   const initialResponses: ResponsesByStep = {
     ...responsesWithMigration,
@@ -92,7 +94,7 @@ export default async function OnboardingPage() {
 /**
  * Returns the family_members[] array to use for hydration. If the responses
  * already carry a non-empty array, it wins; otherwise we derive cards from
- * legacy `family.*_relatives` and `family_deaths.*_status` keys.
+ * legacy condition-multiselect and deceased-relative keys.
  *
  * Pure helper so it can be unit-tested without spinning up the page server
  * component.

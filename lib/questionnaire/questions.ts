@@ -7,7 +7,7 @@
 //     - needs Supabase Storage bucket + RLS decision
 //   - Payment step - handled by /api/stripe/checkout, not part of this form
 
-import type { FieldDef, QuestionnaireDef } from "./schema";
+import type { QuestionnaireDef } from "./schema";
 
 export const RELATIVES = [
   "Mother",
@@ -37,60 +37,6 @@ export const CANCER_TYPES = [
   "Don't know specific type",
   "Other",
 ] as const;
-
-const VITAL_STATUS = ["Alive", "Deceased", "Unknown"] as const;
-
-// Per-condition pair: which relatives were affected + earliest age of onset.
-// Both fields are optional; a user with no family history simply leaves them
-// empty (or selects "None"). The risk engine treats absence as "no signal".
-function familyConditionFields(id: string, label: string): FieldDef[] {
-  return [
-    {
-      id: `${id}_relatives`,
-      label: `${label} — affected relatives`,
-      type: "multiselect",
-      optional: true,
-      options: [...RELATIVES],
-    },
-    {
-      id: `${id}_onset_age`,
-      label: `${label} — earliest age of onset`,
-      type: "number",
-      optional: true,
-      placeholder: "e.g. 55",
-      suffix: "years",
-    },
-  ];
-}
-
-// Per-relative trio: vital status + age + cause of death. Cause/age are only
-// meaningful when status === "Deceased" but we don't yet support conditional
-// fields, so all three are optional and skip-friendly.
-function deceasedRelativeFields(id: string, label: string): FieldDef[] {
-  return [
-    {
-      id: `${id}_status`,
-      label: `${label} — status`,
-      type: "select",
-      optional: true,
-      options: [...VITAL_STATUS],
-    },
-    {
-      id: `${id}_age`,
-      label: `${label} — age (current or at death)`,
-      type: "number",
-      optional: true,
-      suffix: "years",
-    },
-    {
-      id: `${id}_cause_of_death`,
-      label: `${label} — cause of death`,
-      type: "text",
-      optional: true,
-      placeholder: "e.g. heart attack, stroke, cancer (lung)",
-    },
-  ];
-}
 
 export const onboardingQuestionnaire: QuestionnaireDef = {
   steps: [
@@ -201,7 +147,7 @@ export const onboardingQuestionnaire: QuestionnaireDef = {
       id: "family",
       label: "Family history",
       description:
-        "Add family members below for the richest picture, or fill the per-condition fields further down if you prefer.",
+        "Add each family member you know about. Mark which conditions they had and at what age. The richest data feeds the most accurate risk picture.",
       fields: [
         {
           id: "family_members",
@@ -209,9 +155,8 @@ export const onboardingQuestionnaire: QuestionnaireDef = {
           type: "family_members",
           optional: true,
           helpText:
-            "Add each family member you know about. Mark which conditions they had and at what age. The richest data feeds the most accurate risk picture. You can also use the per-condition fields below if you prefer — both will work.",
+            "Add parents, siblings, grandparents, aunts, and uncles. Skip any you don't know about.",
         },
-        ...familyConditionFields("cardiovascular", "Heart disease or stroke"),
         {
           id: "cancer_history",
           label: "Cancer in your family",
@@ -220,26 +165,6 @@ export const onboardingQuestionnaire: QuestionnaireDef = {
           helpText:
             "Cancer type, age, and which relatives are the strongest signals for inherited risk. Skip anything you don't know.",
         },
-        ...familyConditionFields(
-          "neurodegenerative",
-          "Neurodegenerative (Alzheimer's, Parkinson's)",
-        ),
-        ...familyConditionFields("diabetes", "Type 2 diabetes"),
-        ...familyConditionFields("osteoporosis", "Osteoporosis or fractures"),
-      ],
-    },
-    {
-      id: "family_deaths",
-      label: "Deaths in the family",
-      description:
-        "If known, record cause of death and age for parents and grandparents. This is the strongest single signal for inherited longevity — the actuarial models depend on it. Skip any you don't know.",
-      fields: [
-        ...deceasedRelativeFields("mother", "Mother"),
-        ...deceasedRelativeFields("father", "Father"),
-        ...deceasedRelativeFields("maternal_grandmother", "Maternal grandmother"),
-        ...deceasedRelativeFields("maternal_grandfather", "Maternal grandfather"),
-        ...deceasedRelativeFields("paternal_grandmother", "Paternal grandmother"),
-        ...deceasedRelativeFields("paternal_grandfather", "Paternal grandfather"),
       ],
     },
     {

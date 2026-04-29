@@ -44,8 +44,8 @@ export type CancerHistoryValue = {
 };
 
 // ---------------------------------------------------------------------------
-// `family_members` field value: per-relative cards. Replaces the old
-// per-condition multiselects + the `family_deaths` step. The deterministic
+// `family_members` field value: per-relative cards. Replaces the legacy
+// per-condition multiselects and the deceased-relatives step. The deterministic
 // risk engine reads these cards via `aggregateConditionFromMembers()` in
 // `lib/risk/assemble.ts`. Smoking/alcohol per relative are stored but not
 // yet consumed by the engine (future-proofing for parental smoking → CV uplift).
