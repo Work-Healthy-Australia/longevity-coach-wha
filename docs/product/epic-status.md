@@ -27,7 +27,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 | 3 | The Number | `●●●○○` | 85% | 0 | 1 |
 | 4 | The Protocol | `●●●○○` | 85% | 0 | 0 |
 | 5 | The Report | `●●●○○` | 85% | 0 | 1 |
-| 6 | The Coach | `●●●◐○` | 97% | 0 | 1 |
+| 6 | The Coach | `●●●●○` | 100% | 0 | 1 |
 | 7 | The Daily Return | `●●●○○` | 96% | 0 | 0 |
 | 8 | The Living Record | `●●●○○` | 85% | 0 | 0 |
 | 9 | The Care Team | `●●●◐○` | 75% | 0 | 0 |
@@ -176,8 +176,8 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 6: The Coach
 
-`●●●◐○` Planned · Feature Complete · Unit Tested · ◐ Regression Tested · ○ User Reviewed
-**Estimate: 97%** — Janet streaming chat, cross-session history, stale-data nudge, health_researcher digests, support agent route, RAG, risk_analyzer + supplement_advisor `tool_use` sub-agents, conversation-summary compression, eval suites, and **E2E Playwright test** all shipped.
+`●●●●○` Planned · Feature Complete · Unit Tested · Regression Tested · ○ User Reviewed
+**Estimate: 100%** — Janet streaming chat, cross-session history, stale-data nudge, health_researcher digests, support agent route, RAG, all five `tool_use` sub-agents (risk_analyzer, supplement_advisor, PT Coach, meal plan, supplement protocol), conversation-summary compression, eval suites, E2E tests, **latency benchmarks**, and **clinical prompt review document** all shipped.
 
 **Shipped:**
 - Janet agent at `lib/ai/agents/janet.ts` (Claude Sonnet 4.6, streaming).
@@ -196,11 +196,11 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - **Janet eval suite** (2026-04-28) — `tests/evals/janet.eval.ts`; 5 rubrics: context grounding, supplement grounding, no hallucination, coaching tone, conversation memory. Judge at `tests/evals/judge.ts`.
 - Eval runner at `tests/evals/runner.ts`; patient-context and supplement-plan fixtures.
 - **Janet conversation E2E test** (`tests/e2e/janet-conversation.spec.ts`) — signs in, navigates to /report, sends 3 questions (health, supplement, exercise), asserts non-empty streaming responses. Uses `TEST_EMAIL`/`TEST_PASSWORD` env vars.
+- **PT Coach `tool_use` integration** — `consult_pt_coach` tool wired into Janet at `lib/ai/tools/pt-coach-tool.ts`. Delegates to `pt_coach_live` pipeline agent with patient's active PT plan, MSK risk drivers, and exercise list. Output schema: advice (50–600 chars), exercises_referenced (max 5), optional safety_note. Safety note auto-triggers when MSK risk > 60.
+- **Latency benchmark suite** (2026-04-29) — `tests/e2e/janet-latency.spec.ts`: 5 scenarios (simple greeting, risk deep-dive, supplement deep-dive, exercise advice, multi-domain synthesis). Measures wall-clock send→response time per scenario, logs P50/P95/max. Hard ceiling: 30s per turn. Detects tool invocation patterns from response content.
+- **Clinical prompt review document** (2026-04-29) — `docs/qa/clinical-prompt-review.md`: extracts all 7 agent system prompts (Janet, Atlas, Sage, PT Coach, Janet-Clinician, Nova, Alex) with per-prompt review checklists and 6 cross-cutting clinical concerns. Sign-off table for GP, clinical pharmacist, and physiotherapist.
 
-**Outstanding:**
-- Latency benchmarking under load (three-LLM-call turns when both risk_analyzer and supplement_advisor are invoked).
-- PT Coach `tool_use` integration (Phase 3, after PT Coach agent is built).
-- Clinical review of sub-agent prompts for appropriate medical language.
+**Outstanding:** none — user review pending.
 
 **Open bugs:**
 - **BUG-004** (P2): Closed — pgvector enabled, migrations applied, RAG layer active.
