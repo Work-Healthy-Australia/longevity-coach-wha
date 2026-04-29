@@ -1168,7 +1168,7 @@ export type Database = {
           policy_id: string
           policy_version: string
           user_agent: string | null
-          user_uuid: string
+          user_uuid: string | null
         }
         Insert: {
           accepted_at?: string
@@ -1178,7 +1178,7 @@ export type Database = {
           policy_id: string
           policy_version: string
           user_agent?: string | null
-          user_uuid: string
+          user_uuid?: string | null
         }
         Update: {
           accepted_at?: string
@@ -1188,7 +1188,43 @@ export type Database = {
           policy_id?: string
           policy_version?: string
           user_agent?: string | null
-          user_uuid?: string
+          user_uuid?: string | null
+        }
+        Relationships: []
+      }
+      erasure_log: {
+        Row: {
+          confirmation_text: string
+          erased_at: string
+          hard_delete: boolean
+          id: string
+          request_ip: string | null
+          request_user_agent: string | null
+          stripe_subscription_action: string | null
+          table_counts: Json
+          user_uuid: string | null
+        }
+        Insert: {
+          confirmation_text: string
+          erased_at?: string
+          hard_delete?: boolean
+          id?: string
+          request_ip?: string | null
+          request_user_agent?: string | null
+          stripe_subscription_action?: string | null
+          table_counts: Json
+          user_uuid?: string | null
+        }
+        Update: {
+          confirmation_text?: string
+          erased_at?: string
+          hard_delete?: boolean
+          id?: string
+          request_ip?: string | null
+          request_user_agent?: string | null
+          stripe_subscription_action?: string | null
+          table_counts?: Json
+          user_uuid?: string | null
         }
         Relationships: []
       }
@@ -1200,7 +1236,7 @@ export type Database = {
           format: string
           id: string
           request_ip: string | null
-          user_uuid: string
+          user_uuid: string | null
         }
         Insert: {
           byte_size?: number | null
@@ -1209,7 +1245,7 @@ export type Database = {
           format: string
           id?: string
           request_ip?: string | null
-          user_uuid: string
+          user_uuid?: string | null
         }
         Update: {
           byte_size?: number | null
@@ -1218,7 +1254,7 @@ export type Database = {
           format?: string
           id?: string
           request_ip?: string | null
-          user_uuid?: string
+          user_uuid?: string | null
         }
         Relationships: []
       }
@@ -1646,6 +1682,7 @@ export type Database = {
           drip_day1_sent_at: string | null
           drip_day3_sent_at: string | null
           drip_day7_sent_at: string | null
+          erased_at: string | null
           full_name: string | null
           id: string
           is_admin: boolean
@@ -1660,6 +1697,7 @@ export type Database = {
           drip_day1_sent_at?: string | null
           drip_day3_sent_at?: string | null
           drip_day7_sent_at?: string | null
+          erased_at?: string | null
           full_name?: string | null
           id: string
           is_admin?: boolean
@@ -1674,6 +1712,7 @@ export type Database = {
           drip_day1_sent_at?: string | null
           drip_day3_sent_at?: string | null
           drip_day7_sent_at?: string | null
+          erased_at?: string | null
           full_name?: string | null
           id?: string
           is_admin?: boolean

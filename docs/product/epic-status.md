@@ -1,6 +1,6 @@
 # Longevity Coach — Epic Status Dashboard
 
-Last updated **2026-04-29** (Sprint 2 Engineering Completeness).
+Last updated **2026-04-29** (Sprint 2 Engineering Completeness; right-to-erasure flow shipped end-to-end across PRs #46, #48, #50).
 
 Companion to [epics.md](./epics.md) (strategy, stable) and [product.md](./product.md) (vision). This file is the **at-a-glance status** of each epic: how far through the build pipeline, what's still outstanding, what's broken right now.
 
@@ -32,7 +32,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 | 8 | The Living Record | `●●●○○` | 85% | 0 | 0 |
 | 9 | The Care Team | `●●●◐○` | 75% | 0 | 0 |
 | 10 | The Knowledge Engine | `●◐◐○○` | 60% | 0 | 1 |
-| 11 | The Trust Layer | `●●●○○` | 90% | 0 | 1 |
+| 11 | The Trust Layer | `●●●○○` | 95% | 0 | 1 |
 | 12 | The Distribution | `●●◐○○` | 55% | 0 | 0 |
 | 13 | The Business Model | `●●◐○○` | 45% | 0 | 0 |
 | 14 | The Platform Foundation | `●●○○○` | 65% | 0 | 0 |
@@ -348,7 +348,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 11: The Trust Layer
 
 `●●●○○` Planned · Feature Complete · Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 90%** — RLS + PII boundary + consent records shipped and verified at the schema level, with the pgTAP RLS suite now running in CI on every PR; **export-everything bundle shipped 2026-04-28**. Remaining trust surfaces (deceased flow, ToS clause, pause/freeze, right-to-erasure) are not built.
+**Estimate: 95%** — RLS + PII boundary + consent records shipped and verified at the schema level, with the pgTAP RLS suite now running in CI on every PR; **export-everything bundle shipped 2026-04-28**; **right-to-erasure flow + "we never train on your data" clause shipped 2026-04-29** across three waves (PRs #46, #48, #50). Remaining trust surfaces (deceased flow, pause/freeze copy refinement, quarterly audit cadence) still outstanding.
 
 **Shipped:**
 - RLS on every table across `public`, `biomarkers`, `clinical`, `programs`, `billing` schemas.
@@ -358,13 +358,16 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - Service-role admin client used only in webhook routes, pipeline workers, and PDF generation.
 - pgTAP RLS test suite at `supabase/tests/rls.sql` with 20 assertions, executed in CI via the `pgtap` job in `.github/workflows/ci.yml`.
 - **Export-everything bundle** at `GET /api/export` — ZIP with one JSON file per patient-facing table (profile, health_profiles, risk_scores, supplement_plans, lab_results, daily_logs, consent_records), latest PDF report, and `manifest.json`. Soft 10000-row cap per table with truncation flag. Audit row per export in `public.export_log` (migration `0026`, append-only, owner-select RLS, service-role-only insert). Surfaced via `/account` page (2026-04-28).
+- **Right-to-erasure flow** (2026-04-29, three waves):
+  - Wave 1 (#46): migration `0052_erasure_log_and_data_no_training.sql` — new append-only `public.erasure_log` audit table (admin-select RLS, service-role-insert), `profiles.erased_at` soft-delete marker, FK relaxation on `consent_records.user_uuid` and `export_log.user_uuid` from `ON DELETE CASCADE` to `ON DELETE SET NULL` so the audit trail outlives a hard-delete. `data_no_training` consent policy registered (`lib/consent/policies.ts`, version `2026-04-29-1`).
+  - Wave 2 (#48): cascade engine at `lib/erasure/plan.ts` (24-table data module with per-column scrub modes — `null` / `erased_sentinel` / `empty_jsonb`) + `lib/erasure/execute.ts` (orchestrator). Rewritten `deleteAccount` server action at `app/(app)/account/actions.ts` — 11 numbered steps: confirmation → auth → idempotency lookup against `erasure_log` → request metadata → Stripe cancel (hard-blocks on failure) → storage cleanup → cascade → audit log insert → `profiles.erased_at` stamp → hard-delete (`ENABLE_HARD_DELETE` defaults to true) or sign-out → redirect. Old `app/api/account/route.ts` backdoor deleted. 9 integration tests + 10 unit tests lock the invariants (24-entry coverage, idempotency short-circuit, Stripe-fail abort, payload exactness, happy-path full run).
+  - Wave 3 (#50): UX surfaces — fourth onboarding consent toggle wires `data_no_training`; new `/legal/data-handling` static page with named-processors table (Anthropic, Resend, Stripe, Supabase, Vercel); `/account` "How we use your data" card showing acceptance state per current policy version; hardened delete-account button with type-`DELETE` text input replacing the Wave 2 placeholder. Footer link added site-wide on public pages.
 
 **Outstanding:**
-- "We never train on your data" clause in ToS, surfaced in onboarding.
-- Right-to-erasure flow (single-row scrub since PII is single-table).
-- Pause / freeze account flow.
+- Pause / freeze account flow (refinement — basic pause already shipped).
 - Deceased-flag flow with warm copy path (not a checkbox).
 - Quarterly trust audit cadence (logs scrub, signed-URL TTL check, deceased-flow walk-through).
+- Real user-review of the erasure flow (someone running it end-to-end with a disposable account on staging).
 
 **Open bugs:** none.
 
