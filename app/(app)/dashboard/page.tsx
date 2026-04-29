@@ -442,12 +442,14 @@ export default async function DashboardPage() {
             stat="Active prescriptions · 2"
             sub="Atorvastatin 20mg · Metformin 500mg"
           />
-          <ComingTile
-            icon="🤝"
-            title="Care Team"
-            stat="Your GP · Dr Patel"
-            sub="Last review 14 Apr · Next due 14 Oct"
-          />
+          <Link href="/care-team" className="lc-coming-tile lc-coming-tile--linked" aria-label="Care Team">
+            <div className="lc-coming-head">
+              <span className="lc-coming-icon" aria-hidden="true">🤝</span>
+            </div>
+            <div className="lc-coming-title">Care Team</div>
+            <div className="lc-coming-stat">Your GP · Dr Patel</div>
+            <div className="lc-coming-sub">Book a session with your clinician →</div>
+          </Link>
           <ComingTile
             icon="📓"
             title="Journal"

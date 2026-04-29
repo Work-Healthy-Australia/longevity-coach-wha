@@ -440,3 +440,344 @@
   display: flex;
   justify-content: flex-end;
 }
+
+/* ----------------------- Schedule sections ----------------------- */
+
+.sched-section {
+  margin-top: 32px;
+}
+
+.sched-section__heading {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--lc-text, #1A2E3B);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--lc-line, #E3E8EC);
+}
+
+/* ----------------------- Availability grid ----------------------- */
+
+.sched-avail__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  background: var(--lc-surface, #FFFFFF);
+  border: 1px solid var(--lc-line, #E3E8EC);
+  border-radius: 10px;
+  padding: 16px;
+  overflow-x: auto;
+}
+
+@media (max-width: 900px) {
+  .sched-avail__grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .sched-avail__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.sched-avail__day-col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 90px;
+}
+
+.sched-avail__day-heading {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--lc-muted, #6B7280);
+  margin-bottom: 4px;
+}
+
+.sched-avail__slot-pill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #E9F5F4;
+  border: 1px solid #B9D8D4;
+  border-radius: 999px;
+  padding: 4px 8px;
+  font-size: 12px;
+  color: var(--lc-text, #1A2E3B);
+  gap: 4px;
+}
+
+.sched-avail__slot-pill--deleting {
+  opacity: 0.4;
+}
+
+.sched-avail__slot-time {
+  white-space: nowrap;
+  flex: 1;
+}
+
+.sched-avail__slot-delete {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--lc-muted, #6B7280);
+  line-height: 1;
+  padding: 0 2px;
+  flex-shrink: 0;
+}
+
+.sched-avail__slot-delete:hover {
+  color: #a02020;
+}
+
+.sched-avail__add-btn {
+  background: none;
+  border: 1px dashed var(--lc-line, #E3E8EC);
+  border-radius: 6px;
+  color: var(--lc-primary, #2F6F8F);
+  font-size: 12px;
+  padding: 4px 6px;
+  cursor: pointer;
+  text-align: center;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.sched-avail__add-btn:hover {
+  background: #E9F5F4;
+  border-color: var(--lc-primary, #2F6F8F);
+}
+
+.sched-avail__add-form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--lc-canvas, #FAFAF7);
+  border: 1px solid var(--lc-line, #E3E8EC);
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 12px;
+}
+
+.sched-avail__add-form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sched-avail__add-label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 11px;
+  color: var(--lc-muted, #6B7280);
+  font-weight: 500;
+}
+
+.sched-avail__select {
+  padding: 4px 6px;
+  border: 1px solid var(--lc-line, #E3E8EC);
+  border-radius: 4px;
+  font-size: 12px;
+  background: #fff;
+  color: var(--lc-text, #1A2E3B);
+}
+
+.sched-avail__add-form-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.sched-avail__btn-save {
+  background: var(--lc-primary, #2F6F8F);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  flex: 1;
+}
+
+.sched-avail__btn-save:disabled {
+  background: var(--lc-muted, #6B7280);
+  cursor: not-allowed;
+}
+
+.sched-avail__btn-cancel {
+  background: #fff;
+  color: var(--lc-text, #1A2E3B);
+  border: 1px solid var(--lc-line, #E3E8EC);
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.sched-avail__form-error {
+  color: #a02020;
+  font-size: 11px;
+  background: #ffefef;
+  border: 1px solid #f4a4a4;
+  border-radius: 4px;
+  padding: 4px 6px;
+}
+
+/* ----------------------- Booking requests ----------------------- */
+
+.sched-requests {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sched-requests__empty {
+  color: var(--lc-muted, #6B7280);
+  font-size: 14px;
+  padding: 16px 0;
+}
+
+.sched-requests__card {
+  background: var(--lc-surface, #FFFFFF);
+  border: 1px solid var(--lc-line, #E3E8EC);
+  border-radius: 10px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 560px;
+}
+
+.sched-requests__patient-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--lc-text, #1A2E3B);
+}
+
+.sched-requests__meta {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: var(--lc-muted, #6B7280);
+}
+
+.sched-requests__notes {
+  font-size: 13px;
+  color: var(--lc-text, #1A2E3B);
+  background: var(--lc-canvas, #FAFAF7);
+  border-left: 3px solid var(--lc-sage, #6B8E83);
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+
+.sched-requests__actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.sched-requests__btn-accept {
+  background: var(--lc-primary, #2F6F8F);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 18px;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.sched-requests__btn-accept:disabled {
+  background: var(--lc-muted, #6B7280);
+  cursor: not-allowed;
+}
+
+.sched-requests__btn-decline {
+  background: #fff;
+  color: var(--lc-text, #1A2E3B);
+  border: 1px solid var(--lc-line, #E3E8EC);
+  border-radius: 6px;
+  padding: 8px 18px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.sched-requests__btn-decline:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sched-requests__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  align-self: flex-start;
+}
+
+.sched-requests__badge--confirmed {
+  background: #d6f5e0;
+  color: #1d6e3a;
+}
+
+.sched-requests__decline-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sched-requests__reason-input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--lc-line, #E3E8EC);
+  border-radius: 6px;
+  font: inherit;
+  font-size: 13px;
+  resize: vertical;
+  color: var(--lc-text, #1A2E3B);
+}
+
+.sched-requests__decline-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.sched-requests__btn-decline-confirm {
+  background: #a02020;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 16px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.sched-requests__btn-decline-confirm:disabled {
+  background: var(--lc-muted, #6B7280);
+  cursor: not-allowed;
+}
+
+.sched-requests__btn-cancel {
+  background: #fff;
+  color: var(--lc-text, #1A2E3B);
+  border: 1px solid var(--lc-line, #E3E8EC);
+  border-radius: 6px;
+  padding: 7px 16px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.sched-requests__error {
+  background: #ffefef;
+  border: 1px solid #f4a4a4;
+  color: #a02020;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+}
