@@ -74,6 +74,19 @@ export interface PatientContext {
     body: string;
     createdAt: string;
   }>;
+  mealPlan: {
+    id: string;
+    validFrom: string | null;
+    calorieTarget: number | null;
+    recipes: Array<{
+      name: string;
+      mealType: string;
+      dayOfWeek: number;
+      macros: Record<string, unknown>;
+      isBloodworkOptimised: boolean;
+    }>;
+    shoppingList: Array<{ item: string; quantity: number; unit: string; category: string }>;
+  } | null;
   recentConversation: ConversationTurn[];
   knowledgeChunks: string[];
   conversationSummary: string | null;
@@ -90,7 +103,7 @@ export async function loadPatientContext(
 ): Promise<PatientContext> {
   const admin = createAdminClient();
 
-  const [profileResult, riskResult, healthResult, uploadsResult, supplementResult, ptPlanResult, journalResult, conversationResult, knowledgeChunks, recentDigestsResult, conversationSummaryResult] =
+  const [profileResult, riskResult, healthResult, uploadsResult, supplementResult, ptPlanResult, journalResult, mealPlanResult, conversationResult, knowledgeChunks, recentDigestsResult, conversationSummaryResult] =
     await Promise.all([
       // Profile (PII layer — demographics only, no clinical data)
       admin
@@ -155,6 +168,17 @@ export async function loadPatientContext(
         .order('created_at', { ascending: false })
         .limit(3),
 
+      // Latest active meal plan with nested recipes + shopping list
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (admin as any)
+        .from('meal_plans')
+        .select('id, valid_from, calorie_target, recipes(name, meal_type, day_of_week, macros, is_bloodwork_optimised), shopping_lists(items)')
+        .eq('patient_uuid', userId)
+        .eq('status', 'active')
+        .order('valid_from', { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+
       // Last 20 conversation turns for the specified agent
       options.includeConversation !== false
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -202,6 +226,13 @@ export async function loadPatientContext(
   const supplement = supplementResult.data;
   const ptPlan = ptPlanResult.data;
   const journalEntries = (journalResult.data ?? []) as Array<{ body: string; created_at: string }>;
+  const mealPlanData = (mealPlanResult as { data: unknown }).data as {
+    id: string;
+    valid_from: string | null;
+    calorie_target: number | null;
+    recipes: Array<{ name: string; meal_type: string; day_of_week: number; macros: unknown; is_bloodwork_optimised: boolean }> | null;
+    shopping_lists: Array<{ items: unknown }> | null;
+  } | null;
   const conversation = conversationResult.data ?? [];
 
   return {
@@ -270,6 +301,22 @@ export async function loadPatientContext(
       : null,
 
     journalEntries: journalEntries.map(e => ({ body: e.body, createdAt: e.created_at })),
+
+    mealPlan: mealPlanData
+      ? {
+          id: mealPlanData.id,
+          validFrom: mealPlanData.valid_from ?? null,
+          calorieTarget: mealPlanData.calorie_target ?? null,
+          recipes: (mealPlanData.recipes ?? []).map(r => ({
+            name: r.name,
+            mealType: r.meal_type,
+            dayOfWeek: r.day_of_week,
+            macros: r.macros as Record<string, unknown>,
+            isBloodworkOptimised: r.is_bloodwork_optimised,
+          })),
+          shoppingList: ((mealPlanData.shopping_lists?.[0]?.items ?? []) as Array<{ item: string; quantity: number; unit: string; category: string }>),
+        }
+      : null,
 
     // Conversation is returned in chronological order (reversed from query)
     recentConversation: [...conversation].reverse() as ConversationTurn[],
@@ -346,6 +393,16 @@ export function summariseContext(ctx: PatientContext): string {
     lines.push(`PT plan: active from ${ctx.ptPlan.planStartDate ?? 'unknown'} — ${ctx.ptPlan.planName ?? 'unnamed'}`);
   } else {
     lines.push(`PT plan: not yet generated`);
+  }
+
+  if (ctx.mealPlan) {
+    const recipeCount = ctx.mealPlan.recipes.length;
+    lines.push(`Meal plan: ${recipeCount} recipes for week of ${ctx.mealPlan.validFrom ?? 'unknown'} (${ctx.mealPlan.calorieTarget ?? '?'} kcal/day target)`);
+    if (ctx.mealPlan.shoppingList.length > 0) {
+      lines.push(`Shopping list: ${ctx.mealPlan.shoppingList.length} items`);
+    }
+  } else {
+    lines.push(`Meal plan: not yet generated`);
   }
 
   if (ctx.journalEntries.length > 0) {

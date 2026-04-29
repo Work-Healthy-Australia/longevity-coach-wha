@@ -1266,6 +1266,8 @@ export type Database = {
           created_by_uuid: string | null
           dietary_restrictions: string[]
           id: string
+          last_run_at: string | null
+          last_run_status: string | null
           macros_target: Json | null
           meal_structure: Json | null
           notes: string | null
@@ -1283,6 +1285,8 @@ export type Database = {
           created_by_uuid?: string | null
           dietary_restrictions?: string[]
           id?: string
+          last_run_at?: string | null
+          last_run_status?: string | null
           macros_target?: Json | null
           meal_structure?: Json | null
           notes?: string | null
@@ -1300,6 +1304,8 @@ export type Database = {
           created_by_uuid?: string | null
           dietary_restrictions?: string[]
           id?: string
+          last_run_at?: string | null
+          last_run_status?: string | null
           macros_target?: Json | null
           meal_structure?: Json | null
           notes?: string | null
@@ -1625,6 +1631,97 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      recipes: {
+        Row: {
+          created_at: string
+          day_of_week: number
+          id: string
+          ingredients: Json
+          instructions: string[]
+          is_bloodwork_optimised: boolean
+          macros: Json
+          meal_plan_id: string
+          meal_type: string
+          name: string
+          patient_uuid: string
+          source_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          day_of_week: number
+          id?: string
+          ingredients: Json
+          instructions?: string[]
+          is_bloodwork_optimised?: boolean
+          macros: Json
+          meal_plan_id: string
+          meal_type: string
+          name: string
+          patient_uuid: string
+          source_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          day_of_week?: number
+          id?: string
+          ingredients?: Json
+          instructions?: string[]
+          is_bloodwork_optimised?: boolean
+          macros?: Json
+          meal_plan_id?: string
+          meal_type?: string
+          name?: string
+          patient_uuid?: string
+          source_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recipes_meal_plan_id_fkey"
+            columns: ["meal_plan_id"]
+            isOneToOne: false
+            referencedRelation: "meal_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shopping_lists: {
+        Row: {
+          created_at: string
+          generated_at: string
+          id: string
+          items: Json
+          meal_plan_id: string
+          patient_uuid: string
+          week_start: string
+        }
+        Insert: {
+          created_at?: string
+          generated_at?: string
+          id?: string
+          items: Json
+          meal_plan_id: string
+          patient_uuid: string
+          week_start: string
+        }
+        Update: {
+          created_at?: string
+          generated_at?: string
+          id?: string
+          items?: Json
+          meal_plan_id?: string
+          patient_uuid?: string
+          week_start?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shopping_lists_meal_plan_id_fkey"
+            columns: ["meal_plan_id"]
+            isOneToOne: true
+            referencedRelation: "meal_plans"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       risk_scores: {
         Row: {
