@@ -125,60 +125,63 @@ export default async function ReportPage() {
         </section>
       )}
 
-      {/* Domain scores */}
-      <section className="card">
-        <h2>Risk domains</h2>
-        <p className="section-note">0 = optimal · 100 = highest risk</p>
-        <div className="domains-grid">
-          {domains.map(([label, value]) => (
-            <div key={label} className="domain-card">
-              <div className="domain-label">{label}</div>
-              {value != null ? (
-                <>
-                  <div
-                    className={`domain-value ${riskClass(value)}`}
-                  >
-                    {Math.round(value)}
-                  </div>
-                  <div className="domain-bar">
-                    <div
-                      className={`domain-bar-fill ${riskClass(value)}`}
-                      style={{ width: `${value}%` }}
-                    />
-                  </div>
-                </>
-              ) : (
-                <div className="domain-value pending">—</div>
-              )}
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* Risk domains + Top risk factors — always side by side */}
+      <div className="two-col">
+        <section className="card">
+          <h2>Risk domains</h2>
+          <p className="section-note">0 = optimal · 100 = highest risk</p>
+          <div className="domains-grid">
+            {domains.map(([label, value]) => (
+              <div key={label} className="domain-card">
+                <div className="domain-label">{label}</div>
+                {value != null ? (
+                  <>
+                    <div className={`domain-value ${riskClass(value)}`}>
+                      {Math.round(value)}
+                    </div>
+                    <div className="domain-bar">
+                      <div
+                        className={`domain-bar-fill ${riskClass(value)}`}
+                        style={{ width: `${value}%` }}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <div className="domain-value pending">—</div>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
 
-      {/* Risk drivers & recommendations */}
-      {(risk?.top_risk_drivers?.length || risk?.recommended_screenings?.length) && (
-        <div className="two-col">
-          {(risk.top_risk_drivers as string[])?.length > 0 && (
-            <section className="card">
-              <h2>Top risk factors to address</h2>
-              <ol className="driver-list">
-                {(risk.top_risk_drivers as string[]).map((d, i) => (
-                  <li key={i}>{cleanLegacyDriver(d)}</li>
-                ))}
-              </ol>
-            </section>
+        <section className="card">
+          <h2>Top risk factors to address</h2>
+          {(risk?.top_risk_drivers as string[])?.length > 0 ? (
+            <ol className="driver-list">
+              {(risk.top_risk_drivers as string[]).map((d, i) => (
+                <li key={i}>{cleanLegacyDriver(d)}</li>
+              ))}
+            </ol>
+          ) : (
+            <p className="muted-text placeholder-text">
+              Your personalised risk factors will appear here once your health
+              assessment has been fully analysed. This typically takes a few
+              minutes after completing the questionnaire.
+            </p>
           )}
-          {(risk.recommended_screenings as string[])?.length > 0 && (
-            <section className="card">
-              <h2>Recommended screenings</h2>
-              <ul className="screening-list">
-                {(risk.recommended_screenings as string[]).map((s, i) => (
-                  <li key={i}>{s}</li>
-                ))}
-              </ul>
-            </section>
-          )}
-        </div>
+        </section>
+      </div>
+
+      {/* Recommended screenings */}
+      {(risk?.recommended_screenings as string[])?.length > 0 && (
+        <section className="card">
+          <h2>Recommended screenings</h2>
+          <ul className="screening-list">
+            {(risk.recommended_screenings as string[]).map((s, i) => (
+              <li key={i}>{s}</li>
+            ))}
+          </ul>
+        </section>
       )}
 
       {/* Supplement protocol */}

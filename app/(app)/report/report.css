@@ -295,6 +295,7 @@
 }
 
 .lc-report .muted-text { color: var(--lc-grey); font-size: 14px; }
+.lc-report .placeholder-text { line-height: 1.6; font-style: italic; }
 
 /* Chat */
 .lc-report .chat-section { display: flex; flex-direction: column; }
