@@ -1,6 +1,6 @@
 # Longevity Coach — Epic Status Dashboard
 
-Last updated **2026-04-29** (post-Sprint 2 catch-up; right-to-erasure waves 1–3, pipeline stability, admin tier/plan-builder, org members, rest-day streaks all landed).
+Last updated **2026-04-30** (Sentry setup + DR drill runbooks landed at [docs/operations/](../operations/); pause/freeze account flow confirmed shipped — UI, server actions, and proxy redirect all wired).
 
 Companion to [epics.md](./epics.md) (strategy, stable) and [product.md](./product.md) (vision). This file is the **at-a-glance status** of each epic: how far through the build pipeline, what's still outstanding, what's broken right now.
 
@@ -367,10 +367,14 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
   - Wave 3 (#50): UX surfaces — fourth onboarding consent toggle wires `data_no_training`; new `/legal/data-handling` static page with named-processors table (Anthropic, Resend, Stripe, Supabase, Vercel); `/account` "How we use your data" card showing acceptance state per current policy version; hardened delete-account button with type-`DELETE` text input replacing the Wave 2 placeholder. Footer link added site-wide on public pages.
 - **Erasure flow smoke test** (2026-04-29) — full end-to-end walkthrough with a disposable test user created via Supabase admin API: signup → onboarding → type-DELETE confirmation → account deleted → `erasure_log` row confirmed → `auth.users` hard-delete verified → audit row survives (FK `ON DELETE SET NULL`). `/legal/data-handling` page verified (4 sections, named-processors table, no console errors). Footer "Data handling" link confirmed on `/` and `/pricing`.
 
+**Pause / freeze account flow — shipped 2026-04-30 (verified).** `app/(app)/account/pause-actions.ts` exposes `pauseAccount` / `unpauseAccount` server actions; `/account` renders the toggle button + paused banner; `lib/supabase/proxy.ts:102` redirects paused users away from `/dashboard`, `/report`, `/check-in` to `/account?paused=true`. Fail-open on DB error to avoid permanent lockout. Copy refinement still pending real-user feedback.
+
 **Outstanding:**
-- Pause / freeze account flow (refinement — basic pause already shipped).
+- Pause / freeze copy refinement (warm tone, "we'll keep your data" reassurance).
 - Deceased-flag flow with warm copy path (not a checkbox).
 - Quarterly trust audit cadence (logs scrub, signed-URL TTL check, deceased-flow walk-through).
+- DR drill — runbook drafted at [docs/operations/dr-drill.md](../operations/dr-drill.md); first drill scheduled for 2026-07-31.
+- Sentry — code wired, runbook at [docs/operations/sentry-setup.md](../operations/sentry-setup.md); `NEXT_PUBLIC_SENTRY_DSN` still needs to be set in Vercel before error monitoring goes live.
 
 **Open bugs:** none.
 
