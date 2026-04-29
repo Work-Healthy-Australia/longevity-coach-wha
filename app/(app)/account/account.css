@@ -125,3 +125,69 @@
   cursor: pointer;
   text-decoration: underline;
 }
+
+.lc-account-error {
+  background: #ffefef;
+  border: 1px solid #f4a4a4;
+  color: #a02020;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.lc-account-success {
+  background: #eaf7ee;
+  border: 1px solid #9bd1ad;
+  color: #1d6e3a;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.lc-care-team-list {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+}
+
+.lc-care-team-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--lc-line);
+}
+
+.lc-care-team-list li:last-child {
+  border-bottom: 0;
+}
+
+.lc-care-team-list .muted {
+  color: var(--lc-ink-soft);
+  font-size: 13px;
+}
+
+.lc-care-team-form {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  margin-top: 8px;
+}
+
+.lc-care-team-form label {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--lc-ink-soft);
+}
+
+.lc-care-team-form input {
+  padding: 8px 10px;
+  border: 1px solid var(--lc-line);
+  border-radius: 6px;
+  font: inherit;
+}
