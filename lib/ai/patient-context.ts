@@ -64,6 +64,12 @@ export interface PatientContext {
     items: SupplementItem[];
     createdAt: string;
   } | null;
+  ptPlan: {
+    planName: string | null;
+    planStartDate: string | null;
+    exercises: unknown[];
+    notes: string | null;
+  } | null;
   recentConversation: ConversationTurn[];
   knowledgeChunks: string[];
   conversationSummary: string | null;
@@ -80,7 +86,7 @@ export async function loadPatientContext(
 ): Promise<PatientContext> {
   const admin = createAdminClient();
 
-  const [profileResult, riskResult, healthResult, uploadsResult, supplementResult, conversationResult, knowledgeChunks, recentDigestsResult, conversationSummaryResult] =
+  const [profileResult, riskResult, healthResult, uploadsResult, supplementResult, ptPlanResult, conversationResult, knowledgeChunks, recentDigestsResult, conversationSummaryResult] =
     await Promise.all([
       // Profile (PII layer — demographics only, no clinical data)
       admin
@@ -123,6 +129,16 @@ export async function loadPatientContext(
         .eq("patient_uuid", userId)
         .eq("status", "active")
         .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+
+      // Latest active PT plan
+      admin
+        .from('training_plans')
+        .select('plan_name, plan_start_date, exercises, notes')
+        .eq('patient_uuid', userId)
+        .eq('status', 'active')
+        .order('plan_start_date', { ascending: false })
         .limit(1)
         .maybeSingle(),
 
@@ -171,6 +187,7 @@ export async function loadPatientContext(
   const health = healthResult.data;
   const uploads = uploadsResult.data ?? [];
   const supplement = supplementResult.data;
+  const ptPlan = ptPlanResult.data;
   const conversation = conversationResult.data ?? [];
 
   return {
@@ -226,6 +243,15 @@ export async function loadPatientContext(
       ? {
           items: (supplement.items as unknown as SupplementItem[]) ?? [],
           createdAt: supplement.created_at,
+        }
+      : null,
+
+    ptPlan: ptPlan
+      ? {
+          planName: (ptPlan as unknown as { plan_name: string | null }).plan_name ?? null,
+          planStartDate: (ptPlan as unknown as { plan_start_date: string | null }).plan_start_date ?? null,
+          exercises: ((ptPlan as unknown as { exercises: unknown[] }).exercises) ?? [],
+          notes: (ptPlan as unknown as { notes: string | null }).notes ?? null,
         }
       : null,
 
@@ -298,6 +324,12 @@ export function summariseContext(ctx: PatientContext): string {
     );
   } else {
     lines.push(`Supplement protocol: not yet generated`);
+  }
+
+  if (ctx.ptPlan) {
+    lines.push(`PT plan: active from ${ctx.ptPlan.planStartDate ?? 'unknown'} — ${ctx.ptPlan.planName ?? 'unnamed'}`);
+  } else {
+    lines.push(`PT plan: not yet generated`);
   }
 
   if (ctx.conversationSummary) {

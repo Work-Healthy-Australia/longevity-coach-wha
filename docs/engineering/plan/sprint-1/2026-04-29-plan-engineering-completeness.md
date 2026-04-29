@@ -303,6 +303,164 @@ No PII in logs. Use `Date.now()` diff around each phase. This feeds the latency 
 
 ---
 
+### W2-10: Meal Plan schema extension
+
+**What:** `meal_plans` exists (migration `0012`) but is missing `recipes`, `shopping_lists`, and pipeline tracking columns. Add migration `0043_meal_plan_recipes_shopping.sql`:
+
+```sql
+-- Add pipeline tracking to existing table
+alter table public.meal_plans
+  add column if not exists last_run_at     timestamptz,
+  add column if not exists last_run_status text check (last_run_status in ('pending', 'completed', 'failed'));
+
+-- Recipes — one row per meal per day in the weekly plan
+create table if not exists public.recipes (
+  id                    uuid        primary key default gen_random_uuid(),
+  meal_plan_id          uuid        not null references public.meal_plans(id) on delete cascade,
+  patient_uuid          uuid        not null references auth.users(id) on delete cascade,
+  name                  text        not null,
+  meal_type             text        not null check (meal_type in ('breakfast', 'lunch', 'dinner', 'snack')),
+  day_of_week           int         not null check (day_of_week between 1 and 7),
+  macros                jsonb       not null,  -- { calories, protein_g, carbs_g, fat_g }
+  ingredients           jsonb       not null,  -- [{ item, quantity, unit }]
+  instructions          text[]      not null default '{}',
+  source_url            text,
+  is_bloodwork_optimised boolean    not null default false,
+  created_at            timestamptz not null default now()
+);
+
+create index if not exists recipes_meal_plan_idx on public.recipes(meal_plan_id);
+create index if not exists recipes_patient_idx on public.recipes(patient_uuid);
+
+alter table public.recipes enable row level security;
+create policy "recipes_patient_select" on public.recipes for select using (auth.uid() = patient_uuid);
+create policy "recipes_service_insert" on public.recipes for insert with check (auth.role() = 'service_role');
+create policy "recipes_service_delete" on public.recipes for delete using (auth.role() = 'service_role');
+
+-- Shopping lists — one per meal plan (replaced on each run)
+create table if not exists public.shopping_lists (
+  id           uuid        primary key default gen_random_uuid(),
+  meal_plan_id uuid        not null references public.meal_plans(id) on delete cascade,
+  patient_uuid uuid        not null references auth.users(id) on delete cascade,
+  week_start   date        not null,
+  items        jsonb       not null,  -- [{ item, quantity, unit, category }]
+  generated_at timestamptz not null default now(),
+  created_at   timestamptz not null default now(),
+  unique (meal_plan_id)
+);
+
+create index if not exists shopping_lists_patient_idx on public.shopping_lists(patient_uuid);
+
+alter table public.shopping_lists enable row level security;
+create policy "shopping_lists_patient_select" on public.shopping_lists for select using (auth.uid() = patient_uuid);
+create policy "shopping_lists_service_write"  on public.shopping_lists for all    using (auth.role() = 'service_role');
+```
+
+Regenerate TypeScript types after applying.
+
+---
+
+### W2-11: Meal Plan Pipeline worker (Chef)
+
+**What:** Build `lib/ai/pipelines/meal-plan.ts` — a weekly pipeline that generates a personalised 7-day meal plan with recipes and a shopping list, using Anthropic's built-in web search to source real recipes.
+
+**Design:**
+
+- Input: `user_uuid` → reads `PatientContext` (demographics, `health_profiles.responses.lifestyle` dietary pattern + staples + allergies, risk scores, `patient_uploads` biomarkers)
+- Macro derivation (no hard dependency on W3-1 `daily_goals`): compute from `health_profiles` weight × activity level using standard Harris-Benedict. Use `meal_plans.calorie_target` if a clinician or previous run has already set it; otherwise compute and persist on first run.
+- Web search: use the Anthropic built-in `{ type: "web_search_20250305" }` tool — no extra credential. Pass the tool in the first LLM call to source trending recipes. Every recipe must include a `source_url` from search results.
+- Bloodwork food rules (from `agent-system.md` Component 6):
+
+  | Concern | Priority foods |
+  |---|---|
+  | High LDL | Oats, fatty fish, nuts, avocado, olive oil, legumes, berries |
+  | High hs-CRP | Turmeric, ginger, fatty fish, leafy greens, berries |
+  | High estrogen (male) | Cruciferous veg, flaxseed, citrus |
+  | Elevated fasting glucose | High-fibre foods, leafy greens, legumes, whole grains |
+
+- Output schema (Zod):
+  ```typescript
+  const MealSchema = z.object({
+    name: z.string(),
+    meal_type: z.enum(['breakfast', 'lunch', 'dinner', 'snack']),
+    day_of_week: z.number().int().min(1).max(7),
+    macros: z.object({ calories: z.number(), protein_g: z.number(), carbs_g: z.number(), fat_g: z.number() }),
+    ingredients: z.array(z.object({ item: z.string(), quantity: z.number(), unit: z.string() })),
+    instructions: z.array(z.string()),
+    source_url: z.string().url().optional(),
+    is_bloodwork_optimised: z.boolean(),
+  });
+
+  const MealPlanOutputSchema = z.object({
+    week_start: z.string(),        // ISO date of Monday
+    calorie_target: z.number(),
+    macros_target: z.object({ protein_g: z.number(), carbs_g: z.number(), fat_g: z.number() }),
+    meals: z.array(MealSchema),    // 21 meals (3/day × 7 days) + optional snacks
+    shopping_list: z.array(z.object({ item: z.string(), quantity: z.number(), unit: z.string(), category: z.string() })),
+    notes: z.string().optional(),
+    generated_at: z.string(),
+  });
+  ```
+
+- Write sequence (all within a DB transaction):
+  1. Upsert `meal_plans` on `(patient_uuid, valid_from)` where `valid_from = week_start` — set `status = 'active'`, supersede any prior active plan for same patient
+  2. Delete existing `recipes` for this `meal_plan_id` (re-run is always a full replacement)
+  3. Bulk insert `recipes` rows
+  4. Upsert `shopping_lists` on `(meal_plan_id)` constraint
+  5. Update `meal_plans.last_run_at` and `meal_plans.last_run_status = 'completed'`
+
+- On Zod validation failure: retry once with schema correction message; on second failure write `last_run_status = 'failed'` and stop.
+
+Implement:
+- `lib/ai/pipelines/meal-plan.ts`
+- `app/api/pipelines/meal-plan/route.ts` — secured with `x-pipeline-secret`; accepts `{ user_uuid: string, week_start?: string }` (defaults to next Monday)
+- `app/api/cron/meal-plan/route.ts` — weekly Monday cron; queries all users with `status = 'active'` subscription; fires one pipeline call per user; returns 200 on any individual failure to prevent Vercel retry storms
+
+Register in `vercel.json`:
+```json
+{ "path": "/api/cron/meal-plan", "schedule": "0 7 * * 1" }
+```
+
+Unit tests: `tests/unit/ai/meal-plan-helpers.test.ts`
+- Macro derivation (weight × activity → calorie target)
+- Bloodwork food rule application (given high LDL → oats/fatty fish appear)
+- `week_start` rounding to Monday
+
+Integration test: `tests/integration/ai/meal-plan.test.ts` (mocked Supabase + mocked Anthropic web search tool result)
+
+---
+
+### W2-12: Janet `request_meal_plan` tool + PatientContext layer
+
+**What (tool):** Build `lib/ai/tools/meal-plan-tool.ts` — Janet triggers the meal plan pipeline asynchronously when the user explicitly asks for a new meal plan.
+
+- Tool name: `request_meal_plan`
+- Trigger signal: user asks for a meal plan, asks what to eat this week, or requests a shopping list
+- Execution: fires `POST /api/pipelines/meal-plan` with `x-pipeline-secret` header **non-blocking** (do not `await` the full pipeline result — fire and forget, then Janet responds with "I'm generating your meal plan for the week — it'll be ready in about a minute")
+- Janet must NOT wait for the pipeline to complete before responding (this is a background pipeline, not a real-time sub-agent)
+- After pipeline completes, the updated `meal_plans` row is visible to Janet at the next session load
+
+Add `request_meal_plan` to Janet's tool list in `lib/ai/agents/janet.ts`.
+
+**What (PatientContext):** Extend `lib/ai/patient-context.ts` to load the latest active meal plan in the parallel `Promise.all` read:
+
+```typescript
+supabase.from('meal_plans').select('*, recipes(*), shopping_lists(*)')
+  .eq('patient_uuid', userId)
+  .eq('status', 'active')
+  .order('valid_from', { ascending: false })
+  .limit(1)
+  .single()
+```
+
+Expose as `patientContext.mealPlan` (includes nested `recipes` and `shopping_lists`). Janet uses this to answer "what's for dinner tonight?" or "what's on my shopping list?" without calling the pipeline.
+
+Unit tests: `tests/unit/ai/tools/meal-plan-tool.test.ts`
+- Assert fire-and-forget (pipeline call is not awaited)
+- Assert Janet response message matches "generating…" pattern when tool is invoked
+
+---
+
 ## Wave 3 — Epic 7 Daily Return Features
 
 ### W3-1: Personalised daily goals
@@ -417,7 +575,7 @@ After each wave, Claude Code updates `docs/product/epic-status.md`:
 | Epic | Expected delta |
 |---|---|
 | Epic 5 | Move PDF to Feature Complete; close BUG-005 |
-| Epic 6 | Close PT Coach outstanding; add W2-7/W2-8 to Shipped |
+| Epic 6 | Close PT Coach outstanding; add W2-7/W2-8 to Shipped; add Chef pipeline (W2-10/11/12) to Shipped |
 | Epic 9 | Add Janet-Clinician brief pipeline to Shipped; advance to ~25% |
 | Epic 7 | Move personalised goals, weekly digest, journal, rest-day to Shipped; advance to ~90% |
 | Epic 8 | Add risk simulator to Shipped; advance to ~65% |
