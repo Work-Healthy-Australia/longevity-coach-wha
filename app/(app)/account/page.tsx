@@ -1,4 +1,7 @@
+import { createAdminClient } from "@/lib/supabase/admin";
+import { loose } from "@/lib/supabase/loose-table";
 import { createClient } from "@/lib/supabase/server";
+import { CareTeamSection, type AssignedClinician } from "./_components/care-team-section";
 import { DeleteAccountButton } from "./_components/delete-account-button";
 import { pauseAccount, unpauseAccount } from "./pause-actions";
 import "./account.css";
@@ -44,6 +47,44 @@ export default async function AccountPage({
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
   const showPausedBanner = resolvedSearchParams?.paused === "true";
 
+  // Active care-team assignments (clinicians the patient has nominated).
+  // Service-role read so we can join across patient_assignments + auth.users +
+  // clinician_profiles without RLS friction; only displayed back to the patient.
+  const admin = createAdminClient();
+  const { data: assignmentRows } = await admin
+    .from("patient_assignments")
+    .select("id, clinician_uuid, assigned_at")
+    .eq("patient_uuid", user!.id)
+    .eq("status", "active")
+    .order("assigned_at", { ascending: false });
+
+  const clinicianIds = (assignmentRows ?? [])
+    .map((a) => a.clinician_uuid)
+    .filter((x): x is string => Boolean(x));
+
+  let clinicianRows: { user_uuid: string; full_name: string | null; contact_email: string | null; specialties: string[] }[] = [];
+  if (clinicianIds.length > 0) {
+    const { data } = await loose(admin)
+      .from("clinician_profiles")
+      .select("user_uuid, full_name, contact_email, specialties")
+      .in("user_uuid", clinicianIds);
+    clinicianRows = data ?? [];
+  }
+
+  const clinicians: AssignedClinician[] = (assignmentRows ?? [])
+    .map((a) => {
+      if (!a.clinician_uuid) return null;
+      const profile = clinicianRows.find((c) => c.user_uuid === a.clinician_uuid);
+      return {
+        assignment_id: a.id,
+        full_name: profile?.full_name ?? null,
+        contact_email: profile?.contact_email ?? null,
+        specialties: profile?.specialties ?? [],
+        assigned_at: a.assigned_at,
+      };
+    })
+    .filter((x): x is AssignedClinician => x !== null);
+
   return (
     <div className="lc-account">
       <h1>Account</h1>
@@ -76,6 +117,8 @@ export default async function AccountPage({
           </div>
         </dl>
       </section>
+
+      <CareTeamSection clinicians={clinicians} />
 
       <section className="lc-account-card">
         <h2>Download my data</h2>
