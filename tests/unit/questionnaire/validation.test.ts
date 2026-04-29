@@ -66,6 +66,7 @@ describe("requiredMissing", () => {
       requiredMissing(consent, {
         data_processing: true,
         not_medical_advice: true,
+        data_no_training: true,
         terms: false,
       }),
     ).toBe("I agree to the privacy policy and terms of service.");
@@ -73,6 +74,17 @@ describe("requiredMissing", () => {
       requiredMissing(consent, {
         data_processing: true,
         not_medical_advice: true,
+        data_no_training: false,
+        terms: true,
+      }),
+    ).toBe(
+      "I understand Longevity Coach does not train AI models on my personal data.",
+    );
+    expect(
+      requiredMissing(consent, {
+        data_processing: true,
+        not_medical_advice: true,
+        data_no_training: true,
         terms: true,
       }),
     ).toBeNull();
