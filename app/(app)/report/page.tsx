@@ -100,10 +100,36 @@ export default async function ReportPage() {
   return (
     <div className="lc-report">
 
-      {/* ── Left column: scrollable report data ── */}
-      <div className="report-data">
+      {/* Hero row: Risk domains | Bio-age hero | Top risk factors */}
+      <div className="hero-row">
 
-        {/* Bio-age hero */}
+        <section className="card">
+          <h2>Risk domains</h2>
+          <p className="section-note">0 = optimal · 100 = highest risk</p>
+          <div className="domains-grid">
+            {domains.map(([label, value]) => (
+              <div key={label} className="domain-card">
+                <div className="domain-label">{label}</div>
+                {value != null ? (
+                  <>
+                    <div className={`domain-value ${riskClass(value)}`}>
+                      {Math.round(value)}
+                    </div>
+                    <div className="domain-bar">
+                      <div
+                        className={`domain-bar-fill ${riskClass(value)}`}
+                        style={{ width: `${value}%` }}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <div className="domain-value pending">—</div>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+
         <section className="bio-age-hero">
           {risk?.biological_age != null ? (
             <>
@@ -124,156 +150,133 @@ export default async function ReportPage() {
               <div className="pending-icon">⏳</div>
               <h2>Your report is being prepared</h2>
               <p>
-                It takes a few minutes to analyse your assessment. Ask Janet a question
-                on the right — she can help while your report processes.
+                It takes a few minutes to analyse your assessment. Ask Janet below —
+                she can help while your report processes.
               </p>
               <RegenerateButton />
             </div>
           )}
         </section>
 
-        {/* Risk narrative */}
-        {risk?.narrative && (
-          <section className="card">
-            <h2>Your health story</h2>
-            <p className="narrative">{risk.narrative}</p>
-          </section>
-        )}
-
-        {/* Risk domains + Top risk factors */}
-        <div className="two-col">
-          <section className="card">
-            <h2>Risk domains</h2>
-            <p className="section-note">0 = optimal · 100 = highest risk</p>
-            <div className="domains-grid">
-              {domains.map(([label, value]) => (
-                <div key={label} className="domain-card">
-                  <div className="domain-label">{label}</div>
-                  {value != null ? (
-                    <>
-                      <div className={`domain-value ${riskClass(value)}`}>
-                        {Math.round(value)}
-                      </div>
-                      <div className="domain-bar">
-                        <div
-                          className={`domain-bar-fill ${riskClass(value)}`}
-                          style={{ width: `${value}%` }}
-                        />
-                      </div>
-                    </>
-                  ) : (
-                    <div className="domain-value pending">—</div>
-                  )}
-                </div>
+        <section className="card">
+          <h2>Top risk factors to address</h2>
+          {(risk?.top_risk_drivers as string[])?.length > 0 ? (
+            <ol className="driver-list">
+              {(risk?.top_risk_drivers as string[]).map((d, i) => (
+                <li key={i}>{cleanLegacyDriver(d)}</li>
               ))}
-            </div>
-          </section>
+            </ol>
+          ) : (
+            <p className="muted-text placeholder-text">
+              Your personalised risk factors will appear here once your health
+              assessment has been fully analysed. This typically takes a few
+              minutes after completing the questionnaire.
+            </p>
+          )}
+        </section>
 
-          <section className="card">
-            <h2>Top risk factors to address</h2>
-            {(risk?.top_risk_drivers as string[])?.length > 0 ? (
-              <ol className="driver-list">
-                {(risk?.top_risk_drivers as string[]).map((d, i) => (
-                  <li key={i}>{cleanLegacyDriver(d)}</li>
-                ))}
-              </ol>
-            ) : (
-              <p className="muted-text placeholder-text">
-                Your personalised risk factors will appear here once your health
-                assessment has been fully analysed. This typically takes a few
-                minutes after completing the questionnaire.
-              </p>
-            )}
-          </section>
-        </div>
+      </div>
 
-        {/* Recommended screenings */}
-        {(risk?.recommended_screenings as string[])?.length > 0 && (
-          <section className="card">
-            <h2>Recommended screenings</h2>
+      {/* Risk narrative — collapsible (long text, secondary read) */}
+      {risk?.narrative && (
+        <details className="info-accordion" open>
+          <summary className="info-accordion-summary">
+            Your health story
+            <span className="info-accordion-chevron" aria-hidden="true">▾</span>
+          </summary>
+          <div className="info-accordion-body">
+            <p className="narrative">{risk.narrative}</p>
+          </div>
+        </details>
+      )}
+
+      {/* Recommended screenings — collapsible (supplementary info) */}
+      {(risk?.recommended_screenings as string[])?.length > 0 && (
+        <details className="info-accordion">
+          <summary className="info-accordion-summary">
+            Recommended screenings
+            <span className="info-accordion-chevron" aria-hidden="true">▾</span>
+          </summary>
+          <div className="info-accordion-body">
             <ul className="screening-list">
               {(risk?.recommended_screenings as string[]).map((s, i) => (
                 <li key={i}>{s}</li>
               ))}
             </ul>
-          </section>
-        )}
-
-        {/* Supplement protocol */}
-        <section className="card">
-          <div className="card-head">
-            <h2>Your supplement protocol</h2>
-            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-              <SupplementRefreshButton hasProtocol={supplements.length > 0} />
-              {supplement?.created_at && (
-                <span className="badge muted">
-                  Updated {formatDate(supplement.created_at)}
-                </span>
-              )}
-              {supplements.length > 0 && (
-                <a href="/api/report/pdf" className="btn-download" download="longevity-report.pdf">
-                  Download PDF
-                </a>
-              )}
-            </div>
           </div>
+        </details>
+      )}
 
-          {supplements.length === 0 ? (
-            <p className="muted-text">
-              Your supplement protocol hasn&apos;t been generated yet. Click &apos;Generate my protocol&apos; above to get started.
-            </p>
-          ) : (
-            <div className="supplement-list">
-              {["critical", "high", "recommended", "performance"].map((tier) => {
-                const tierItems = supplements.filter((s) => s.priority === tier);
-                if (!tierItems.length) return null;
-                return (
-                  <details key={tier} className="supplement-tier supplement-accordion" open>
-                    <summary className={`supplement-accordion-summary tier-label tier-${tier}`}>
-                      <span>{tierLabel(tier)}</span>
-                      <span className="supplement-accordion-meta">
-                        <span className="supplement-accordion-count">{tierItems.length}</span>
-                        <span className="supplement-collapse-chevron" aria-hidden="true">▾</span>
-                      </span>
-                    </summary>
-                    <div className="supplement-accordion-body">
-                      {tierItems.map((s, i) => (
-                        <div key={i} className="supplement-item">
-                          <div className="supplement-header">
-                            <span className="supplement-name">{s.name}</span>
-                            <span className="supplement-dosage">
-                              {s.dosage} · {s.form}
-                            </span>
-                          </div>
-                          <div className="supplement-timing">{s.timing}</div>
-                          <div className="supplement-rationale">{s.rationale}</div>
-                          {s.note && (
-                            <div className="supplement-note">⚠ {s.note}</div>
-                          )}
+      {/* Supplement protocol */}
+      <section className="card">
+        <div className="card-head">
+          <h2>Your supplement protocol</h2>
+          <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+            <SupplementRefreshButton hasProtocol={supplements.length > 0} />
+            {supplement?.created_at && (
+              <span className="badge muted">
+                Updated {formatDate(supplement.created_at)}
+              </span>
+            )}
+            {supplements.length > 0 && (
+              <a href="/api/report/pdf" className="btn-download" download="longevity-report.pdf">
+                Download PDF
+              </a>
+            )}
+          </div>
+        </div>
+
+        {supplements.length === 0 ? (
+          <p className="muted-text">
+            Your supplement protocol hasn&apos;t been generated yet. Click &apos;Generate my protocol&apos; above to get started.
+          </p>
+        ) : (
+          <div className="supplement-list">
+            {["critical", "high", "recommended", "performance"].map((tier) => {
+              const tierItems = supplements.filter((s) => s.priority === tier);
+              if (!tierItems.length) return null;
+              return (
+                <details key={tier} className="supplement-tier supplement-accordion" open>
+                  <summary className={`supplement-accordion-summary tier-label tier-${tier}`}>
+                    <span>{tierLabel(tier)}</span>
+                    <span className="supplement-accordion-meta">
+                      <span className="supplement-accordion-count">{tierItems.length}</span>
+                      <span className="supplement-collapse-chevron" aria-hidden="true">▾</span>
+                    </span>
+                  </summary>
+                  <div className="supplement-accordion-body">
+                    {tierItems.map((s, i) => (
+                      <div key={i} className="supplement-item">
+                        <div className="supplement-header">
+                          <span className="supplement-name">{s.name}</span>
+                          <span className="supplement-dosage">
+                            {s.dosage} · {s.form}
+                          </span>
                         </div>
-                      ))}
-                    </div>
-                  </details>
-                );
-              })}
-            </div>
-          )}
-        </section>
-
-      </div>{/* end .report-data */}
-
-      {/* ── Right column: Janet — sticky coaching panel ── */}
-      <div className="report-chat-panel">
-        <section className="card chat-card">
-          <div className="chat-card-header">
-            <h2>Ask Janet</h2>
-            <p className="section-note">
-              Your longevity coach — ask about your results, supplements, or anything health-related.
-            </p>
+                        <div className="supplement-timing">{s.timing}</div>
+                        <div className="supplement-rationale">{s.rationale}</div>
+                        {s.note && (
+                          <div className="supplement-note">⚠ {s.note}</div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </details>
+              );
+            })}
           </div>
-          <JanetChat initialMessages={priorTurns} userId={user.id} />
-        </section>
-      </div>
+        )}
+      </section>
+
+      {/* Janet */}
+      <section className="card chat-section">
+        <h2>Ask Janet</h2>
+        <p className="section-note">
+          Janet is your longevity health coach. Ask about your results, supplements,
+          lifestyle changes, or anything else on your mind.
+        </p>
+        <JanetChat initialMessages={priorTurns} userId={user.id} />
+      </section>
 
     </div>
   );

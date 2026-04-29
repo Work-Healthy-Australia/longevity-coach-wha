@@ -243,9 +243,9 @@ If verdict is **APPROVED**:
 2. Start the local dev server: `pnpm dev`.
 3. **Pause and ask the user to verify the wave's changes in their browser.** State clearly what to look at — the routes, flows, or UI elements that this wave touched. Do not proceed until the user explicitly confirms ("looks good", "approved", "ship it", or equivalent).
 4. If the user reports an issue: stop the dev server, fix the issue, re-run `pnpm build`, re-run QA, then restart this verification step.
-5. Once the user confirms: stop the dev server, push the branch: `git push origin <branch>`.
-6. Create a PR scoped to this wave's changes — title must name the wave (e.g. "Wave 1: risk score schema and seed data").
-7. Merge the PR.
+5. Once the user confirms: stop the dev server, upload changes to GitHub — `git push origin <branch>` *(saves your work to GitHub)*.
+6. Open a pull request for this wave — `gh pr create --title "Wave N: <name>" --body "..."` *(asks GitHub to prepare your changes for release)*.
+7. **Immediately merge the PR** — `gh pr merge --merge --delete-branch` *(ships your changes to main and triggers a Vercel deployment)*. Confirm with `gh pr view` showing status "MERGED".
 8. Confirm the merge succeeded, then start Wave N+1.
 
 **Never batch multiple waves into a single PR.** Each wave is its own PR, reviewed and merged independently.
@@ -326,6 +326,7 @@ docs/engineering/changes/<YYYY-MM-DD>/<slug>/
 - Never store PII outside `profiles`
 - Never proceed to the next wave if the current wave's QA verdict is BLOCKED
 - Never batch multiple waves into a single PR — each wave is its own PR and merge
+- Never leave a PR open — create it and immediately merge it with `gh pr merge --merge --delete-branch`
 - Never push or merge a wave without first starting `pnpm dev` and getting explicit user confirmation that the changes look correct in the browser
 - Never hold a passing wave back waiting for the next wave to be ready
 - Each wave must leave the app fully functional — no broken states between waves
