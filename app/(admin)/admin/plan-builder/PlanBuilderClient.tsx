@@ -572,12 +572,31 @@ export function PlanBuilderClient({
               <p>No plan yet for {selectedOrg.name}.</p>
               <button
                 className="pb-create-plan-btn"
-                onClick={() => {
-                  setNewOrgId(selectedOrg.id);
-                  setShowNewClientForm(true);
+                disabled={saving}
+                onClick={async () => {
+                  setSaving(true);
+                  setError(null);
+                  try {
+                    const res = await fetch("/api/admin/b2b-plans", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ org_id: selectedOrg.id, name: selectedOrg.name }),
+                    });
+                    if (!res.ok) {
+                      const j = await res.json().catch(() => ({}));
+                      throw new Error((j as { error?: string }).error ?? "Create plan failed");
+                    }
+                    const created = (await res.json()) as B2BPlan;
+                    setB2bPlans((prev) => [created, ...prev]);
+                    handleSelectOrg(selectedOrg.id);
+                  } catch (e) {
+                    setError(e instanceof Error ? e.message : "Create plan failed");
+                  } finally {
+                    setSaving(false);
+                  }
                 }}
               >
-                Create Plan
+                {saving ? "Creating…" : "Create Plan"}
               </button>
             </div>
           ) : (
@@ -1091,24 +1110,16 @@ export function PlanBuilderClient({
             <div className="pb-modal-actions">
               <button
                 className="btn-cancel"
-<<<<<<< HEAD
                 onClick={() => {
                   setShowNewClientForm(false);
                   setNewClientName("");
                 }}
-=======
-                onClick={() => setShowNewClientForm(false)}
->>>>>>> main
               >
                 Cancel
               </button>
               <button
                 className="btn-activate"
-<<<<<<< HEAD
                 disabled={saving || !newClientName.trim()}
-=======
-                disabled={saving || !newPlanName.trim()}
->>>>>>> main
                 onClick={handleCreatePlan}
               >
                 {saving ? "Creating…" : "Create"}

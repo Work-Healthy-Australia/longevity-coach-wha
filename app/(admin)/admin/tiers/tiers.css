@@ -15,21 +15,13 @@
 .tiers-header-left h1 {
   font-size: 22px;
   font-weight: 700;
-<<<<<<< HEAD
   color: #2B2B2B;
-=======
-  color: #1A3A4A;
->>>>>>> main
   margin: 0 0 4px;
 }
 
 .tiers-header-left p {
   font-size: 13px;
-<<<<<<< HEAD
   color: #8A9AA5;
-=======
-  color: #6B7C85;
->>>>>>> main
   margin: 0;
 }
 
@@ -38,27 +30,23 @@
   gap: 8px;
 }
 
-<<<<<<< HEAD
 /* Buttons */
 .btn-primary {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-=======
-.btn-primary {
->>>>>>> main
   font-size: 13px;
   font-weight: 600;
   padding: 8px 16px;
   background: #2F6F8F;
   color: #fff;
-<<<<<<< HEAD
   border: 1px solid transparent;
   border-radius: 7px;
   cursor: pointer;
   transition: background 0.15s;
 }
 .btn-primary:hover { background: #245672; }
+.btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
 
 .btn-outline {
   display: inline-flex;
@@ -75,6 +63,7 @@
   transition: background 0.15s;
 }
 .btn-outline:hover { background: #EEF3F6; }
+.btn-outline:disabled { opacity: 0.55; cursor: not-allowed; }
 
 .btn-sm  { padding: 6px 12px; font-size: 12px; }
 .btn-xs  { padding: 4px 10px; font-size: 11px; }
@@ -92,45 +81,6 @@
 .pill-grey  { background: #EDF1F4; color: #8A9AA5; }
 
 /* ── Tier card row ── */
-=======
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.btn-primary:hover {
-  background: #1A3A4A;
-}
-
-.btn-outline {
-  font-size: 13px;
-  font-weight: 600;
-  padding: 8px 16px;
-  background: #fff;
-  color: #2F6F8F;
-  border: 1px solid #D4E0E8;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.btn-outline:hover {
-  background: #F0F4F7;
-}
-
-.btn-sm {
-  font-size: 12px;
-  padding: 6px 12px;
-}
-
-.btn-xs {
-  font-size: 11px;
-  padding: 4px 10px;
-}
-
-/* Tier cards — horizontal row */
->>>>>>> main
 .tier-cards {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -139,7 +89,6 @@
 }
 
 .tier-card {
-<<<<<<< HEAD
   border: 1px solid #E3E8EC;
   border-radius: 10px;
   padding: 16px;
@@ -149,35 +98,18 @@
   gap: 2px;
   transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
   position: relative;
-=======
-  background: #fff;
-  border: 1px solid #D4E0E8;
-  border-radius: 10px;
-  padding: 18px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  transition: border-color 0.15s, box-shadow 0.15s;
->>>>>>> main
 }
 
 .tier-card.editing {
   border-color: #2F6F8F;
-<<<<<<< HEAD
   background: #fff;
-=======
->>>>>>> main
   box-shadow: 0 0 0 3px #DDE8EE;
 }
 
 .tier-card-name {
   font-size: 13px;
   font-weight: 700;
-<<<<<<< HEAD
   color: #2B2B2B;
-=======
-  color: #1A3A4A;
->>>>>>> main
   margin-bottom: 2px;
 }
 
@@ -185,27 +117,16 @@
   font-size: 20px;
   font-weight: 800;
   color: #2F6F8F;
-<<<<<<< HEAD
   line-height: 1.15;
-=======
->>>>>>> main
 }
 
 .tier-card-meta {
   font-size: 12px;
-<<<<<<< HEAD
   color: #8A9AA5;
   margin: 2px 0 12px;
 }
 
-/* Tier colour accents */
-=======
-  color: #9AABBA;
-  margin: 2px 0 10px;
-}
-
 /* Tier badges */
->>>>>>> main
 .tier-badge {
   font-size: 10px;
   font-weight: 700;
@@ -214,7 +135,6 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
-<<<<<<< HEAD
 .tier-core     { background: #D1FAE5; color: #065F46; }
 .tier-clinical { background: #DBEAFE; color: #1E40AF; }
 .tier-elite    { background: #EDE9FE; color: #5B21B6; }
@@ -227,52 +147,17 @@
   border-top: 3px solid #2F6F8F;
   border-radius: 10px;
   padding: 24px;
-=======
-
-.tier-core {
-  background: #D1FAE5;
-  color: #065F46;
-}
-
-.tier-clinical {
-  background: #DBEAFE;
-  color: #1E40AF;
-}
-
-.tier-elite {
-  background: #EDE9FE;
-  color: #5B21B6;
-}
-
-/* Inline editor — renders below the tier-cards row */
-.tier-editor {
-  margin-top: 16px;
-  background: #fff;
-  border: 1px solid #D4E0E8;
-  border-radius: 10px;
-  padding: 24px;
-  border-top: 3px solid #2F6F8F;
->>>>>>> main
 }
 
 .editor-title {
   font-size: 14px;
   font-weight: 700;
   color: #2F6F8F;
-<<<<<<< HEAD
   margin-bottom: 18px;
 }
 
-/* Sub-section title */
 .editor-section {
   margin-bottom: 22px;
-=======
-  margin-bottom: 16px;
-}
-
-.editor-section {
-  margin-bottom: 24px;
->>>>>>> main
 }
 
 .editor-section-title {
@@ -280,12 +165,11 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-<<<<<<< HEAD
   color: #8A9AA5;
   margin-bottom: 12px;
 }
-.editor-section-title.inherited    { color: #2F6F8F; }
-.editor-section-title.this-tier    { color: #6B5B8E; }
+.editor-section-title.inherited     { color: #2F6F8F; }
+.editor-section-title.this-tier     { color: #6B5B8E; }
 .editor-section-title.not-available { color: #B9C3CB; }
 
 .editor-divider {
@@ -294,47 +178,20 @@
   margin: 20px 0;
 }
 
-/* Pricing grid — 6 cols */
-=======
-  color: #6B7C85;
-  margin-bottom: 12px;
-}
-
-.editor-section-title.inherited {
-  color: #2D7A4F;
-}
-
-.editor-section-title.this-tier {
-  color: #5B21B6;
-}
-
-.editor-section-title.not-available {
-  color: #9AABBA;
-}
-
->>>>>>> main
+/* Pricing grid */
 .pricing-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 12px;
-<<<<<<< HEAD
   margin-bottom: 14px;
 }
 
 /* Form fields */
-=======
-  margin-bottom: 16px;
-}
-
->>>>>>> main
 .form-field {
   display: flex;
   flex-direction: column;
   gap: 4px;
-<<<<<<< HEAD
   margin-bottom: 12px;
-=======
->>>>>>> main
 }
 
 .form-field label {
@@ -342,17 +199,12 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-<<<<<<< HEAD
   color: #8A9AA5;
-=======
-  color: #6B7C85;
->>>>>>> main
 }
 
 .form-field input,
 .form-field select,
 .form-field textarea {
-<<<<<<< HEAD
   width: 100%;
   padding: 7px 10px;
   border: 1px solid #E3E8EC;
@@ -362,15 +214,6 @@
   background: #fff;
   font-family: inherit;
   box-sizing: border-box;
-=======
-  padding: 7px 10px;
-  border: 1px solid #D4E0E8;
-  border-radius: 6px;
-  font-size: 13px;
-  color: #1A3A4A;
-  background: #fff;
-  font-family: inherit;
->>>>>>> main
 }
 
 .form-field input:focus,
@@ -381,7 +224,6 @@
 }
 
 .form-field input[readonly] {
-<<<<<<< HEAD
   background: #EDF1F4;
   color: #8A9AA5;
   cursor: default;
@@ -400,33 +242,6 @@
   border-collapse: collapse;
   font-size: 12.5px;
   margin-bottom: 18px;
-=======
-  background: #F0F4F7;
-  color: #6B7C85;
-  cursor: default;
-}
-
-.form-field.wide {
-  max-width: 480px;
-}
-
-.form-field textarea {
-  resize: vertical;
-  min-height: 72px;
-}
-
-.editor-divider {
-  border: none;
-  border-top: 1px solid #EEF2F5;
-  margin: 20px 0;
-}
-
-/* Inclusion table */
-.inclusion-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 13px;
->>>>>>> main
 }
 
 .inclusion-table th {
@@ -435,7 +250,6 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-<<<<<<< HEAD
   color: #8A9AA5;
   padding: 7px 10px;
   background: #EDF1F4;
@@ -445,16 +259,6 @@
 .inclusion-table td {
   padding: 8px 10px;
   border-bottom: 1px solid #EDF1F4;
-=======
-  color: #6B7C85;
-  padding: 6px 8px;
-  border-bottom: 2px solid #EEF2F5;
-}
-
-.inclusion-table td {
-  padding: 8px;
-  border-bottom: 1px solid #EEF2F5;
->>>>>>> main
   vertical-align: middle;
 }
 
@@ -463,7 +267,6 @@
 }
 
 .inclusion-table tr.disabled-row {
-<<<<<<< HEAD
   opacity: 0.5;
 }
 
@@ -508,47 +311,6 @@
   grid-template-columns: repeat(4, 1fr);
   gap: 8px;
   margin-bottom: 14px;
-=======
-  opacity: 0.55;
-}
-
-.inclusion-table input[type="number"] {
-  width: 80px;
-  padding: 5px 8px;
-  border: 1px solid #D4E0E8;
-  border-radius: 5px;
-  font-size: 13px;
-  color: #1A3A4A;
-  font-family: inherit;
-}
-
-.inclusion-table input[type="number"]:disabled {
-  background: #F0F4F7;
-  cursor: default;
-}
-
-.inclusion-table select {
-  padding: 5px 8px;
-  border: 1px solid #D4E0E8;
-  border-radius: 5px;
-  font-size: 13px;
-  color: #1A3A4A;
-  background: #fff;
-  font-family: inherit;
-}
-
-.inclusion-table select:disabled {
-  background: #F0F4F7;
-  cursor: default;
-}
-
-/* Feature flags grid */
-.flag-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  margin-bottom: 16px;
->>>>>>> main
 }
 
 .flag-item {
@@ -557,7 +319,6 @@
   gap: 8px;
   align-items: center;
   font-size: 13px;
-<<<<<<< HEAD
   cursor: pointer;
 }
 
@@ -570,26 +331,12 @@
 .flag-item.disabled {
   cursor: default;
   opacity: 0.65;
-=======
-  padding: 6px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  background: #F8FAFB;
-  border: 1px solid #EEF2F5;
-  user-select: none;
-}
-
-.flag-item.disabled {
-  opacity: 0.55;
-  cursor: default;
->>>>>>> main
 }
 
 .flag-grid-group {
   margin-bottom: 16px;
 }
 
-<<<<<<< HEAD
 /* ── Margin card ── */
 .margin-card {
   background: #EEF3F6;
@@ -605,23 +352,6 @@
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: #245672;
-=======
-/* Margin card */
-.margin-card {
-  background: #F8FAFB;
-  border: 1px solid #D4E0E8;
-  border-radius: 8px;
-  padding: 16px;
-  margin-top: 20px;
-}
-
-.margin-card-title {
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #6B7C85;
->>>>>>> main
   margin-bottom: 10px;
 }
 
@@ -630,7 +360,6 @@
   flex-direction: row;
   justify-content: space-between;
   font-size: 13px;
-<<<<<<< HEAD
   padding: 3px 0;
   border-bottom: 1px solid #DDE8EE;
 }
@@ -650,73 +379,46 @@
   color: #8A9AA5;
   border-top: 1px solid #DDE8EE;
   border-bottom: none;
-=======
-  padding: 4px 0;
-}
-
-.margin-row .label {
-  color: #6B7C85;
-}
-
-.margin-row .val {
-  font-weight: 600;
-  color: #1A3A4A;
-}
-
-.margin-row .val.success {
-  color: #2D7A4F;
-}
-
-.margin-row.note {
-  font-size: 11px;
-  color: #9AABBA;
-  border-top: 1px solid #EEF2F5;
->>>>>>> main
   padding-top: 8px;
   margin-top: 4px;
 }
 
-<<<<<<< HEAD
 /* ── Editor actions ── */
-=======
-/* Editor actions */
->>>>>>> main
 .editor-actions {
   display: flex;
   flex-direction: row;
   gap: 8px;
   justify-content: flex-end;
   padding-top: 16px;
-<<<<<<< HEAD
   border-top: 1px solid #EDF1F4;
   margin-top: 18px;
 }
 
-/* ── Slide-in panels (Janet / Feature Keys) ── */
-=======
-  border-top: 1px solid #EEF2F5;
-  margin-top: 20px;
+/* ── Add Tier modal ── */
+.tier-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  background: #fff;
+  border: 1px solid #E3E8EC;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.14);
+  padding: 24px;
+  z-index: 200;
 }
 
-/* Janet panel */
->>>>>>> main
+/* ── Slide-in panels (Janet / Feature Keys) ── */
 .janet-panel {
   position: fixed;
   right: 0;
   top: 0;
-<<<<<<< HEAD
   width: 500px;
   height: 100vh;
   background: #fff;
   border-left: 1px solid #E3E8EC;
-  box-shadow: -6px 0 24px rgba(0,0,0,0.08);
-=======
-  width: 480px;
-  height: 100vh;
-  background: #fff;
-  border-left: 1px solid #D4E0E8;
-  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
->>>>>>> main
+  box-shadow: -6px 0 24px rgba(0, 0, 0, 0.08);
   z-index: 200;
   overflow-y: auto;
   padding: 24px;
@@ -725,14 +427,9 @@
 .panel-overlay {
   position: fixed;
   inset: 0;
-<<<<<<< HEAD
-  background: rgba(43,43,43,0.25);
+  background: rgba(43, 43, 43, 0.25);
   z-index: 199;
   backdrop-filter: blur(1px);
-=======
-  background: rgba(0, 0, 0, 0.2);
-  z-index: 199;
->>>>>>> main
 }
 
 .panel-header {
@@ -740,7 +437,6 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 20px;
-<<<<<<< HEAD
   padding-bottom: 14px;
   border-bottom: 1px solid #E3E8EC;
 }
@@ -749,14 +445,6 @@
   font-size: 15px;
   font-weight: 700;
   color: #2B2B2B;
-=======
-}
-
-.panel-title {
-  font-size: 16px;
-  font-weight: 700;
-  color: #1A3A4A;
->>>>>>> main
 }
 
 .panel-close {
@@ -764,22 +452,11 @@
   border: none;
   cursor: pointer;
   font-size: 18px;
-<<<<<<< HEAD
   color: #B9C3CB;
   padding: 4px;
   line-height: 1;
 }
 .panel-close:hover { color: #2B2B2B; }
-=======
-  color: #9AABBA;
-  padding: 4px;
-  line-height: 1;
-}
-
-.panel-close:hover {
-  color: #1A3A4A;
-}
->>>>>>> main
 
 .panel-table {
   width: 100%;
@@ -793,39 +470,22 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-<<<<<<< HEAD
   color: #8A9AA5;
   padding: 7px 8px;
   background: #EDF1F4;
   border-bottom: 1px solid #E3E8EC;
-=======
-  color: #6B7C85;
-  padding: 6px 8px;
-  border-bottom: 2px solid #EEF2F5;
->>>>>>> main
 }
 
 .panel-table td {
   padding: 10px 8px;
-<<<<<<< HEAD
   border-bottom: 1px solid #EDF1F4;
   vertical-align: middle;
 }
 .panel-table tr:last-child td { border-bottom: none; }
-=======
-  border-bottom: 1px solid #EEF2F5;
-  vertical-align: middle;
-}
-
-.panel-table tr:last-child td {
-  border-bottom: none;
-}
->>>>>>> main
 
 .panel-input {
   width: 100%;
   padding: 5px 8px;
-<<<<<<< HEAD
   border: 1px solid #E3E8EC;
   border-radius: 5px;
   font-size: 12px;
@@ -833,25 +493,13 @@
   font-family: inherit;
   box-sizing: border-box;
 }
-=======
-  border: 1px solid #D4E0E8;
-  border-radius: 5px;
-  font-size: 12px;
-  color: #1A3A4A;
-  font-family: inherit;
-  box-sizing: border-box;
-}
 
->>>>>>> main
 .panel-input:focus {
   outline: none;
   border-color: #2F6F8F;
 }
 
-<<<<<<< HEAD
 /* Toggle buttons */
-=======
->>>>>>> main
 .toggle-btn {
   font-size: 11px;
   font-weight: 600;
@@ -860,31 +508,16 @@
   border: none;
   cursor: pointer;
 }
-<<<<<<< HEAD
 .toggle-active   { background: #D1FAE5; color: #065F46; }
 .toggle-inactive { background: #FEE2E2; color: #991B1B; }
 
 /* Custom flag inline form */
-=======
-
-.toggle-active {
-  background: #D1FAE5;
-  color: #065F46;
-}
-
-.toggle-inactive {
-  background: #FEE2E2;
-  color: #991B1B;
-}
-
->>>>>>> main
 .custom-flag-form {
   display: flex;
   gap: 8px;
   align-items: center;
   margin-top: 12px;
   padding: 12px;
-<<<<<<< HEAD
   background: #F4F7F9;
   border: 1px solid #EDF1F4;
   border-radius: 7px;
@@ -895,23 +528,11 @@
   min-width: 100px;
   padding: 6px 10px;
   border: 1px solid #E3E8EC;
-=======
-  background: #F8FAFB;
-  border: 1px solid #EEF2F5;
-  border-radius: 6px;
-}
-
-.custom-flag-form input {
-  flex: 1;
-  padding: 6px 10px;
-  border: 1px solid #D4E0E8;
->>>>>>> main
   border-radius: 5px;
   font-size: 13px;
   font-family: inherit;
 }
 
-<<<<<<< HEAD
 /* Error banner */
 .error-banner {
   background: #FEE2E2;
@@ -921,13 +542,4 @@
   margin-bottom: 14px;
   font-size: 13px;
   border: 1px solid #FECACA;
-=======
-.error-banner {
-  background: #FEE2E2;
-  color: #991B1B;
-  padding: 10px 12px;
-  border-radius: 6px;
-  margin-bottom: 12px;
-  font-size: 13px;
->>>>>>> main
 }

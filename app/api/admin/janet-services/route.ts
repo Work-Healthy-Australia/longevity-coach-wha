@@ -5,11 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 
 const ServiceCreateSchema = z.object({
   name: z.string().min(1),
-<<<<<<< HEAD
   unit_type: z.enum(["per_month", "per_session", "per_year", "once_off", "per_patient"]),
-=======
-  unit_type: z.string().min(1),
->>>>>>> main
   internal_cost_cents: z.number().int().min(0).default(0),
   retail_value_cents: z.number().int().min(0).default(0),
   delivery_owner: z.string().nullable().optional(),

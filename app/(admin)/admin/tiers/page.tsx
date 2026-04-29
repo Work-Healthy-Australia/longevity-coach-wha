@@ -15,8 +15,7 @@ export default async function AdminTiersPage() {
         .schema("billing")
         .from("plans")
         .select("*")
-        .in("tier", ["core", "clinical", "elite"])
-        .order("tier"),
+        .order("base_price_cents"),
       admin
         .schema("billing")
         .from("janet_services")
@@ -33,11 +32,7 @@ export default async function AdminTiersPage() {
         .order("label"),
     ]);
 
-  // Sort plans by tier order since raw order() with CASE isn't supported in supabase-js
-  const tierOrder: Record<string, number> = { core: 1, clinical: 2, elite: 3 };
-  const plans = ((plansResult.data ?? []) as Plan[]).sort(
-    (a, b) => (tierOrder[a.tier] ?? 9) - (tierOrder[b.tier] ?? 9),
-  );
+  const plans = (plansResult.data ?? []) as Plan[];
 
   return (
     <div className="tiers-page">
