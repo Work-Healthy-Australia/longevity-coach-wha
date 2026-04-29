@@ -85,6 +85,20 @@ If a key is absent, the feature it gates should silently no-op — never hard-er
 
 ---
 
+## Superpowers skill output — migration rule
+
+Never leave superpowers skill output (plans, specs, brainstorms) in a `docs/superpowers/` folder. This project does not use that directory.
+
+After any superpowers skill produces a plan or spec, immediately migrate it to the project convention:
+
+```
+docs/engineering/changes/YYYY-MM-DD-slug/PLAN.md
+```
+
+Name the slug after the feature, not the skill. Delete the superpowers source file once migrated. The `docs/superpowers/` directory must never exist in this repo.
+
+---
+
 ## Product roadmap
 
 See `docs/product/` for the full phased roadmap. Current phase: **Phase 2 — Intelligence** (risk engine, supplement protocol, branded PDF report).
