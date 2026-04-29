@@ -214,6 +214,125 @@
   font-size: 13px;
   margin-bottom: 12px;
 }
+
+.cw-chat {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 520px;
+}
+
+.cw-chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 8px 4px;
+}
+
+.cw-chat-empty {
+  padding: 24px;
+  color: #666;
+  font-size: 14px;
+  text-align: center;
+}
+
+.cw-chat-starters {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.cw-chat-starter {
+  background: #f0ebda;
+  color: #444;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 0;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.cw-chat-message {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cw-chat-message.user {
+  align-items: flex-end;
+}
+
+.cw-chat-role {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: #888;
+}
+
+.cw-chat-bubble {
+  background: #fff;
+  border: 1px solid #e0ddd2;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  max-width: 80%;
+}
+
+.cw-chat-message.user .cw-chat-bubble {
+  background: #e9f5f4;
+  border-color: #b9d8d4;
+}
+
+.cw-chat-typing {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.cw-chat-typing span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #888;
+  animation: cw-blink 1.4s infinite both;
+}
+
+.cw-chat-typing span:nth-child(2) { animation-delay: .2s; }
+.cw-chat-typing span:nth-child(3) { animation-delay: .4s; }
+
+@keyframes cw-blink {
+  0%, 80%, 100% { opacity: .2; }
+  40% { opacity: 1; }
+}
+
+.cw-chat-form {
+  display: flex;
+  gap: 8px;
+}
+
+.cw-chat-input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #ddd6c0;
+  border-radius: 6px;
+  font: inherit;
+}
+
+.cw-chat-form button {
+  background: #1a1a1a;
+  color: #fff;
+  border: 0;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.cw-chat-form button:disabled {
+  background: #888;
+  cursor: not-allowed;
+}
 .cw-success {
   background: #eaf7ee;
   border: 1px solid #9bd1ad;

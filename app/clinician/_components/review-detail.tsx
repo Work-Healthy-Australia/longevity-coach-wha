@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useActionState } from "react";
 
 import { approveAndSend, saveProgram, startReview } from "../actions";
+import { ClinicianJanetChat } from "./janet-chat";
 
 type ReviewRow = {
   id: string;
@@ -83,13 +84,7 @@ export function ReviewDetail({
         />
       )}
 
-      {activeTab === "janet" && (
-        <div className="muted">
-          Janet chat lands in Wave 10 — the existing monthly Janet-Clinician Brief
-          pipeline already populates the patient card; the live conversational
-          surface is queued.
-        </div>
-      )}
+      {activeTab === "janet" && <ClinicianJanetChat reviewId={review.id} />}
 
       {activeTab === "program" && (
         <ProgramTab
@@ -195,7 +190,7 @@ function ProgramTab({
     <div className="cw-program">
       {review.program_sent_at && (
         <div className="cw-success">
-          Sent to patient on {new Date(review.program_sent_at).toLocaleString()}.
+          <span suppressHydrationWarning>Sent to patient on {new Date(review.program_sent_at).toLocaleString()}.</span>
         </div>
       )}
       <form action={saveAction}>

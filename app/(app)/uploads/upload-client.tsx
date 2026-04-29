@@ -266,7 +266,7 @@ export function UploadClient({ initialUploads }: Props) {
               </div>
               <div className="file-body">
                 <p className="file-name">{u.original_filename}</p>
-                <p className="file-meta">
+                <p className="file-meta" suppressHydrationWarning>
                   {formatBytes(u.file_size_bytes)} · Uploaded {formatDate(u.created_at)}
                 </p>
                 {u.janet_category && (

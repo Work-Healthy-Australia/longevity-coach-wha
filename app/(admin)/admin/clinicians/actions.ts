@@ -5,7 +5,7 @@ import { randomBytes } from "node:crypto";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
-import { getResend, getFromAddress } from "@/lib/email/client";
+import { sendClinicianPromotedEmail } from "@/lib/email/clinician-invite";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { loose } from "@/lib/supabase/loose-table";
 import { createClient } from "@/lib/supabase/server";
@@ -86,24 +86,22 @@ export async function inviteClinician(
     }
 
     try {
-      const resend = getResend();
-      await resend.emails.send({
-        from: getFromAddress(),
+      await sendClinicianPromotedEmail({
         to: lower,
-        subject: `You've been added as a ${role} — Longevity Coach`,
-        html: `<p>${inviterName} has granted you ${role} access to the Longevity Coach platform.</p>
-<p><a href="${siteUrl}/clinician">Open the clinician portal →</a></p>`,
+        inviterName,
+        role,
+        fullName: full_name ?? profile?.full_name ?? null,
+        appUrl: siteUrl,
       });
-    } catch {
+    } catch (e) {
+      console.error("[admin/clinicians] promoted email failed:", e);
       // Email failure is non-fatal — the role is already granted.
     }
 
     return { success: `${role} access granted to ${lower}.` };
   }
 
-  // New user — record a single-use token in clinician_invites and send the
-  // Supabase invite. The token is the audit anchor; status flips to 'accepted'
-  // when the user signs up via the invite link.
+  // New user — record the audit token then send via Supabase (uses custom SMTP).
   const token = randomBytes(24).toString("hex");
   const { error: insertError } = await loose(admin)
     .from("clinician_invites")
@@ -124,6 +122,7 @@ export async function inviteClinician(
     redirectTo: `${siteUrl}/auth/callback`,
     data: { invited_as: role, clinician_invite_token: token },
   });
+
   if (inviteError) {
     await loose(admin).from("clinician_invites").delete().eq("token", token);
     return { error: inviteError.message };

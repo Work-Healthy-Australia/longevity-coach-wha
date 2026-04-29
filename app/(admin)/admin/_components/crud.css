@@ -14,6 +14,15 @@
   font-size: 13px;
 }
 
+.crud-success {
+  background: #efffef;
+  color: #1a6b1a;
+  padding: 10px 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+
 .crud-create {
   margin-bottom: 16px;
 }
@@ -115,4 +124,47 @@
   border: 1px solid #ddd6c0;
   border-radius: 6px;
   font: inherit;
+}
+
+/* Standalone invite / action forms (e.g. /admin/clinicians) */
+.invite-form {
+  display: grid;
+  gap: 10px;
+  background: #fafaf7;
+  padding: 14px 16px;
+  border-radius: 8px;
+  max-width: 480px;
+}
+
+.invite-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: #555;
+}
+
+.invite-form input,
+.invite-form select {
+  padding: 8px;
+  border: 1px solid #ddd6c0;
+  border-radius: 6px;
+  font: inherit;
+}
+
+.invite-form button[type="submit"] {
+  justify-self: start;
+  background: #1a3a4a;
+  color: #fff;
+  border: 0;
+  padding: 8px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.invite-form button[type="submit"]:disabled {
+  background: #888;
+  cursor: not-allowed;
 }

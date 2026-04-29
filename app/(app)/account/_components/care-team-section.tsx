@@ -40,7 +40,7 @@ export function CareTeamSection({ clinicians }: { clinicians: AssignedClinician[
                 {c.specialties.length > 0 && (
                   <span className="muted"> — {c.specialties.join(", ")}</span>
                 )}
-                <div className="muted">
+                <div className="muted" suppressHydrationWarning>
                   Granted {new Date(c.assigned_at).toLocaleDateString()}
                 </div>
               </div>

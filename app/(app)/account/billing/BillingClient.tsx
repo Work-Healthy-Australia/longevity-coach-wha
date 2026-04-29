@@ -127,7 +127,7 @@ export function BillingClient({
             </div>
             {currentPeriodEnd && (
               <div className="muted">
-                Renews {new Date(currentPeriodEnd).toLocaleDateString()}
+                <span suppressHydrationWarning>Renews {new Date(currentPeriodEnd).toLocaleDateString()}</span>
                 {cancelAtPeriodEnd && " (cancellation pending)"}
               </div>
             )}

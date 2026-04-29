@@ -126,7 +126,7 @@ export function CliniciansClient({
                   <td>{i.full_name ?? "—"}</td>
                   <td>{i.role}</td>
                   <td>{i.status}</td>
-                  <td>{new Date(i.expires_at).toLocaleDateString()}</td>
+                  <td suppressHydrationWarning>{new Date(i.expires_at).toLocaleDateString()}</td>
                 </tr>
               ))}
             </tbody>
