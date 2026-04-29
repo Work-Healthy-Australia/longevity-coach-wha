@@ -2,6 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 const PROTECTED_PREFIXES = ["/dashboard", "/onboarding", "/admin", "/uploads", "/check-in", "/report", "/account", "/labs", "/trends", "/simulator"];
+const PAUSE_REDIRECTED_PREFIXES = ["/dashboard", "/report", "/check-in", "/trends", "/labs", "/uploads", "/journal", "/insights"];
 const AUTH_ONLY_PREFIXES = ["/login", "/signup", "/forgot-password"];
 
 function matches(pathname: string, prefixes: string[]): boolean {
@@ -54,6 +55,23 @@ export async function updateSession(request: NextRequest) {
     dash.pathname = "/dashboard";
     dash.search = "";
     return NextResponse.redirect(dash);
+  }
+
+  // Paused account check — fail open on DB error to avoid permanent lockout.
+  if (user && matches(pathname, PAUSE_REDIRECTED_PREFIXES)) {
+    try {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("paused_at")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      if (profile?.paused_at && !pathname.startsWith("/account")) {
+        return NextResponse.redirect(new URL("/account?paused=true", request.url));
+      }
+    } catch {
+      // Fail open — allow through if DB query fails.
+    }
   }
 
   return response;

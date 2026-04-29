@@ -119,11 +119,17 @@ export function OnboardingClient({
         )}
         {step.description && <p className="step-desc">{step.description}</p>}
         {step.id === "consent" && (
-          <p className="step-callout">
-            <a href="/legal/collection-notice" target="_blank" rel="noreferrer">
-              Read the Personal information collection notice (APP 5) →
-            </a>
-          </p>
+          <>
+            <p className="step-callout">
+              <a href="/legal/collection-notice" target="_blank" rel="noreferrer">
+                Read the Personal information collection notice (APP 5) →
+              </a>
+            </p>
+            <p className="step-disclosure">
+              Longevity Coach does not use your health data to train AI models.
+              Your data is used solely to personalise your assessment and coaching.
+            </p>
+          </>
         )}
         {error && <div className="err">{error}</div>}
         <div className="fields">

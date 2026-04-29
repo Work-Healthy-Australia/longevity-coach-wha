@@ -86,3 +86,42 @@
 .lc-account-button:hover {
   background: var(--lc-primary-700);
 }
+
+.lc-account-button-secondary {
+  align-self: flex-start;
+  display: inline-block;
+  padding: 10px 18px;
+  background: transparent;
+  color: var(--lc-primary);
+  border: 1px solid var(--lc-primary);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.lc-account-button-secondary:hover {
+  background: var(--lc-primary);
+  color: #fff;
+}
+
+.lc-paused-banner {
+  background: #fff8e1;
+  border: 1px solid #f9c74f;
+  border-radius: 8px;
+  padding: 14px 18px;
+  font-size: 14px;
+  color: var(--lc-ink);
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--lc-primary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+}
