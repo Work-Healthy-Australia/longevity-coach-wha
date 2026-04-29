@@ -33,8 +33,8 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 | 9 | The Care Team | `●●○○○` | 30% | 0 | 0 |
 | 10 | The Knowledge Engine | `●◐◐○○` | 60% | 0 | 1 |
 | 11 | The Trust Layer | `●●●○○` | 90% | 0 | 1 |
-| 12 | The Distribution | `●◐○○○` | 20% | 0 | 0 |
-| 13 | The Business Model | `●○○○○` | 0% | 0 | 0 |
+| 12 | The Distribution | `●●◐○○` | 55% | 0 | 0 |
+| 13 | The Business Model | `●●◐○○` | 45% | 0 | 0 |
 | 14 | The Platform Foundation | `●●○○○` | 65% | 0 | 0 |
 
 **Bug totals:** 0 open, 8 closed. (Bug log: forthcoming `qa/QA-bugs.md`.)
@@ -355,8 +355,8 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 12: The Distribution
 
-`●◐○○○` Planned · ◐ Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 20%** — admin area secured with proper `is_admin` gate, invite/revoke flow shipped 2026-04-28; corporate and marketplace not built.
+`●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 55%** — admin CRM expanded into a full back-office (plans, add-ons, suppliers, products, test-orders) with shared CrudTable + admin-gated APIs (Sprint 2 W5). Admin overview now ships MRR / active members / churn / pipeline runs / uploads tiles (Sprint 2 W6). Corporate invite scaffolding (`billing.org_invites`, email + CSV) shipped at the schema layer 2026-04-29; marketplace + employer dashboard UI still outstanding.
 
 **Shipped:**
 - `app/(admin)/admin.css` styling.
@@ -370,12 +370,15 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - **Admin-only nav link** — "Admin" link in the top nav visible only to `is_admin` users.
 
 **Outstanding:**
-- Admin CRM: MRR, active members, churn, pipeline runs in last 24h.
-- Corporate account management (employee CSV upload, invitations, team challenges, aggregate reporting).
+- Employer dashboard UI (`/employer`) — schema (`billing.organisations`, `organisation_addons`, `organisation_members`, `org_invites`) is in place; UI for the health-manager flow is not yet built.
+- Bulk CSV invite intake handler — schema row exists, server action to parse + insert pending tokens still outstanding.
 - Supplement marketplace integration (auto-replenishment, in-app purchase from protocol page).
-- Pricing tiers (individual / family / clinical / corporate) wired to entitlements.
 - Sign-in-with-Vercel for clinician partners.
 - Audit log for admin-configuration changes (who changed agent settings and when).
+
+**Recently shipped (Sprint 2):**
+- Wave 5 (2026-04-29) — `/admin/plans`, `/admin/addons`, `/admin/suppliers`, `/admin/products` CRUD pages + 10 admin-gated API routes; shared `CrudTable` component; `lib/admin/guard.ts` requireAdmin helper.
+- Wave 6 (2026-04-29) — `/admin` overview tiles for MRR, active members, new signups, churn, pipeline runs, uploads.
 
 **Open bugs:** none.
 **Closed bugs:** 0.
@@ -384,12 +387,23 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 13: The Business Model
 
-`●○○○○` Planned · ○ Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 0%** — designed 2026-04-28; no provider-ecosystem code yet. The B2C revenue stream is shipped via Epic 1 (Stripe checkout). The adjacent `billing` schema (`suppliers`, `products`, `plans`, `add_ons`, `organisations`) already exists from Epic 12 work.
+`●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 45%** — Sprint 2 (2026-04-29) shipped the customer-facing pricing rail end-to-end: public `/pricing` page driven from DB, four-path feature-flag resolver, account add-on management, full admin catalog. Decisions D1–D4 resolved by James (flat corporate pricing, flat per-add-on Stripe billing, email + CSV invites, fixed feature-key enum). Provider-partner / Stripe Connect / patient disclosure work still outstanding.
 
 **Shipped:**
 - B2C subscription rail (Stripe checkout + webhook lifecycle) — see Epic 1.
-- `billing` schema scaffolding (`suppliers`, `products`, `plans`, `add_ons`, `organisations`) — migration `0013_billing_schema.sql`.
+- `billing` schema scaffolding (`suppliers`, `products`, `plans`, `plan_addons`, `subscription_addons`, `test_orders`, `organisations`, `organisation_members`, `organisation_addons`) — migration `0013_billing_schema.sql`.
+- `billing.org_invites` table (single-use tokens, 14-day expiry) for email + CSV bulk corporate invites — migration `0047_*` (2026-04-29).
+- `billing.organisation_addons.stripe_subscription_item_id` + status — D4 flat one-Stripe-item-per-add-on org billing — migration `0047_*` (2026-04-29).
+- `lib/features/resolve.ts` — four-path canAccess(userId, featureKey) feature-flag resolver covering admin, org_addon, org plan tier, sub_addon, user plan tier (Sprint 2 W2).
+- `lib/pricing/calculate.ts` — `calculateTotal` + `calculateOrgTotal` (flat per D2/D4) with 11 unit-test cases (Sprint 2 W2).
+- Public `/pricing` page (Screen 1): monthly/annual toggle, tier cards, gated add-ons, live total (Sprint 2 W3).
+- DB-driven `/api/stripe/checkout` accepting `{ plan_id, addon_ids[], billing_interval }`; `priceIdForPlan()` flagged `@deprecated` (Sprint 2 W3).
+- `GET /api/plans` and `GET /api/plan-addons` (Sprint 2 W3).
+- `/account/billing` page (Screen 3): current plan, add-on add/remove, test catalog, order history (Sprint 2 W4).
+- `POST/GET/DELETE /api/subscription/addons`, `GET/POST /api/test-orders` with Stripe sub-item / payment-intent helpers (Sprint 2 W4).
+- Admin plan + add-on catalog UI (`/admin/plans`, `/admin/addons`) and 4 admin API routes (Sprint 2 W5).
+- Admin supplier + product catalog UI (`/admin/suppliers`, `/admin/products`) — wholesale price hidden from non-admin views via `billing.products_public` (Sprint 2 W5).
 
 **Outstanding:**
 - `provider_partners` table — admin-managed; contract terms, margin %, region, status.
