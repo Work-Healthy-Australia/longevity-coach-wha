@@ -32,6 +32,9 @@ export const MD_COMPONENTS: React.ComponentProps<typeof ReactMarkdown>['componen
  * the final output is properly formatted. Keeping these two phases separate
  * avoids partial-parse artefacts from feeding incomplete markdown to the parser.
  */
+// Drip rate: one word every N ms, regardless of LLM chunk delivery cadence.
+const WORD_INTERVAL_MS = 45;
+
 export function AssistantBubble({
   text,
   isStreaming,
@@ -39,21 +42,53 @@ export function AssistantBubble({
   text: string;
   isStreaming: boolean;
 }) {
-  const [chunks, setChunks] = useState<string[]>([]);
-  const prevRef = useRef('');
+  // words already rendered on screen
+  const [displayed, setDisplayed] = useState<string[]>([]);
+  // pending word queue — filled as LLM delivers chunks
+  const queueRef = useRef<string[]>([]);
+  const consumedRef = useRef('');
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // Feed new text from LLM into the word queue
   useEffect(() => {
-    if (!isStreaming) {
-      setChunks([]);
-      prevRef.current = '';
-      return;
-    }
-    const next = text.slice(prevRef.current.length);
-    if (next) {
-      prevRef.current = text;
-      setChunks((c) => [...c, next]);
-    }
+    if (!isStreaming) return;
+    const next = text.slice(consumedRef.current.length);
+    if (!next) return;
+    consumedRef.current = text;
+    // Split on whitespace boundaries, keeping the delimiter with the preceding token
+    const words = next.match(/\S+\s*/g) ?? [next];
+    queueRef.current.push(...words);
   }, [text, isStreaming]);
+
+  // Start/stop the drip timer with streaming state
+  useEffect(() => {
+    if (isStreaming) {
+      intervalRef.current = setInterval(() => {
+        const word = queueRef.current.shift();
+        if (word !== undefined) {
+          setDisplayed((d) => [...d, word]);
+        }
+      }, WORD_INTERVAL_MS);
+    } else {
+      // Streaming ended — clear interval, flush any queued words immediately
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+      const remaining = queueRef.current.splice(0);
+      if (remaining.length) {
+        setDisplayed((d) => [...d, ...remaining]);
+      }
+      // Reset for next message
+      setTimeout(() => {
+        setDisplayed([]);
+        consumedRef.current = '';
+      }, 0);
+    }
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [isStreaming]);
 
   if (!isStreaming) {
     return (
@@ -67,8 +102,8 @@ export function AssistantBubble({
 
   return (
     <span>
-      {chunks.map((chunk, i) => (
-        <span key={i} className="chat-chunk">{chunk}</span>
+      {displayed.map((word, i) => (
+        <span key={i} className="chat-chunk">{word}</span>
       ))}
     </span>
   );
