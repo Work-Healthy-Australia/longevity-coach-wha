@@ -32,6 +32,7 @@ export default async function AppLayout({
     { href: "/dashboard", label: "Dashboard" },
     { href: "/report", label: "My Report" },
     { href: "/labs", label: "Labs" },
+    { href: "/simulator", label: "Simulator" },
     { href: "/uploads", label: "Documents" },
     { href: "/account", label: "Account" },
     ...(isAdmin ? [{ href: "/admin", label: "Admin" }] : []),
