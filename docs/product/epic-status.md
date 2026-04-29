@@ -1,6 +1,6 @@
 # Longevity Coach — Epic Status Dashboard
 
-Last updated **2026-04-28**.
+Last updated **2026-04-29**.
 
 Companion to [epics.md](./epics.md) (strategy, stable) and [product.md](./product.md) (vision). This file is the **at-a-glance status** of each epic: how far through the build pipeline, what's still outstanding, what's broken right now.
 
@@ -29,7 +29,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 | 5 | The Report | `●◐○○○` | 35% | 1 (P3) | 0 |
 | 6 | The Coach | `●●◐○○` | 90% | 0 | 1 |
 | 7 | The Daily Return | `●●◐○○` | 70% | 0 | 0 |
-| 8 | The Living Record | `●●◐○○` | 55% | 0 | 0 |
+| 8 | The Living Record | `●●◐○○` | 65% | 0 | 0 |
 | 9 | The Care Team | `●○○○○` | 5% | 0 | 0 |
 | 10 | The Knowledge Engine | `●◐◐○○` | 60% | 0 | 1 |
 | 11 | The Trust Layer | `●●◐○○` | 65% | 0 | 1 |
@@ -242,7 +242,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 8: The Living Record
 
 `●●◐○○` Planned · Feature Complete (member labs surface) · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 55%** — four shipped 2026-04-28: `/labs` (Lab Results UI), `/trends` (Daily-log trends), the alerts surface (`member_alerts` + dashboard chip + repeat-test cron + upload-flow lab-alert hook), and the **Janet → `lab_results` structured writer** (migration 0032 idempotency index, prompt extension, server-side `deriveStatus` rule, `persistLabResults` upload step). Lab-alert path is now live — fires the moment any Janet-extracted biomarker is `low`/`high`/`critical`.
+**Estimate: 65%** — five member-visible surfaces shipped: `/labs` (Lab Results UI), `/trends` (Daily-log trends), the alerts surface (`member_alerts` + dashboard chip + repeat-test cron + upload-flow lab-alert hook), the **Janet → `lab_results` structured writer**, and **`/simulator`** (real-time risk simulator with LDL/HbA1c/hsCRP/Weight sliders running the deterministic risk engine in-browser via `useDeferredValue`, side-by-side baseline-vs-simulated display, empty-state CTA). Lab-alert path is now live — fires the moment any Janet-extracted biomarker is `low`/`high`/`critical`.
 
 **Shipped:**
 - `biomarkers` schema with `lab_results`, `wearable_summaries`, `daily_logs` tables (migrations `0009`, `0010`).

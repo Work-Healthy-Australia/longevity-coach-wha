@@ -293,6 +293,23 @@ Spec compliance + code-quality reviews per task. Both must pass before marking c
 - **Population defaults can mislead.** A member with no data who slides hsCRP from 1.5 to 8 will see CV risk rise — but the baseline was synthetic. Mitigation: a "(population default)" caption next to any slider whose initial value came from defaults.
 - **Mobile slider precision.** Step sizes (`step: 0.1` for hba1c) may be hard to land precisely on touch. Acceptable trade-off for clarity; can tune later.
 
+## Plan-review addenda (post Phase 4)
+
+The plan reviewer cleared APPROVED WITH NOTES. The following are mandatory for the executor:
+
+1. **Client imports skip the barrel.** The `@/lib/risk` barrel re-exports `assemblePatientFromDB` from `assemble.ts`, which imports `@supabase/supabase-js`. Even with tree-shaking, dev bundles and any accidental future re-export risk pulling Supabase into the client. The simulator client component MUST import directly:
+   ```ts
+   import { scoreRisk } from "@/lib/risk/scorer";
+   import type { PatientInput, EngineOutput } from "@/lib/risk/types";
+   ```
+   Do NOT use `import { ... } from "@/lib/risk"` from the client component. The pure helpers in `lib/simulator/` may import from the barrel since they only run server-side or in tests.
+
+2. **Accessibility on the sliders.** Each `<input type="range">` MUST have an `aria-label` (or a `<label htmlFor>` with descriptive text) including the metric name and unit — e.g. `aria-label="LDL Cholesterol in milligrams per decilitre"`. Browsers expose `aria-valuenow` natively for range inputs, so no manual ARIA is needed for the current value, but the label is required.
+
+3. **PatientInput serialisation acknowledgement.** Passing the full `PatientInput` to the client component serialises it into the HTML payload (`__next_f`). It's de-identified data but contains the entire questionnaire + biomarker JSON. For this round, add a one-line acknowledgement comment in `app/(app)/simulator/page.tsx` noting this. Trimming to a `SimulatorPatient` slice is a deferred follow-up; record it as a known limitation in the QA report + CHANGELOG. Do not block on it.
+
+The executor reads this section before starting Task 1.
+
 ## Out of scope (carried forward)
 
 - Numeric SBP slider + engine extension (separate change).
