@@ -20,6 +20,8 @@ import type {
 import type {
   CancerHistoryEntry,
   CancerHistoryValue,
+  CardConditionType,
+  FamilyMemberCard,
   ResponsesByStep,
 } from "@/lib/questionnaire/schema";
 
@@ -36,6 +38,24 @@ const SECOND_DEGREE_RELATIVES = new Set([
   "Paternal grandmother",
   "Paternal grandfather",
   "Aunt or uncle",
+]);
+
+// New lowercase relationship keys used by the per-relative card model.
+// Distinct from FIRST/SECOND_DEGREE_RELATIVES which are Title-Case strings
+// kept for the legacy multiselect path.
+const FIRST_DEGREE_REL_KEYS = new Set<string>([
+  "mother",
+  "father",
+  "sister",
+  "brother",
+]);
+const SECOND_DEGREE_REL_KEYS = new Set<string>([
+  "maternal_grandmother",
+  "maternal_grandfather",
+  "paternal_grandmother",
+  "paternal_grandfather",
+  "aunt",
+  "uncle",
 ]);
 
 const BIOMARKER_KEY_MAP: Record<string, keyof BloodPanel> = {
@@ -196,34 +216,91 @@ function familyConditionFromMultiselect(
   return out;
 }
 
+/**
+ * Aggregate a per-condition `FamilyHistoryCondition` shape from the new
+ * `family_members[]` cards. Pure / deterministic.
+ *
+ * - `first_degree`: at least one mother/father/sister/brother card has the condition.
+ * - `second_degree`: at least one grandparent/aunt/uncle card has the condition.
+ * - `age_onset`: minimum across all matching cards' `age_onset` (undefined if none provided).
+ * - `multiple`: `true` only when ≥ 2 first-degree cards have the condition. This fixes
+ *   the long-standing silent bug in `metabolic.ts` where the legacy multiselect path
+ *   could not distinguish "Mother" from "Mother + Father".
+ *
+ * Returns `undefined` when no card has the condition.
+ */
+export function aggregateConditionFromMembers(
+  members: FamilyMemberCard[],
+  type: CardConditionType,
+): { first_degree: boolean; second_degree: boolean; age_onset?: number; multiple: boolean } | undefined {
+  const matched = members.flatMap((m) => {
+    const entry = m.conditions?.find((c) => c.type === type);
+    if (!entry) return [];
+    return [{ relationship: m.relationship, age_onset: entry.age_onset }];
+  });
+  if (matched.length === 0) return undefined;
+  const firstDegreeCount = matched.filter((m) => FIRST_DEGREE_REL_KEYS.has(m.relationship)).length;
+  const secondDegree = matched.some((m) => SECOND_DEGREE_REL_KEYS.has(m.relationship));
+  const ages = matched
+    .map((m) => m.age_onset)
+    .filter((a): a is number => typeof a === "number" && Number.isFinite(a));
+  const out: { first_degree: boolean; second_degree: boolean; age_onset?: number; multiple: boolean } = {
+    first_degree: firstDegreeCount > 0,
+    second_degree: secondDegree,
+    multiple: firstDegreeCount >= 2,
+  };
+  if (ages.length > 0) out.age_onset = Math.min(...ages);
+  return out;
+}
+
 export function buildFamilyHistory(family: Record<string, unknown> | undefined): FamilyHistory {
   if (!family) return {};
   const fh: FamilyHistory = {};
 
-  const cv = familyConditionFromMultiselect(
-    family.cardiovascular_relatives,
-    family.cardiovascular_onset_age,
-  );
-  if (cv) fh.cardiovascular = cv;
+  // Prefer new per-relative cards if present.
+  const membersRaw = (family as { family_members?: unknown }).family_members;
+  const members: FamilyMemberCard[] = Array.isArray(membersRaw)
+    ? (membersRaw as FamilyMemberCard[])
+    : [];
+  const hasNewShape = members.length > 0;
 
-  const neuro = familyConditionFromMultiselect(
-    family.neurodegenerative_relatives,
-    family.neurodegenerative_onset_age,
-  );
-  if (neuro) fh.neurodegenerative = neuro;
+  if (hasNewShape) {
+    const cv = aggregateConditionFromMembers(members, "cardiovascular");
+    if (cv) fh.cardiovascular = cv;
+    const neuro = aggregateConditionFromMembers(members, "neurodegenerative");
+    if (neuro) fh.neurodegenerative = neuro;
+    const dia = aggregateConditionFromMembers(members, "diabetes");
+    if (dia) fh.diabetes = dia;
+    const osteo = aggregateConditionFromMembers(members, "osteoporosis");
+    if (osteo) fh.osteoporosis = osteo;
+  } else {
+    // Legacy fallback — preserved verbatim so existing responses still score.
+    const cv = familyConditionFromMultiselect(
+      family.cardiovascular_relatives,
+      family.cardiovascular_onset_age,
+    );
+    if (cv) fh.cardiovascular = cv;
 
-  const dia = familyConditionFromMultiselect(
-    family.diabetes_relatives,
-    family.diabetes_onset_age,
-  );
-  if (dia) fh.diabetes = dia;
+    const neuro = familyConditionFromMultiselect(
+      family.neurodegenerative_relatives,
+      family.neurodegenerative_onset_age,
+    );
+    if (neuro) fh.neurodegenerative = neuro;
 
-  const osteo = familyConditionFromMultiselect(
-    family.osteoporosis_relatives,
-    family.osteoporosis_onset_age,
-  );
-  if (osteo) fh.osteoporosis = osteo;
+    const dia = familyConditionFromMultiselect(
+      family.diabetes_relatives,
+      family.diabetes_onset_age,
+    );
+    if (dia) fh.diabetes = dia;
 
+    const osteo = familyConditionFromMultiselect(
+      family.osteoporosis_relatives,
+      family.osteoporosis_onset_age,
+    );
+    if (osteo) fh.osteoporosis = osteo;
+  }
+
+  // Cancer history is independent of cards in either path.
   const cancer = adaptCancerHistory(family.cancer_history as CancerHistoryValue | undefined);
   if (cancer) fh.cancer = cancer;
 

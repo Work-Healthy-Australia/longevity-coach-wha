@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Family history redesign — wireframes</title>
+<style>
+  :root {
+    --sage: #7CA982;
+    --sage-50: #F2F7F3;
+    --sage-100: #E1ECE3;
+    --sage-200: #C7DCCC;
+    --teal: #2F6F8F;
+    --ink: #1A2B33;
+    --ink-60: #5A6B73;
+    --ink-40: #8A9499;
+    --bg: #F4F7F9;
+    --card: #FFFFFF;
+    --border: #DDE5E8;
+    --warning: #D9A441;
+    --danger: #C75444;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  .page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+  }
+  h1 { font-size: 24px; margin: 0 0 4px; }
+  .subtitle { color: var(--ink-60); margin: 0 0 24px; }
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .tab {
+    padding: 10px 16px;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: var(--ink-60);
+    font-size: 14px;
+    font-weight: 500;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+  }
+  .tab.active { color: var(--teal); border-bottom-color: var(--teal); }
+  .tab:hover:not(.active) { color: var(--ink); }
+  .panel { display: none; }
+  .panel.active { display: grid; gap: 24px; grid-template-columns: 1fr 380px; align-items: start; }
+  @media (max-width: 900px) { .panel.active { grid-template-columns: 1fr; } }
+  .form, .data {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 22px;
+  }
+  .data {
+    position: sticky;
+    top: 16px;
+  }
+  .data h3 {
+    margin: 0 0 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-60);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  pre {
+    margin: 0;
+    font-family: ui-monospace, "SF Mono", Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    background: #0E2026;
+    color: #C5E0D8;
+    padding: 16px;
+    border-radius: 10px;
+    overflow-x: auto;
+  }
+  .step-head {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 18px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .step-head h2 { margin: 0; font-size: 18px; }
+  .step-head p { margin: 0; color: var(--ink-60); font-size: 14px; }
+  .field { margin-bottom: 22px; }
+  .field-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: var(--ink);
+  }
+  .field-help {
+    color: var(--ink-60);
+    font-size: 12px;
+    margin: 4px 0 8px;
+  }
+  .multiselect {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .chip {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 13px;
+    cursor: pointer;
+    background: var(--card);
+    color: var(--ink);
+    user-select: none;
+  }
+  .chip.on {
+    background: var(--sage-100);
+    border-color: var(--sage);
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .chip:hover { border-color: var(--ink-40); }
+  input[type="number"], input[type="text"], select {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    background: var(--card);
+  }
+  input[type="number"]:focus, input[type="text"]:focus, select:focus {
+    outline: 2px solid var(--sage);
+    outline-offset: -1px;
+    border-color: var(--sage);
+  }
+  .age-input { max-width: 140px; }
+  .relative-row {
+    display: grid;
+    grid-template-columns: 1fr 140px 36px;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .age-with-suffix {
+    position: relative;
+  }
+  .age-with-suffix input { padding-right: 48px; }
+  .age-with-suffix .suffix {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--ink-40);
+    font-size: 12px;
+    pointer-events: none;
+  }
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--card);
+    color: var(--ink-60);
+    cursor: pointer;
+    font-size: 16px;
+    display: grid;
+    place-items: center;
+  }
+  .icon-btn:hover { color: var(--danger); border-color: var(--danger); }
+  .add-row {
+    margin-top: 8px;
+    padding: 10px 14px;
+    border: 1px dashed var(--border);
+    background: transparent;
+    border-radius: 10px;
+    color: var(--teal);
+    font-weight: 500;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+  }
+  .add-row:hover { border-color: var(--teal); background: var(--sage-50); }
+  .condition-block {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+    background: var(--sage-50);
+  }
+  .condition-block.empty { background: var(--card); }
+  .condition-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .condition-head h3 { margin: 0; font-size: 15px; font-weight: 600; }
+  .pill {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--sage-200);
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .pill.ghost { background: var(--bg); color: var(--ink-60); }
+  /* Option 2 — relative cards */
+  .relative-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .relative-card-head {
+    padding: 14px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+  }
+  .relative-card-head .who {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--sage-100);
+    color: var(--teal);
+    display: grid;
+    place-items: center;
+    font-size: 18px;
+  }
+  .relative-card-head .meta { font-size: 12px; color: var(--ink-60); margin-top: 2px; }
+  .relative-card-body {
+    border-top: 1px solid var(--border);
+    padding: 16px 18px;
+  }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background: var(--sage-50);
+    border: 1px solid var(--sage-200);
+    border-radius: 10px;
+    margin-bottom: 12px;
+  }
+  .switch {
+    width: 40px;
+    height: 22px;
+    border-radius: 999px;
+    background: var(--sage);
+    position: relative;
+    flex-shrink: 0;
+  }
+  .switch::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 20px;
+    width: 18px;
+    height: 18px;
+    background: #fff;
+    border-radius: 50%;
+  }
+  .switch.off { background: var(--ink-40); }
+  .switch.off::after { left: 2px; }
+  .conditions-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .condition-tick {
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 13px;
+    cursor: pointer;
+    background: var(--card);
+    user-select: none;
+  }
+  .condition-tick.on {
+    border-color: var(--sage);
+    background: var(--sage-100);
+  }
+  .pros-cons {
+    margin-top: 18px;
+    padding: 14px 16px;
+    background: var(--sage-50);
+    border-radius: 10px;
+    font-size: 13px;
+  }
+  .pros-cons h4 { margin: 0 0 6px; font-size: 13px; }
+  .pros-cons ul { margin: 0; padding-left: 20px; }
+  .pros-cons li { margin-bottom: 4px; }
+  .pros-cons li.pro::marker { color: var(--sage); }
+  .pros-cons li.con::marker { color: var(--warning); }
+  .legend { font-size: 11px; color: var(--ink-40); margin-top: 14px; }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <h1>Family history — redesign wireframes</h1>
+  <p class="subtitle">
+    Three options for capturing per-relative age detail. Same fixture data in every panel:
+    Mother → heart disease at 52 · Father → heart disease at 60 · Maternal grandmother → heart disease at 75 · Mother → diabetes at 58.
+    The "Engine sees" panel on the right shows the assembled `FamilyHistory` shape that feeds the deterministic risk engine.
+  </p>
+
+  <div class="tabs">
+    <button class="tab active" data-target="o1">Option 1 — Per-condition table (RECOMMENDED)</button>
+    <button class="tab" data-target="o2">Option 2 — Per-relative card (Base44-style)</button>
+    <button class="tab" data-target="o3">Option 3 — Two-step disclosure (light)</button>
+  </div>
+
+  <!-- ============ OPTION 1 ============ -->
+  <div id="o1" class="panel active">
+    <div class="form">
+      <div class="step-head">
+        <h2>Family history</h2>
+        <p>For each condition, list which relatives were affected and the age it appeared. Leave blank if no family history.</p>
+      </div>
+
+      <div class="condition-block">
+        <div class="condition-head">
+          <h3>Heart disease or stroke</h3>
+          <span class="pill">2 affected</span>
+        </div>
+        <div class="relative-row">
+          <select>
+            <option>Mother</option>
+            <option>Father</option><option>Sister</option><option>Brother</option>
+            <option>Maternal grandmother</option><option>Maternal grandfather</option>
+            <option>Paternal grandmother</option><option>Paternal grandfather</option>
+            <option>Aunt or uncle</option>
+          </select>
+          <div class="age-with-suffix">
+            <input type="number" value="52" placeholder="age" />
+            <span class="suffix">years</span>
+          </div>
+          <button class="icon-btn" title="Remove">×</button>
+        </div>
+        <div class="relative-row">
+          <select>
+            <option>Father</option>
+            <option>Mother</option><option>Sister</option><option>Brother</option>
+            <option>Maternal grandmother</option><option>Maternal grandfather</option>
+            <option>Paternal grandmother</option><option>Paternal grandfather</option>
+            <option>Aunt or uncle</option>
+          </select>
+          <div class="age-with-suffix">
+            <input type="number" value="60" placeholder="age" />
+            <span class="suffix">years</span>
+          </div>
+          <button class="icon-btn" title="Remove">×</button>
+        </div>
+        <div class="relative-row">
+          <select>
+            <option>Maternal grandmother</option>
+            <option>Mother</option><option>Father</option><option>Sister</option>
+            <option>Brother</option><option>Maternal grandfather</option>
+            <option>Paternal grandmother</option><option>Paternal grandfather</option>
+            <option>Aunt or uncle</option>
+          </select>
+          <div class="age-with-suffix">
+            <input type="number" value="75" placeholder="age" />
+            <span class="suffix">years</span>
+          </div>
+          <button class="icon-btn" title="Remove">×</button>
+        </div>
+        <button class="add-row">+ Add affected relative</button>
+      </div>
+
+      <div class="condition-block">
+        <div class="condition-head">
+          <h3>Type 2 diabetes</h3>
+          <span class="pill">1 affected</span>
+        </div>
+        <div class="relative-row">
+          <select>
+            <option>Mother</option>
+            <option>Father</option><option>Sister</option><option>Brother</option>
+            <option>Maternal grandmother</option><option>Maternal grandfather</option>
+            <option>Paternal grandmother</option><option>Paternal grandfather</option>
+            <option>Aunt or uncle</option>
+          </select>
+          <div class="age-with-suffix">
+            <input type="number" value="58" placeholder="age" />
+            <span class="suffix">years</span>
+          </div>
+          <button class="icon-btn" title="Remove">×</button>
+        </div>
+        <button class="add-row">+ Add affected relative</button>
+      </div>
+
+      <div class="condition-block empty">
+        <div class="condition-head">
+          <h3>Neurodegenerative (Alzheimer's, Parkinson's)</h3>
+          <span class="pill ghost">none</span>
+        </div>
+        <button class="add-row">+ Add affected relative</button>
+      </div>
+
+      <div class="condition-block empty">
+        <div class="condition-head">
+          <h3>Osteoporosis or fractures</h3>
+          <span class="pill ghost">none</span>
+        </div>
+        <button class="add-row">+ Add affected relative</button>
+      </div>
+    </div>
+
+    <div class="data">
+      <h3>Member's stored response (JSONB)</h3>
+<pre>{
+  "cardiovascular_history": {
+    "affected": [
+      { "relative": "Mother", "age_onset": 52 },
+      { "relative": "Father", "age_onset": 60 },
+      { "relative": "Maternal grandmother", "age_onset": 75 }
+    ]
+  },
+  "diabetes_history": {
+    "affected": [
+      { "relative": "Mother", "age_onset": 58 }
+    ]
+  }
+}</pre>
+
+      <h3 style="margin-top:18px">Engine sees (after assemble)</h3>
+<pre>{
+  cardiovascular: {
+    first_degree:  true,   // Mother + Father
+    second_degree: true,   // Maternal grandmother
+    age_onset:     52,     // min across affected
+    multiple:      true    // ≥2 first-degree
+  },
+  diabetes: {
+    first_degree:  true,
+    second_degree: false,
+    age_onset:     58,
+    multiple:      false
+  }
+}</pre>
+
+      <div class="pros-cons">
+        <h4>Option 1 — recommended</h4>
+        <ul>
+          <li class="pro"><b>Fixes:</b> per-relative ages preserved · `multiple` flag derivable · `age_onset` no longer ambiguous</li>
+          <li class="pro">Mirrors the existing `cancer_history` typed-field pattern — proven UX, proven hydration, proven engine path</li>
+          <li class="pro">Engine code untouched; only `assemble.ts` changes (~10 lines)</li>
+          <li class="pro">Same relative can repeat (two aunts, three cousins) — no false-uniqueness constraint</li>
+          <li class="con">4 new typed-field renderers vs. 8 flat fields today (small UI complexity bump)</li>
+          <li class="con">Hydration shim needed once for old responses</li>
+        </ul>
+        <p class="legend">Effort: ~1 day · Affects: family step only · Migration: hydration shim, no DB change</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ OPTION 2 ============ -->
+  <div id="o2" class="panel">
+    <div class="form">
+      <div class="step-head">
+        <h2>Family health history</h2>
+        <p>Add parents, grandparents, aunts/uncles. For each, capture vitals, lifestyle, and the conditions they've had.</p>
+      </div>
+
+      <div class="relative-card">
+        <div class="relative-card-head">
+          <div class="who">
+            <div class="avatar">👤</div>
+            <div>
+              <div><b>Mother</b></div>
+              <div class="meta">Living · age 67</div>
+            </div>
+          </div>
+          <span class="pill">2 conditions</span>
+        </div>
+        <div class="relative-card-body">
+          <div class="toggle">
+            <div>
+              <div><b>Currently alive?</b></div>
+              <div style="font-size:12px;color:var(--ink-60)">Living</div>
+            </div>
+            <div class="switch"></div>
+          </div>
+          <div class="grid-2">
+            <div class="field" style="margin:0">
+              <label class="field-label">Current age</label>
+              <div class="age-with-suffix">
+                <input type="number" value="67" />
+                <span class="suffix">years</span>
+              </div>
+            </div>
+            <div class="field" style="margin:0">
+              <label class="field-label">Smoking</label>
+              <select><option>Never</option><option>Former smoker</option><option>Current</option><option>Unknown</option></select>
+            </div>
+          </div>
+          <div class="field" style="margin:14px 0 8px">
+            <label class="field-label">Conditions she has — with age of onset</label>
+          </div>
+          <div class="conditions-grid">
+            <div class="condition-tick on">
+              <div>Heart disease / stroke</div>
+              <div style="margin-top:4px">
+                <input type="number" value="52" style="height:30px;font-size:12px;width:90px" /> <span style="font-size:11px;color:var(--ink-60)">at age</span>
+              </div>
+            </div>
+            <div class="condition-tick on">
+              <div>Type 2 diabetes</div>
+              <div style="margin-top:4px">
+                <input type="number" value="58" style="height:30px;font-size:12px;width:90px" /> <span style="font-size:11px;color:var(--ink-60)">at age</span>
+              </div>
+            </div>
+            <div class="condition-tick">Cancer</div>
+            <div class="condition-tick">Neurodegenerative</div>
+            <div class="condition-tick">Osteoporosis</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="relative-card">
+        <div class="relative-card-head">
+          <div class="who">
+            <div class="avatar">👤</div>
+            <div>
+              <div><b>Father</b></div>
+              <div class="meta">Living · age 71</div>
+            </div>
+          </div>
+          <span class="pill">1 condition</span>
+        </div>
+      </div>
+
+      <div class="relative-card">
+        <div class="relative-card-head">
+          <div class="who">
+            <div class="avatar">👤</div>
+            <div>
+              <div><b>Maternal grandmother</b></div>
+              <div class="meta">Deceased · died at 88</div>
+            </div>
+          </div>
+          <span class="pill">1 condition</span>
+        </div>
+      </div>
+
+      <button class="add-row">+ Add family member</button>
+
+      <p style="font-size:12px;color:var(--ink-60);margin-top:14px">
+        💡 Note: this also <b>replaces</b> the current "Deaths in the family" step — vital status, age, and cause of death are captured per relative.
+      </p>
+    </div>
+
+    <div class="data">
+      <h3>Member's stored response (JSONB)</h3>
+<pre>{
+  "family_members": [
+    {
+      "id": "rel_mother",
+      "relationship": "mother",
+      "is_alive": true,
+      "current_age": 67,
+      "smoking_status": "never",
+      "alcohol_use": "light",
+      "conditions": [
+        { "type": "cardiovascular", "age_onset": 52 },
+        { "type": "diabetes", "age_onset": 58 }
+      ]
+    },
+    {
+      "id": "rel_father",
+      "relationship": "father",
+      "is_alive": true,
+      "current_age": 71,
+      "conditions": [
+        { "type": "cardiovascular", "age_onset": 60 }
+      ]
+    },
+    {
+      "id": "rel_maternal_grandmother",
+      "relationship": "maternal_grandmother",
+      "is_alive": false,
+      "age_at_death": 88,
+      "cause_category": "cardiovascular",
+      "conditions": [
+        { "type": "cardiovascular", "age_onset": 75 }
+      ]
+    }
+  ]
+}</pre>
+
+      <h3 style="margin-top:18px">Engine sees (after assemble)</h3>
+<pre>{
+  cardiovascular: {
+    first_degree:  true,
+    second_degree: true,
+    age_onset:     52,
+    multiple:      true
+  },
+  diabetes: {
+    first_degree:  true,
+    second_degree: false,
+    age_onset:     58,
+    multiple:      false
+  }
+}</pre>
+
+      <div class="pros-cons">
+        <h4>Option 2 — Base44-style invert</h4>
+        <ul>
+          <li class="pro">Closer to clinical mental model ("my mom had X, Y, Z")</li>
+          <li class="pro">Captures vital status + cause of death + smoking + alcohol per relative — collapses two existing steps into one</li>
+          <li class="pro">Ready for the future "longevity actuarial" model that needs deceased ages and causes</li>
+          <li class="con">Largest blast radius — touches family-history AND deaths step; new schema; more renderer work</li>
+          <li class="con">Hydration shim needs to merge old condition data + old deaths-step data into the new per-relative shape</li>
+          <li class="con">Engine assemble logic gets more complex (denormalise per-relative into per-condition aggregates)</li>
+        </ul>
+        <p class="legend">Effort: ~3 days · Affects: family + deaths steps · Migration: complex hydration shim, no DB change</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ OPTION 3 ============ -->
+  <div id="o3" class="panel">
+    <div class="form">
+      <div class="step-head">
+        <h2>Family history</h2>
+        <p>For each condition, mark which relatives were affected and the age each first showed it.</p>
+      </div>
+
+      <div class="condition-block">
+        <div class="condition-head">
+          <h3>Heart disease or stroke</h3>
+          <span class="pill">3 affected</span>
+        </div>
+
+        <label class="field-label">Affected relatives</label>
+        <div class="multiselect">
+          <span class="chip on">Mother</span>
+          <span class="chip on">Father</span>
+          <span class="chip">Sister</span>
+          <span class="chip">Brother</span>
+          <span class="chip on">Maternal grandmother</span>
+          <span class="chip">Maternal grandfather</span>
+          <span class="chip">Paternal grandmother</span>
+          <span class="chip">Paternal grandfather</span>
+          <span class="chip">Aunt or uncle</span>
+          <span class="chip">None</span>
+        </div>
+
+        <div style="margin-top:14px">
+          <label class="field-label">Age of onset for each affected relative</label>
+          <p class="field-help">An age input appears as you toggle relatives on. Skip any you don't know.</p>
+          <div style="display:grid;grid-template-columns:1fr 140px;gap:8px;margin-top:8px">
+            <div style="padding:9px 12px;background:var(--sage-50);border:1px solid var(--sage-200);border-radius:8px;font-size:13px">Mother</div>
+            <div class="age-with-suffix">
+              <input type="number" value="52" />
+              <span class="suffix">years</span>
+            </div>
+            <div style="padding:9px 12px;background:var(--sage-50);border:1px solid var(--sage-200);border-radius:8px;font-size:13px">Father</div>
+            <div class="age-with-suffix">
+              <input type="number" value="60" />
+              <span class="suffix">years</span>
+            </div>
+            <div style="padding:9px 12px;background:var(--sage-50);border:1px solid var(--sage-200);border-radius:8px;font-size:13px">Maternal grandmother</div>
+            <div class="age-with-suffix">
+              <input type="number" value="75" />
+              <span class="suffix">years</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="condition-block">
+        <div class="condition-head">
+          <h3>Type 2 diabetes</h3>
+          <span class="pill">1 affected</span>
+        </div>
+        <label class="field-label">Affected relatives</label>
+        <div class="multiselect">
+          <span class="chip on">Mother</span>
+          <span class="chip">Father</span>
+          <span class="chip">Sister</span>
+          <span class="chip">Brother</span>
+          <span class="chip">Maternal grandmother</span>
+          <span class="chip">Maternal grandfather</span>
+          <span class="chip">Paternal grandmother</span>
+          <span class="chip">Paternal grandfather</span>
+          <span class="chip">Aunt or uncle</span>
+          <span class="chip">None</span>
+        </div>
+        <div style="margin-top:14px">
+          <label class="field-label">Age of onset for each affected relative</label>
+          <div style="display:grid;grid-template-columns:1fr 140px;gap:8px;margin-top:8px">
+            <div style="padding:9px 12px;background:var(--sage-50);border:1px solid var(--sage-200);border-radius:8px;font-size:13px">Mother</div>
+            <div class="age-with-suffix">
+              <input type="number" value="58" />
+              <span class="suffix">years</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="condition-block empty">
+        <div class="condition-head">
+          <h3>Neurodegenerative (Alzheimer's, Parkinson's)</h3>
+          <span class="pill ghost">none</span>
+        </div>
+        <label class="field-label">Affected relatives</label>
+        <div class="multiselect">
+          <span class="chip">Mother</span>
+          <span class="chip">Father</span>
+          <span class="chip">Sister</span>
+          <span class="chip">Brother</span>
+          <span class="chip">Maternal grandmother</span>
+          <span class="chip">Maternal grandfather</span>
+          <span class="chip">Paternal grandmother</span>
+          <span class="chip">Paternal grandfather</span>
+          <span class="chip">Aunt or uncle</span>
+          <span class="chip on">None</span>
+        </div>
+      </div>
+
+      <div class="condition-block empty">
+        <div class="condition-head">
+          <h3>Osteoporosis or fractures</h3>
+          <span class="pill ghost">none</span>
+        </div>
+        <label class="field-label">Affected relatives</label>
+        <div class="multiselect">
+          <span class="chip">Mother</span>
+          <span class="chip">Father</span>
+          <span class="chip">Sister</span>
+          <span class="chip">Brother</span>
+          <span class="chip">Maternal grandmother</span>
+          <span class="chip">Maternal grandfather</span>
+          <span class="chip">Paternal grandmother</span>
+          <span class="chip">Paternal grandfather</span>
+          <span class="chip">Aunt or uncle</span>
+          <span class="chip on">None</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="data">
+      <h3>Member's stored response (JSONB)</h3>
+<pre>{
+  "cardiovascular_relatives":   ["Mother","Father","Maternal grandmother"],
+  "cardiovascular_onset_ages":  {
+    "Mother": 52,
+    "Father": 60,
+    "Maternal grandmother": 75
+  },
+  "diabetes_relatives":  ["Mother"],
+  "diabetes_onset_ages": { "Mother": 58 }
+}</pre>
+
+      <h3 style="margin-top:18px">Engine sees (after assemble)</h3>
+<pre>{
+  cardiovascular: {
+    first_degree:  true,
+    second_degree: true,
+    age_onset:     52,
+    multiple:      true
+  },
+  diabetes: {
+    first_degree:  true,
+    second_degree: false,
+    age_onset:     58,
+    multiple:      false
+  }
+}</pre>
+
+      <div class="pros-cons">
+        <h4>Option 3 — two-step disclosure (lightest)</h4>
+        <ul>
+          <li class="pro">Smallest schema change — keeps the multiselect, replaces the single age field with a typed map</li>
+          <li class="pro">Familiar UX (multiselect first, age inputs reveal as you toggle)</li>
+          <li class="con">Two coupled fields per condition — harder to validate consistently (orphaned ages when you uncheck a relative)</li>
+          <li class="con">Same relative can't be added twice (two aunts? two cousins?) — capped at 9 relative types</li>
+          <li class="con">Awkward as relatives toggle on/off — age inputs flash in/out of existence</li>
+          <li class="con">Doesn't easily accommodate the future per-relative-card refactor</li>
+        </ul>
+        <p class="legend">Effort: ~0.5 day · Affects: family step only · Not recommended — fixes everything Option 1 fixes but with worse UX</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  document.querySelectorAll(".tab").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      const target = tab.dataset.target;
+      document.querySelectorAll(".tab").forEach((t) => t.classList.toggle("active", t === tab));
+      document.querySelectorAll(".panel").forEach((p) => p.classList.toggle("active", p.id === target));
+    });
+  });
+  // Toggle chips for hover demonstration (preview only)
+  document.querySelectorAll(".chip").forEach((c) => {
+    c.addEventListener("click", () => c.classList.toggle("on"));
+  });
+  document.querySelectorAll(".condition-tick").forEach((c) => {
+    c.addEventListener("click", () => c.classList.toggle("on"));
+  });
+</script>
+
+</body>
+</html>
