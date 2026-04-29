@@ -64,11 +64,39 @@ describe("cleanLegacyDriver", () => {
     );
   });
 
-  it("handles legacy BMI_onco gracefully (no parens, prefix retained)", () => {
-    // Legacy data may have name "BMI_onco" which lacks the (cancer risk) tag.
-    // The cleaner should NOT strip — it falls back to keeping the domain prefix.
+  it("rewrites legacy BMI_onco to the new readable form", () => {
     expect(cleanLegacyDriver("oncological: BMI_onco (score 45)")).toBe(
-      "oncological: BMI_onco (score 45)",
+      "BMI (cancer risk) (score 45)",
+    );
+  });
+
+  it("rewrites legacy bare BMI in metabolic context", () => {
+    expect(cleanLegacyDriver("metabolic: BMI (score 64)")).toBe(
+      "BMI (metabolic) (score 64)",
+    );
+  });
+
+  it("rewrites legacy _onco suffix factors generically", () => {
+    expect(cleanLegacyDriver("oncological: hsCRP_onco (score 55)")).toBe(
+      "hsCRP (cancer risk) (score 55)",
+    );
+    expect(cleanLegacyDriver("oncological: smoking_onco (score 80)")).toBe(
+      "smoking (cancer risk) (score 80)",
+    );
+  });
+
+  it("rewrites legacy _neuro suffix factors", () => {
+    expect(cleanLegacyDriver("neurodegenerative: hsCRP_neuro (score 40)")).toBe(
+      "hsCRP (brain health) (score 40)",
+    );
+    expect(cleanLegacyDriver("neurodegenerative: vitamin_D_neuro (score 50)")).toBe(
+      "vitamin_D (brain health) (score 50)",
+    );
+  });
+
+  it("rewrites legacy _msk suffix factors", () => {
+    expect(cleanLegacyDriver("musculoskeletal: testosterone_msk (score 35)")).toBe(
+      "testosterone (musculoskeletal) (score 35)",
     );
   });
 });

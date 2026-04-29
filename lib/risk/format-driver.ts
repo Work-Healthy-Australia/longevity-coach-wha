@@ -34,20 +34,66 @@ export function formatRiskDriver(domain: string, name: string, score: number): s
   return `${prefix}${name} (score ${score})`;
 }
 
+// Legacy factor-name → readable display map. Applied at display time so
+// rows persisted before the engine rename (commit 3663e19) render cleanly
+// without requiring a DB rewrite or engine re-run.
+const LEGACY_NAME_REWRITES: Record<string, string> = {
+  // Special: BMI lives under two different scoring functions; bare "BMI"
+  // legacy means the metabolic one.
+  "metabolic:BMI": "BMI (metabolic)",
+  "oncological:BMI_onco": "BMI (cancer risk)",
+};
+
+// Generic suffix-to-parens rewrites for the rest of the multi-domain
+// duplicates (hsCRP_onco, smoking_onco, vitamin_D_neuro, testosterone_msk,
+// etc.). Match the trailing suffix and translate to a readable tag.
+const SUFFIX_REWRITES: Array<{ re: RegExp; tag: string }> = [
+  { re: /_onco$/, tag: "(cancer risk)" },
+  { re: /_neuro$/, tag: "(brain health)" },
+  { re: /_msk$/, tag: "(musculoskeletal)" },
+];
+
+function rewriteLegacyName(domain: string, name: string): string {
+  // Exact mapping wins (handles bare "BMI" → "BMI (metabolic)" disambiguation).
+  const exact = LEGACY_NAME_REWRITES[`${domain.toLowerCase()}:${name}`];
+  if (exact) return exact;
+  // Generic suffix translation.
+  for (const { re, tag } of SUFFIX_REWRITES) {
+    if (re.test(name)) return `${name.replace(re, "")} ${tag}`;
+  }
+  return name;
+}
+
 /**
  * Clean a previously-persisted risk driver string.
  *
- * Handles the redundant shape `"metabolic: BMI (metabolic) (score 64)"`
- * by stripping the leading `"<domain>: "` when the same domain appears
- * inside parentheses later in the string. Returns the input unchanged
- * if no redundancy is detected.
+ * Two operations:
+ * 1. Translate legacy factor names (e.g. `BMI_onco`) to the new readable
+ *    form (`BMI (cancer risk)`) so rows persisted before the engine rename
+ *    render correctly without a DB rewrite.
+ * 2. Strip the redundant `"<domain>: "` prefix when the (possibly translated)
+ *    factor name already names the domain in parentheses.
+ *
+ * Returns the input unchanged for malformed strings.
  */
 export function cleanLegacyDriver(s: string): string {
-  // Match leading "word: " up to the first colon-space.
+  // Match leading "word: " up to the first colon-space, then the rest.
+  // "rest" looks like `"<name> (score N)"` for engine-formatted rows.
   const match = s.match(/^([a-z]+):\s+(.*)$/i);
   if (!match) return s;
   const [, domain, rest] = match;
   const hint = DOMAIN_HINTS[domain.toLowerCase()];
   if (!hint) return s;
+
+  // Try to peel off " (score N)" suffix so we can rewrite the name in isolation.
+  const scoreMatch = rest.match(/^(.*?)\s*(\(score\s+\d+\))$/);
+  if (scoreMatch) {
+    const [, rawName, scorePart] = scoreMatch;
+    const renamed = rewriteLegacyName(domain, rawName.trim());
+    const restRebuilt = `${renamed} ${scorePart}`;
+    return hint.test(restRebuilt) ? restRebuilt : `${domain}: ${restRebuilt}`;
+  }
+
+  // No score suffix — just check redundancy on the rest as-is.
   return hint.test(rest) ? rest : s;
 }
