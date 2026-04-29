@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { cleanLegacyDriver } from "@/lib/risk/format-driver";
 import { JanetChat } from "./_components/janet-chat";
 import "./report.css";
 
@@ -140,7 +141,7 @@ export default async function ReportPage() {
               <h2>Top risk factors to address</h2>
               <ol className="driver-list">
                 {(risk.top_risk_drivers as string[]).map((d, i) => (
-                  <li key={i}>{d}</li>
+                  <li key={i}>{cleanLegacyDriver(d)}</li>
                 ))}
               </ol>
             </section>
