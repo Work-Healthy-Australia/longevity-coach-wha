@@ -52,7 +52,7 @@
     padding: 0 48px;
   }
   .top-nav-inner {
-    max-width: 1200px; margin: 0 auto;
+    max-width: 1280px; margin: 0 auto;
     display: flex; align-items: center; justify-content: space-between;
     height: 58px;
   }
@@ -67,14 +67,15 @@
     padding: 4px;
   }
   .view-tab {
-    padding: 7px 18px;
+    padding: 7px 14px;
     border-radius: 7px;
     border: none;
     background: transparent;
     color: var(--lc-ink-soft);
-    font-size: 13px; font-weight: 500;
+    font-size: 12px; font-weight: 500;
     cursor: pointer;
     transition: all 0.15s;
+    white-space: nowrap;
   }
   .view-tab:hover { color: var(--lc-primary); }
   .view-tab.active {
@@ -88,7 +89,7 @@
   .view.active { display: block; }
 
   .section-wrap {
-    max-width: 1200px; margin: 0 auto;
+    max-width: 1280px; margin: 0 auto;
     padding: 48px 48px 80px;
   }
 
@@ -156,7 +157,6 @@
   .col-type { font-size: 11px; color: var(--lc-grey); white-space: nowrap; }
   .col-note { font-size: 11px; color: var(--lc-teal); grid-column: 1/-1; padding-left: 0; margin-top: -3px; }
 
-  /* table accent colours by subsystem */
   .t-s1 .db-table-header { background: var(--lc-primary-50); color: var(--lc-primary-800); border-bottom: 1px solid var(--lc-primary-100); }
   .t-s1 .schema-badge { background: var(--lc-primary-100); color: var(--lc-primary-800); }
   .t-s2 .db-table-header { background: var(--lc-accent-50); color: #7A4010; border-bottom: 1px solid var(--lc-accent-100); }
@@ -168,7 +168,6 @@
   .t-anchor .db-table-header { background: var(--lc-line-soft); color: var(--lc-ink-soft); border-bottom: 1px solid var(--lc-line); }
   .t-anchor .schema-badge { background: var(--lc-line); color: var(--lc-ink-soft); }
 
-  /* subsystem legend */
   .legend {
     display: flex; gap: 16px; flex-wrap: wrap;
     margin-bottom: 28px;
@@ -181,37 +180,6 @@
     width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0;
   }
 
-  /* relations */
-  .relations-list {
-    display: flex; flex-direction: column; gap: 8px;
-  }
-  .rel-row {
-    display: flex; align-items: center; gap: 10px;
-    font-size: 13px; font-family: ui-monospace, Menlo, monospace;
-    background: var(--lc-line-soft); border-radius: 7px;
-    padding: 8px 14px;
-  }
-  .rel-from { color: var(--lc-primary); font-weight: 600; }
-  .rel-arrow { color: var(--lc-grey); }
-  .rel-to { color: var(--lc-plum); font-weight: 600; }
-  .rel-note { font-family: ui-sans-serif, system-ui, sans-serif; color: var(--lc-grey); font-size: 12px; margin-left: auto; }
-
-  /* RLS table */
-  .rls-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .rls-table th {
-    text-align: left; padding: 9px 14px;
-    background: var(--lc-line-soft);
-    color: var(--lc-grey);
-    font-size: 12px; font-weight: 600;
-    border-bottom: 1px solid var(--lc-line);
-  }
-  .rls-table td {
-    padding: 9px 14px;
-    border-bottom: 1px solid var(--lc-line-soft);
-    vertical-align: middle;
-  }
-  .rls-table tr:last-child td { border-bottom: none; }
-  .rls-table .table-name { font-family: ui-monospace, Menlo, monospace; font-size: 12px; color: var(--lc-primary); }
   .pill {
     display: inline-block;
     font-size: 11px; padding: 2px 8px; border-radius: 20px;
@@ -221,140 +189,49 @@
   .pill-amber  { background: #fef3cd; color: #7a4c0b; }
   .pill-grey   { background: var(--lc-line-soft); color: var(--lc-grey); }
   .pill-blue   { background: var(--lc-primary-50); color: var(--lc-primary-800); }
+  .pill-red    { background: #fde8e4; color: var(--lc-danger); }
 
-  /* ── System design view ── */
-  .flow-diagram {
-    display: flex; flex-direction: column; gap: 16px;
-  }
-  .flow-row {
-    display: flex; align-items: stretch; gap: 12px;
-  }
-  .flow-box {
-    flex: 1;
-    background: var(--lc-surface);
-    border: 1px solid var(--lc-line);
-    border-radius: 11px;
-    padding: 16px 18px;
-  }
-  .flow-box-title {
-    font-size: 12px; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.05em;
-    color: var(--lc-grey); margin: 0 0 10px;
-  }
-  .flow-box ul {
-    margin: 0; padding: 0 0 0 16px;
-    font-size: 13px; color: var(--lc-ink-soft);
-    display: flex; flex-direction: column; gap: 4px;
-  }
-  .flow-box.highlight { border-color: var(--lc-primary-100); background: var(--lc-primary-50); }
-  .flow-box.highlight .flow-box-title { color: var(--lc-primary-700); }
-  .flow-box.accent-box { border-color: var(--lc-accent-100); background: var(--lc-accent-50); }
-  .flow-box.accent-box .flow-box-title { color: #7A4010; }
-  .flow-arrow {
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px; color: var(--lc-grey-soft);
-    flex-shrink: 0; width: 28px;
-  }
+  /* ── Buttons ── */
+  .btn { display: inline-flex; align-items: center; gap: 7px; padding: 10px 18px; border-radius: 8px; border: 1px solid transparent; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; transition: all 0.15s; justify-content: center; }
+  .btn-primary { background: var(--lc-primary); color: #fff; }
+  .btn-primary:hover { background: var(--lc-primary-700); }
+  .btn-outline { background: transparent; color: var(--lc-primary); border-color: var(--lc-primary-100); }
+  .btn-outline:hover { background: var(--lc-primary-50); }
+  .btn-accent { background: var(--lc-accent); color: #fff; }
+  .btn-accent:hover { background: var(--lc-accent-600); }
+  .btn-danger { background: #fde8e4; color: var(--lc-danger); border-color: #f7c8c0; }
+  .btn-sm { padding: 6px 12px; font-size: 12px; }
+  .btn-xs { padding: 4px 10px; font-size: 11px; }
+  .btn-full { width: 100%; }
 
-  .api-section { margin-bottom: 28px; }
-  .api-title {
-    font-size: 13px; font-weight: 700; color: var(--lc-grey);
-    text-transform: uppercase; letter-spacing: 0.06em;
-    margin: 0 0 12px;
-  }
-  .api-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .api-table th {
-    text-align: left; padding: 8px 12px;
-    background: var(--lc-line-soft);
-    font-size: 12px; font-weight: 600; color: var(--lc-grey);
-    border-bottom: 1px solid var(--lc-line);
-  }
-  .api-table td {
-    padding: 8px 12px;
-    border-bottom: 1px solid var(--lc-line-soft);
-    vertical-align: top;
-  }
-  .api-table tr:last-child td { border-bottom: none; }
-  .method {
-    display: inline-block; font-family: ui-monospace, Menlo, monospace;
-    font-size: 11px; font-weight: 700;
-    padding: 2px 6px; border-radius: 4px;
-  }
-  .method-get  { background: #dcf5e8; color: #1d6b40; }
-  .method-post { background: #dceeff; color: #1a4e8f; }
-  .method-del  { background: #fde8e4; color: #7a2218; }
-  .method-put  { background: #fef9e0; color: #7a5c0b; }
-  .route { font-family: ui-monospace, Menlo, monospace; font-size: 12px; color: var(--lc-primary); }
-
-  .stripe-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .stripe-table th {
-    text-align: left; padding: 8px 12px;
-    background: var(--lc-line-soft);
-    font-size: 12px; font-weight: 600; color: var(--lc-grey);
-    border-bottom: 1px solid var(--lc-line);
-  }
-  .stripe-table td {
-    padding: 9px 12px;
-    border-bottom: 1px solid var(--lc-line-soft);
-    font-size: 13px;
-  }
-  .stripe-table tr:last-child td { border-bottom: none; }
-  .stripe-event { font-family: ui-monospace, Menlo, monospace; font-size: 12px; color: var(--lc-plum); }
-
-  .flag-box {
-    background: var(--lc-line-soft);
-    border: 1px solid var(--lc-line);
-    border-radius: 10px;
-    padding: 18px 22px;
-    font-size: 13px;
-  }
-  .flag-step {
-    display: flex; align-items: flex-start; gap: 12px;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--lc-line);
-  }
-  .flag-step:last-child { border-bottom: none; }
-  .flag-num {
-    width: 24px; height: 24px; border-radius: 50%;
-    background: var(--lc-primary); color: #fff;
-    font-size: 12px; font-weight: 700;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; margin-top: 1px;
-  }
-  .flag-text { color: var(--lc-ink-soft); line-height: 1.5; }
-  .flag-text strong { color: var(--lc-ink); }
-
-  /* ── UI Preview view ── */
-  .screen-label {
-    font-size: 11px; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.08em;
-    color: var(--lc-grey);
-    margin: 0 0 10px;
-  }
+  /* ── Mock screens ── */
   .screen-wrap {
     border: 1px solid var(--lc-line);
     border-radius: 14px;
     overflow: hidden;
     background: var(--lc-bg);
+    margin-bottom: 32px;
   }
-
-  /* mock nav bar inside screens */
   .mock-bar {
-    background: rgba(244,247,249,0.9);
-    backdrop-filter: blur(8px);
+    background: rgba(244,247,249,0.95);
     border-bottom: 1px solid var(--lc-line);
     padding: 12px 28px;
     display: flex; align-items: center; justify-content: space-between;
   }
   .mock-bar .brand { font-size: 14px; font-weight: 700; color: var(--lc-primary); }
   .mock-bar .brand span { color: var(--lc-accent); }
-  .mock-bar-links { display: flex; gap: 20px; font-size: 13px; color: var(--lc-ink-soft); }
+  .mock-bar-links { display: flex; gap: 16px; font-size: 13px; color: var(--lc-ink-soft); align-items: center; }
+  .mock-bar-links .btn { width: auto; padding: 7px 14px; font-size: 12px; }
 
   .screen-body { padding: 32px 28px; }
-  .screen-body h2 { font-size: 24px; font-weight: 700; color: var(--lc-ink); margin: 0 0 6px; }
+  .screen-body h2 { font-size: 26px; font-weight: 800; color: var(--lc-ink); margin: 0 0 6px; }
   .screen-body .sub { font-size: 14px; color: var(--lc-grey); margin: 0 0 28px; }
+  .screen-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--lc-grey); margin: 0 0 10px;
+  }
 
-  /* billing toggle */
+  /* ── Billing toggle ── */
   .billing-toggle {
     display: inline-flex;
     background: var(--lc-line-soft);
@@ -374,78 +251,88 @@
     padding: 1px 6px; border-radius: 4px; margin-left: 4px;
   }
 
-  /* plan cards */
-  .plan-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 28px; }
+  /* ── Plan cards ── */
+  .plan-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 32px; }
   .plan-card {
     background: var(--lc-surface);
     border: 1.5px solid var(--lc-line);
-    border-radius: 14px;
-    padding: 22px 20px 20px;
+    border-radius: 16px;
+    padding: 24px 22px 22px;
+    position: relative;
   }
-  .plan-card.featured { border-color: var(--lc-primary); box-shadow: 0 0 0 3px var(--lc-primary-100); }
-  .plan-tier { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--lc-grey); margin: 0 0 10px; }
-  .plan-price { font-size: 30px; font-weight: 800; color: var(--lc-ink); line-height: 1; margin-bottom: 4px; }
-  .plan-price span { font-size: 14px; font-weight: 500; color: var(--lc-grey); }
-  .plan-note { font-size: 12px; color: var(--lc-grey); margin-bottom: 16px; }
-  .plan-features { list-style: none; padding: 0; margin: 0 0 20px; display: flex; flex-direction: column; gap: 7px; }
-  .plan-features li { font-size: 13px; color: var(--lc-ink-soft); display: flex; align-items: center; gap: 7px; }
-  .plan-features li::before { content: "✓"; color: var(--lc-success); font-weight: 700; flex-shrink: 0; }
-  .plan-features li.locked::before { content: "○"; color: var(--lc-grey-soft); }
-  .btn { display: inline-flex; align-items: center; gap: 7px; padding: 10px 18px; border-radius: 8px; border: 1px solid transparent; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; transition: all 0.15s; width: 100%; justify-content: center; }
-  .btn-primary { background: var(--lc-primary); color: #fff; }
-  .btn-primary:hover { background: var(--lc-primary-700); }
-  .btn-outline { background: transparent; color: var(--lc-primary); border-color: var(--lc-primary-100); }
-  .btn-outline:hover { background: var(--lc-primary-50); }
-  .btn-accent { background: var(--lc-accent); color: #fff; }
-  .btn-danger { background: #fde8e4; color: var(--lc-danger); border-color: #f7c8c0; }
+  .plan-card.featured {
+    border-color: var(--lc-primary);
+    box-shadow: 0 0 0 3px var(--lc-primary-100);
+  }
+  .plan-card.premium {
+    border-color: var(--lc-accent);
+    background: linear-gradient(160deg, #fffaf5 0%, #fff 60%);
+    box-shadow: 0 0 0 3px var(--lc-accent-100);
+  }
+  .plan-badge {
+    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+    background: var(--lc-primary); color: #fff;
+    font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 20px;
+    white-space: nowrap;
+  }
+  .plan-badge.gold { background: var(--lc-accent); }
+  .plan-tier { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--lc-grey); margin: 0 0 10px; }
+  .plan-price { font-size: 32px; font-weight: 800; color: var(--lc-ink); line-height: 1; margin-bottom: 4px; }
+  .plan-price span { font-size: 15px; font-weight: 500; color: var(--lc-grey); }
+  .plan-note { font-size: 12px; color: var(--lc-grey); margin-bottom: 18px; min-height: 18px; }
+  .plan-features { list-style: none; padding: 0; margin: 0 0 22px; display: flex; flex-direction: column; gap: 8px; }
+  .plan-features li { font-size: 13px; color: var(--lc-ink-soft); display: flex; align-items: flex-start; gap: 8px; }
+  .plan-features li::before { content: "✓"; color: var(--lc-success); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
 
-  /* addons row */
-  .addons-section { border-top: 1px solid var(--lc-line); padding-top: 22px; margin-top: 4px; }
+  /* ── Add-ons section ── */
+  .addons-section { margin-top: 8px; }
   .addons-title { font-size: 13px; font-weight: 700; color: var(--lc-grey); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 14px; }
   .addon-row {
     display: flex; align-items: center; gap: 12px;
-    padding: 11px 14px;
+    padding: 12px 16px;
     background: var(--lc-surface);
     border: 1px solid var(--lc-line);
     border-radius: 9px; margin-bottom: 8px;
+    cursor: pointer;
+    transition: border-color 0.15s;
   }
-  .addon-check { width: 18px; height: 18px; border-radius: 4px; border: 1.5px solid var(--lc-grey-soft); flex-shrink: 0; cursor: pointer; }
+  .addon-row:hover { border-color: var(--lc-primary-100); }
+  .addon-check { width: 18px; height: 18px; border-radius: 4px; border: 1.5px solid var(--lc-grey-soft); flex-shrink: 0; cursor: pointer; transition: all 0.15s; }
   .addon-check.checked { background: var(--lc-primary); border-color: var(--lc-primary); display: flex; align-items: center; justify-content: center; }
   .addon-check.checked::after { content: "✓"; color: #fff; font-size: 11px; font-weight: 700; }
   .addon-name { font-size: 13px; font-weight: 500; color: var(--lc-ink); flex: 1; }
-  .addon-price { font-size: 13px; color: var(--lc-primary); font-weight: 600; margin-right: 6px; }
-  .addon-gate { font-size: 11px; color: var(--lc-grey); white-space: nowrap; }
-  .addon-gate.locked { color: var(--lc-grey-soft); }
+  .addon-desc { font-size: 12px; color: var(--lc-grey); margin-top: 1px; }
+  .addon-price { font-size: 13px; color: var(--lc-primary); font-weight: 600; white-space: nowrap; }
+  .addon-type { font-size: 11px; color: var(--lc-grey); margin-top: 2px; }
 
   .total-bar {
     display: flex; align-items: center; justify-content: space-between;
     background: var(--lc-primary-50); border: 1px solid var(--lc-primary-100);
-    border-radius: 10px; padding: 14px 18px; margin-top: 20px;
+    border-radius: 10px; padding: 16px 20px; margin-top: 22px;
+    gap: 16px;
   }
   .total-bar .total-label { font-size: 14px; color: var(--lc-ink-soft); }
-  .total-bar .total-amount { font-size: 20px; font-weight: 800; color: var(--lc-primary); }
-  .total-bar .total-cta { padding: 10px 20px; width: auto; }
+  .total-bar .total-amount { font-size: 22px; font-weight: 800; color: var(--lc-primary); flex: 1; }
 
-  /* billing page */
+  /* ── Account/Billing ── */
   .billing-section { margin-bottom: 28px; }
   .billing-section-title {
     font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
-    color: var(--lc-grey); border-bottom: 1px solid var(--lc-line); padding-bottom: 10px; margin-bottom: 14px;
+    color: var(--lc-grey); border-bottom: 1px solid var(--lc-line); padding-bottom: 10px; margin-bottom: 16px;
   }
   .billing-plan-row {
     background: var(--lc-primary-50); border: 1px solid var(--lc-primary-100);
-    border-radius: 10px; padding: 16px 18px;
+    border-radius: 12px; padding: 18px 20px;
     display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 10px;
+    margin-bottom: 10px; gap: 16px;
   }
-  .billing-plan-name { font-size: 15px; font-weight: 700; color: var(--lc-primary-800); }
+  .billing-plan-name { font-size: 16px; font-weight: 700; color: var(--lc-primary-800); }
   .billing-plan-meta { font-size: 13px; color: var(--lc-grey); margin-top: 2px; }
-  .billing-plan-actions { display: flex; gap: 8px; }
-  .btn-sm { padding: 7px 14px; font-size: 12px; width: auto; }
+  .billing-plan-actions { display: flex; gap: 8px; flex-shrink: 0; }
 
   .addon-manage-row {
     display: flex; align-items: center; gap: 12px;
-    padding: 10px 14px; border-bottom: 1px solid var(--lc-line-soft);
+    padding: 11px 0; border-bottom: 1px solid var(--lc-line-soft);
   }
   .addon-manage-row:last-child { border-bottom: none; }
   .addon-status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
@@ -454,128 +341,181 @@
   .addon-manage-name { font-size: 13px; color: var(--lc-ink); flex: 1; font-weight: 500; }
   .addon-manage-price { font-size: 13px; color: var(--lc-grey); margin-right: 8px; }
 
-  .test-catalog-row {
-    display: flex; align-items: center; gap: 12px;
-    padding: 11px 0; border-bottom: 1px solid var(--lc-line-soft);
-  }
-  .test-catalog-row:last-child { border-bottom: none; }
-  .test-catalog-name { font-size: 13px; font-weight: 500; color: var(--lc-ink); flex: 1; }
-  .test-cat-badge { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; margin-right: 4px; }
-  .cat-img  { background: var(--lc-teal-100); color: #1E5450; }
-  .cat-path { background: var(--lc-primary-50); color: var(--lc-primary-800); }
-  .cat-gen  { background: var(--lc-plum-100); color: #3D2961; }
-  .test-retail { font-size: 14px; font-weight: 700; color: var(--lc-ink); margin-right: 8px; }
+  .order-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .order-table th { text-align: left; padding: 8px 12px; background: var(--lc-line-soft); font-size: 12px; font-weight: 600; color: var(--lc-grey); border-bottom: 1px solid var(--lc-line); }
+  .order-table td { padding: 10px 12px; border-bottom: 1px solid var(--lc-line-soft); }
+  .order-table tr:last-child td { border-bottom: none; }
 
-  /* employer dashboard */
+  /* ── Employer dashboard ── */
   .emp-header {
     background: linear-gradient(135deg, var(--lc-primary) 0%, var(--lc-primary-800) 100%);
-    color: #fff; border-radius: 14px; padding: 22px 24px; margin-bottom: 24px;
+    color: #fff; border-radius: 14px; padding: 22px 26px; margin-bottom: 24px;
   }
-  .emp-header h3 { margin: 0 0 4px; font-size: 18px; font-weight: 700; }
+  .emp-header h3 { margin: 0 0 4px; font-size: 20px; font-weight: 700; }
   .emp-header p { margin: 0; font-size: 13px; opacity: 0.75; }
-  .emp-meta-pills { display: flex; gap: 10px; margin-top: 12px; }
+  .emp-meta-pills { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
   .emp-meta-pill {
     background: rgba(255,255,255,0.15); border-radius: 6px;
     padding: 4px 12px; font-size: 12px; font-weight: 600;
   }
 
-  .feature-matrix { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .feature-matrix th {
-    text-align: left; padding: 9px 14px;
-    background: var(--lc-line-soft);
-    font-size: 12px; font-weight: 600; color: var(--lc-grey);
-    border-bottom: 1px solid var(--lc-line);
-  }
-  .feature-matrix td { padding: 11px 14px; border-bottom: 1px solid var(--lc-line-soft); vertical-align: middle; }
-  .feature-matrix tr:last-child td { border-bottom: none; }
-  .toggle-on  { background: #e0f2ea; color: var(--lc-success); border-radius: 12px; padding: 3px 10px; font-size: 12px; font-weight: 700; }
-  .toggle-off { background: var(--lc-line-soft); color: var(--lc-grey); border-radius: 12px; padding: 3px 10px; font-size: 12px; font-weight: 700; }
-  .impact-cost { font-size: 13px; color: var(--lc-accent-600); font-weight: 600; }
-  .included-tag { font-size: 12px; color: var(--lc-grey); font-style: italic; }
-
-  .emp-total-bar {
-    background: var(--lc-primary-50); border: 1px solid var(--lc-primary-100);
-    border-radius: 10px; padding: 14px 18px; margin-top: 16px;
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .emp-total-label { font-size: 14px; color: var(--lc-ink-soft); }
-  .emp-total-amount { font-size: 20px; font-weight: 800; color: var(--lc-primary); }
+  .emp-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .emp-table th { text-align: left; padding: 9px 14px; background: var(--lc-line-soft); font-size: 12px; font-weight: 600; color: var(--lc-grey); border-bottom: 1px solid var(--lc-line); }
+  .emp-table td { padding: 11px 14px; border-bottom: 1px solid var(--lc-line-soft); vertical-align: middle; }
+  .emp-table tr:last-child td { border-bottom: none; }
+  .emp-table tfoot td { border-top: 2px solid var(--lc-line); font-weight: 700; padding: 12px 14px; }
 
   .members-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .members-table th {
-    text-align: left; padding: 8px 12px;
-    background: var(--lc-line-soft);
-    font-size: 12px; font-weight: 600; color: var(--lc-grey);
-    border-bottom: 1px solid var(--lc-line);
-  }
+  .members-table th { text-align: left; padding: 8px 12px; background: var(--lc-line-soft); font-size: 12px; font-weight: 600; color: var(--lc-grey); border-bottom: 1px solid var(--lc-line); }
   .members-table td { padding: 10px 12px; border-bottom: 1px solid var(--lc-line-soft); }
   .members-table tr:last-child td { border-bottom: none; }
+
   .role-badge { font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
   .role-mgr { background: var(--lc-primary-50); color: var(--lc-primary-800); }
   .role-mem { background: var(--lc-line-soft); color: var(--lc-grey); }
   .status-active { font-size: 12px; color: var(--lc-success); font-weight: 600; }
+  .status-invited { font-size: 12px; color: var(--lc-accent-600); font-weight: 600; }
 
-  /* admin screens */
+  .emp-total-bar {
+    background: var(--lc-primary-50); border: 1px solid var(--lc-primary-100);
+    border-radius: 10px; padding: 14px 20px; margin-top: 4px;
+    display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  }
+  .emp-total-label { font-size: 14px; color: var(--lc-ink-soft); }
+  .emp-total-amount { font-size: 20px; font-weight: 800; color: var(--lc-primary); }
+  .emp-total-annual { font-size: 13px; color: var(--lc-grey); margin-top: 1px; }
+
+  /* ── Admin ── */
   .admin-header {
-    background: var(--lc-ink);
-    color: #fff; padding: 12px 20px;
+    background: var(--lc-ink); color: #fff;
+    padding: 12px 20px;
     display: flex; align-items: center; justify-content: space-between;
     font-size: 13px;
   }
-  .admin-header .brand { color: var(--lc-accent); }
-  .admin-header nav { display: flex; gap: 20px; font-size: 13px; opacity: 0.65; }
-  .admin-header nav span { cursor: pointer; }
-  .admin-header nav span:hover, .admin-header nav span.active { opacity: 1; color: #fff; }
+  .admin-header .brand { color: var(--lc-accent); font-weight: 700; font-size: 14px; }
+  .admin-header nav { display: flex; gap: 20px; font-size: 13px; }
+  .admin-header nav a { color: rgba(255,255,255,0.6); text-decoration: none; cursor: pointer; }
+  .admin-header nav a.active, .admin-header nav a:hover { color: #fff; }
+  .admin-header .admin-user { font-size: 12px; color: rgba(255,255,255,0.5); }
 
-  .admin-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .admin-table th {
-    text-align: left; padding: 9px 14px;
-    background: var(--lc-line-soft);
-    font-size: 12px; font-weight: 600; color: var(--lc-grey);
-    border-bottom: 1px solid var(--lc-line);
-  }
-  .admin-table td { padding: 10px 14px; border-bottom: 1px solid var(--lc-line-soft); vertical-align: middle; }
-  .admin-table tr:last-child td { border-bottom: none; }
-  .ws-col { color: var(--lc-danger); font-weight: 600; font-size: 12px; }
-
-  .modal-overlay {
-    background: rgba(0,0,0,0.06); border-radius: 10px;
-    padding: 16px 0; margin-top: 16px;
-  }
-  .modal {
+  /* ── Plan builder collapsible sections ── */
+  .builder-section {
     background: var(--lc-surface); border: 1px solid var(--lc-line);
-    border-radius: 12px; padding: 20px 22px;
-    max-width: 380px;
+    border-radius: 12px; margin-bottom: 14px; overflow: hidden;
   }
-  .modal h4 { font-size: 14px; font-weight: 700; color: var(--lc-ink); margin: 0 0 16px; }
+  .builder-section-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 18px; cursor: pointer; user-select: none;
+    transition: background 0.1s;
+  }
+  .builder-section-header:hover { background: var(--lc-line-soft); }
+  .builder-section-title { font-size: 14px; font-weight: 700; color: var(--lc-ink); flex: 1; }
+  .builder-section-count {
+    font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 12px;
+    background: var(--lc-line-soft); color: var(--lc-grey);
+  }
+  .chevron { font-size: 12px; color: var(--lc-grey); transition: transform 0.2s; flex-shrink: 0; }
+  .chevron.open { transform: rotate(90deg); }
+  .builder-section-body { display: none; padding: 0 18px 18px; border-top: 1px solid var(--lc-line); }
+  .builder-section-body.open { display: block; }
+
+  /* Tier cards in plan builder */
+  .tier-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 0; }
+  .tier-card {
+    border: 1px solid var(--lc-line); border-radius: 10px;
+    padding: 16px; background: var(--lc-bg);
+    position: relative;
+  }
+  .tier-card.editing { border-color: var(--lc-primary); background: #fff; box-shadow: 0 0 0 3px var(--lc-primary-100); }
+  .tier-card-name { font-size: 13px; font-weight: 700; color: var(--lc-ink); margin-bottom: 4px; }
+  .tier-card-price { font-size: 20px; font-weight: 800; color: var(--lc-primary); }
+  .tier-card-meta { font-size: 12px; color: var(--lc-grey); margin: 4px 0 12px; }
+
+  /* Inline tier editor */
+  .tier-editor { margin-top: 16px; border-top: 1px solid var(--lc-line-soft); padding-top: 16px; }
+  .tier-editor-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 18px; }
+  .tier-editor-grid .form-field { margin-bottom: 0; }
   .form-field { margin-bottom: 12px; }
-  .form-field label { display: block; font-size: 12px; font-weight: 600; color: var(--lc-grey); margin-bottom: 4px; }
-  .form-field input, .form-field select {
-    width: 100%; padding: 8px 10px; border: 1px solid var(--lc-line);
+  .form-field label { display: block; font-size: 11px; font-weight: 600; color: var(--lc-grey); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .form-field input, .form-field select, .form-field textarea {
+    width: 100%; padding: 7px 10px; border: 1px solid var(--lc-line);
     border-radius: 7px; font-size: 13px; color: var(--lc-ink);
-    background: var(--lc-surface); outline: none;
+    background: var(--lc-surface); outline: none; font-family: inherit;
   }
-  .form-field input:focus, .form-field select:focus { border-color: var(--lc-primary); }
-  .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+  .form-field input:focus, .form-field select:focus, .form-field textarea:focus { border-color: var(--lc-primary); }
+  .form-field input[readonly] { background: var(--lc-line-soft); color: var(--lc-grey); }
+  .form-field textarea { resize: vertical; min-height: 60px; }
 
-  /* sub-screens within UI view */
-  .screen-tabs {
-    display: flex; gap: 4px;
-    border-bottom: 1px solid var(--lc-line);
-    padding: 0 28px;
-    background: var(--lc-surface);
-  }
-  .screen-tab {
-    padding: 10px 16px; border: none; background: transparent;
-    font-size: 13px; font-weight: 500; color: var(--lc-grey);
-    cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px;
-    transition: all 0.15s;
-  }
-  .screen-tab.active { color: var(--lc-primary); border-bottom-color: var(--lc-primary); }
-  .screen-tab:hover { color: var(--lc-ink); }
+  .inclusion-table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin-bottom: 18px; }
+  .inclusion-table th { text-align: left; padding: 7px 10px; background: var(--lc-line-soft); font-size: 11px; font-weight: 600; color: var(--lc-grey); border-bottom: 1px solid var(--lc-line); text-transform: uppercase; letter-spacing: 0.04em; }
+  .inclusion-table td { padding: 8px 10px; border-bottom: 1px solid var(--lc-line-soft); vertical-align: middle; }
+  .inclusion-table tr:last-child td { border-bottom: none; }
+  .inclusion-table input[type=number] { width: 60px; padding: 4px 6px; }
+  .inclusion-table input[type=checkbox] { width: 15px; height: 15px; cursor: pointer; accent-color: var(--lc-primary); }
 
-  .screen-panel { display: none; }
-  .screen-panel.active { display: block; }
+  .feature-flags-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 18px; }
+  .flag-item { display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; }
+  .flag-item input[type=checkbox] { accent-color: var(--lc-primary); width: 15px; height: 15px; }
+
+  .margin-card {
+    background: var(--lc-primary-50); border: 1px solid var(--lc-primary-100);
+    border-radius: 10px; padding: 14px 16px;
+  }
+  .margin-card-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--lc-primary-700); margin-bottom: 10px; }
+  .margin-row { display: flex; justify-content: space-between; font-size: 13px; padding: 3px 0; border-bottom: 1px solid var(--lc-primary-100); }
+  .margin-row:last-child { border-bottom: none; font-weight: 700; color: var(--lc-primary-800); }
+  .margin-row .label { color: var(--lc-ink-soft); }
+  .margin-row .val { font-weight: 600; color: var(--lc-primary); }
+
+  .editor-actions { display: flex; gap: 8px; margin-top: 16px; justify-content: flex-end; }
+
+  /* ── Admin B2B ── */
+  .b2b-layout { display: grid; grid-template-columns: 300px 1fr; gap: 20px; }
+  .b2b-client-list { background: var(--lc-surface); border: 1px solid var(--lc-line); border-radius: 12px; overflow: hidden; }
+  .b2b-list-header { padding: 14px 16px; border-bottom: 1px solid var(--lc-line); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--lc-grey); }
+  .b2b-client-row {
+    padding: 14px 16px; border-bottom: 1px solid var(--lc-line-soft);
+    cursor: pointer; transition: background 0.1s;
+  }
+  .b2b-client-row:last-child { border-bottom: none; }
+  .b2b-client-row:hover, .b2b-client-row.active { background: var(--lc-primary-50); }
+  .b2b-client-name { font-size: 13px; font-weight: 700; color: var(--lc-ink); }
+  .b2b-client-plan { font-size: 12px; color: var(--lc-grey); margin-top: 1px; }
+  .b2b-client-meta { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 12px; }
+
+  .b2b-editor { background: var(--lc-surface); border: 1px solid var(--lc-line); border-radius: 12px; padding: 22px 24px; }
+  .b2b-editor-title { font-size: 16px; font-weight: 700; color: var(--lc-ink); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+
+  .b2b-form-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  .b2b-form-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+
+  .tier-alloc-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 8px; }
+  .tier-alloc-table th { text-align: left; padding: 8px 12px; background: var(--lc-line-soft); font-size: 12px; font-weight: 600; color: var(--lc-grey); border-bottom: 1px solid var(--lc-line); }
+  .tier-alloc-table td { padding: 10px 12px; border-bottom: 1px solid var(--lc-line-soft); }
+  .tier-alloc-table tr:last-child td { border-bottom: none; }
+  .tier-alloc-table input[type=number] { width: 80px; padding: 5px 8px; border: 1px solid var(--lc-line); border-radius: 6px; font-size: 13px; }
+
+  .b2b-totals-bar {
+    background: var(--lc-primary-50); border: 1px solid var(--lc-primary-100);
+    border-radius: 10px; padding: 14px 16px; margin-bottom: 16px;
+    display: flex; align-items: center; gap: 28px;
+  }
+  .b2b-total-item .label { font-size: 11px; color: var(--lc-grey); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+  .b2b-total-item .val { font-size: 18px; font-weight: 800; color: var(--lc-primary); }
+
+  .warning-banner {
+    background: #fffbec; border: 1px solid #f0d080;
+    border-radius: 10px; padding: 14px 18px; margin-bottom: 18px;
+    display: flex; align-items: flex-start; gap: 12px;
+  }
+  .warning-icon { font-size: 18px; flex-shrink: 0; line-height: 1.4; }
+  .warning-text { flex: 1; font-size: 13px; color: #7a4c0b; }
+  .warning-text strong { display: block; font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+  .warning-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .btn-approve { background: #e0f2ea; color: #1d6b40; border: 1px solid #b2d8c8; padding: 6px 14px; border-radius: 7px; font-size: 12px; font-weight: 600; cursor: pointer; }
+  .btn-reject  { background: #fde8e4; color: var(--lc-danger); border: 1px solid #f7c8c0; padding: 6px 14px; border-radius: 7px; font-size: 12px; font-weight: 600; cursor: pointer; }
+
+  .note-text { font-size: 12px; color: var(--lc-grey); font-style: italic; margin-top: 3px; }
 
   /* ── misc ── */
   .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
@@ -586,6 +526,8 @@
   .tag-s4 { background: var(--lc-teal-100); color: #1E5450; }
 
   code { font-family: ui-monospace, Menlo, monospace; font-size: 12px; background: var(--lc-line-soft); padding: 1px 5px; border-radius: 4px; }
+  .divider { border: none; border-top: 1px solid var(--lc-line); margin: 24px 0; }
+  .sub-section-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--lc-grey); margin: 0 0 12px; }
 
   @media (max-width: 900px) {
     .section-wrap { padding: 24px 20px 60px; }
@@ -593,6 +535,11 @@
     .plan-cards { grid-template-columns: 1fr; }
     .tables-grid { grid-template-columns: 1fr; }
     .two-col { grid-template-columns: 1fr; }
+    .b2b-layout { grid-template-columns: 1fr; }
+    .tier-cards { grid-template-columns: 1fr; }
+    .tier-editor-grid { grid-template-columns: 1fr 1fr; }
+    .feature-flags-grid { grid-template-columns: 1fr 1fr; }
+    .b2b-form-grid { grid-template-columns: 1fr 1fr; }
   }
 </style>
 </head>
@@ -601,44 +548,1069 @@
 <!-- ═══════════════════ TOP NAV ═══════════════════ -->
 <nav class="top-nav">
   <div class="top-nav-inner">
-    <div class="brand">Longevity<span>Coach</span> <span style="font-weight:400;color:var(--lc-grey);font-size:13px;margin-left:10px;">· Pricing Feature</span></div>
+    <div class="brand">Janet<span>.</span> <span style="font-weight:400;color:var(--lc-grey);font-size:13px;margin-left:10px;">· Pricing Feature</span></div>
     <div class="view-tabs">
-      <button class="view-tab active" onclick="switchView('db')">Database Tables</button>
-      <button class="view-tab" onclick="switchView('sys')">System Design</button>
-      <button class="view-tab" onclick="switchView('ui')">UI Preview</button>
+      <button class="view-tab active" onclick="switchView('pricing')">Public Pricing</button>
+      <button class="view-tab" onclick="switchView('billing')">Account / Billing</button>
+      <button class="view-tab" onclick="switchView('employer')">Employer Dashboard</button>
+      <button class="view-tab" onclick="switchView('planbuilder')">Admin — Tiers</button>
+      <button class="view-tab" onclick="switchView('suppliers')">Admin — Suppliers</button>
+      <button class="view-tab" onclick="switchView('b2b')">Admin — Plan Builder</button>
+      <button class="view-tab" onclick="switchView('datamodel')">Data Model</button>
     </div>
   </div>
 </nav>
 
-<!-- ═══════════════════ VIEW 1 — DATABASE ═══════════════════ -->
-<div id="view-db" class="view active">
+<!-- ═══════════════════ TAB 1 — PUBLIC PRICING ═══════════════════ -->
+<div id="view-pricing" class="view active">
+  <div class="screen-wrap" style="margin:24px 48px;max-width:none;">
+
+    <!-- Public site nav -->
+    <div class="mock-bar">
+      <div class="brand">Jane<span>t</span>.</div>
+      <div class="mock-bar-links">
+        <span>Features</span>
+        <span>Science</span>
+        <span style="color:var(--lc-primary);font-weight:600;">Pricing</span>
+        <button class="btn btn-outline btn-sm">Login</button>
+        <button class="btn btn-primary btn-sm">Get Started</button>
+      </div>
+    </div>
+
+    <div class="screen-body">
+      <div style="text-align:center;margin-bottom:32px;">
+        <h2 style="font-size:32px;font-weight:800;margin-bottom:8px;">Choose your plan</h2>
+        <p class="sub" style="font-size:16px;">Evidence-based longevity coaching, built around you.</p>
+
+        <div class="billing-toggle">
+          <button class="billing-btn on" id="btn-monthly" onclick="setBilling('monthly')">Monthly</button>
+          <button class="billing-btn" id="btn-annual" onclick="setBilling('annual')">Annual <span class="badge">Save 20%</span></button>
+        </div>
+      </div>
+
+      <!-- Plan cards -->
+      <div class="plan-cards">
+
+        <!-- Core -->
+        <div class="plan-card">
+          <div class="plan-tier">Core</div>
+          <div class="plan-price" id="price-core">$49<span>/mo</span></div>
+          <div class="plan-note" id="note-core">&nbsp;</div>
+          <ul class="plan-features">
+            <li>Janet AI Health Coach</li>
+            <li>Monthly check-in &amp; analysis</li>
+            <li>5-domain health risk report</li>
+            <li>Personalised supplement protocol</li>
+            <li>PDF export</li>
+          </ul>
+          <button class="btn btn-outline btn-full">Get started</button>
+        </div>
+
+        <!-- Clinical (featured) -->
+        <div class="plan-card featured">
+          <div class="plan-badge">Most popular</div>
+          <div class="plan-tier" style="color:var(--lc-primary);">Clinical</div>
+          <div class="plan-price" id="price-clinical">$99<span>/mo</span></div>
+          <div class="plan-note" id="note-clinical">&nbsp;</div>
+          <ul class="plan-features">
+            <li>Everything in Core</li>
+            <li>Human coaching session (1/month)</li>
+            <li>GP review coordination</li>
+            <li>Advanced risk report with trends</li>
+          </ul>
+          <button class="btn btn-primary btn-full">Get started</button>
+        </div>
+
+        <!-- Elite (premium) -->
+        <div class="plan-card premium">
+          <div class="plan-badge gold">Elite</div>
+          <div class="plan-tier" style="color:var(--lc-accent-600);">Elite</div>
+          <div class="plan-price" id="price-elite" style="color:var(--lc-accent);">$199<span>/mo</span></div>
+          <div class="plan-note" id="note-elite">&nbsp;</div>
+          <ul class="plan-features">
+            <li>Everything in Clinical</li>
+            <li>DEXA scan (1/year)</li>
+            <li>Full blood panel (1/year)</li>
+            <li>Genomics analysis</li>
+            <li>Elite coaching sessions (2/month)</li>
+            <li>Priority access &amp; concierge support</li>
+          </ul>
+          <button class="btn btn-accent btn-full">Get started</button>
+        </div>
+      </div>
+
+      <!-- Add-ons -->
+      <div class="addons-section">
+        <div class="addons-title">Optional add-ons</div>
+
+        <div class="addon-row" onclick="toggleAddon(this,'addon-dexa',350)">
+          <div class="addon-check" id="addon-dexa"></div>
+          <div style="flex:1;">
+            <div class="addon-name">DEXA Body Composition Scan</div>
+            <div class="addon-desc">Precise lean mass, fat mass &amp; bone density measurement</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="addon-price">$350</div>
+            <div class="addon-type">one-time</div>
+          </div>
+        </div>
+
+        <div class="addon-row" onclick="toggleAddon(this,'addon-blood',120)">
+          <div class="addon-check" id="addon-blood"></div>
+          <div style="flex:1;">
+            <div class="addon-name">Full Blood Panel</div>
+            <div class="addon-desc">Comprehensive biomarker analysis via HealthPath</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="addon-price">$120</div>
+            <div class="addon-type">one-time</div>
+          </div>
+        </div>
+
+        <div class="addon-row" onclick="toggleAddon(this,'addon-genetics',499)">
+          <div class="addon-check" id="addon-genetics"></div>
+          <div style="flex:1;">
+            <div class="addon-name">Genetic Test &amp; Genomics Analysis</div>
+            <div class="addon-desc">Whole-genome screening with longevity variant interpretation</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="addon-price">$499</div>
+            <div class="addon-type">one-time</div>
+          </div>
+        </div>
+
+        <div class="addon-row" onclick="toggleAddon(this,'addon-supps',45)">
+          <div class="addon-check" id="addon-supps"></div>
+          <div style="flex:1;">
+            <div class="addon-name">Monthly Supplement Delivery</div>
+            <div class="addon-desc">Protocol-matched supplements shipped monthly</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="addon-price">+$45</div>
+            <div class="addon-type">per month</div>
+          </div>
+        </div>
+
+        <div class="total-bar">
+          <div>
+            <div class="total-label">Estimated total</div>
+            <div style="font-size:11px;color:var(--lc-grey);margin-top:1px;">Select a plan above + any add-ons</div>
+          </div>
+          <div class="total-amount" id="running-total">$0</div>
+          <button class="btn btn-primary" style="width:auto;padding:11px 24px;">Continue to checkout →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ TAB 2 — ACCOUNT / BILLING ═══════════════════ -->
+<div id="view-billing" class="view">
   <div class="section-wrap">
-    <h1 class="page-title">Database Tables</h1>
-    <p class="page-sub">10 tables across 4 subsystems — public schema. All tables have RLS enabled.</p>
+    <h1 class="page-title">Account &amp; Billing</h1>
+    <p class="page-sub">/account/billing</p>
+
+    <div class="two-col" style="align-items:start;">
+      <div>
+        <!-- Current plan -->
+        <div class="billing-section">
+          <div class="billing-section-title">Current plan</div>
+          <div class="billing-plan-row">
+            <div>
+              <div class="billing-plan-name">Clinical <span class="pill pill-blue" style="font-size:12px;vertical-align:middle;">Annual</span></div>
+              <div class="billing-plan-meta">Renews: 2027-04-29 &nbsp;·&nbsp; $950/yr billed annually</div>
+            </div>
+            <div class="billing-plan-actions">
+              <button class="btn btn-outline btn-sm">Upgrade plan</button>
+              <button class="btn btn-danger btn-sm">Cancel</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Active add-ons -->
+        <div class="billing-section">
+          <div class="billing-section-title">Active add-ons</div>
+          <div class="card" style="padding:16px 20px;margin-bottom:0;">
+            <div class="addon-manage-row">
+              <div class="addon-status-dot dot-green"></div>
+              <div class="addon-manage-name">Monthly Supplement Delivery</div>
+              <div class="addon-manage-price">$45/mo</div>
+              <button class="btn btn-danger btn-xs">Remove</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Available add-ons -->
+        <div class="billing-section">
+          <div class="billing-section-title">Available add-ons</div>
+          <div class="card" style="padding:16px 20px;margin-bottom:0;">
+            <div class="addon-manage-row">
+              <div class="addon-status-dot dot-grey"></div>
+              <div class="addon-manage-name">DEXA Body Composition Scan</div>
+              <div class="addon-manage-price">$350 one-time</div>
+              <button class="btn btn-outline btn-xs">Order</button>
+            </div>
+            <div class="addon-manage-row">
+              <div class="addon-status-dot dot-grey"></div>
+              <div class="addon-manage-name">Full Blood Panel</div>
+              <div class="addon-manage-price">$120 one-time</div>
+              <button class="btn btn-outline btn-xs">Order</button>
+            </div>
+            <div class="addon-manage-row">
+              <div class="addon-status-dot dot-grey"></div>
+              <div class="addon-manage-name">Genetic Test</div>
+              <div class="addon-manage-price">$499 one-time</div>
+              <button class="btn btn-outline btn-xs">Order</button>
+            </div>
+            <div class="addon-manage-row">
+              <div class="addon-status-dot dot-grey"></div>
+              <div class="addon-manage-name">Monthly PT Session</div>
+              <div class="addon-manage-price">+$99/mo</div>
+              <button class="btn btn-outline btn-xs">Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <!-- Order history -->
+        <div class="billing-section">
+          <div class="billing-section-title">Order history</div>
+          <div class="card" style="padding:0;overflow:hidden;margin-bottom:0;">
+            <table class="order-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Item</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="color:var(--lc-grey);font-size:12px;">2026-03-12</td>
+                  <td>Full Blood Panel</td>
+                  <td style="font-weight:600;">$120</td>
+                  <td><span class="pill pill-green">Completed</span></td>
+                </tr>
+                <tr>
+                  <td style="color:var(--lc-grey);font-size:12px;">2025-11-04</td>
+                  <td>DEXA Scan</td>
+                  <td style="font-weight:600;">$350</td>
+                  <td><span class="pill pill-green">Completed</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ TAB 3 — EMPLOYER DASHBOARD ═══════════════════ -->
+<div id="view-employer" class="view">
+  <div class="section-wrap">
+    <h1 class="page-title">Employer Dashboard</h1>
+    <p class="page-sub">/employer</p>
+
+    <!-- Company header -->
+    <div class="emp-header">
+      <h3>Acme Corp</h3>
+      <p>Corporate wellness programme · managed by Sarah Chen</p>
+      <div class="emp-meta-pills">
+        <span class="emp-meta-pill">&#x1F4BC; Health Manager</span>
+        <span class="emp-meta-pill">100 seats</span>
+        <span class="emp-meta-pill" style="background:rgba(63,138,92,0.3);">&#x2714; Active</span>
+        <span class="emp-meta-pill">Contract: 2026-05-01 → 2027-04-30</span>
+      </div>
+    </div>
+
+    <div class="two-col" style="align-items:start;">
+      <div>
+        <!-- Plan breakdown -->
+        <div class="card" style="padding:0;overflow:hidden;">
+          <div style="padding:18px 20px 0;"><div class="card-title">Plan breakdown</div></div>
+          <table class="emp-table">
+            <thead>
+              <tr>
+                <th>Tier</th>
+                <th>Seats</th>
+                <th>Price/seat</th>
+                <th>Monthly</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="tag tag-s1">Core</span></td>
+                <td>80</td>
+                <td>$49</td>
+                <td style="font-weight:600;">$3,920</td>
+              </tr>
+              <tr>
+                <td><span class="tag" style="background:var(--lc-primary-100);color:var(--lc-primary-800);">Clinical</span></td>
+                <td>15</td>
+                <td>$99</td>
+                <td style="font-weight:600;">$1,485</td>
+              </tr>
+              <tr>
+                <td><span class="tag tag-s2">Elite</span></td>
+                <td>5</td>
+                <td>$199</td>
+                <td style="font-weight:600;">$995</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="3" style="font-weight:700;">Total</td>
+                <td style="font-weight:800;color:var(--lc-primary);font-size:15px;">$6,400/mo</td>
+              </tr>
+            </tfoot>
+          </table>
+          <div style="padding:12px 20px 16px;">
+            <div class="emp-total-bar" style="margin-top:0;">
+              <div class="emp-total-item">
+                <div class="label">Monthly</div>
+                <div class="val">$6,400</div>
+              </div>
+              <div class="emp-total-item">
+                <div class="label">Annual (−20%)</div>
+                <div class="val">$61,440/yr</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <!-- Employee management -->
+        <div class="card" style="padding:0;overflow:hidden;">
+          <div style="padding:18px 20px 12px;display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-title" style="margin:0;">Employees</div>
+            <button class="btn btn-primary btn-sm">+ Invite employee</button>
+          </div>
+          <table class="members-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Tier</th>
+                <th>Role</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-weight:600;">Jane Smith</td>
+                <td style="color:var(--lc-grey);font-size:12px;">jane@acme.com</td>
+                <td><span class="tag" style="background:var(--lc-primary-100);color:var(--lc-primary-800);">Clinical</span></td>
+                <td><span class="role-badge role-mem">Member</span></td>
+                <td><span class="status-active">● Active</span></td>
+              </tr>
+              <tr>
+                <td style="font-weight:600;">Bob Lee</td>
+                <td style="color:var(--lc-grey);font-size:12px;">bob@acme.com</td>
+                <td><span class="tag tag-s1">Core</span></td>
+                <td><span class="role-badge role-mgr">Manager</span></td>
+                <td><span class="status-active">● Active</span></td>
+              </tr>
+              <tr>
+                <td style="font-weight:600;">Sarah Chen</td>
+                <td style="color:var(--lc-grey);font-size:12px;">sarah@acme.com</td>
+                <td><span class="tag tag-s2">Elite</span></td>
+                <td><span class="role-badge role-mem">Member</span></td>
+                <td><span class="status-active">● Active</span></td>
+              </tr>
+              <tr>
+                <td style="font-weight:600;">Tom Wells</td>
+                <td style="color:var(--lc-grey);font-size:12px;">tom@acme.com</td>
+                <td><span class="tag tag-s1">Core</span></td>
+                <td><span class="role-badge role-mem">Member</span></td>
+                <td><span class="status-invited">◌ Invited</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ TAB 4 — ADMIN TIERS ═══════════════════ -->
+<div id="view-planbuilder" class="view">
+  <div class="screen-wrap" style="margin:24px 48px;max-width:none;">
+    <div class="admin-header">
+      <div class="brand">Janet Admin</div>
+      <nav>
+        <a href="#">Dashboard</a>
+        <a class="active">Tiers</a>
+        <a href="#">Suppliers</a>
+        <a href="#">Plan Builder</a>
+        <a href="#">Members</a>
+      </nav>
+      <div class="admin-user">admin@janet.health</div>
+    </div>
+
+    <div style="padding:28px 32px;">
+      <h1 class="page-title" style="margin-bottom:4px;">Tiers</h1>
+      <p class="page-sub" style="margin-bottom:24px;">/admin/tiers — configure Core, Clinical, and Elite subscription tiers (B2C)</p>
+
+      <!-- Section 1: Tiers (expanded) -->
+      <div class="builder-section">
+        <div class="builder-section-header" onclick="toggleSection('tiers')">
+          <span class="chevron open" id="chevron-tiers">&#9654;</span>
+          <span class="builder-section-title">Tiers</span>
+          <span class="builder-section-count">3 tiers</span>
+        </div>
+        <div class="builder-section-body open" id="body-tiers">
+          <div style="height:16px;"></div>
+
+          <!-- Tier cards -->
+          <div class="tier-cards" id="tier-cards">
+
+            <!-- Core -->
+            <div class="tier-card" id="tier-core">
+              <div class="tier-card-name">Core</div>
+              <div class="tier-card-price">$49<span style="font-size:14px;font-weight:400;color:var(--lc-grey);">/mo</span></div>
+              <div class="tier-card-meta">5 inclusions · Annual: $470/yr</div>
+              <div style="display:flex;gap:8px;align-items:center;justify-content:space-between;">
+                <span class="pill pill-green">Active</span>
+                <button class="btn btn-outline btn-xs" onclick="editTier('core')">Edit tier</button>
+              </div>
+            </div>
+
+            <!-- Clinical (editing) -->
+            <div class="tier-card editing" id="tier-clinical">
+              <div class="tier-card-name">Clinical</div>
+              <div class="tier-card-price" style="color:var(--lc-primary);">$99<span style="font-size:14px;font-weight:400;color:var(--lc-grey);">/mo</span></div>
+              <div class="tier-card-meta">7 inclusions · Annual: $950/yr</div>
+              <div style="display:flex;gap:8px;align-items:center;justify-content:space-between;">
+                <span class="pill pill-green">Active</span>
+                <button class="btn btn-primary btn-xs" onclick="editTier('clinical')">Editing ▾</button>
+              </div>
+            </div>
+
+            <!-- Elite -->
+            <div class="tier-card" id="tier-elite">
+              <div class="tier-card-name">Elite</div>
+              <div class="tier-card-price" style="color:var(--lc-accent);">$199<span style="font-size:14px;font-weight:400;color:var(--lc-grey);">/mo</span></div>
+              <div class="tier-card-meta">11 inclusions · Annual: $1,910/yr</div>
+              <div style="display:flex;gap:8px;align-items:center;justify-content:space-between;">
+                <span class="pill pill-green">Active</span>
+                <button class="btn btn-outline btn-xs" onclick="editTier('elite')">Edit tier</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Inline editor for Clinical tier -->
+          <div class="tier-editor" id="editor-clinical">
+            <div style="font-size:14px;font-weight:700;color:var(--lc-primary);margin-bottom:16px;">Editing: Clinical tier</div>
+
+            <!-- Pricing fields -->
+            <div class="sub-section-title">Pricing</div>
+            <div class="tier-editor-grid" style="grid-template-columns:repeat(6,1fr);">
+              <div class="form-field">
+                <label>Monthly price</label>
+                <input type="number" value="99">
+              </div>
+              <div class="form-field">
+                <label>Annual discount</label>
+                <input type="number" value="20">
+              </div>
+              <div class="form-field">
+                <label>Annual price</label>
+                <input type="text" value="$950/yr" readonly>
+              </div>
+              <div class="form-field">
+                <label>Setup fee</label>
+                <input type="number" value="0">
+              </div>
+              <div class="form-field">
+                <label>Min commitment</label>
+                <input type="number" value="12">
+              </div>
+              <div class="form-field">
+                <label>Commitment unit</label>
+                <select><option>months</option><option>years</option></select>
+              </div>
+            </div>
+            <div class="form-field" style="max-width:480px;">
+              <label>Public description</label>
+              <textarea>For individuals who want human-guided coaching alongside AI insights. Includes monthly practitioner sessions and GP coordination.</textarea>
+            </div>
+
+            <hr class="divider">
+
+            <!-- Janet Services -->
+            <div class="sub-section-title">Included Janet services</div>
+            <table class="inclusion-table">
+              <thead>
+                <tr>
+                  <th style="width:32px;"></th>
+                  <th>Service name</th>
+                  <th>Qty</th>
+                  <th>Frequency</th>
+                  <th>Wholesale $</th>
+                  <th>Retail $</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="checkbox" checked></td>
+                  <td>Janet AI Coach</td>
+                  <td><input type="number" value="1"></td>
+                  <td><select><option>monthly</option></select></td>
+                  <td><input type="number" value="0"></td>
+                  <td><input type="number" value="0"></td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" checked></td>
+                  <td>Monthly AI Check-in</td>
+                  <td><input type="number" value="1"></td>
+                  <td><select><option>monthly</option></select></td>
+                  <td><input type="number" value="0"></td>
+                  <td><input type="number" value="0"></td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" checked></td>
+                  <td>Human Coaching Session</td>
+                  <td><input type="number" value="1"></td>
+                  <td><select><option>monthly</option></select></td>
+                  <td><input type="number" value="45"></td>
+                  <td><input type="number" value="90"></td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" checked></td>
+                  <td>GP Review Coordination</td>
+                  <td><input type="number" value="1"></td>
+                  <td><select><option>quarterly</option></select></td>
+                  <td><input type="number" value="35"></td>
+                  <td><input type="number" value="70"></td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" checked></td>
+                  <td>Advanced Risk Report</td>
+                  <td><input type="number" value="1"></td>
+                  <td><select><option>annually</option></select></td>
+                  <td><input type="number" value="20"></td>
+                  <td><input type="number" value="40"></td>
+                </tr>
+                <tr style="opacity:0.55;">
+                  <td><input type="checkbox"></td>
+                  <td>Onboarding Call</td>
+                  <td><input type="number" value="1" disabled></td>
+                  <td><select disabled><option>one-time</option></select></td>
+                  <td><input type="number" value="0" disabled></td>
+                  <td><input type="number" value="0" disabled></td>
+                </tr>
+                <tr style="opacity:0.55;">
+                  <td><input type="checkbox"></td>
+                  <td>Corporate Dashboard Access</td>
+                  <td><input type="number" value="1" disabled></td>
+                  <td><select disabled><option>monthly</option></select></td>
+                  <td><input type="number" value="0" disabled></td>
+                  <td><input type="number" value="0" disabled></td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- Feature flags -->
+            <div class="sub-section-title">Feature flags</div>
+            <p style="font-size:13px;color:var(--lc-grey);margin:0 0 14px;">Access is granted by tier hierarchy — each flag has a minimum tier. Clinical users automatically inherit all Core flags. <strong style="color:var(--lc-ink-soft);">Elite flags are freely configurable by admin.</strong></p>
+
+            <!-- Core flags (locked for Clinical/Elite — always inherited) -->
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--lc-primary);margin-bottom:8px;">Core — inherited ✓</div>
+            <div class="feature-flags-grid" style="margin-bottom:16px;opacity:.65;">
+              <label class="flag-item"><input type="checkbox" checked disabled> Janet AI Coach</label>
+              <label class="flag-item"><input type="checkbox" checked disabled> Supplement Protocol</label>
+              <label class="flag-item"><input type="checkbox" checked disabled> PDF Export</label>
+            </div>
+
+            <!-- Clinical flags (this is the Clinical tier editor — shown as "this tier") -->
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--lc-plum);margin-bottom:8px;">Clinical — this tier</div>
+            <div class="feature-flags-grid" style="margin-bottom:16px;opacity:.65;">
+              <label class="flag-item"><input type="checkbox" checked disabled> Personal Clinician Access</label>
+              <label class="flag-item"><input type="checkbox" checked disabled> GP Review Coordination</label>
+              <label class="flag-item"><input type="checkbox" checked disabled> Advanced Risk Report</label>
+            </div>
+
+            <!-- Elite flags (locked for Clinical — not available) -->
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--lc-grey-soft);margin-bottom:8px;">Elite only — not available on this tier</div>
+            <div class="feature-flags-grid" style="margin-bottom:20px;opacity:.4;">
+              <label class="flag-item"><input type="checkbox" disabled> Genome Analysis Access</label>
+              <label class="flag-item"><input type="checkbox" disabled> DEXA Scan Ordering</label>
+              <span style="font-size:12px;color:var(--lc-grey);align-self:center;">+ any admin-defined Elite flags</span>
+            </div>
+
+            <!-- Margin summary -->
+            <div class="margin-card">
+              <div class="margin-card-title">Margin summary — Clinical tier</div>
+              <div class="margin-row"><span class="label">Janet services internal cost/mo</span><span class="val">$22.50</span></div>
+              <div class="margin-row"><span class="label">Janet services retail value/mo</span><span class="val">$71.00</span></div>
+              <div class="margin-row"><span class="label">Monthly price</span><span class="val">$99.00</span></div>
+              <div class="margin-row"><span class="label">Gross margin</span><span class="val" style="color:var(--lc-success);">$76.50 &nbsp;(77%)</span></div>
+              <div class="margin-row" style="font-size:11px;color:var(--lc-grey);border-top:1px solid var(--lc-line-soft);padding-top:8px;margin-top:4px;"><span>Supplier products are not bundled into tiers — available a la carte to patients or via B2B plan inclusions.</span></div>
+            </div>
+
+            <div class="editor-actions">
+              <button class="btn btn-outline btn-sm" onclick="editTier('clinical')">Cancel</button>
+              <button class="btn btn-primary btn-sm">Save changes</button>
+            </div>
+          </div><!-- /editor-clinical -->
+
+        </div><!-- /body-tiers -->
+      </div><!-- /builder-section tiers -->
+
+    </div><!-- /padding -->
+  </div><!-- /screen-wrap -->
+</div>
+
+<!-- ═══════════════════ TAB 5 — ADMIN SUPPLIERS ═══════════════════ -->
+<div id="view-suppliers" class="view">
+  <div class="screen-wrap" style="margin:24px 48px;max-width:none;">
+    <div class="admin-header">
+      <div class="brand">Janet Admin</div>
+      <nav>
+        <a href="#">Dashboard</a>
+        <a href="#">Tiers</a>
+        <a class="active">Suppliers</a>
+        <a href="#">Plan Builder</a>
+        <a href="#">Members</a>
+      </nav>
+      <div class="admin-user">admin@janet.health</div>
+    </div>
+
+    <div style="padding:28px 32px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+        <div>
+          <h1 class="page-title" style="margin-bottom:2px;">Suppliers</h1>
+          <p class="page-sub" style="margin:0;">/admin/suppliers — manage supplier partners and their products</p>
+        </div>
+        <button class="btn btn-primary btn-sm">+ Add Supplier</button>
+      </div>
+
+      <!-- Supplier 1: HealthPath Labs — EXPANDED -->
+      <div class="card" style="padding:0;overflow:hidden;margin-bottom:16px;">
+        <!-- Supplier header row -->
+        <div onclick="toggleSupplier('healthpath')" style="display:flex;align-items:center;gap:16px;padding:18px 24px;cursor:pointer;background:var(--lc-surface);border-bottom:1px solid var(--lc-line);">
+          <span id="sup-chevron-healthpath" style="font-size:12px;color:var(--lc-grey);transition:transform .2s;transform:rotate(90deg);">&#9654;</span>
+          <div style="flex:1;">
+            <div style="font-weight:700;font-size:15px;color:var(--lc-ink);">HealthPath Labs</div>
+            <div style="font-size:12px;color:var(--lc-grey);margin-top:2px;">Pathology · ABN 51 234 567 890</div>
+          </div>
+          <span class="pill pill-green">Active</span>
+          <span style="font-size:13px;color:var(--lc-grey-soft);">5 products</span>
+        </div>
+
+        <!-- Expanded body -->
+        <div id="sup-body-healthpath" style="display:block;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid var(--lc-line);">
+
+            <!-- Left: Contact details -->
+            <div style="padding:20px 24px;border-right:1px solid var(--lc-line);">
+              <div class="card-title" style="margin-bottom:14px;">Contact details</div>
+              <div style="display:grid;grid-template-columns:120px 1fr;gap:6px 12px;font-size:13px;">
+                <span style="color:var(--lc-grey);">Legal entity</span><span>HealthPath Labs Pty Ltd</span>
+                <span style="color:var(--lc-grey);">ABN</span><span>51 234 567 890</span>
+                <span style="color:var(--lc-grey);">Type</span><span>Pathology</span>
+                <span style="color:var(--lc-grey);">Primary contact</span><span>Dr Sarah Nguyen</span>
+                <span style="color:var(--lc-grey);">Email</span><span>sarah@healthpath.com.au</span>
+                <span style="color:var(--lc-grey);">Phone</span><span>+61 2 9XXX XXXX</span>
+                <span style="color:var(--lc-grey);">Website</span><span style="color:var(--lc-primary);">healthpath.com.au</span>
+                <span style="color:var(--lc-grey);">Address</span><span>12 Science Rd, Sydney NSW</span>
+              </div>
+            </div>
+
+            <!-- Right: Billing & contract -->
+            <div style="padding:20px 24px;">
+              <div class="card-title" style="margin-bottom:14px;">Billing &amp; contract</div>
+              <div style="display:grid;grid-template-columns:130px 1fr;gap:6px 12px;font-size:13px;margin-bottom:16px;">
+                <span style="color:var(--lc-grey);">Billing email</span><span>accounts@healthpath.com.au</span>
+                <span style="color:var(--lc-grey);">Accounts contact</span><span>James Park</span>
+                <span style="color:var(--lc-grey);">Invoice terms</span><span>Monthly</span>
+                <span style="color:var(--lc-grey);">Payment terms</span><span>Net 30</span>
+                <span style="color:var(--lc-grey);">Preferred method</span><span>EFT</span>
+                <span style="color:var(--lc-grey);">BSB / Account</span><span>062-000 / 1234 5678</span>
+                <span style="color:var(--lc-grey);">Contract</span><span>01 Jan 2026 → 31 Dec 2026</span>
+                <span style="color:var(--lc-grey);">Contract status</span><span><span class="pill pill-green" style="font-size:11px;">Active</span></span>
+              </div>
+              <div style="display:flex;gap:8px;justify-content:flex-end;">
+                <button class="btn btn-outline btn-sm">Edit supplier</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Products nested under this supplier -->
+          <div style="padding:20px 24px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+              <div class="card-title" style="margin:0;">Products <span style="font-weight:400;color:var(--lc-grey);text-transform:none;letter-spacing:0;">(5)</span></div>
+              <button class="btn btn-primary btn-sm">+ Add Product</button>
+            </div>
+            <table style="width:100%;border-collapse:collapse;font-size:13px;">
+              <thead>
+                <tr style="border-bottom:2px solid var(--lc-line);">
+                  <th style="text-align:left;padding:7px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--lc-grey);">Code</th>
+                  <th style="text-align:left;padding:7px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--lc-grey);">Name</th>
+                  <th style="text-align:left;padding:7px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--lc-grey);">Category</th>
+                  <th style="text-align:left;padding:7px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--lc-grey);">Type</th>
+                  <th style="text-align:left;padding:7px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--lc-grey);">Sub</th>
+                  <th style="text-align:right;padding:7px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--lc-grey);">Retail</th>
+                  <th style="text-align:right;padding:7px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--lc-grey);">Wholesale</th>
+                  <th style="text-align:center;padding:7px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--lc-grey);">Status</th>
+                  <th style="padding:7px 10px;"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom:1px solid var(--lc-line-soft);">
+                  <td style="padding:9px 10px;font-family:monospace;font-size:12px;color:var(--lc-grey);">DEX-001</td>
+                  <td style="padding:9px 10px;font-weight:500;">DEXA Scan</td>
+                  <td style="padding:9px 10px;"><span class="pill" style="background:var(--lc-teal-100);color:#1E5450;">Imaging</span></td>
+                  <td style="padding:9px 10px;color:var(--lc-grey);">Scan</td>
+                  <td style="padding:9px 10px;"><span title="One-time" style="font-size:16px;">1×</span></td>
+                  <td style="padding:9px 10px;text-align:right;">$350</td>
+                  <td style="padding:9px 10px;text-align:right;color:var(--lc-grey);">$200</td>
+                  <td style="padding:9px 10px;text-align:center;"><span class="pill pill-green">Active</span></td>
+                  <td style="padding:9px 10px;text-align:right;"><button class="btn btn-outline btn-sm" style="padding:3px 10px;">Edit</button></td>
+                </tr>
+                <tr style="border-bottom:1px solid var(--lc-line-soft);">
+                  <td style="padding:9px 10px;font-family:monospace;font-size:12px;color:var(--lc-grey);">BLD-001</td>
+                  <td style="padding:9px 10px;font-weight:500;">Full Blood Panel</td>
+                  <td style="padding:9px 10px;"><span class="pill" style="background:var(--lc-plum-100);color:#3D2961;">Pathology</span></td>
+                  <td style="padding:9px 10px;color:var(--lc-grey);">Test</td>
+                  <td style="padding:9px 10px;"><span title="One-time" style="font-size:16px;">1×</span></td>
+                  <td style="padding:9px 10px;text-align:right;">$120</td>
+                  <td style="padding:9px 10px;text-align:right;color:var(--lc-grey);">$65</td>
+                  <td style="padding:9px 10px;text-align:center;"><span class="pill pill-green">Active</span></td>
+                  <td style="padding:9px 10px;text-align:right;"><button class="btn btn-outline btn-sm" style="padding:3px 10px;">Edit</button></td>
+                </tr>
+                <tr style="border-bottom:1px solid var(--lc-line-soft);">
+                  <td style="padding:9px 10px;font-family:monospace;font-size:12px;color:var(--lc-grey);">BLD-002</td>
+                  <td style="padding:9px 10px;font-weight:500;">Hormonal Panel</td>
+                  <td style="padding:9px 10px;"><span class="pill" style="background:var(--lc-plum-100);color:#3D2961;">Pathology</span></td>
+                  <td style="padding:9px 10px;color:var(--lc-grey);">Test</td>
+                  <td style="padding:9px 10px;"><span title="One-time" style="font-size:16px;">1×</span></td>
+                  <td style="padding:9px 10px;text-align:right;">$95</td>
+                  <td style="padding:9px 10px;text-align:right;color:var(--lc-grey);">$48</td>
+                  <td style="padding:9px 10px;text-align:center;"><span class="pill pill-green">Active</span></td>
+                  <td style="padding:9px 10px;text-align:right;"><button class="btn btn-outline btn-sm" style="padding:3px 10px;">Edit</button></td>
+                </tr>
+                <tr style="border-bottom:1px solid var(--lc-line-soft);">
+                  <td style="padding:9px 10px;font-family:monospace;font-size:12px;color:var(--lc-grey);">SUP-001</td>
+                  <td style="padding:9px 10px;font-weight:500;">Monthly Supplement Bundle</td>
+                  <td style="padding:9px 10px;"><span class="pill" style="background:var(--lc-accent-50);color:#7A4010;">Supplements</span></td>
+                  <td style="padding:9px 10px;color:var(--lc-grey);">Product</td>
+                  <td style="padding:9px 10px;"><span title="Recurring" style="font-size:16px;color:var(--lc-primary);">↻</span></td>
+                  <td style="padding:9px 10px;text-align:right;">$45</td>
+                  <td style="padding:9px 10px;text-align:right;color:var(--lc-grey);">$28</td>
+                  <td style="padding:9px 10px;text-align:center;"><span class="pill pill-green">Active</span></td>
+                  <td style="padding:9px 10px;text-align:right;"><button class="btn btn-outline btn-sm" style="padding:3px 10px;">Edit</button></td>
+                </tr>
+                <tr>
+                  <td style="padding:9px 10px;font-family:monospace;font-size:12px;color:var(--lc-grey);">SUP-002</td>
+                  <td style="padding:9px 10px;font-weight:500;">Monthly PT Session</td>
+                  <td style="padding:9px 10px;"><span class="pill" style="background:var(--lc-teal-100);color:#1E5450;">Fitness</span></td>
+                  <td style="padding:9px 10px;color:var(--lc-grey);">Session</td>
+                  <td style="padding:9px 10px;"><span title="Recurring" style="font-size:16px;color:var(--lc-primary);">↻</span></td>
+                  <td style="padding:9px 10px;text-align:right;">$99</td>
+                  <td style="padding:9px 10px;text-align:right;color:var(--lc-grey);">$60</td>
+                  <td style="padding:9px 10px;text-align:center;"><span class="pill pill-green">Active</span></td>
+                  <td style="padding:9px 10px;text-align:right;"><button class="btn btn-outline btn-sm" style="padding:3px 10px;">Edit</button></td>
+                </tr>
+              </tbody>
+            </table>
+            <p style="font-size:12px;color:var(--lc-grey);margin:10px 0 0;">1× = one-time order &nbsp;·&nbsp; ↻ = recurring subscription &nbsp;·&nbsp; Wholesale column visible to admin only</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Supplier 2: GenomicsCo — COLLAPSED -->
+      <div class="card" style="padding:0;overflow:hidden;margin-bottom:16px;">
+        <div onclick="toggleSupplier('genomics')" style="display:flex;align-items:center;gap:16px;padding:18px 24px;cursor:pointer;">
+          <span id="sup-chevron-genomics" style="font-size:12px;color:var(--lc-grey);">&#9654;</span>
+          <div style="flex:1;">
+            <div style="font-weight:700;font-size:15px;color:var(--lc-ink);">GenomicsCo</div>
+            <div style="font-size:12px;color:var(--lc-grey);margin-top:2px;">Genomics · ABN 83 456 789 012</div>
+          </div>
+          <span class="pill pill-green">Active</span>
+          <span style="font-size:13px;color:var(--lc-grey-soft);">3 products</span>
+        </div>
+        <div id="sup-body-genomics" style="display:none;padding:20px 24px;border-top:1px solid var(--lc-line);color:var(--lc-grey);font-size:13px;">
+          Expand to view full contact/billing/contract details and products.
+        </div>
+      </div>
+
+      <!-- Supplier 3: ImagingPlus — COLLAPSED, INACTIVE -->
+      <div class="card" style="padding:0;overflow:hidden;margin-bottom:16px;opacity:.75;">
+        <div onclick="toggleSupplier('imaging')" style="display:flex;align-items:center;gap:16px;padding:18px 24px;cursor:pointer;">
+          <span id="sup-chevron-imaging" style="font-size:12px;color:var(--lc-grey);">&#9654;</span>
+          <div style="flex:1;">
+            <div style="font-weight:700;font-size:15px;color:var(--lc-ink);">ImagingPlus</div>
+            <div style="font-size:12px;color:var(--lc-grey);margin-top:2px;">Imaging · ABN 72 321 654 098</div>
+          </div>
+          <span class="pill" style="background:#f5e4e2;color:var(--lc-danger);">Inactive</span>
+          <span style="font-size:13px;color:var(--lc-grey-soft);">5 products</span>
+        </div>
+        <div id="sup-body-imaging" style="display:none;padding:20px 24px;border-top:1px solid var(--lc-line);color:var(--lc-grey);font-size:13px;">
+          Expand to view full contact/billing/contract details and products.
+        </div>
+      </div>
+
+    </div><!-- /padding -->
+  </div><!-- /screen-wrap -->
+</div>
+
+<!-- ═══════════════════ TAB 6 — ADMIN B2B PLAN BUILDER ═══════════════════ -->
+<div id="view-b2b" class="view">
+  <div class="screen-wrap" style="margin:24px 48px;max-width:none;">
+    <div class="admin-header">
+      <div class="brand">Janet Admin</div>
+      <nav>
+        <a href="#">Dashboard</a>
+        <a href="#">Tiers</a>
+        <a href="#">Suppliers</a>
+        <a class="active">Plan Builder</a>
+        <a href="#">Members</a>
+      </nav>
+      <div class="admin-user">admin@janet.health</div>
+    </div>
+
+    <div style="padding:28px 32px;">
+      <h1 class="page-title" style="margin-bottom:4px;">Plan Builder</h1>
+      <p class="page-sub" style="margin-bottom:20px;">/admin/plan-builder — build and manage B2B corporate plans</p>
+
+      <!-- Suspicious change warning banner -->
+      <div class="warning-banner">
+        <div class="warning-icon">⚠</div>
+        <div class="warning-text">
+          <strong>Suspicious seat change flagged — Clinical tier: +800 seats requested (80% increase)</strong>
+          This exceeds the platform threshold of 50% increase per update. Review before approving. Requested by: acct@acme.com at 2026-04-29 09:14 UTC.
+        </div>
+        <div class="warning-actions">
+          <button class="btn-approve">Approve</button>
+          <button class="btn-reject">Reject</button>
+        </div>
+      </div>
+
+      <div class="b2b-layout">
+
+        <!-- Client list -->
+        <div class="b2b-client-list">
+          <div class="b2b-list-header">Clients</div>
+
+          <div class="b2b-client-row active">
+            <div class="b2b-client-name">Acme Corp</div>
+            <div class="b2b-client-plan">Acme 2026 · 100 seats</div>
+            <div class="b2b-client-meta">
+              <span class="pill pill-green">Active</span>
+              <span style="color:var(--lc-grey);font-size:12px;">$6,400/mo</span>
+            </div>
+          </div>
+
+          <div class="b2b-client-row">
+            <div class="b2b-client-name">HealthFirst Co</div>
+            <div class="b2b-client-plan">HealthFirst Q1 · 50 seats</div>
+            <div class="b2b-client-meta">
+              <span class="pill pill-amber">Draft</span>
+              <span style="color:var(--lc-grey);font-size:12px;">$2,450/mo</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- B2B plan editor -->
+        <div class="b2b-editor">
+          <div class="b2b-editor-title">
+            Acme Corp
+            <span class="pill pill-green" style="font-size:12px;">Active</span>
+          </div>
+
+          <!-- Plan details -->
+          <div class="sub-section-title">Plan details</div>
+          <div class="b2b-form-grid">
+            <div class="form-field">
+              <label>Plan name</label>
+              <input type="text" value="Acme 2026">
+            </div>
+            <div class="form-field">
+              <label>Billing basis</label>
+              <select><option>Per seat monthly</option><option>Per seat annual</option><option>Flat monthly</option></select>
+            </div>
+            <div class="form-field">
+              <label>Annual discount</label>
+              <input type="number" value="20">
+            </div>
+          </div>
+          <div class="b2b-form-2col">
+            <div class="form-field">
+              <label>Contract start</label>
+              <input type="date" value="2026-05-01">
+            </div>
+            <div class="form-field">
+              <label>Contract end</label>
+              <input type="date" value="2027-04-30">
+            </div>
+          </div>
+          <div class="b2b-form-2col" style="margin-bottom:0;">
+            <div class="form-field">
+              <label>Min commitment (months)</label>
+              <input type="number" value="12">
+            </div>
+            <div class="form-field">
+              <label>Max seats per tier (this client)</label>
+              <input type="number" value="10000">
+              <div class="note-text">Platform default: 10,000 — override here for this client</div>
+            </div>
+          </div>
+
+          <div style="background:var(--lc-line-soft);border:1px solid var(--lc-line);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--lc-grey);margin:12px 0 18px;">
+            <strong style="color:var(--lc-ink-soft);">Suspicion check settings:</strong> Suspicious changes flagged at &gt;50% increase or &gt;500 seats per update (platform defaults — configurable in platform_settings).
+          </div>
+
+          <hr class="divider" style="margin:0 0 18px;">
+
+          <!-- Tier allocations -->
+          <div class="sub-section-title">Tier allocations</div>
+          <table class="tier-alloc-table">
+            <thead>
+              <tr>
+                <th>Tier</th>
+                <th>Seats</th>
+                <th>Price/seat</th>
+                <th>Monthly</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="tag tag-s1">Core</span></td>
+                <td><input type="number" value="80" oninput="calcB2BTotals()"></td>
+                <td>$49</td>
+                <td id="alloc-core">$3,920</td>
+              </tr>
+              <tr>
+                <td><span class="tag" style="background:var(--lc-primary-100);color:var(--lc-primary-800);">Clinical</span></td>
+                <td><input type="number" value="15" oninput="calcB2BTotals()"></td>
+                <td>$99</td>
+                <td id="alloc-clinical">$1,485</td>
+              </tr>
+              <tr>
+                <td><span class="tag tag-s2">Elite</span></td>
+                <td><input type="number" value="5" oninput="calcB2BTotals()"></td>
+                <td>$199</td>
+                <td id="alloc-elite">$995</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="b2b-totals-bar">
+            <div class="b2b-total-item">
+              <div class="label">Monthly total</div>
+              <div class="val" id="b2b-monthly">$6,400</div>
+            </div>
+            <div class="b2b-total-item">
+              <div class="label">Annual (−20%)</div>
+              <div class="val" id="b2b-annual">$61,440/yr</div>
+            </div>
+          </div>
+
+          <hr class="divider" style="margin:0 0 18px;">
+
+          <!-- Bundled Products -->
+          <div class="sub-section-title">Bundled products</div>
+          <p style="font-size:13px;color:var(--lc-grey);margin:0 0 14px;">Add supplier products to include in this plan for a specific tier allocation. Patients on that tier will receive these products as part of their package — admin sets qty, frequency, and client price per product.</p>
+
+          <table class="inclusion-table" style="margin-bottom:12px;">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Supplier</th>
+                <th>Tier</th>
+                <th>Qty</th>
+                <th>Frequency</th>
+                <th>Wholesale $</th>
+                <th>Client price $</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Full Blood Panel</strong></td>
+                <td><span class="tag tag-s4">HealthPath</span></td>
+                <td><span class="tag tag-s1">Core</span></td>
+                <td><input type="number" value="1" style="width:56px;"></td>
+                <td><select><option>annually</option><option>quarterly</option><option>monthly</option></select></td>
+                <td><input type="number" value="65" style="width:72px;"></td>
+                <td><input type="number" value="0" style="width:72px;"></td>
+                <td><button class="btn btn-outline btn-sm" style="padding:2px 8px;color:#c0392b;border-color:#e8c1bb;">✕</button></td>
+              </tr>
+              <tr>
+                <td><strong>DEXA Scan</strong></td>
+                <td><span class="tag tag-s4">HealthPath</span></td>
+                <td><span class="tag tag-s2">Elite</span></td>
+                <td><input type="number" value="1" style="width:56px;"></td>
+                <td><select><option>annually</option></select></td>
+                <td><input type="number" value="200" style="width:72px;"></td>
+                <td><input type="number" value="0" style="width:72px;"></td>
+                <td><button class="btn btn-outline btn-sm" style="padding:2px 8px;color:#c0392b;border-color:#e8c1bb;">✕</button></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
+            <select style="flex:2;padding:7px 10px;border:1px solid var(--lc-line);border-radius:6px;font-size:13px;color:var(--lc-ink);">
+              <option>— Select a product to add —</option>
+              <option>Hormonal Panel (HealthPath · $48 wholesale)</option>
+              <option>Monthly Supplement Bundle (HealthPath · $28 wholesale)</option>
+              <option>Genetic Test (GenomicsCo · $250 wholesale)</option>
+            </select>
+            <select style="flex:1;padding:7px 10px;border:1px solid var(--lc-line);border-radius:6px;font-size:13px;color:var(--lc-ink);">
+              <option>Core tier</option>
+              <option>Clinical tier</option>
+              <option>Elite tier</option>
+            </select>
+            <button class="btn btn-outline btn-sm">+ Add</button>
+          </div>
+
+          <!-- Internal notes -->
+          <div class="form-field" style="margin-bottom:18px;">
+            <label>Internal notes</label>
+            <textarea style="min-height:72px;">Q2 2026 onboarding. Primary contact: Sarah Chen (sarah@acme.com). Negotiated 20% off standard rates for 2-year commitment intent.</textarea>
+          </div>
+
+          <div style="display:flex;gap:8px;justify-content:flex-end;">
+            <button class="btn btn-outline btn-sm">Cancel</button>
+            <button class="btn btn-outline btn-sm" style="color:var(--lc-success);border-color:#b2d8c8;">Save draft</button>
+            <button class="btn btn-primary btn-sm">Activate plan</button>
+          </div>
+        </div><!-- /b2b-editor -->
+
+      </div><!-- /b2b-layout -->
+    </div><!-- /padding -->
+  </div><!-- /screen-wrap -->
+</div>
+
+<!-- ═══════════════════ TAB 6 — DATA MODEL ═══════════════════ -->
+<div id="view-datamodel" class="view">
+  <div class="section-wrap">
+    <h1 class="page-title">Data Model</h1>
+    <p class="page-sub">Key tables across the pricing &amp; B2B subsystems — public schema.</p>
 
     <div class="legend">
-      <div class="legend-item"><div class="legend-dot" style="background:var(--lc-primary);"></div> S1 — Plans</div>
-      <div class="legend-item"><div class="legend-dot" style="background:var(--lc-accent);"></div> S2 — Add-ons</div>
-      <div class="legend-item"><div class="legend-dot" style="background:var(--lc-plum);"></div> S3 — Employer</div>
-      <div class="legend-item"><div class="legend-dot" style="background:var(--lc-teal);"></div> S4 — Suppliers</div>
-      <div class="legend-item"><div class="legend-dot" style="background:var(--lc-grey-soft);"></div> Existing</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--lc-primary);"></div> S1 — Plans &amp; tiers</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--lc-accent);"></div> S2 — Add-ons &amp; orders</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--lc-plum);"></div> S3 — B2B &amp; organisations</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--lc-teal);"></div> S4 — Suppliers &amp; products</div>
     </div>
 
     <div class="tables-grid">
 
-      <!-- subscriptions (existing) -->
-      <div class="db-table t-anchor">
-        <div class="db-table-header">subscriptions <span class="schema-badge">existing</span></div>
+      <!-- platform_settings -->
+      <div class="db-table t-s3">
+        <div class="db-table-header">platform_settings <span class="schema-badge">S3</span></div>
         <div class="db-table-rows">
-          <div class="db-row"><span class="col-name pk">id</span><span class="col-type">uuid PK</span></div>
-          <div class="db-row"><span class="col-name fk">user_uuid</span><span class="col-type">uuid FK→auth.users</span></div>
-          <div class="db-row"><span class="col-name">stripe_customer_id</span><span class="col-type">text unique</span></div>
-          <div class="db-row"><span class="col-name">stripe_subscription_id</span><span class="col-type">text unique</span></div>
-          <div class="db-row"><span class="col-name">price_id</span><span class="col-type">text</span></div>
-          <div class="db-row"><span class="col-note">↳ soft-ref to plans.stripe_price_id</span></div>
-          <div class="db-row"><span class="col-name">status</span><span class="col-type">text</span></div>
-          <div class="db-row"><span class="col-name">current_period_end</span><span class="col-type">timestamptz</span></div>
-          <div class="db-row"><span class="col-name">cancel_at_period_end</span><span class="col-type">boolean</span></div>
+          <div class="db-row"><span class="col-name pk">key</span><span class="col-type">text PK</span></div>
+          <div class="db-row"><span class="col-name">value</span><span class="col-type">jsonb</span></div>
+          <div class="db-row"><span class="col-name">description</span><span class="col-type">text</span></div>
+          <div class="db-row"><span class="col-note">↳ max_seats_per_tier_default, suspicion_pct_threshold, suspicion_seat_threshold</span></div>
+          <div class="db-row"><span class="col-name">updated_at</span><span class="col-type">timestamptz</span></div>
         </div>
       </div>
 
@@ -647,36 +1619,82 @@
         <div class="db-table-header">plans <span class="schema-badge">S1</span></div>
         <div class="db-table-rows">
           <div class="db-row"><span class="col-name pk">id</span><span class="col-type">uuid PK</span></div>
-          <div class="db-row"><span class="col-name">name</span><span class="col-type">text</span></div>
-          <div class="db-row"><span class="col-name">tier</span><span class="col-type">text CHECK</span></div>
-          <div class="db-row"><span class="col-note">↳ individual | professional | corporate</span></div>
-          <div class="db-row"><span class="col-name">billing_interval</span><span class="col-type">text CHECK</span></div>
-          <div class="db-row"><span class="col-note">↳ month | year</span></div>
-          <div class="db-row"><span class="col-name">stripe_price_id</span><span class="col-type">text unique</span></div>
-          <div class="db-row"><span class="col-name">base_price_cents</span><span class="col-type">int</span></div>
+          <div class="db-row"><span class="col-name">slug</span><span class="col-type">text unique</span></div>
+          <div class="db-row"><span class="col-note">↳ core | clinical | elite</span></div>
+          <div class="db-row"><span class="col-name">display_name</span><span class="col-type">text</span></div>
+          <div class="db-row"><span class="col-name">price_monthly_cents</span><span class="col-type">int</span></div>
           <div class="db-row"><span class="col-name">annual_discount_pct</span><span class="col-type">numeric(5,2)</span></div>
-          <div class="db-row"><span class="col-name">feature_flags</span><span class="col-type">jsonb</span></div>
-          <div class="db-row"><span class="col-note">↳ ceiling of what this tier permits</span></div>
+          <div class="db-row"><span class="col-name">stripe_price_id_monthly</span><span class="col-type">text unique</span></div>
+          <div class="db-row"><span class="col-name">stripe_price_id_annual</span><span class="col-type">text unique</span></div>
+          <div class="db-row"><span class="col-name">setup_fee_cents</span><span class="col-type">int</span></div>
+          <div class="db-row"><span class="col-name">min_commitment_months</span><span class="col-type">int</span></div>
+          <div class="db-row"><span class="col-name">public_description</span><span class="col-type">text</span></div>
+          <div class="db-row"><span class="col-name">is_active</span><span class="col-type">boolean</span></div>
+          <div class="db-row"><span class="col-name">sort_order</span><span class="col-type">int</span></div>
+        </div>
+      </div>
+
+      <!-- feature_keys -->
+      <div class="db-table t-s1">
+        <div class="db-table-header">feature_keys <span class="schema-badge">S1</span></div>
+        <div class="db-table-rows">
+          <div class="db-row"><span class="col-name pk">key</span><span class="col-type">text PK</span></div>
+          <div class="db-row"><span class="col-note">↳ ai_coach_access · pdf_export · clinician_access · genome_access …</span></div>
+          <div class="db-row"><span class="col-name">label</span><span class="col-type">text</span></div>
+          <div class="db-row"><span class="col-name">tier_affinity</span><span class="col-type">text CHECK</span></div>
+          <div class="db-row"><span class="col-note">↳ core | clinical | elite — minimum tier required</span></div>
+          <div class="db-row"><span class="col-name">description</span><span class="col-type">text</span></div>
+          <div class="db-row"><span class="col-name">is_active</span><span class="col-type">boolean</span></div>
+          <div class="db-row"><span class="col-note" style="color:var(--lc-accent);">No join table — resolver uses TIER_RANK[user] ≥ TIER_RANK[feature]</span></div>
+        </div>
+      </div>
+
+      <!-- janet_services -->
+      <div class="db-table t-s1">
+        <div class="db-table-header">janet_services <span class="schema-badge">S1</span></div>
+        <div class="db-table-rows">
+          <div class="db-row"><span class="col-name pk">id</span><span class="col-type">uuid PK</span></div>
+          <div class="db-row"><span class="col-name">slug</span><span class="col-type">text unique</span></div>
+          <div class="db-row"><span class="col-name">display_name</span><span class="col-type">text</span></div>
+          <div class="db-row"><span class="col-name">delivery_type</span><span class="col-type">text CHECK</span></div>
+          <div class="db-row"><span class="col-note">↳ ai | human | hybrid</span></div>
+          <div class="db-row"><span class="col-name">default_wholesale_cents</span><span class="col-type">int</span></div>
+          <div class="db-row"><span class="col-name">default_retail_cents</span><span class="col-type">int</span></div>
           <div class="db-row"><span class="col-name">is_active</span><span class="col-type">boolean</span></div>
         </div>
       </div>
 
-      <!-- plan_addons -->
+      <!-- tier_inclusions -->
       <div class="db-table t-s1">
-        <div class="db-table-header">plan_addons <span class="schema-badge">S1</span></div>
+        <div class="db-table-header">tier_inclusions <span class="schema-badge">S1</span></div>
         <div class="db-table-rows">
           <div class="db-row"><span class="col-name pk">id</span><span class="col-type">uuid PK</span></div>
-          <div class="db-row"><span class="col-name">name</span><span class="col-type">text</span></div>
-          <div class="db-row"><span class="col-name">description</span><span class="col-type">text</span></div>
-          <div class="db-row"><span class="col-name">feature_key</span><span class="col-type">text unique</span></div>
-          <div class="db-row"><span class="col-note">↳ e.g. supplement_protocol, pdf_export</span></div>
-          <div class="db-row"><span class="col-name">stripe_price_id_monthly</span><span class="col-type">text unique</span></div>
-          <div class="db-row"><span class="col-name">stripe_price_id_annual</span><span class="col-type">text unique</span></div>
-          <div class="db-row"><span class="col-name">price_monthly_cents</span><span class="col-type">int</span></div>
-          <div class="db-row"><span class="col-name">price_annual_cents</span><span class="col-type">int</span></div>
-          <div class="db-row"><span class="col-name">min_tier</span><span class="col-type">text CHECK</span></div>
-          <div class="db-row"><span class="col-note">↳ gates which tiers can purchase</span></div>
-          <div class="db-row"><span class="col-name">is_active</span><span class="col-type">boolean</span></div>
+          <div class="db-row"><span class="col-name fk">plan_id</span><span class="col-type">uuid FK→plans</span></div>
+          <div class="db-row"><span class="col-name fk">janet_service_id</span><span class="col-type">uuid FK→janet_services NOT NULL</span></div>
+          <div class="db-row"><span class="col-note">↳ Janet services only — no supplier products in tiers</span></div>
+          <div class="db-row"><span class="col-name">quantity</span><span class="col-type">int ≥1</span></div>
+          <div class="db-row"><span class="col-name">frequency</span><span class="col-type">text CHECK</span></div>
+          <div class="db-row"><span class="col-note">↳ monthly | quarterly | annually | once_off</span></div>
+          <div class="db-row"><span class="col-name">wholesale_cost_cents</span><span class="col-type">int snapshotted</span></div>
+          <div class="db-row"><span class="col-name">retail_value_cents</span><span class="col-type">int snapshotted</span></div>
+          <div class="db-row"><span class="col-name" style="font-size:11px;color:var(--lc-grey);">UNIQUE(plan_id, janet_service_id)</span><span class="col-type"></span></div>
+        </div>
+      </div>
+
+      <!-- b2b_plan_product_inclusions -->
+      <div class="db-table t-s3">
+        <div class="db-table-header">b2b_plan_product_inclusions <span class="schema-badge">S3</span></div>
+        <div class="db-table-rows">
+          <div class="db-row"><span class="col-name pk">id</span><span class="col-type">uuid PK</span></div>
+          <div class="db-row"><span class="col-name fk">b2b_plan_id</span><span class="col-type">uuid FK→b2b_plans</span></div>
+          <div class="db-row"><span class="col-name fk">allocation_id</span><span class="col-type">uuid FK→b2b_plan_tier_allocations</span></div>
+          <div class="db-row"><span class="col-name fk">product_id</span><span class="col-type">uuid FK→products</span></div>
+          <div class="db-row"><span class="col-note">↳ admin picks products per tier allocation for this org</span></div>
+          <div class="db-row"><span class="col-name">quantity</span><span class="col-type">int ≥1</span></div>
+          <div class="db-row"><span class="col-name">frequency</span><span class="col-type">text CHECK</span></div>
+          <div class="db-row"><span class="col-name">wholesale_cost_cents</span><span class="col-type">int snapshotted</span></div>
+          <div class="db-row"><span class="col-name">client_price_cents</span><span class="col-type">int (0 = fully included)</span></div>
+          <div class="db-row"><span class="col-name" style="font-size:11px;color:var(--lc-grey);">UNIQUE(b2b_plan_id, allocation_id, product_id)</span><span class="col-type"></span></div>
         </div>
       </div>
 
@@ -686,13 +1704,12 @@
         <div class="db-table-rows">
           <div class="db-row"><span class="col-name pk">id</span><span class="col-type">uuid PK</span></div>
           <div class="db-row"><span class="col-name fk">user_uuid</span><span class="col-type">uuid FK→auth.users</span></div>
-          <div class="db-row"><span class="col-name fk">plan_addon_id</span><span class="col-type">uuid FK→plan_addons</span></div>
-          <div class="db-row"><span class="col-name">stripe_subscription_id</span><span class="col-type">text</span></div>
+          <div class="db-row"><span class="col-name fk">product_id</span><span class="col-type">uuid FK→products</span></div>
           <div class="db-row"><span class="col-name">stripe_subscription_item_id</span><span class="col-type">text unique</span></div>
-          <div class="db-row"><span class="col-note">↳ used to remove the add-on via Stripe API</span></div>
           <div class="db-row"><span class="col-name">status</span><span class="col-type">text CHECK</span></div>
           <div class="db-row"><span class="col-note">↳ active | cancelled</span></div>
-          <div class="db-row"><span class="col-name" style="font-size:11px;color:var(--lc-grey)">UNIQUE(user_uuid, plan_addon_id)</span><span class="col-type"></span></div>
+          <div class="db-row"><span class="col-name">created_at</span><span class="col-type">timestamptz</span></div>
+          <div class="db-row"><span class="col-name" style="font-size:11px;color:var(--lc-grey);">UNIQUE(user_uuid, product_id) WHERE status='active'</span><span class="col-type"></span></div>
         </div>
       </div>
 
@@ -704,11 +1721,11 @@
           <div class="db-row"><span class="col-name fk">user_uuid</span><span class="col-type">uuid FK→auth.users</span></div>
           <div class="db-row"><span class="col-name fk">product_id</span><span class="col-type">uuid FK→products</span></div>
           <div class="db-row"><span class="col-name">stripe_payment_intent_id</span><span class="col-type">text unique</span></div>
-          <div class="db-row"><span class="col-name">amount_cents</span><span class="col-type">int</span></div>
-          <div class="db-row"><span class="col-note">↳ price snapshot at order time</span></div>
           <div class="db-row"><span class="col-name">status</span><span class="col-type">text CHECK</span></div>
-          <div class="db-row"><span class="col-note">↳ pending→paid→fulfilling→completed</span></div>
-          <div class="db-row"><span class="col-name">notes</span><span class="col-type">text</span></div>
+          <div class="db-row"><span class="col-note">↳ pending | processing | completed | cancelled</span></div>
+          <div class="db-row"><span class="col-name">amount_cents</span><span class="col-type">int</span></div>
+          <div class="db-row"><span class="col-name">ordered_at</span><span class="col-type">timestamptz</span></div>
+          <div class="db-row"><span class="col-name">completed_at</span><span class="col-type">timestamptz</span></div>
         </div>
       </div>
 
@@ -718,20 +1735,12 @@
         <div class="db-table-rows">
           <div class="db-row"><span class="col-name pk">id</span><span class="col-type">uuid PK</span></div>
           <div class="db-row"><span class="col-name">name</span><span class="col-type">text</span></div>
-          <div class="db-row"><span class="col-name fk">plan_id</span><span class="col-type">uuid FK→plans</span></div>
-          <div class="db-row"><span class="col-note">↳ must reference a corporate tier plan</span></div>
-          <div class="db-row"><span class="col-name">seat_count</span><span class="col-type">int</span></div>
-        </div>
-      </div>
-
-      <!-- organisation_addons -->
-      <div class="db-table t-s3">
-        <div class="db-table-header">organisation_addons <span class="schema-badge">S3</span></div>
-        <div class="db-table-rows">
-          <div class="db-row"><span class="col-name fk pk">org_id</span><span class="col-type">uuid PK+FK→orgs</span></div>
-          <div class="db-row"><span class="col-name fk pk">plan_addon_id</span><span class="col-type">uuid PK+FK→plan_addons</span></div>
-          <div class="db-row"><span class="col-name">enabled_at</span><span class="col-type">timestamptz</span></div>
-          <div class="db-row"><span class="col-note">↳ composite PK — typed rows, not JSONB</span></div>
+          <div class="db-row"><span class="col-name">slug</span><span class="col-type">text unique</span></div>
+          <div class="db-row"><span class="col-name">billing_email</span><span class="col-type">text</span></div>
+          <div class="db-row"><span class="col-name">stripe_customer_id</span><span class="col-type">text unique</span></div>
+          <div class="db-row"><span class="col-name">status</span><span class="col-type">text CHECK</span></div>
+          <div class="db-row"><span class="col-note">↳ active | suspended | cancelled</span></div>
+          <div class="db-row"><span class="col-name">created_at</span><span class="col-type">timestamptz</span></div>
         </div>
       </div>
 
@@ -739,12 +1748,70 @@
       <div class="db-table t-s3">
         <div class="db-table-header">organisation_members <span class="schema-badge">S3</span></div>
         <div class="db-table-rows">
-          <div class="db-row"><span class="col-name fk pk">org_id</span><span class="col-type">uuid PK+FK→orgs</span></div>
-          <div class="db-row"><span class="col-name fk pk">user_uuid</span><span class="col-type">uuid PK+FK→auth.users</span></div>
+          <div class="db-row"><span class="col-name pk">id</span><span class="col-type">uuid PK</span></div>
+          <div class="db-row"><span class="col-name fk">organisation_id</span><span class="col-type">uuid FK→organisations</span></div>
+          <div class="db-row"><span class="col-name fk">user_uuid</span><span class="col-type">uuid FK→auth.users</span></div>
+          <div class="db-row"><span class="col-name fk">b2b_plan_tier_id</span><span class="col-type">uuid FK→b2b_plan_tier_allocations</span></div>
           <div class="db-row"><span class="col-name">role</span><span class="col-type">text CHECK</span></div>
-          <div class="db-row"><span class="col-note">↳ member | health_manager</span></div>
+          <div class="db-row"><span class="col-note">↳ member | manager | admin</span></div>
+          <div class="db-row"><span class="col-name">status</span><span class="col-type">text CHECK</span></div>
+          <div class="db-row"><span class="col-note">↳ invited | active | suspended</span></div>
+          <div class="db-row"><span class="col-name">invited_at</span><span class="col-type">timestamptz</span></div>
           <div class="db-row"><span class="col-name">joined_at</span><span class="col-type">timestamptz</span></div>
-          <div class="db-row"><span class="col-note">↳ UNIQUE on user_uuid — one org per user</span></div>
+          <div class="db-row"><span class="col-name" style="font-size:11px;color:var(--lc-grey);">UNIQUE(organisation_id, user_uuid)</span><span class="col-type"></span></div>
+        </div>
+      </div>
+
+      <!-- b2b_plans -->
+      <div class="db-table t-s3">
+        <div class="db-table-header">b2b_plans <span class="schema-badge">S3</span></div>
+        <div class="db-table-rows">
+          <div class="db-row"><span class="col-name pk">id</span><span class="col-type">uuid PK</span></div>
+          <div class="db-row"><span class="col-name fk">organisation_id</span><span class="col-type">uuid FK→organisations</span></div>
+          <div class="db-row"><span class="col-name">name</span><span class="col-type">text</span></div>
+          <div class="db-row"><span class="col-name">billing_basis</span><span class="col-type">text CHECK</span></div>
+          <div class="db-row"><span class="col-note">↳ per_seat_monthly | per_seat_annual | flat_monthly</span></div>
+          <div class="db-row"><span class="col-name">annual_discount_pct</span><span class="col-type">numeric(5,2)</span></div>
+          <div class="db-row"><span class="col-name">contract_start</span><span class="col-type">date</span></div>
+          <div class="db-row"><span class="col-name">contract_end</span><span class="col-type">date</span></div>
+          <div class="db-row"><span class="col-name">min_commitment_months</span><span class="col-type">int</span></div>
+          <div class="db-row"><span class="col-name">max_seats_override</span><span class="col-type">int nullable</span></div>
+          <div class="db-row"><span class="col-note">↳ null = use platform_settings default (10,000)</span></div>
+          <div class="db-row"><span class="col-name">status</span><span class="col-type">text CHECK</span></div>
+          <div class="db-row"><span class="col-note">↳ draft | active | expired | cancelled</span></div>
+          <div class="db-row"><span class="col-name">internal_notes</span><span class="col-type">text</span></div>
+        </div>
+      </div>
+
+      <!-- b2b_plan_tier_allocations -->
+      <div class="db-table t-s3">
+        <div class="db-table-header">b2b_plan_tier_allocations <span class="schema-badge">S3</span></div>
+        <div class="db-table-rows">
+          <div class="db-row"><span class="col-name pk">id</span><span class="col-type">uuid PK</span></div>
+          <div class="db-row"><span class="col-name fk">b2b_plan_id</span><span class="col-type">uuid FK→b2b_plans</span></div>
+          <div class="db-row"><span class="col-name fk">plan_id</span><span class="col-type">uuid FK→plans</span></div>
+          <div class="db-row"><span class="col-name">seat_count</span><span class="col-type">int</span></div>
+          <div class="db-row"><span class="col-name">price_per_seat_cents</span><span class="col-type">int</span></div>
+          <div class="db-row"><span class="col-note">↳ may differ from public plan price (negotiated)</span></div>
+          <div class="db-row"><span class="col-name" style="font-size:11px;color:var(--lc-grey);">UNIQUE(b2b_plan_id, plan_id)</span><span class="col-type"></span></div>
+        </div>
+      </div>
+
+      <!-- b2b_plan_seat_audit -->
+      <div class="db-table t-s3">
+        <div class="db-table-header">b2b_plan_seat_audit <span class="schema-badge">S3</span></div>
+        <div class="db-table-rows">
+          <div class="db-row"><span class="col-name pk">id</span><span class="col-type">uuid PK</span></div>
+          <div class="db-row"><span class="col-name fk">b2b_plan_tier_id</span><span class="col-type">uuid FK→b2b_plan_tier_allocations</span></div>
+          <div class="db-row"><span class="col-name fk">changed_by</span><span class="col-type">uuid FK→auth.users</span></div>
+          <div class="db-row"><span class="col-name">old_seat_count</span><span class="col-type">int</span></div>
+          <div class="db-row"><span class="col-name">new_seat_count</span><span class="col-type">int</span></div>
+          <div class="db-row"><span class="col-name">pct_change</span><span class="col-type">numeric(6,2)</span></div>
+          <div class="db-row"><span class="col-name">flagged_suspicious</span><span class="col-type">boolean</span></div>
+          <div class="db-row"><span class="col-name">review_status</span><span class="col-type">text CHECK</span></div>
+          <div class="db-row"><span class="col-note">↳ pending | approved | rejected</span></div>
+          <div class="db-row"><span class="col-name">reviewed_by</span><span class="col-type">uuid FK→auth.users nullable</span></div>
+          <div class="db-row"><span class="col-name">changed_at</span><span class="col-type">timestamptz</span></div>
         </div>
       </div>
 
@@ -754,11 +1821,10 @@
         <div class="db-table-rows">
           <div class="db-row"><span class="col-name pk">id</span><span class="col-type">uuid PK</span></div>
           <div class="db-row"><span class="col-name">name</span><span class="col-type">text</span></div>
+          <div class="db-row"><span class="col-name">slug</span><span class="col-type">text unique</span></div>
           <div class="db-row"><span class="col-name">contact_email</span><span class="col-type">text</span></div>
-          <div class="db-row"><span class="col-name">contact_phone</span><span class="col-type">text</span></div>
-          <div class="db-row"><span class="col-name">address</span><span class="col-type">text</span></div>
-          <div class="db-row"><span class="col-name">external_identifier</span><span class="col-type">text</span></div>
-          <div class="db-row"><span class="col-note">↳ ABN, provider number, etc.</span></div>
+          <div class="db-row"><span class="col-name">api_integration</span><span class="col-type">text nullable</span></div>
+          <div class="db-row"><span class="col-note">↳ healthpath | imaging_plus | genomics_lab | null</span></div>
           <div class="db-row"><span class="col-name">is_active</span><span class="col-type">boolean</span></div>
         </div>
       </div>
@@ -769,807 +1835,134 @@
         <div class="db-table-rows">
           <div class="db-row"><span class="col-name pk">id</span><span class="col-type">uuid PK</span></div>
           <div class="db-row"><span class="col-name fk">supplier_id</span><span class="col-type">uuid FK→suppliers</span></div>
-          <div class="db-row"><span class="col-name">product_code</span><span class="col-type">text</span></div>
-          <div class="db-row"><span class="col-name">name</span><span class="col-type">text</span></div>
-          <div class="db-row"><span class="col-name">category</span><span class="col-type">text CHECK</span></div>
-          <div class="db-row"><span class="col-note">↳ imaging|pathology|genomics|hormonal…</span></div>
+          <div class="db-row"><span class="col-name">slug</span><span class="col-type">text unique</span></div>
+          <div class="db-row"><span class="col-name">display_name</span><span class="col-type">text</span></div>
+          <div class="db-row"><span class="col-name">product_type</span><span class="col-type">text CHECK</span></div>
+          <div class="db-row"><span class="col-note">↳ one_time | recurring | subscription_addon</span></div>
+          <div class="db-row"><span class="col-name">stripe_price_id</span><span class="col-type">text unique nullable</span></div>
           <div class="db-row"><span class="col-name">wholesale_cents</span><span class="col-type">int</span></div>
-          <div class="db-row"><span class="col-note">↳ hidden from non-admin RLS policies</span></div>
           <div class="db-row"><span class="col-name">retail_cents</span><span class="col-type">int</span></div>
-          <div class="db-row"><span class="col-name">stripe_price_id</span><span class="col-type">text unique</span></div>
+          <div class="db-row"><span class="col-name">min_plan_slug</span><span class="col-type">text nullable FK→plans.slug</span></div>
+          <div class="db-row"><span class="col-note">↳ gates which plan tier can purchase</span></div>
           <div class="db-row"><span class="col-name">is_active</span><span class="col-type">boolean</span></div>
-          <div class="db-row"><span class="col-name" style="font-size:11px;color:var(--lc-grey)">UNIQUE(supplier_id, product_code)</span><span class="col-type"></span></div>
         </div>
       </div>
 
     </div><!-- /tables-grid -->
-
-    <!-- Entity relations -->
-    <div class="card" style="margin-top:8px;">
-      <div class="card-title">Key Foreign-Key Relations</div>
-      <div class="relations-list">
-        <div class="rel-row"><span class="rel-from">subscriptions.price_id</span><span class="rel-arrow">─ soft-ref ──→</span><span class="rel-to">plans.stripe_price_id</span><span class="rel-note">no FK; matched at query time</span></div>
-        <div class="rel-row"><span class="rel-from">subscription_addons.plan_addon_id</span><span class="rel-arrow">──────────→</span><span class="rel-to">plan_addons.id</span><span class="rel-note">recurring add-on per user</span></div>
-        <div class="rel-row"><span class="rel-from">test_orders.product_id</span><span class="rel-arrow">──────────────────────→</span><span class="rel-to">products.id</span><span class="rel-note">one-time purchase</span></div>
-        <div class="rel-row"><span class="rel-from">organisations.plan_id</span><span class="rel-arrow">─────────────────────→</span><span class="rel-to">plans.id</span><span class="rel-note">must be corporate tier</span></div>
-        <div class="rel-row"><span class="rel-from">organisation_addons.org_id</span><span class="rel-arrow">───────────────→</span><span class="rel-to">organisations.id</span><span class="rel-note">enabled features per org</span></div>
-        <div class="rel-row"><span class="rel-from">organisation_addons.plan_addon_id</span><span class="rel-arrow">──────→</span><span class="rel-to">plan_addons.id</span><span class="rel-note">constrained to plan ceiling</span></div>
-        <div class="rel-row"><span class="rel-from">organisation_members.(org_id,user_uuid)</span><span class="rel-arrow">→</span><span class="rel-to">organisations + auth.users</span><span class="rel-note">many:many, one org per user</span></div>
-        <div class="rel-row"><span class="rel-from">products.supplier_id</span><span class="rel-arrow">──────────────────────→</span><span class="rel-to">suppliers.id</span><span class="rel-note">on delete restrict</span></div>
-      </div>
-    </div>
-
-    <!-- RLS summary -->
-    <div class="card">
-      <div class="card-title">Row-Level Security Summary</div>
-      <table class="rls-table">
-        <thead>
-          <tr>
-            <th>Table</th>
-            <th>Patient (standalone)</th>
-            <th>Health Manager</th>
-            <th>Platform Admin</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td class="table-name">plans</td><td><span class="pill pill-blue">SELECT active</span></td><td><span class="pill pill-blue">SELECT active</span></td><td><span class="pill pill-green">ALL</span></td></tr>
-          <tr><td class="table-name">plan_addons</td><td><span class="pill pill-blue">SELECT active</span></td><td><span class="pill pill-blue">SELECT active</span></td><td><span class="pill pill-green">ALL</span></td></tr>
-          <tr><td class="table-name">subscription_addons</td><td><span class="pill pill-amber">own rows</span></td><td><span class="pill pill-grey">—</span></td><td><span class="pill pill-green">ALL</span></td></tr>
-          <tr><td class="table-name">test_orders</td><td><span class="pill pill-amber">own rows</span></td><td><span class="pill pill-blue">own org's</span></td><td><span class="pill pill-green">ALL</span></td></tr>
-          <tr><td class="table-name">organisations</td><td><span class="pill pill-blue">SELECT own</span></td><td><span class="pill pill-amber">SELECT+UPDATE own</span></td><td><span class="pill pill-green">ALL</span></td></tr>
-          <tr><td class="table-name">organisation_addons</td><td><span class="pill pill-blue">SELECT own org</span></td><td><span class="pill pill-amber">INSERT/DELETE own org</span></td><td><span class="pill pill-green">ALL</span></td></tr>
-          <tr><td class="table-name">organisation_members</td><td><span class="pill pill-blue">SELECT own row</span></td><td><span class="pill pill-blue">SELECT own org</span></td><td><span class="pill pill-green">ALL</span></td></tr>
-          <tr><td class="table-name">suppliers</td><td><span class="pill pill-grey">—</span></td><td><span class="pill pill-blue">SELECT active</span></td><td><span class="pill pill-green">ALL</span></td></tr>
-          <tr><td class="table-name">products</td><td><span class="pill pill-grey">via view</span></td><td><span class="pill pill-blue">retail only (view)</span></td><td><span class="pill pill-green">ALL incl. wholesale</span></td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Migration plan -->
-    <div class="card">
-      <div class="card-title">Migration Plan</div>
-      <table class="rls-table">
-        <thead><tr><th>#</th><th>File</th><th>Content</th><th>Subsystem</th></tr></thead>
-        <tbody>
-          <tr><td>0007</td><td><code>0007_plans.sql</code></td><td>plans, plan_addons, RLS</td><td><span class="tag tag-s1">S1</span></td></tr>
-          <tr><td>0008</td><td><code>0008_subscription_addons.sql</code></td><td>subscription_addons, test_orders, RLS</td><td><span class="tag tag-s2">S2</span></td></tr>
-          <tr><td>0009</td><td><code>0009_organisations.sql</code></td><td>organisations, org_addons, org_members, RLS</td><td><span class="tag tag-s3">S3</span></td></tr>
-          <tr><td>0010</td><td><code>0010_suppliers_products.sql</code></td><td>suppliers, products, products_public view, RLS</td><td><span class="tag tag-s4">S4</span></td></tr>
-        </tbody>
-      </table>
-    </div>
-
-  </div>
-</div>
-
-<!-- ═══════════════════ VIEW 2 — SYSTEM DESIGN ═══════════════════ -->
-<div id="view-sys" class="view">
-  <div class="section-wrap">
-    <h1 class="page-title">System Design</h1>
-    <p class="page-sub">User journeys, API layer, Stripe integration, and feature-flag resolution.</p>
-
-    <!-- User journeys -->
-    <div class="card">
-      <div class="card-title">User Journeys</div>
-      <div style="display:flex;flex-direction:column;gap:20px;">
-
-        <div>
-          <div style="font-size:13px;font-weight:700;color:var(--lc-ink);margin-bottom:10px;">Journey 1 — Standalone User</div>
-          <div class="flow-row">
-            <div class="flow-box highlight" style="flex:0 0 auto;min-width:120px;text-align:center;">
-              <div class="flow-box-title">Entry</div>
-              <div style="font-size:13px;color:var(--lc-primary-800);">Pricing page</div>
-            </div>
-            <div class="flow-arrow">→</div>
-            <div class="flow-box" style="flex:0 0 auto;min-width:140px;text-align:center;">
-              <div class="flow-box-title">Configure</div>
-              <div style="font-size:13px;">Select tier + interval + add-ons</div>
-            </div>
-            <div class="flow-arrow">→</div>
-            <div class="flow-box accent-box" style="flex:0 0 auto;min-width:130px;text-align:center;">
-              <div class="flow-box-title">Checkout</div>
-              <div style="font-size:13px;">Stripe session</div>
-            </div>
-            <div class="flow-arrow">→</div>
-            <div class="flow-box" style="flex:0 0 auto;min-width:100px;text-align:center;">
-              <div class="flow-box-title">Post-pay</div>
-              <div style="font-size:13px;">Dashboard</div>
-            </div>
-          </div>
-          <div class="flow-row" style="margin-top:8px;">
-            <div class="flow-box" style="flex:0 0 auto;min-width:120px;text-align:center;">
-              <div class="flow-box-title">Later</div>
-              <div style="font-size:13px;color:var(--lc-ink-soft);">/account/billing</div>
-            </div>
-            <div class="flow-arrow">→</div>
-            <div class="flow-box" style="flex:0 0 auto;min-width:180px;text-align:center;">
-              <div class="flow-box-title">Manage</div>
-              <div style="font-size:13px;">Add/remove add-ons · Order tests</div>
-            </div>
-            <div class="flow-arrow">→</div>
-            <div class="flow-box accent-box" style="flex:0 0 auto;min-width:160px;text-align:center;">
-              <div class="flow-box-title">Stripe</div>
-              <div style="font-size:13px;">Sub item update / Payment intent</div>
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <div style="font-size:13px;font-weight:700;color:var(--lc-ink);margin-bottom:10px;">Journey 2 — Employer / Health Manager</div>
-          <div class="flow-row">
-            <div class="flow-box" style="flex:0 0 auto;min-width:140px;text-align:center;">
-              <div class="flow-box-title">Setup</div>
-              <div style="font-size:13px;">Admin assigns org to corporate plan</div>
-            </div>
-            <div class="flow-arrow">→</div>
-            <div class="flow-box highlight" style="flex:0 0 auto;min-width:140px;text-align:center;">
-              <div class="flow-box-title">Dashboard</div>
-              <div style="font-size:13px;">Toggle features · Invite employees</div>
-            </div>
-            <div class="flow-arrow">→</div>
-            <div class="flow-box" style="flex:0 0 auto;min-width:160px;text-align:center;">
-              <div class="flow-box-title">Members</div>
-              <div style="font-size:13px;">Employees see enabled features automatically</div>
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <div style="font-size:13px;font-weight:700;color:var(--lc-ink);margin-bottom:10px;">Journey 3 — Platform Admin</div>
-          <div class="flow-row">
-            <div class="flow-box" style="flex:0 0 auto;min-width:120px;text-align:center;">
-              <div class="flow-box-title">Plans</div>
-              <div style="font-size:13px;">Create/edit tiers + Stripe IDs</div>
-            </div>
-            <div class="flow-arrow">→</div>
-            <div class="flow-box" style="flex:0 0 auto;min-width:130px;text-align:center;">
-              <div class="flow-box-title">Add-ons</div>
-              <div style="font-size:13px;">Feature add-on catalog</div>
-            </div>
-            <div class="flow-arrow">→</div>
-            <div class="flow-box t-s4" style="flex:0 0 auto;min-width:130px;text-align:center;background:var(--lc-teal-100);border-color:#b2d8d5;">
-              <div class="flow-box-title" style="color:#1E5450;">Suppliers</div>
-              <div style="font-size:13px;">Register + manage</div>
-            </div>
-            <div class="flow-arrow">→</div>
-            <div class="flow-box t-s4" style="flex:0 0 auto;min-width:130px;text-align:center;background:var(--lc-teal-100);border-color:#b2d8d5;">
-              <div class="flow-box-title" style="color:#1E5450;">Products</div>
-              <div style="font-size:13px;">Catalog + Stripe price IDs</div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- API layer -->
-    <div class="card">
-      <div class="card-title">API Layer</div>
-
-      <div class="api-section">
-        <div class="api-title">Public</div>
-        <table class="api-table">
-          <thead><tr><th>Method</th><th>Route</th><th>Description</th></tr></thead>
-          <tbody>
-            <tr><td><span class="method method-get">GET</span></td><td class="route">/api/plans</td><td>Active plans with pricing and features</td></tr>
-            <tr><td><span class="method method-get">GET</span></td><td class="route">/api/plan-addons</td><td>Active add-ons with tier gating info</td></tr>
-            <tr><td><span class="method method-get">GET</span></td><td class="route">/api/products</td><td>Active products — retail price only via <code>products_public</code> view</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="api-section">
-        <div class="api-title">Authenticated — Standalone User</div>
-        <table class="api-table">
-          <thead><tr><th>Method</th><th>Route</th><th>Description</th></tr></thead>
-          <tbody>
-            <tr><td><span class="method method-post">POST</span></td><td class="route">/api/stripe/checkout</td><td>Create Stripe checkout session: <code>{ plan_id, addon_ids[], billing_interval }</code></td></tr>
-            <tr><td><span class="method method-get">GET</span></td><td class="route">/api/subscription</td><td>Current subscription status + active add-ons</td></tr>
-            <tr><td><span class="method method-post">POST</span></td><td class="route">/api/subscription/addons</td><td>Add recurring add-on → Stripe subscription item</td></tr>
-            <tr><td><span class="method method-del">DEL</span></td><td class="route">/api/subscription/addons/:id</td><td>Remove add-on → delete Stripe subscription item, mark cancelled</td></tr>
-            <tr><td><span class="method method-get">GET</span></td><td class="route">/api/test-orders</td><td>User's test order history</td></tr>
-            <tr><td><span class="method method-post">POST</span></td><td class="route">/api/test-orders</td><td>Create test order: <code>{ product_id }</code> → Stripe payment intent</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="api-section">
-        <div class="api-title">Employer / Health Manager</div>
-        <table class="api-table">
-          <thead><tr><th>Method</th><th>Route</th><th>Description</th></tr></thead>
-          <tbody>
-            <tr><td><span class="method method-get">GET</span></td><td class="route">/api/org</td><td>Org details + plan + seat count</td></tr>
-            <tr><td><span class="method method-get">GET</span></td><td class="route">/api/org/addons</td><td>Org-enabled add-ons</td></tr>
-            <tr><td><span class="method method-post">POST</span></td><td class="route">/api/org/addons</td><td>Enable add-on for all org members: <code>{ plan_addon_id }</code></td></tr>
-            <tr><td><span class="method method-del">DEL</span></td><td class="route">/api/org/addons/:id</td><td>Disable add-on for all org members</td></tr>
-            <tr><td><span class="method method-post">POST</span></td><td class="route">/api/org/invites</td><td>Invite employee by email: <code>{ email, role }</code></td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="api-section">
-        <div class="api-title">Platform Admin</div>
-        <table class="api-table">
-          <thead><tr><th>Method</th><th>Route</th><th>Description</th></tr></thead>
-          <tbody>
-            <tr><td><span class="method method-get">GET</span> <span class="method method-post">POST</span></td><td class="route">/api/admin/plans</td><td>List / create plans</td></tr>
-            <tr><td><span class="method method-put">PUT</span> <span class="method method-del">DEL</span></td><td class="route">/api/admin/plans/:id</td><td>Update / deactivate a plan</td></tr>
-            <tr><td><span class="method method-get">GET</span> <span class="method method-post">POST</span></td><td class="route">/api/admin/suppliers</td><td>List / create suppliers</td></tr>
-            <tr><td><span class="method method-put">PUT</span></td><td class="route">/api/admin/suppliers/:id</td><td>Update a supplier</td></tr>
-            <tr><td><span class="method method-get">GET</span> <span class="method method-post">POST</span></td><td class="route">/api/admin/products</td><td>List / create products</td></tr>
-            <tr><td><span class="method method-get">GET</span> <span class="method method-put">PUT</span></td><td class="route">/api/admin/test-orders</td><td>List all test orders · Update fulfillment status</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Stripe integration -->
-    <div class="card">
-      <div class="card-title">Stripe Integration Points</div>
-      <table class="stripe-table">
-        <thead><tr><th>Trigger</th><th>Stripe Call / Event</th><th>DB Effect</th></tr></thead>
-        <tbody>
-          <tr><td>User completes checkout</td><td><span class="stripe-event">checkout.session.completed</span></td><td>Write <code>subscriptions</code> + <code>subscription_addons</code> rows</td></tr>
-          <tr><td>User adds recurring add-on</td><td><code>subscriptionItems.create</code></td><td>Write <code>subscription_addons</code> row</td></tr>
-          <tr><td>User removes recurring add-on</td><td><code>subscriptionItems.del</code></td><td>Mark <code>subscription_addons.status = 'cancelled'</code></td></tr>
-          <tr><td>User orders a test</td><td><code>paymentIntents.create</code></td><td>Write <code>test_orders</code> row with <code>pending</code> status</td></tr>
-          <tr><td>Test payment confirmed</td><td><span class="stripe-event">payment_intent.succeeded</span></td><td>Update <code>test_orders.status = 'paid'</code></td></tr>
-          <tr><td>Plan cancelled</td><td><span class="stripe-event">customer.subscription.deleted</span></td><td>Update <code>subscriptions.status</code></td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Pricing calc -->
-    <div class="two-col">
-      <div class="card">
-        <div class="card-title">Pricing Calculation — Standalone User</div>
-        <pre style="margin:0;font-size:12px;color:var(--lc-ink-soft);font-family:ui-monospace,Menlo,monospace;white-space:pre-wrap;line-height:1.6;">function calculateTotal(
-  plan, addons, interval
-): number {
-  const planPrice = interval === 'year'
-    ? plan.base_price_cents * 12
-      * (1 - plan.annual_discount_pct / 100)
-    : plan.base_price_cents;
-
-  const addonTotal = addons.reduce((sum, a) =>
-    sum + (interval === 'year'
-      ? a.price_annual_cents
-      : a.price_monthly_cents), 0);
-
-  return planPrice + addonTotal;
-}</pre>
-      </div>
-      <div class="card">
-        <div class="card-title">Pricing Calculation — Employer</div>
-        <pre style="margin:0;font-size:12px;color:var(--lc-ink-soft);font-family:ui-monospace,Menlo,monospace;white-space:pre-wrap;line-height:1.6;">function calculateOrgTotal(
-  plan, enabledAddons,
-  seatCount, interval
-): number {
-  const basePerSeat = interval === 'year'
-    ? plan.base_price_cents * 12
-      * (1 - plan.annual_discount_pct / 100)
-    : plan.base_price_cents;
-
-  const addonPerSeat = enabledAddons.reduce(
-    (sum, a) => sum + (interval === 'year'
-      ? a.price_annual_cents
-      : a.price_monthly_cents), 0);
-
-  return (basePerSeat + addonPerSeat)
-    * seatCount;
-}</pre>
-      </div>
-    </div>
-
-    <!-- Feature flag resolution -->
-    <div class="card">
-      <div class="card-title">Feature Flag Resolution — <code>lib/features/resolve.ts</code></div>
-      <div class="flag-box">
-        <div class="flag-step">
-          <div class="flag-num">1</div>
-          <div class="flag-text"><strong>Platform admin?</strong> — all features unlocked immediately.</div>
-        </div>
-        <div class="flag-step">
-          <div class="flag-num">2</div>
-          <div class="flag-text"><strong>Org member?</strong> — check <code>organisation_addons</code> for the feature key. If enabled or included in the org's plan tier → unlocked. Otherwise → locked.</div>
-        </div>
-        <div class="flag-step">
-          <div class="flag-num">3</div>
-          <div class="flag-text"><strong>Standalone subscriber?</strong> — check <code>subscription_addons</code> for an active row. If present, or if included in their plan's <code>feature_flags</code> ceiling → unlocked. Otherwise → locked (show upsell).</div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<!-- ═══════════════════ VIEW 3 — UI PREVIEW ═══════════════════ -->
-<div id="view-ui" class="view">
-  <div class="section-wrap">
-    <h1 class="page-title">UI Preview</h1>
-    <p class="page-sub">Interactive mockups of the 6 screens across the 4 subsystems.</p>
-
-    <!-- sub-screen tabs -->
-    <div class="screen-tabs" id="screenTabs" style="border-radius:12px 12px 0 0;border:1px solid var(--lc-line);border-bottom-color:var(--lc-line);overflow:hidden;">
-      <button class="screen-tab active" onclick="switchScreen('s-pricing')">Pricing Page</button>
-      <button class="screen-tab" onclick="switchScreen('s-billing')">Account / Billing</button>
-      <button class="screen-tab" onclick="switchScreen('s-employer')">Employer Dashboard</button>
-      <button class="screen-tab" onclick="switchScreen('s-admin')">Admin Panel</button>
-    </div>
-
-    <!-- SCREEN: Pricing Page -->
-    <div id="s-pricing" class="screen-panel active">
-      <div class="screen-wrap" style="border-top:none;border-radius:0 0 14px 14px;">
-        <div class="mock-bar">
-          <div class="brand">Longevity<span style="color:var(--lc-accent);">Coach</span></div>
-          <div class="mock-bar-links"><span>Science</span><span>Stories</span><span style="color:var(--lc-primary);font-weight:600;">Pricing</span></div>
-          <div style="display:flex;gap:8px;">
-            <button class="btn btn-outline btn-sm">Login</button>
-            <button class="btn btn-primary btn-sm">Get Started</button>
-          </div>
-        </div>
-        <div class="screen-body">
-          <h2 style="text-align:center;">Choose your plan</h2>
-          <p class="sub" style="text-align:center;">Optimise your healthspan. Cancel any time.</p>
-
-          <div style="display:flex;justify-content:center;margin-bottom:28px;">
-            <div class="billing-toggle">
-              <button class="billing-btn on" id="toggle-monthly" onclick="setBilling('monthly')">Monthly</button>
-              <button class="billing-btn" id="toggle-annual" onclick="setBilling('annual')">Annual <span class="badge">Save 20%</span></button>
-            </div>
-          </div>
-
-          <div class="plan-cards">
-            <div class="plan-card">
-              <div class="plan-tier">Individual</div>
-              <div class="plan-price" id="price-individual">$29 <span>/ mo</span></div>
-              <div class="plan-note" id="note-individual">&nbsp;</div>
-              <ul class="plan-features">
-                <li>Biological age test</li>
-                <li>5-domain risk report</li>
-                <li>Daily health coaching</li>
-                <li class="locked">Advanced supplement protocol</li>
-                <li class="locked">Genome analysis</li>
-              </ul>
-              <button class="btn btn-outline">Get started</button>
-            </div>
-            <div class="plan-card featured">
-              <div style="display:flex;align-items:center;justify-content:space-between;">
-                <div class="plan-tier" style="color:var(--lc-primary);">Professional</div>
-                <span class="pill pill-blue" style="font-size:11px;">Most popular</span>
-              </div>
-              <div class="plan-price" id="price-professional">$59 <span>/ mo</span></div>
-              <div class="plan-note" id="note-professional">&nbsp;</div>
-              <ul class="plan-features">
-                <li>Everything in Individual</li>
-                <li>Advanced supplement protocol</li>
-                <li>Branded PDF export</li>
-                <li>Clinician sharing</li>
-                <li class="locked">Employer Health Manager portal</li>
-              </ul>
-              <button class="btn btn-primary">Get started</button>
-            </div>
-            <div class="plan-card">
-              <div class="plan-tier">Corporate</div>
-              <div class="plan-price" id="price-corporate">$45 <span>/ seat / mo</span></div>
-              <div class="plan-note" id="note-corporate">Minimum 5 seats</div>
-              <ul class="plan-features">
-                <li>Everything in Professional</li>
-                <li>Health Manager portal</li>
-                <li>Custom feature toggles</li>
-                <li>Bulk employee invites</li>
-                <li>Org-level cost reporting</li>
-              </ul>
-              <button class="btn btn-outline">Contact sales</button>
-            </div>
-          </div>
-
-          <div class="addons-section">
-            <div class="addons-title">Optional Add-ons</div>
-            <div class="addon-row">
-              <div class="addon-check checked" onclick="toggleAddon(this,9)"></div>
-              <span class="addon-name">Advanced Supplement Protocol</span>
-              <span class="addon-price" id="addon-price-supplement">+$9/mo</span>
-              <span class="addon-gate">Professional+</span>
-            </div>
-            <div class="addon-row">
-              <div class="addon-check" onclick="toggleAddon(this,5)"></div>
-              <span class="addon-name">Branded PDF Export</span>
-              <span class="addon-price" id="addon-price-pdf">+$5/mo</span>
-              <span class="addon-gate">All plans</span>
-            </div>
-            <div class="addon-row" style="opacity:0.55;">
-              <div class="addon-check locked-addon"></div>
-              <span class="addon-name">Genome Analysis Access</span>
-              <span class="addon-price" id="addon-price-genome">+$19/mo</span>
-              <span class="addon-gate locked">Professional+ required</span>
-            </div>
-          </div>
-
-          <div class="total-bar">
-            <div>
-              <div class="total-label">Estimated total</div>
-              <div style="font-size:12px;color:var(--lc-grey);">Updates as you select add-ons</div>
-            </div>
-            <div class="total-amount" id="running-total">$38/mo</div>
-            <button class="btn btn-accent total-cta">Continue to checkout →</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SCREEN: Account / Billing -->
-    <div id="s-billing" class="screen-panel">
-      <div class="screen-wrap" style="border-top:none;border-radius:0 0 14px 14px;">
-        <div class="mock-bar">
-          <div class="brand">Longevity<span style="color:var(--lc-accent);">Coach</span></div>
-          <div class="mock-bar-links"><span>Dashboard</span><span>Report</span><span style="color:var(--lc-primary);font-weight:600;">Account</span></div>
-        </div>
-        <div class="screen-body">
-          <h2>Billing &amp; Add-ons</h2>
-
-          <div class="billing-section">
-            <div class="billing-section-title">Current Plan</div>
-            <div class="billing-plan-row">
-              <div>
-                <div class="billing-plan-name">Professional — Annual</div>
-                <div class="billing-plan-meta">Renews 2027-04-27 · $590/yr</div>
-              </div>
-              <div class="billing-plan-actions">
-                <button class="btn btn-outline btn-sm">Upgrade plan</button>
-                <button class="btn btn-danger btn-sm">Cancel</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="billing-section">
-            <div class="billing-section-title">Active Add-ons</div>
-            <div style="background:var(--lc-surface);border:1px solid var(--lc-line);border-radius:10px;overflow:hidden;">
-              <div class="addon-manage-row">
-                <div class="addon-status-dot dot-green"></div>
-                <div class="addon-manage-name">Advanced Supplement Protocol</div>
-                <div class="addon-manage-price">$90/yr</div>
-                <button class="btn btn-danger btn-sm">Remove</button>
-              </div>
-              <div class="addon-manage-row">
-                <div class="addon-status-dot dot-green"></div>
-                <div class="addon-manage-name">Branded PDF Export</div>
-                <div class="addon-manage-price">$48/yr</div>
-                <button class="btn btn-danger btn-sm">Remove</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="billing-section">
-            <div class="billing-section-title">Available Add-ons</div>
-            <div style="background:var(--lc-surface);border:1px solid var(--lc-line);border-radius:10px;overflow:hidden;">
-              <div class="addon-manage-row">
-                <div class="addon-status-dot dot-grey"></div>
-                <div class="addon-manage-name">Genome Analysis Access</div>
-                <div class="addon-manage-price">$182/yr</div>
-                <button class="btn btn-primary btn-sm">Add</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="billing-section">
-            <div class="billing-section-title">Order a Test</div>
-            <div style="display:flex;gap:10px;margin-bottom:12px;">
-              <select style="padding:8px 10px;border:1px solid var(--lc-line);border-radius:7px;font-size:13px;color:var(--lc-ink);flex:0 0 auto;"><option>All categories</option><option>Imaging</option><option>Pathology</option><option>Genomics</option></select>
-              <input type="text" placeholder="Search tests…" style="flex:1;padding:8px 10px;border:1px solid var(--lc-line);border-radius:7px;font-size:13px;color:var(--lc-ink);">
-            </div>
-            <div style="background:var(--lc-surface);border:1px solid var(--lc-line);border-radius:10px;overflow:hidden;padding:0 14px;">
-              <div class="test-catalog-row">
-                <div class="test-catalog-name">DEXA Scan</div>
-                <span class="test-cat-badge cat-img">Imaging</span>
-                <span class="test-retail">$350</span>
-                <button class="btn btn-primary btn-sm">Order</button>
-              </div>
-              <div class="test-catalog-row">
-                <div class="test-catalog-name">Full Blood Panel</div>
-                <span class="test-cat-badge cat-path">Pathology</span>
-                <span class="test-retail">$120</span>
-                <button class="btn btn-primary btn-sm">Order</button>
-              </div>
-              <div class="test-catalog-row">
-                <div class="test-catalog-name">Genetic Test</div>
-                <span class="test-cat-badge cat-gen">Genomics</span>
-                <span class="test-retail">$499</span>
-                <button class="btn btn-primary btn-sm">Order</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="billing-section">
-            <div class="billing-section-title">Order History</div>
-            <div style="background:var(--lc-surface);border:1px solid var(--lc-line);border-radius:10px;overflow:hidden;padding:0 14px;">
-              <div class="test-catalog-row">
-                <div class="test-catalog-name" style="color:var(--lc-ink-soft);">2026-03-12 — DEXA Scan</div>
-                <span class="test-retail" style="font-size:13px;color:var(--lc-grey);">$350</span>
-                <span class="pill pill-green">Completed</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SCREEN: Employer Dashboard -->
-    <div id="s-employer" class="screen-panel">
-      <div class="screen-wrap" style="border-top:none;border-radius:0 0 14px 14px;">
-        <div class="mock-bar">
-          <div class="brand">Longevity<span style="color:var(--lc-accent);">Coach</span> <span style="font-size:12px;color:var(--lc-grey);font-weight:400;">· Acme Corp</span></div>
-          <div class="mock-bar-links"><span>Overview</span><span style="color:var(--lc-primary);font-weight:600;">Health Package</span><span>Employees</span></div>
-        </div>
-        <div class="screen-body">
-          <div class="emp-header">
-            <h3>Acme Corp — Health Package</h3>
-            <p>Manage the features and tests available to your employees.</p>
-            <div class="emp-meta-pills">
-              <span class="emp-meta-pill">Corporate Annual</span>
-              <span class="emp-meta-pill">12 employees</span>
-              <span class="emp-meta-pill">Health Manager</span>
-            </div>
-          </div>
-
-          <div class="card" style="margin-bottom:20px;">
-            <div class="card-title">Employee Features</div>
-            <table class="feature-matrix">
-              <thead>
-                <tr><th>Feature</th><th>Status</th><th>Cost/seat/mo</th><th>Annual impact</th></tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Risk Report</td>
-                  <td><span class="toggle-on">ON ●</span></td>
-                  <td><span class="included-tag">included</span></td>
-                  <td>—</td>
-                </tr>
-                <tr>
-                  <td>Advanced Supplement Protocol</td>
-                  <td><span class="toggle-on">ON ●</span></td>
-                  <td class="impact-cost">+$9/mo</td>
-                  <td class="impact-cost">$9 × 12 × 12 = $1,296/yr</td>
-                </tr>
-                <tr>
-                  <td>Branded PDF Export</td>
-                  <td><span class="toggle-off">OFF ○</span></td>
-                  <td style="color:var(--lc-grey);">+$5/mo</td>
-                  <td><button class="btn btn-primary btn-sm">Enable</button></td>
-                </tr>
-                <tr>
-                  <td>Genome Analysis Access</td>
-                  <td><span class="toggle-off">OFF ○</span></td>
-                  <td style="color:var(--lc-grey);">+$19/mo</td>
-                  <td><button class="btn btn-primary btn-sm">Enable</button></td>
-                </tr>
-              </tbody>
-            </table>
-            <div class="emp-total-bar">
-              <div>
-                <div class="emp-total-label">Current monthly cost</div>
-                <div style="font-size:12px;color:var(--lc-grey);">($45 base + $9 add-on) × 12 seats</div>
-              </div>
-              <div class="emp-total-amount">$648/mo · $7,776/yr</div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-              <div class="card-title" style="margin:0;">Employees</div>
-              <div style="display:flex;gap:8px;">
-                <button class="btn btn-outline btn-sm">Import CSV</button>
-                <button class="btn btn-primary btn-sm">+ Invite employee</button>
-              </div>
-            </div>
-            <table class="members-table">
-              <thead>
-                <tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th></tr>
-              </thead>
-              <tbody>
-                <tr><td>Jane Smith</td><td>jane@acme.com</td><td><span class="role-badge role-mgr">Health Manager</span></td><td><span class="status-active">Active</span></td></tr>
-                <tr><td>Bob Lee</td><td>bob@acme.com</td><td><span class="role-badge role-mem">Member</span></td><td><span class="status-active">Active</span></td></tr>
-                <tr><td>Sarah Chen</td><td>sarah@acme.com</td><td><span class="role-badge role-mem">Member</span></td><td><span class="status-active">Active</span></td></tr>
-                <tr><td>Tom Harris</td><td>tom@acme.com</td><td><span class="role-badge role-mem">Member</span></td><td style="color:var(--lc-grey);font-size:12px;">Invited</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SCREEN: Admin Panel -->
-    <div id="s-admin" class="screen-panel">
-      <div class="screen-wrap" style="border-top:none;border-radius:0 0 14px 14px;background:var(--lc-bg);">
-        <div class="admin-header">
-          <div class="brand" style="font-size:14px;font-weight:700;">LongevityCoach <span style="opacity:0.4;margin-left:4px;">Admin</span></div>
-          <nav>
-            <span>Plans</span>
-            <span>Add-ons</span>
-            <span class="active">Suppliers</span>
-            <span>Products</span>
-            <span>Test Orders</span>
-          </nav>
-        </div>
-
-        <div style="padding:28px;">
-          <!-- Suppliers table -->
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-            <h3 style="margin:0;font-size:16px;font-weight:700;color:var(--lc-ink);">Suppliers</h3>
-            <button class="btn btn-primary btn-sm">+ Add Supplier</button>
-          </div>
-          <div style="background:var(--lc-surface);border:1px solid var(--lc-line);border-radius:12px;overflow:hidden;margin-bottom:28px;">
-            <table class="admin-table">
-              <thead><tr><th>Name</th><th>ABN / ID</th><th>Status</th><th>Products</th><th></th></tr></thead>
-              <tbody>
-                <tr>
-                  <td style="font-weight:600;">HealthPath Labs</td>
-                  <td style="font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--lc-grey);">51 234 567 890</td>
-                  <td><span class="pill pill-green">Active</span></td>
-                  <td>8</td>
-                  <td><button class="btn btn-outline btn-sm">Edit</button></td>
-                </tr>
-                <tr>
-                  <td style="font-weight:600;">GenomicsCo</td>
-                  <td style="font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--lc-grey);">83 456 789 012</td>
-                  <td><span class="pill pill-green">Active</span></td>
-                  <td>3</td>
-                  <td><button class="btn btn-outline btn-sm">Edit</button></td>
-                </tr>
-                <tr>
-                  <td style="font-weight:600;">ImagingPlus</td>
-                  <td style="font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--lc-grey);">72 890 123 456</td>
-                  <td><span class="pill pill-grey">Inactive</span></td>
-                  <td>5</td>
-                  <td><button class="btn btn-outline btn-sm">Edit</button></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <!-- Products table -->
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-            <h3 style="margin:0;font-size:16px;font-weight:700;color:var(--lc-ink);">Products <span style="font-size:13px;font-weight:400;color:var(--lc-grey);margin-left:8px;">Supplier: All</span></h3>
-            <button class="btn btn-primary btn-sm">+ Add Product</button>
-          </div>
-          <div style="background:var(--lc-surface);border:1px solid var(--lc-line);border-radius:12px;overflow:hidden;margin-bottom:28px;">
-            <table class="admin-table">
-              <thead><tr><th>Code</th><th>Name</th><th>Supplier</th><th>Category</th><th>Retail</th><th>Wholesale</th><th></th></tr></thead>
-              <tbody>
-                <tr>
-                  <td class="route">DEX-001</td>
-                  <td style="font-weight:500;">DEXA Scan</td>
-                  <td style="color:var(--lc-grey);font-size:13px;">HealthPath</td>
-                  <td><span class="test-cat-badge cat-img">Imaging</span></td>
-                  <td style="font-weight:600;">$350</td>
-                  <td class="ws-col">$200</td>
-                  <td style="display:flex;gap:6px;"><button class="btn btn-outline btn-sm">Edit</button><button class="btn btn-danger btn-sm">Deactivate</button></td>
-                </tr>
-                <tr>
-                  <td class="route">BLD-001</td>
-                  <td style="font-weight:500;">Full Blood Panel</td>
-                  <td style="color:var(--lc-grey);font-size:13px;">HealthPath</td>
-                  <td><span class="test-cat-badge cat-path">Pathology</span></td>
-                  <td style="font-weight:600;">$120</td>
-                  <td class="ws-col">$65</td>
-                  <td style="display:flex;gap:6px;"><button class="btn btn-outline btn-sm">Edit</button><button class="btn btn-danger btn-sm">Deactivate</button></td>
-                </tr>
-                <tr>
-                  <td class="route">GEN-001</td>
-                  <td style="font-weight:500;">Genetic Test</td>
-                  <td style="color:var(--lc-grey);font-size:13px;">GenomicsCo</td>
-                  <td><span class="test-cat-badge cat-gen">Genomics</span></td>
-                  <td style="font-weight:600;">$499</td>
-                  <td class="ws-col">$300</td>
-                  <td style="display:flex;gap:6px;"><button class="btn btn-outline btn-sm">Edit</button><button class="btn btn-danger btn-sm">Deactivate</button></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <!-- Add product modal example -->
-          <div class="modal-overlay">
-            <div style="font-size:12px;font-weight:600;color:var(--lc-grey);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.06em;">Example modal — Add / Edit Product</div>
-            <div class="modal">
-              <h4>Add Product</h4>
-              <div class="form-field"><label>Supplier</label><select><option>HealthPath Labs</option><option>GenomicsCo</option></select></div>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-                <div class="form-field"><label>Product code</label><input type="text" placeholder="DEX-001"></div>
-                <div class="form-field"><label>Category</label><select><option>Imaging</option><option>Pathology</option><option>Genomics</option></select></div>
-              </div>
-              <div class="form-field"><label>Name</label><input type="text" placeholder="DEXA Scan"></div>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-                <div class="form-field"><label>Wholesale ($)</label><input type="number" placeholder="200"></div>
-                <div class="form-field"><label>Retail ($)</label><input type="number" placeholder="350"></div>
-              </div>
-              <div class="form-field"><label>Stripe Price ID</label><input type="text" placeholder="price_1ABC…"></div>
-              <div class="form-field"><label>Status</label><select><option>Active</option><option>Inactive</option></select></div>
-              <div class="modal-actions">
-                <button class="btn btn-outline btn-sm">Cancel</button>
-                <button class="btn btn-primary btn-sm">Save Product</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
   </div>
 </div>
 
 <script>
-  // ── View switching ──
-  function switchView(name) {
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
-    document.getElementById('view-' + name).classList.add('active');
-    event.currentTarget.classList.add('active');
-  }
+// ── Tab switching ──
+function switchView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
 
-  // ── Screen switching (within UI view) ──
-  function switchScreen(name) {
-    document.querySelectorAll('.screen-panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.screen-tab').forEach(t => t.classList.remove('active'));
-    document.getElementById(name).classList.add('active');
-    event.currentTarget.classList.add('active');
-  }
+// ── Billing toggle ──
+const prices = {
+  monthly: { core: '$49', clinical: '$99', elite: '$199', note: '' },
+  annual:  { core: '$470', clinical: '$950', elite: '$1,910', note: '/yr — billed annually' }
+};
+let billingMode = 'monthly';
+let selectedPlanPrice = 0;
 
-  // ── Billing toggle ──
-  const prices = {
-    monthly: { individual: 29, professional: 59, corporate: 45,
-                supplement: 9, pdf: 5, genome: 19 },
-    annual:  { individual: 23, professional: 47, corporate: 36,
-                supplement: 8, pdf: 4, genome: 15 }
-  };
-  let currentInterval = 'monthly';
-  let addonState = { supplement: true, pdf: false };
+function setBilling(mode) {
+  billingMode = mode;
+  const p = prices[mode];
+  const suffix = mode === 'monthly' ? '<span>/mo</span>' : '<span>/yr</span>';
+  document.getElementById('price-core').innerHTML = p.core + suffix;
+  document.getElementById('price-clinical').innerHTML = p.clinical + suffix;
+  document.getElementById('price-elite').innerHTML = p.elite + suffix;
+  document.getElementById('note-core').textContent = mode === 'annual' ? 'Billed as $470/yr — save $118' : ' ';
+  document.getElementById('note-clinical').textContent = mode === 'annual' ? 'Billed as $950/yr — save $238' : ' ';
+  document.getElementById('note-elite').textContent = mode === 'annual' ? 'Billed as $1,910/yr — save $478' : ' ';
+  document.getElementById('btn-monthly').classList.toggle('on', mode === 'monthly');
+  document.getElementById('btn-annual').classList.toggle('on', mode === 'annual');
+  updateRunningTotal();
+}
 
-  function setBilling(interval) {
-    currentInterval = interval;
-    document.getElementById('toggle-monthly').classList.toggle('on', interval === 'monthly');
-    document.getElementById('toggle-annual').classList.toggle('on', interval === 'annual');
-    updatePrices();
-  }
+// ── Add-on toggle ──
+const addonState = { 'addon-dexa': false, 'addon-blood': false, 'addon-genetics': false, 'addon-supps': false };
+const addonPrices = { 'addon-dexa': 350, 'addon-blood': 120, 'addon-genetics': 499, 'addon-supps': 45 };
 
-  function updatePrices() {
-    const p = prices[currentInterval];
-    const suffix = currentInterval === 'annual' ? '/ mo (billed annually)' : '/ mo';
-    document.getElementById('price-individual').innerHTML = `$${p.individual} <span>${suffix}</span>`;
-    document.getElementById('price-professional').innerHTML = `$${p.professional} <span>${suffix}</span>`;
-    document.getElementById('price-corporate').innerHTML = `$${p.corporate} <span>/ seat ${suffix}</span>`;
-    document.getElementById('addon-price-supplement').textContent = `+$${p.supplement}/mo`;
-    document.getElementById('addon-price-pdf').textContent       = `+$${p.pdf}/mo`;
-    document.getElementById('addon-price-genome').textContent     = `+$${p.genome}/mo`;
-    if (currentInterval === 'annual') {
-      document.getElementById('note-individual').textContent    = `Save $${(29-p.individual)*12}/yr`;
-      document.getElementById('note-professional').textContent  = `Save $${(59-p.professional)*12}/yr`;
-      document.getElementById('note-corporate').textContent     = `Save $${(45-p.corporate)*12}/seat/yr`;
-    } else {
-      document.getElementById('note-individual').innerHTML  = '&nbsp;';
-      document.getElementById('note-professional').innerHTML = '&nbsp;';
-      document.getElementById('note-corporate').textContent = 'Minimum 5 seats';
-    }
-    updateTotal();
+function toggleAddon(row, id, price) {
+  addonState[id] = !addonState[id];
+  const check = document.getElementById(id);
+  if (addonState[id]) {
+    check.classList.add('checked');
+  } else {
+    check.classList.remove('checked');
   }
+  updateRunningTotal();
+}
 
-  function updateTotal() {
-    const p = prices[currentInterval];
-    let total = p.professional;
-    if (addonState.supplement) total += p.supplement;
-    if (addonState.pdf)        total += p.pdf;
-    const suffix = currentInterval === 'annual' ? '/mo (annual)' : '/mo';
-    document.getElementById('running-total').textContent = `$${total}${suffix}`;
-  }
+function updateRunningTotal() {
+  let total = Object.entries(addonState).reduce((sum, [id, on]) => on ? sum + addonPrices[id] : sum, 0);
+  document.getElementById('running-total').textContent = total > 0 ? '$' + total.toLocaleString() : '$0';
+}
 
-  function toggleAddon(el, price) {
-    if (el.classList.contains('locked-addon')) return;
-    const isNowChecked = !el.classList.contains('checked');
-    el.classList.toggle('checked', isNowChecked);
-    const name = el.closest('.addon-row').querySelector('.addon-name').textContent.toLowerCase();
-    if (name.includes('supplement')) addonState.supplement = isNowChecked;
-    if (name.includes('pdf'))        addonState.pdf        = isNowChecked;
-    updateTotal();
+// ── B2B seat count live totals ──
+const tierPrices = { core: 49, clinical: 99, elite: 199 };
+
+function calcB2BTotals() {
+  const rows = document.querySelectorAll('.tier-alloc-table tbody tr');
+  let monthly = 0;
+  const tiers = ['core', 'clinical', 'elite'];
+  rows.forEach((row, i) => {
+    const seats = parseInt(row.querySelector('input').value) || 0;
+    const price = tierPrices[tiers[i]];
+    const rowTotal = seats * price;
+    document.getElementById('alloc-' + tiers[i]).textContent = '$' + rowTotal.toLocaleString();
+    monthly += rowTotal;
+  });
+  document.getElementById('b2b-monthly').textContent = '$' + monthly.toLocaleString();
+  const annual = Math.round(monthly * 12 * 0.8);
+  document.getElementById('b2b-annual').textContent = '$' + annual.toLocaleString() + '/yr';
+}
+
+// ── Plan builder collapsible sections ──
+function toggleSection(name) {
+  const body = document.getElementById('body-' + name);
+  const chevron = document.getElementById('chevron-' + name);
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  chevron.classList.toggle('open', !isOpen);
+}
+
+// ── Supplier expand/collapse ──
+function toggleSupplier(name) {
+  const body = document.getElementById('sup-body-' + name);
+  const chevron = document.getElementById('sup-chevron-' + name);
+  if (!body) return;
+  const isOpen = body.style.display !== 'none';
+  body.style.display = isOpen ? 'none' : 'block';
+  chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(90deg)';
+}
+
+// ── Tier editor show/hide ──
+let editingTier = 'clinical'; // start with clinical open
+function editTier(tier) {
+  // Hide all editors
+  ['core','clinical','elite'].forEach(t => {
+    const ed = document.getElementById('editor-' + t);
+    const card = document.getElementById('tier-' + t);
+    if (ed) ed.style.display = 'none';
+    if (card) card.classList.remove('editing');
+  });
+  if (editingTier === tier) {
+    // toggle off
+    editingTier = null;
+    return;
   }
+  editingTier = tier;
+  const ed = document.getElementById('editor-' + tier);
+  const card = document.getElementById('tier-' + tier);
+  if (ed) ed.style.display = 'block';
+  if (card) card.classList.add('editing');
+}
 </script>
 </body>
 </html>

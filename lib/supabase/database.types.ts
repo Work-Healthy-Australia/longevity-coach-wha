@@ -337,40 +337,58 @@ export type Database = {
       plans: {
         Row: {
           annual_discount_pct: number
+          annual_price_cents: number | null
           base_price_cents: number
           billing_interval: string
           created_at: string
           feature_flags: Json
           id: string
           is_active: boolean
+          minimum_commitment_months: number | null
           name: string
+          public_description: string | null
+          setup_fee_cents: number | null
           stripe_price_id: string
+          stripe_price_id_annual: string | null
+          stripe_price_id_monthly: string | null
           tier: string
           updated_at: string
         }
         Insert: {
           annual_discount_pct?: number
+          annual_price_cents?: number | null
           base_price_cents: number
           billing_interval: string
           created_at?: string
           feature_flags?: Json
           id?: string
           is_active?: boolean
+          minimum_commitment_months?: number | null
           name: string
+          public_description?: string | null
+          setup_fee_cents?: number | null
           stripe_price_id: string
+          stripe_price_id_annual?: string | null
+          stripe_price_id_monthly?: string | null
           tier: string
           updated_at?: string
         }
         Update: {
           annual_discount_pct?: number
+          annual_price_cents?: number | null
           base_price_cents?: number
           billing_interval?: string
           created_at?: string
           feature_flags?: Json
           id?: string
           is_active?: boolean
+          minimum_commitment_months?: number | null
           name?: string
+          public_description?: string | null
+          setup_fee_cents?: number | null
           stripe_price_id?: string
+          stripe_price_id_annual?: string | null
+          stripe_price_id_monthly?: string | null
           tier?: string
           updated_at?: string
         }
@@ -556,6 +574,108 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      janet_services: {
+        Row: {
+          id: string
+          name: string
+          unit_type: string
+          internal_cost_cents: number
+          retail_value_cents: number
+          delivery_owner: string | null
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          unit_type: string
+          internal_cost_cents?: number
+          retail_value_cents?: number
+          delivery_owner?: string | null
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          unit_type?: string
+          internal_cost_cents?: number
+          retail_value_cents?: number
+          delivery_owner?: string | null
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      tier_inclusions: {
+        Row: {
+          id: string
+          plan_id: string
+          janet_service_id: string
+          quantity: number
+          frequency: string
+          wholesale_cost_cents: number
+          retail_value_cents: number
+          is_visible_to_customer: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          plan_id: string
+          janet_service_id: string
+          quantity?: number
+          frequency: string
+          wholesale_cost_cents?: number
+          retail_value_cents?: number
+          is_visible_to_customer?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          plan_id?: string
+          janet_service_id?: string
+          quantity?: number
+          frequency?: string
+          wholesale_cost_cents?: number
+          retail_value_cents?: number
+          is_visible_to_customer?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      feature_keys: {
+        Row: {
+          key: string
+          label: string
+          tier_affinity: string
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          key: string
+          label: string
+          tier_affinity: string
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          key?: string
+          label?: string
+          tier_affinity?: string
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
     }
     Views: {

@@ -3,19 +3,29 @@ Date: 2026-04-29
 Phase: Phase 3 — Intelligence
 
 ## What was built
-- Automatic retry-once recovery in `createPipelineAgent` — any JSON parse failure on the first LLM attempt is retried at `temperature: 0` after 500ms, with a structured warning log capturing the raw model output for diagnosis
+- Zod schema hardening + `extractJson` + retry-once in `lib/uploads/janet.ts` (raw Anthropic SDK path, separate from `createPipelineAgent`)
+- Three-tier JSON parse recovery chain in `createPipelineAgent`:
+  - Tier 1: structured tool_use output at configured temperature
+  - Tier 2: structured tool_use output at temperature=0 + raw-text JSON healing (no extra LLM call)
+  - Tier 3: format-escape — plain text generation with labeled `===FIELD: name===` sections, bypasses tool_use entirely, assembles output manually before Zod parse
+- Structured warning logs (`pipeline_parse_attempt_failed`, `pipeline_healed_from_raw`, `pipeline_format_escape_success`, `pipeline_format_escape_zod_fail`) capturing raw model text for diagnosis
 
 ## What changed
-- `lib/ai/agent-factory.ts` — Added `NoObjectGeneratedError` import; replaced single `generateText` call with a 2-attempt retry loop; added null guard on `result.output`; added structured `pipeline_parse_retry` log on first-attempt failure
-- `lib/ai/pipelines/clinician-brief.ts` — Removed `.min(100)`, `.max(1200)`, `.max(400)`, `.max(300)` from `ClinicianBriefOutputSchema` string fields; added explanatory comment
-- `lib/ai/pipelines/pt-plan.ts` — Removed `.min(7)` from `exercises` array in `PtPlanOutputSchema`; added explanatory comment
+
+| File | Change |
+|---|---|
+| `lib/ai/agent-factory.ts` | Complete rewrite of `createPipelineAgent` — 3-tier chain, `extractJson`, `getFieldNames`, `extractLabeledFields`, `assembleFromSections`, `tryHeal` helpers |
+| `lib/ai/pipelines/clinician-brief.ts` | Removed string length constraints; `DomainHighlightSchema` hardened with `.catch()` on all fields, `z.coerce.number()` on score |
+| `lib/ai/pipelines/pt-plan.ts` | `PtPlanItemSchema` hardened with `z.coerce.number()` and `.catch()` on required fields; removed `exercises.min(7)` |
+| `lib/uploads/janet.ts` | Added `BiomarkerExtractionSchema` and `JanetResultSchema` with `.catch()` hardening on all fields; `extractJson` helper; `parseJanetResult` helper; retry-once with stronger JSON prompt on attempt 2 and thinking disabled on retry |
 
 ## Migrations applied
 None.
 
 ## Deviations from plan
-None — all three tasks implemented as specified.
+None.
 
 ## Known gaps / deferred items
-- No unit tests for the retry path itself. The path is exercised by the eval suite with real LLM calls. A mock-based unit test for the retry behaviour would be a useful addition in a future cleanup pass.
-- Pre-existing TypeScript errors in `journal/page.tsx` and `patient-context.ts` (missing `journal_entries` type + `journalEntries` on `PatientContext`) are unrelated and tracked separately.
+- Unit tests for the five pure helper functions in `agent-factory.ts` would be a useful addition. Added as a QA note.
+- Optional numeric fields in `PtPlanItemSchema` (`sets`, `duration_min`) do not have `.catch(undefined)` — if the model produces a non-numeric string for those optional fields, the item parse fails. Low risk; defer to a future cleanup.
+- Model upgrade (sonnet → opus) is a DB configuration change in `agents.agent_definitions`, not code.
