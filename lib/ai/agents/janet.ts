@@ -6,6 +6,7 @@ import { compressConversation } from '@/lib/ai/compression';
 import { riskAnalyzerTool } from '@/lib/ai/tools/risk-analyzer-tool';
 import { supplementAdvisorTool } from '@/lib/ai/tools/supplement-advisor-tool';
 import { ptCoachTool } from '@/lib/ai/tools/pt-coach-tool';
+import { mealPlanTool } from '@/lib/ai/tools/meal-plan-tool';
 
 export async function streamJanetTurn(userId: string, messages: UIMessage[]) {
   const t0 = Date.now();
@@ -23,6 +24,7 @@ export async function streamJanetTurn(userId: string, messages: UIMessage[]) {
       risk_analyzer_summary: riskAnalyzerTool(ctx),
       supplement_advisor_summary: supplementAdvisorTool(ctx),
       consult_pt_coach: ptCoachTool(ctx),
+      request_meal_plan: mealPlanTool(ctx),
     },
     onFinish: async ({ text }) => {
       const totalMs = Date.now() - t0;

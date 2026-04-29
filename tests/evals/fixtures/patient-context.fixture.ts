@@ -112,6 +112,8 @@ export const SEED_PATIENT_CONTEXT: PatientContext = {
 
   journalEntries: [],
 
+  mealPlan: null,
+
   recentConversation: [
     {
       role: 'user',

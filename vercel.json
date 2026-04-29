@@ -4,6 +4,7 @@
     { "path": "/api/cron/drip-emails", "schedule": "0 8 * * *" },
     { "path": "/api/cron/repeat-tests", "schedule": "0 6 * * *" },
     { "path": "/api/cron/pt-plan", "schedule": "0 3 1 * *" },
-    { "path": "/api/cron/clinician-briefs", "schedule": "0 1 1 * *" }
+    { "path": "/api/cron/clinician-briefs", "schedule": "0 1 1 * *" },
+    { "path": "/api/cron/meal-plan", "schedule": "0 7 * * 1" }
   ]
 }

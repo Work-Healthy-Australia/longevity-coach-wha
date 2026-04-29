@@ -13,6 +13,33 @@ Rules:
 - Run `supabase db diff` locally before committing a migration to verify the diff matches intent.
 - After adding a migration, regenerate TypeScript types: `supabase gen types typescript --local > lib/supabase/database.types.ts`
 
+**Bundle small changes — no single-statement migration files.** A migration that adds one column to one table is too small to stand alone. Group related column additions for the same feature into one migration file. Single-statement files create noise in the migration log and make rollbacks harder to reason about. Minimum useful migration: one complete feature slice (e.g. all columns + indexes for a new workflow, not `add column if not exists paused_at timestamptz` in isolation).
+
+---
+
+## Canonical schema definitions
+
+Alongside the sequential migration files, maintain a human-readable canonical schema at:
+
+```
+supabase/schema/<schema>/[tables|functions|views|extensions]/<entity-name>.sql
+```
+
+Examples:
+```
+supabase/schema/public/tables/profiles.sql
+supabase/schema/public/tables/training_plans.sql
+supabase/schema/public/functions/handle_new_user.sql
+supabase/schema/biomarkers/tables/daily_logs.sql
+```
+
+Rules:
+- Each file contains the **current full definition** of the entity (CREATE TABLE ... with all columns, indexes, RLS policies, and triggers).
+- These files are the source of truth for what a table looks like — not the migration history.
+- When a migration adds columns or indexes to an existing table, update the corresponding canonical file at the same time.
+- New tables: create both the migration file and the canonical file together.
+- The canonical files are read-only for production — changes go through migrations, then the canonical file is updated to reflect the result.
+
 ---
 
 ## Row-level security
