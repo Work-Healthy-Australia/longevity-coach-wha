@@ -46,3 +46,5 @@ supabase/.branches/
 *.tsbuildinfo
 next-env.d.ts
 .worktrees/
+
+tests/fixtures/uploads/*

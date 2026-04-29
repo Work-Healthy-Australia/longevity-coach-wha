@@ -116,7 +116,7 @@ Visible work members will feel. Each item is independently shippable.
 - New section on `/check-in` (or new page `/trends`): 30-day line charts for sleep_hours, energy_level, mood, steps.
 - Reuse Recharts setup from B4.
 
-### B6 — Risk simulator stub **(M, ~2 days)** — *Epic 8*
+### B6 — Risk simulator stub **(M, ~2 days)** — *Epic 8* — ✅ **DONE 2026-04-29** (LDL/HbA1c/hsCRP/Weight sliders; SBP deferred — engine treats it as a binary flag)
 - New page `/simulator`: sliders for LDL, HbA1c, BP, weight; recompute risk in real-time using `lib/risk/scorer.ts` (depends on A1).
 - Pure client-side; no new persistence.
 - Out-of-range values clamped with a warning.

@@ -1,6 +1,60 @@
 import type { DomainResult, Factor, PatientInput } from "./types";
 import { computeDomainResult } from "./scorer-utils";
 
+/**
+ * Compute the blood-pressure factor score (0–100, higher = worse).
+ *
+ * Priority chain:
+ *  1. If `systolic_bp_mmHg` is a finite number AND > 0 → graded AHA-aligned bands.
+ *  2. Else if `hasHTN` → existing binary score (70, or 50 with antihypertensive).
+ *  3. Else → 0 (normal).
+ *
+ * Antihypertensive medication: when `hasAntihyp` is true AND the score is
+ * driven by a numeric value, subtract 15 (clamped to ≥ 0). Reflects that
+ * the medicated reading understates underlying pressure. Mirrors the
+ * binary-path behaviour where antihyp drops 70 → 50.
+ *
+ * Returns `{ score, rawValue }`. `rawValue` is `"${sbp} mmHg"` on the numeric
+ * path, `"hypertension"` on the binary path, otherwise `"normal"`.
+ */
+export function computeBpScore(args: {
+  systolic_bp_mmHg?: number;
+  hasHTN: boolean;
+  hasAntihyp: boolean;
+}): { score: number; rawValue: string } {
+  const { systolic_bp_mmHg, hasHTN, hasAntihyp } = args;
+
+  // LIMITATION: SBP < 90 mmHg (clinical hypotension) scores 0 — same as 110.
+  // Real hypotension carries syncope/perfusion risk; the simulator UI clamps
+  // to min 90 so this is unreachable today, but a future data writer (Janet,
+  // questionnaire, wearable) could feed sub-90 values. Adding a hypotension
+  // band is a separate clinical-review decision; documented in the change's
+  // EXECUTIVE_SUMMARY.
+  if (
+    typeof systolic_bp_mmHg === "number" &&
+    Number.isFinite(systolic_bp_mmHg) &&
+    systolic_bp_mmHg > 0
+  ) {
+    let score: number;
+    if (systolic_bp_mmHg < 120) score = 0;
+    else if (systolic_bp_mmHg < 130) score = 15;
+    else if (systolic_bp_mmHg < 140) score = 35;
+    else if (systolic_bp_mmHg < 160) score = 60;
+    else if (systolic_bp_mmHg < 180) score = 85;
+    else score = 100;
+
+    if (hasAntihyp) score = Math.max(0, score - 15);
+
+    return { score, rawValue: `${Math.round(systolic_bp_mmHg)} mmHg` };
+  }
+
+  if (hasHTN) {
+    return { score: hasAntihyp ? 50 : 70, rawValue: "hypertension" };
+  }
+
+  return { score: 0, rawValue: "normal" };
+}
+
 export function scoreCardiovascular(patient: PatientInput): DomainResult {
   const factors: Factor[] = [];
   const bp = patient.biomarkers?.blood_panel || {};
@@ -81,8 +135,20 @@ export function scoreCardiovascular(patient: PatientInput): DomainResult {
   const meds = med.medications || [];
   const hasHTN = conditions.some((c) => /hypertension|high blood pressure/i.test(c));
   const hasAntihyp = meds.some((m) => /lisinopril|amlodipine|losartan|metoprolol|atenolol|ramipril|valsartan|perindopril/i.test(m));
-  const bpScore = hasHTN && hasAntihyp ? 50 : hasHTN ? 70 : 0;
-  factors.push({ name: "blood_pressure", raw_value: hasHTN ? "hypertension" : "normal", score: bpScore, weight: 0.08, modifiable: true, optimal_range: "< 120/80 mmHg" });
+  const dem = patient.demographics ?? {};
+  const { score: bpScore, rawValue: bpRaw } = computeBpScore({
+    systolic_bp_mmHg: dem.systolic_bp_mmHg,
+    hasHTN,
+    hasAntihyp,
+  });
+  factors.push({
+    name: "blood_pressure",
+    raw_value: bpRaw,
+    score: bpScore,
+    weight: 0.08,
+    modifiable: true,
+    optimal_range: "< 120/80 mmHg",
+  });
 
   if (img.coronary_calcium_score != null) {
     let s: number;

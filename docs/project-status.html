@@ -312,6 +312,30 @@
     box-shadow: 0 2px 8px rgba(24, 38, 52, 0.08);
   }
 
+  .plan-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 28px;
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 0;
+  }
+  .plan-tab {
+    padding: 8px 18px;
+    border: none;
+    background: none;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink-mute);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    border-radius: 0;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .plan-tab:hover { color: var(--ink); }
+  .plan-tab.active { color: var(--sage); border-bottom-color: var(--sage); }
+
   @media (max-width: 900px) {
     .layout { grid-template-columns: 1fr; }
     aside {
@@ -364,6 +388,12 @@
       <div class="nav-label">Quality</div>
       <a class="nav-item" data-doc="qa-plan">QA Plan <span class="filename">qa-plan.md</span></a>
       <a class="nav-item" data-doc="qa-report">QA Report (2026-04-27) <span class="filename">2026-04-27-qa-report.md</span></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">Planning</div>
+      <a class="nav-item" data-doc="plan">Plans <span class="filename">sprint-1/</span></a>
+      <a class="nav-item" data-doc="proposals">Proposals <span class="filename">feature-proposal.md</span></a>
     </div>
 
     <div id="tocContainer"></div>
@@ -1206,13 +1236,13 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 | # | Epic | Pipeline | Estimate | Open bugs | Closed bugs |
 |---|---|---|---:|---:|---:|
 | 1 | The Front Door | `●●●●●` | 100% | 0 | 3 |
-| 2 | The Intake | `●●●◐○` | 95% | 0 | 0 |
+| 2 | The Intake | `●●●◐○` | 97% | 0 | 0 |
 | 3 | The Number | `●●◐○○` | 70% | 0 | 1 |
 | 4 | The Protocol | `●●◐○○` | 60% | 0 | 0 |
-| 5 | The Report | `●◐○○○` | 35% | 1 (P3) | 0 |
+| 5 | The Report | `●●○○○` | 65% | 0 | 1 |
 | 6 | The Coach | `●●◐○○` | 90% | 0 | 1 |
 | 7 | The Daily Return | `●●◐○○` | 70% | 0 | 0 |
-| 8 | The Living Record | `●●◐○○` | 25% | 0 | 0 |
+| 8 | The Living Record | `●●◐○○` | 65% | 0 | 0 |
 | 9 | The Care Team | `●○○○○` | 5% | 0 | 0 |
 | 10 | The Knowledge Engine | `●◐◐○○` | 60% | 0 | 1 |
 | 11 | The Trust Layer | `●●◐○○` | 65% | 0 | 1 |
@@ -1220,7 +1250,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 | 13 | The Business Model | `●○○○○` | 0% | 0 | 0 |
 | 14 | The Platform Foundation | `●◐○○○` | 45% | 0 | 0 |
 
-**Bug totals:** 1 open, 7 closed. (Bug log: forthcoming `qa/QA-bugs.md`.)
+**Bug totals:** 0 open, 8 closed. (Bug log: forthcoming `qa/QA-bugs.md`.)
 
 ---
 
@@ -1349,10 +1379,10 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - "What changed since last report" diff when run twice.
 - Visual regression coverage (Chromatic) on `/report` and the PDF.
 
-**Open bugs:**
-- **BUG-005** (P3): Branded PDF route at `/api/report/pdf` returns an unstyled skeleton — no logo, no domain colours, no supplement table. Members cannot share a credible PDF with their GP yet.
+**Open bugs:** none.
 
-**Closed bugs:** 0.
+**Closed bugs:**
+- **BUG-005** (CLOSED 2026-04-29): Branded PDF was returning an unstyled skeleton. Resolved as part of the P0 Vietnam MVP wave (commit `f1fe816`, 2026-04-28); bug entry was simply not closed at the time. PDF now includes logo, cover page, big-number summary, domain colour swatches, supplement table with tier colours, footer disclaimer.
 
 ---
 
@@ -2402,6 +2432,805 @@ Live QA via skill:
 4. **Consider rotating the Supabase secret key** that was committed to `.env.example`.
 5. **Add the upload portal next** — it's the gating dependency for the rest of the gap analysis (Janet parsing, risk calculator, end-to-end tests with sample data).</script>
 
+<script type="text/markdown" id="md-plan-a"># Sprint 2 — Plan A: Business Features
+**Date:** 2026-04-29
+**Scope:** Pricing system (S1+S2), Admin CRM expansion, Stripe entitlement wiring, Clinician Portal review
+**Runner:** Claude Code (coding steps) + James Murray (decisions marked ⚠️)
+**Epics touched:** Epic 9 (Care Team — review only), Epic 12 (Distribution), Epic 13 (Business Model)
+
+---
+
+## Pre-flight: Decisions required from James BEFORE coding starts
+
+These are business decisions that block specific steps. Resolve them in the morning standup.
+
+| # | Decision | Blocks |
+|---|---|---|
+| ⚠️ D1 | **Feature flag key enum** — confirm the exact string identifiers for add-ons. Suggested: `supplement_protocol`, `pdf_export`, `genome_access`, `advanced_risk_report`, `dexa_ordering` | Step 3 migrations |
+| ⚠️ D2 | **Per-seat vs flat corporate pricing** — is the corporate plan billed per employee seat or as a flat org rate? | Step 3 migrations + Step 8 |
+| ⚠️ D3 | **Corporate invite model** — email invite (existing flow), bulk CSV upload, or email-domain auto-match? | Step 9 |
+| ⚠️ D4 | **Org add-on Stripe billing** — does the org get one Stripe subscription item per add-on (flat) or one per seat? Affects whether `organisation_addons` needs a `stripe_subscription_item_id` column | Step 3 migrations |
+
+---
+
+## Step 1 — Audit existing billing schema migration
+
+**Who:** Claude Code
+**What:** Read `supabase/migrations/0013_billing_schema.sql` and compare against the pricing feature database design at `docs/features/pricing/database-design.md`. Produce a diff of what tables already exist vs. what the pricing design requires.
+
+**Output:** A concrete list of new tables/columns needed before any migration is written.
+
+---
+
+## Step 2 — Resolve migration filename collisions
+
+**Who:** Claude Code
+**What:** The `0031_*.sql` and `0032_*.sql` slots each have two files (parallel branch collision). Renumber them to a clean monotonic sequence:
+
+- `0031_member_alerts.sql` → keep as `0031`
+- `0031_patient_uploads_file_hash.sql` → rename to `0038_patient_uploads_file_hash.sql`
+- `0032_lab_results_idempotency.sql` → keep as `0032`
+- `0032_seed_admins.sql` → rename to `0039_seed_admins.sql`
+
+Then bump the next available migration slot to `0040`.
+
+**Verify:** Run `supabase db diff` locally after renaming to confirm the chain is intact.
+
+---
+
+## Step 3 — Write pricing migrations (requires D1, D2, D4)
+
+**Who:** Claude Code
+**What:** Write new idempotent migrations under the next sequential numbers. Reference `docs/features/pricing/database-design.md` exactly.
+
+Tables to create (check Step 1 diff first — some may already exist in `0013`):
+
+| Migration | Tables |
+|---|---|
+| `0040_plans.sql` | `public.plans`, `public.plan_addons` + RLS policies |
+| `0041_subscription_addons.sql` | `public.subscription_addons`, `public.test_orders` + RLS |
+| `0042_organisations_pricing.sql` | `public.organisations` (extend or create), `public.organisation_addons`, `public.organisation_members` + RLS |
+| `0043_products_public_view.sql` | `products_public` view (wholesale hidden from non-admin RLS) |
+
+RLS rules per table must match the table in `docs/features/pricing/database-design.md` — Section "RLS summary".
+
+**Verify:** `supabase db diff` clean; regenerate `lib/supabase/database.types.ts` after all four are applied.
+
+---
+
+## Step 4 — Feature flag resolution layer
+
+**Who:** Claude Code
+**What:** Implement `lib/features/resolve.ts` — the single function that determines whether a user can access a given feature.
+
+Logic (from `docs/features/pricing/system-design.md` — "Feature flag resolution"):
+1. Platform admin → all features unlocked
+2. Org member → check `organisation_addons` → check plan tier ceiling
+3. Standalone subscriber → check `subscription_addons` → check plan tier ceiling
+4. Otherwise → locked
+
+Signature:
+```typescript
+export async function canAccess(
+  userId: string,
+  featureKey: string,
+  supabase: SupabaseClient
+): Promise<boolean>
+```
+
+Write unit tests in `tests/unit/features/resolve.test.ts` covering all four paths.
+
+---
+
+## Step 5 — Pricing calculation helpers
+
+**Who:** Claude Code
+**What:** Implement `lib/pricing/calculate.ts` with two pure functions:
+
+- `calculateTotal(plan, addons, interval)` — standalone user total
+- `calculateOrgTotal(plan, enabledAddons, seatCount, interval)` — employer total
+
+Both are already specced in `docs/features/pricing/system-design.md` — "Pricing Calculation Logic". Add unit tests.
+
+---
+
+## Step 6 — Stripe checkout updated to read from DB plans
+
+**Who:** Claude Code
+**What:** Update `app/api/stripe/checkout/route.ts` to:
+1. Accept `{ plan_id, addon_ids[], billing_interval }` in the request body
+2. Read the plan and add-ons from DB to resolve Stripe price IDs
+3. Build the Stripe checkout session with all line items
+
+Deprecate `priceIdForPlan()` in `lib/stripe/client.ts` once the new checkout route is live (leave a `// deprecated` note and a TODO to remove).
+
+---
+
+## Step 7 — Public pricing page
+
+**Who:** Claude Code
+**What:** Implement `app/(app)/pricing/page.tsx` per the wireframe in `docs/features/pricing/system-design.md` Screen 1.
+
+Requirements:
+- Server component loads plans + plan_addons from DB via `GET /api/plans` and `GET /api/plan-addons`
+- Monthly/Annual toggle is client-side state (no reload)
+- Add-on checkboxes grey out below `min_tier`
+- Running total updates live
+- "Continue to checkout" passes `plan_id`, `addon_ids[]`, `billing_interval` as query params
+
+Also implement the supporting API routes:
+- `GET /api/plans/route.ts` — active plans from DB
+- `GET /api/plan-addons/route.ts` — active add-ons from DB
+
+---
+
+## Step 8 — Account billing page (requires D2)
+
+**Who:** Claude Code
+**What:** Implement `app/(app)/account/billing/page.tsx` per Screen 3 wireframe in system-design.md.
+
+Sections:
+- Current plan + renewal date
+- Active add-ons with Remove button
+- Available add-ons with Add button
+- Test catalog (products from `products_public` view) with Order button
+- Order history
+
+API routes to implement alongside:
+- `GET/POST/DELETE /api/subscription/addons/route.ts`
+- `GET/POST /api/test-orders/route.ts`
+
+---
+
+## Step 9 — Admin: Plans and Add-ons management (requires D3)
+
+**Who:** Claude Code
+**What:** Implement admin pages for managing the plan catalog:
+
+- `app/(admin)/admin/plans/page.tsx` — list plans, create/edit plan form
+- `app/(admin)/admin/addons/page.tsx` — list add-ons, create/edit add-on form
+
+Admin API routes:
+- `GET/POST /api/admin/plans/route.ts`
+- `PUT /api/admin/plans/[id]/route.ts`
+- `GET/POST /api/admin/plan-addons/route.ts`
+- `PUT /api/admin/plan-addons/[id]/route.ts`
+
+All routes gate on `is_admin`. Use the admin Supabase client for writes.
+
+---
+
+## Step 10 — Admin: Suppliers and Products catalog
+
+**Who:** Claude Code
+**What:** Implement `app/(admin)/admin/suppliers/page.tsx` and `app/(admin)/admin/products/page.tsx` per Screens 5 and 6 in system-design.md.
+
+Notes:
+- Wholesale price column must never appear in `products_public` view or non-admin routes
+- "Stripe Price ID" field: manual entry by admin (they create it in Stripe dashboard first)
+
+Admin API routes:
+- `GET/POST /api/admin/suppliers/route.ts`
+- `PUT /api/admin/suppliers/[id]/route.ts`
+- `GET/POST /api/admin/products/route.ts`
+- `PUT /api/admin/products/[id]/route.ts`
+- `GET /api/admin/test-orders/route.ts`
+- `PUT /api/admin/test-orders/[id]/route.ts`
+
+---
+
+## Step 11 — Admin CRM metrics dashboard
+
+**Who:** Claude Code
+**What:** Expand `app/(admin)/admin/page.tsx` with real data:
+
+- **MRR** — count of active subscriptions × plan `base_price_cents / 100`; sum of active subscription_addons
+- **Active members** — count of `subscriptions` where `status = 'active'`
+- **Churn** — count of `subscriptions` where `status = 'cancelled'` in the last 30 days
+- **Pipeline runs** — count of `risk_scores` rows with `created_at > now() - interval '24 hours'`; same for `supplement_plans`
+
+All reads use the admin Supabase client. No PII in the aggregate display.
+
+Write a helper file `lib/admin/metrics.ts` with typed query functions, unit tested in `tests/unit/admin/metrics.test.ts` (already exists — extend it).
+
+---
+
+## Step 12 — Update epic-status.md
+
+**Who:** Claude Code
+**What:** After all steps complete, update:
+- Epic 12 `Shipped` / `Outstanding` entries for plans UI, CRM metrics, corporate scaffolding
+- Epic 13 `Shipped` / `Outstanding` entries for S1/S2 pricing
+- Pipeline glyphs and `%` estimates for Epics 12 and 13
+
+---
+
+## Step 13 — Clinician Portal: James review session (Epic 9)
+
+**Who:** James (read + decision) · Claude Code (note-taking and decision capture)
+
+**Context:** The clinician portal has a detailed architecture reference at `docs/architecture/clinician-portal.md`, abstracted from the working Base44 prototype. The agent implementation (Janet-Clinician Brief) is being built in Plan B W2-9 without needing this review. The **portal UI** — the workspace clinicians actually use — is the part that needs James's input before a single page is coded.
+
+**What James needs to read:**
+- `docs/architecture/clinician-portal.md` — full design, role system, UI patterns, Base44 proven decisions
+
+**Decisions to capture from the review session:**
+
+| # | Decision | Notes from architecture doc |
+|---|---|---|
+| ⚠️ C1 | **Clinician invitation flow** — how does an admin invite a clinician? Admin sends email invite → clinician accepts → role assigned. Confirm this matches intended onboarding. | Section 7: explicitly absent from Base44 prototype — needs designing |
+| ⚠️ C2 | **Patient consent for care-team access** — AHPRA requires a `consent_records` row before a clinician can see a patient. Where does the patient grant this? During onboarding? Or a separate consent surface? | Section 7: absent from prototype |
+| ⚠️ C3 | **Appointment booking from patient side** — does the patient see available slots and book, or does the clinician initiate? | Section 7: absent from prototype |
+| ⚠️ C4 | **Role expansion sign-off** — `profiles.role` currently only allows `user` and `admin`. Expanding to `clinician`, `coach`, `health_manager` requires a migration and proxy.ts changes. Confirm the full role list before the migration is written. | Section 6: role system delta |
+| ⚠️ C5 | **Check-in review cadence** — Base44 runs this as a monthly review workflow. Confirm: monthly per Epic 9 spec, or triggered by each patient check-in? | Section 2: workflow |
+| ⚠️ C6 | **`PROGRAM_READY` signal** — the Base44 prototype uses a text sentinel in the agent stream to trigger program delivery. Confirm we carry this pattern across or replace with a structured `tool_use` result. | Section 5: key design decisions |
+
+**What Claude Code will do with the output:** Record each decision in a new `docs/architecture/clinician-portal-decisions.md` file as soon as the session ends. Plan B W2-9 references those decisions before portal UI steps begin.
+
+---
+
+## Manual tasks (last, or blocked on decisions)
+
+| Task | Who | When |
+|---|---|---|
+| ⚠️ Seed `plans` table in Supabase with real Stripe price IDs after decisions D1-D4 resolved | James + Trac | After Step 3 migrations deployed |
+| ⚠️ Create Stripe add-on price objects for each `plan_addons` row | James | After D1 resolved |
+| ⚠️ Verify Stripe webhook secret in production matches `STRIPE_WEBHOOK_SECRET` env var | Trac | Before Step 6 goes to prod |
+| ⚠️ Register `/api/cron/repeat-tests` in `vercel.json` crons block | Claude Code (trivial — can do now) | Any time |
+| ⚠️ Clinician portal review session (Step 13 above) — decisions C1–C6 | James | Before Plan B portal UI steps begin |</script>
+
+<script type="text/markdown" id="md-plan-b"># Sprint 2 — Plan B: Engineering Completeness
+**Date:** 2026-04-29
+**Scope:** Complete agent suite, PDF, E2E tests, CI, Epic 7 remaining features, Epic 8 risk simulator, Epic 11 trust flows, Epic 9 agent pipeline
+**Runner:** Claude Code throughout — zero business decisions required
+**Humans:** James (product decisions if any arise) · Trac (operator steps)
+**Epics touched:** 3, 4, 5, 6, 7, 8, 9, 10, 11, 14
+
+---
+
+## Overview
+
+This plan targets engineering completeness across all epics that are code-complete but missing sub-systems, tests, or polish. No business decisions block any step. Grouped into four waves so a parallel agent can pick up independent waves.
+
+```
+Wave 1 — Foundation fixes (migrations, CI, PDF)             ← unblocks everything
+Wave 2 — Agent suite completion (incl. Janet-Clinician)     ← independent of Wave 3/4
+Wave 3 — Epic 7 daily return features                       ← independent of Wave 2/4
+Wave 4 — Trust layer + Epic 8 risk simulator                ← independent of Wave 2/3
+```
+
+**Epic 9 split — why the portal is not here:**
+The Janet-Clinician Brief pipeline (agent work) is in Wave 2 below. The clinician portal UI (patient list, care notes, appointment booking) is deferred — it requires James to spec the clinician UX workflows before the first page is built. The agent can ship and run on its monthly cron without the portal being live.
+
+---
+
+## Wave 1 — Foundation Fixes
+
+### W1-1: Resolve migration filename collisions
+
+**What:** The `0031` and `0032` slots each have two files (parallel branch collision). Renumber as follows:
+
+```
+0031_member_alerts.sql             → keep
+0031_patient_uploads_file_hash.sql → rename to 0038_patient_uploads_file_hash.sql
+0032_lab_results_idempotency.sql   → keep
+0032_seed_admins.sql               → rename to 0039_seed_admins.sql
+```
+
+Run `supabase db diff` locally to confirm the applied chain is intact. Regenerate types after.
+
+**Epic 14 impact:** Removes the cosmetic violation flagged in Epic 14 Outstanding.
+
+---
+
+### W1-2: Branded PDF report (BUG-005)
+
+**What:** Fix `app/api/report/pdf/route.tsx` and `lib/pdf/report-doc.tsx`. The skeleton exists — build it out.
+
+Required sections per Epic 5 spec:
+- **Header:** Longevity Coach logo, patient first name, report date
+- **Biological age banner:** large bio-age number, delta from population median if available
+- **Domain scores section:** five domain risk cards with domain colour swatches and confidence label
+- **Narrative section:** Atlas narrative text per domain (readable typography, not monospace)
+- **Supplement protocol table:** items sorted by tier (`critical` → `high` → `recommended` → `performance`), rationale column, tier badge
+- **Footer:** AHPRA disclaimer, "This report is not a substitute for professional medical advice", generated-on timestamp, `Generated by Longevity Coach — longevity-coach.io`
+
+Implementation notes:
+- Use `@react-pdf/renderer` (already in `lib/pdf/`)
+- All data reads must use the admin Supabase client (service-role) since this is a server route
+- PDF stored in Supabase Storage with a 1-hour signed URL; URL returned in the JSON response
+- The `/report` page's download button calls this route and opens the signed URL
+
+Close BUG-005 in `docs/product/epic-status.md` after verified in browser.
+
+---
+
+### W1-3: CI pipeline extension (Playwright + Lighthouse)
+
+**What:** Extend `.github/workflows/ci.yml` to add two jobs after the existing Vitest and pgTAP jobs:
+
+**Playwright job:**
+```yaml
+playwright:
+  runs-on: ubuntu-latest
+  needs: [vitest]
+  steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with: { node-version: '20' }
+    - run: pnpm install
+    - run: pnpm exec playwright install --with-deps chromium
+    - run: pnpm exec playwright test
+      env:
+        NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+        NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+```
+
+**Lighthouse job** (run against the Vercel preview URL using `@vercel/action-wait-for-deployment`):
+- Target: `/`, `/dashboard`, `/report`
+- Minimum scores: Performance ≥ 80, Accessibility ≥ 90, Best Practices ≥ 90
+
+**Epic 14 impact:** Closes the "Playwright + Lighthouse on every PR" outstanding item.
+
+---
+
+### W1-4: Register repeat-tests cron in vercel.json
+
+**What:** Add the daily repeat-test cron to `vercel.json`:
+```json
+{
+  "crons": [
+    { "path": "/api/cron/nova", "schedule": "0 2 * * 1" },
+    { "path": "/api/cron/drip-emails", "schedule": "0 8 * * *" },
+    { "path": "/api/cron/repeat-tests", "schedule": "0 6 * * *" }
+  ]
+}
+```
+
+**Epic 8 impact:** Closes the `vercel.json` cron registration outstanding item.
+
+---
+
+## Wave 2 — Agent Suite Completion
+
+### W2-1: PT Coach agent — pipeline worker (monthly plan)
+
+**What:** Build the monthly PT plan pipeline worker at `lib/ai/pipelines/pt-plan.ts`.
+
+Design follows the same pattern as Atlas (`lib/ai/pipelines/risk-narrative.ts`):
+- Input: user UUID → reads `PatientContext` (risk scores, questionnaire, daily_logs last 30 days)
+- Prompt: generate a structured 30-day progressive exercise program personalised to MSK risk domain, current activity level, step count trends, age and weight
+- Output schema: `{ program_name, weekly_structure, session_count_per_week, notes, generated_at }`
+- Write target: `programs.pt_plans` — idempotent upsert keyed on `(user_uuid, plan_start_date)`
+- Triggered by: Atlas completion + monthly cron
+
+Implement:
+- `lib/ai/pipelines/pt-plan.ts`
+- `app/api/pipelines/pt-plan/route.ts` — secured with `x-pipeline-secret`
+- `app/api/cron/pt-plan/route.ts` — monthly cron, returns 200 on error
+- Register monthly cron in `vercel.json`
+- Unit tests + integration test (mocked Supabase)
+
+---
+
+### W2-2: PT Coach real-time agent
+
+**What:** Build `lib/ai/agents/pt-coach.ts` — a real-time conversational agent for live exercise guidance.
+
+Pattern mirrors `lib/ai/agents/janet.ts`:
+- Reads `pt_plans` + `daily_logs` from `PatientContext`
+- Answers live exercise questions, suggests workout modifications, explains session rationale
+- Does NOT invoke sub-agents (it is itself a specialist called by Janet)
+- Streaming, Claude Sonnet 4.6, same auth pattern as Janet
+
+Implement `lib/ai/agents/pt-coach.ts` + `app/api/chat/pt-coach/route.ts`.
+
+---
+
+### W2-3: PT Coach `tool_use` integration into Janet
+
+**What:** Build `lib/ai/tools/pt-coach-tool.ts` following the exact pattern of `lib/ai/tools/atlas-tool.ts`.
+
+- Tool name: `consult_pt_coach`
+- Trigger signal: Janet detects a question about exercise, fitness, training, rehabilitation
+- Enforce one-layer depth: Janet → PT Coach; PT Coach must never call sub-agents
+
+Add `consult_pt_coach` to Janet's tool list in `lib/ai/agents/janet.ts`.
+
+---
+
+### W2-4: Janet Supplement Advisor mode (`tool_use`)
+
+**What:** Build `lib/ai/tools/supplement-advisor-tool.ts`.
+
+Distinct from Sage (which generates the protocol). The Supplement Advisor answers member questions about specific items in their active protocol.
+
+- Tool name: `consult_supplement_advisor`
+- Input: `{ item_name: string, question: string, patient_context_summary: string }`
+- Reads active `supplement_plans.items` for the user's current protocol
+- Returns a grounded, cited answer (cites the rationale already in the protocol item + health knowledge RAG)
+
+Add `consult_supplement_advisor` to Janet's tool list.
+
+---
+
+### W2-5: PatientContext — add PT plan to context load
+
+**What:** Extend `lib/ai/patient-context.ts` to load the latest active PT plan as the 9th parallel read in `Promise.all`. Expose as `patientContext.ptPlan`.
+
+---
+
+### W2-6: Janet eval suite — add PT Coach and supplement advisor rubrics
+
+**What:** Extend `tests/evals/janet.eval.ts` with two new rubrics:
+
+- **PT Coach grounding:** Janet's exercise answer cites at least one specific element from the patient's PT plan
+- **Supplement advisor grounding:** Janet's supplement answer names the specific item from the patient's protocol and its documented rationale
+
+---
+
+### W2-7: E2E regression test — full Janet conversation loop
+
+**What:** Write `tests/e2e/janet-conversation.spec.ts` (Playwright):
+
+1. Sign in as seeded test user
+2. Navigate to `/report` (Janet chat panel)
+3. Send a health question → assert first-token response within 2s
+4. Ask a supplement question → assert response references a specific supplement by name
+5. Ask an exercise question → assert PT Coach tool was invoked
+6. Reload page → send follow-up → assert Janet references previous message (cross-session memory)
+
+---
+
+### W2-8: Latency instrumentation under load
+
+**What:** Add structured timing logs to `app/api/chat/route.ts`:
+
+```typescript
+console.log(JSON.stringify({
+  event: 'janet_turn',
+  patient_context_ms: ctxDuration,
+  rag_ms: ragDuration,
+  tools_invoked: toolNames,
+  first_token_ms: firstTokenDuration,
+  total_ms: totalDuration,
+}));
+```
+
+No PII in logs. Feeds the latency budget verification in Epic 14.
+
+---
+
+### W2-9: Janet-Clinician Brief pipeline worker (Epic 9 agent)
+
+**Architecture reference:** `docs/architecture/clinician-portal.md` — read before writing any code.
+
+**What this step builds:** The pipeline worker (`janet_brief` pre-generation) only. The portal UI workspace is blocked on James's review session (Plan A Step 13).
+
+**Design:**
+- Execution model: pipeline worker (monthly cron)
+- Input: `patient_uuid` + `clinician_uuid` → reads `PatientContext`, `periodic_reviews`, `member_alerts`, `coach_suggestions`
+- Persona: Janet speaking *to a clinician colleague* — professional, evidence-based, concise
+- Write target: `clinical.periodic_reviews` — idempotent upsert keyed on `(patient_uuid, review_month)`
+- `review_status` initial value: `awaiting_clinician`
+- Status enum: `awaiting_clinician → in_review → program_ready → sent_to_patient`
+
+**Schema prerequisites:**
+- `clinical.periodic_reviews` exists (migration `0011`) — verify columns for `janet_brief`, `review_status`, `clinician_conversation_id`, `program_30_day`. Add `0047_periodic_reviews_expand.sql` if columns are missing.
+
+**Implement:**
+- `lib/ai/pipelines/clinician-brief.ts`
+- `app/api/pipelines/clinician-brief/route.ts` — secured with `x-pipeline-secret`
+- `app/api/cron/clinician-briefs/route.ts` — monthly cron on `0 1 1 * *`
+- Register in `vercel.json`
+- Unit tests + integration test
+
+**Epic 9 impact:** 5% → ~25%
+
+---
+
+## Wave 3 — Epic 7 Daily Return Features
+
+### W3-1: Personalised daily goals
+
+**What:** Replace static goal defaults in `/check-in` with risk-profile-derived targets.
+
+Logic in `lib/goals/derive.ts`:
+- Steps target: if MSK risk `high` → 6000; if CV risk `high` → 10000; default 8000
+- Sleep target: if brain risk `high` → 8h; default 7.5h
+- Water target: body weight × 0.033L; default 8 glasses
+- Meditation: if stress/anxiety indicators → 10 min daily; else optional
+
+Store in `profiles.daily_goals JSONB` (new migration `0044_daily_goals.sql`). Recomputed by Atlas on each run.
+
+---
+
+### W3-2: Weekly insights digest
+
+**What:** Build `lib/insights/weekly.ts` — pure function takes 7 days of `daily_logs` and returns human-readable insight strings.
+
+Patterns to detect:
+- "Your energy is consistently low on Mondays"
+- "Your sleep average this week was 6.1h — below your target of 7.5h"
+- "You hit your step goal 5 out of 7 days — best streak this month"
+
+Render as `/insights` page linked from dashboard.
+
+---
+
+### W3-3: Health journal
+
+**What:** Build the free-form health journal:
+
+- New table: `public.journal_entries` — `(id, user_uuid, body text, created_at, updated_at)` — migration `0045_journal.sql`. RLS: owner-only.
+- Page: `app/(app)/journal/page.tsx`
+- Server actions in `app/(app)/journal/actions.ts`
+- `PatientContext` reads last 3 journal entries as 10th parallel read so Janet can reference them
+
+---
+
+### W3-4: Rest-day streak mechanic
+
+**What:** Extend `computeStreak()` in `lib/streaks/`:
+
+- Allow up to 2 consecutive missed days without breaking the streak (rest-day grace)
+- Mark those days as `rest` in the streak dot strip (different colour from active/missed)
+
+---
+
+## Wave 4 — Trust Layer + Epic 8
+
+### W4-1: Right-to-erasure API
+
+**What:** Build `DELETE /api/account/route.ts`:
+
+1. Verify Supabase session
+2. Write a `consent_records` row with `{ type: 'erasure_request' }`
+3. Using admin client: scrub `profiles` PII columns (`full_name = '[ERASED]'`, `date_of_birth = null`, `phone = null`, `address_postal = null`)
+4. Delete all `patient_uploads` from Supabase Storage
+5. `supabase.auth.admin.deleteUser(userId)` — opt-in behind `ENABLE_HARD_DELETE=true` env var
+
+Expose "Delete my account" button on `/account` behind a confirmation modal.
+
+---
+
+### W4-2: Pause / freeze account
+
+**What:** Build the pause flow:
+
+- New column: `profiles.paused_at timestamptz` — migration `0046_profile_pause.sql`
+- Server action: set/clear `profiles.paused_at`
+- `proxy.ts` check: if `paused_at` is set, redirect `/dashboard`, `/report`, `/check-in` to `/account?paused=true` with a banner
+- Unfreeze button on the banner re-clears `paused_at`
+
+---
+
+### W4-3: "We never train on your data" ToS clause
+
+**What:** Add to the consent step in `app/(app)/onboarding/page.tsx` Step 6:
+
+> "Longevity Coach does not use your health data to train AI models. Your data is used solely to personalise your assessment and coaching."
+
+No schema change needed — existing `consent_records` append-only write captures the timestamp.
+
+---
+
+### W4-4: Risk simulator
+
+**What:** Build the risk simulator page per Epic 8 spec.
+
+- Page: `app/(app)/simulator/page.tsx`
+- UI: select a domain (CV, metabolic, brain, cancer, MSK) → adjust one biomarker slider → see the domain score recomputed live
+- Implementation: call the deterministic risk engine (`lib/risk/scorer.ts`) directly in a server action — do not persist results, purely hypothetical
+
+Write E2E smoke test: adjust one slider → assert domain score changes.
+
+---
+
+## Update epic-status.md (after all waves)
+
+| Epic | Expected delta |
+|---|---|
+| Epic 5 | Move PDF to Feature Complete; close BUG-005 |
+| Epic 6 | Close PT Coach outstanding; add W2-7/W2-8 to Shipped |
+| Epic 9 | Add Janet-Clinician brief pipeline to Shipped; advance to ~25% |
+| Epic 7 | Move personalised goals, weekly digest, journal, rest-day to Shipped; advance to ~90% |
+| Epic 8 | Add risk simulator to Shipped; advance to ~65% |
+| Epic 11 | Add right-to-erasure and pause/freeze to Shipped; advance to ~80% |
+| Epic 14 | Add CI Playwright+Lighthouse, cron registration to Shipped; advance to ~60% |</script>
+
+<script type="text/markdown" id="md-proposals"># Feature Proposals — AU & ASEAN Expansion
+**Date:** 2026-04-29
+**Source:** Janet Global Competitive Audit v2.0 (`docs/engineering/plan/janet-globa-audit-expanded.html`)
+**Status:** Proposed — pending James review. Nothing here is scheduled or committed.
+
+These are **net-new feature areas** not covered by the existing 14 epics. If James approves any of them, they graduate to a numbered epic in `docs/product/epics.md`.
+
+---
+
+## Existing coverage — deconflict
+
+Features already addressed in the current epics are excluded below even where the audit mentions them.
+
+| Audit gap | Covered by | Status |
+|---|---|---|
+| Lab PDF import + biomarker parsing | Epic 2 + Epic 8 | In build |
+| Live wearable data | Epic 8 (outstanding) | Scheduled |
+| Supplement marketplace | Epic 13 | Scheduled |
+| B2B corporate PEPM | Epic 12 | Scheduled |
+| Clinician portal | Epic 9 | Scheduled |
+| Gamification / points | Epic 7 | Partial |
+
+---
+
+## Proposed features
+
+| # | Proposed Epic | Market | Must-have for launch? | Engineering entry point | Rationale |
+|---|---|---|---|---|---|
+| P1 | Regional Compliance Layer | AU + ASEAN | **Yes — legal prerequisite** | Consent schema extension, data residency config, breach-notification cron | Can't accept paying users in AU/ASEAN without TGA, AU Privacy Act, SG PDPA, ID PDP, Thai PDPA compliance |
+| P2 | Insurer Partnership Layer | APAC | **Yes for APAC consumer pricing** | `insurer_accounts` table, wellness score webhook, insurer admin portal | AIA Vitality subsidises at S$8/mo. Without an insurer B2B model, direct pricing is non-competitive |
+| P3 | Localisation Engine | ASEAN | **Yes for non-EN markets** | `next-intl` i18n, `locale` on profiles, halal flag on supplement catalog, TCM contraindication index | Bahasa MY/ID, Mandarin, Thai unlock ~85% of addressable ASEAN population currently excluded |
+| P4 | Epigenetic Layer | AU + SG | No — differentiator | `biomarkers.epigenetic_scores` table, CSV/API import, risk engine confidence upgrade | TruDiagnostic (global), MFM/Biogenix (AU), Chi Longevity (SG) — import-only, no lab build. Closes biggest credibility gap vs Vively |
+| P5 | Coach Ecosystem | ANZ | **Yes for coach distribution** | `coach_assignments`, `coach_commissions`, `coach_profiles` tables, `/coach/` portal, public `/find-a-coach` | HCANZA coaches are Janet's ANZ distribution channel. Distinct from clinicians (Epic 9) — no AHPRA, different workflow |
+| P6 | White-Label / Clinic Licensing | APAC + AU | No — expansion accelerator | `tenants` table, per-tenant theming + routing, tenant-scoped Janet persona | APAC private hospitals (Bumrungrad, Gleneagles, Siloam) + AU functional medicine clinics want a branded platform for their patients |
+| P7 | Microbiome Pipeline | SG + Global | No — quality differentiator | `biomarkers.microbiome_scores` table, AMILI/Viome import, Sage prompt extension | Gut microbiome data materially improves supplement protocol accuracy (probiotic strain, magnesium form selection) |
+
+---
+
+## P1 — Regional Compliance Layer
+
+**Classification:** AU must-have · ASEAN must-have
+**Equivalent epic if approved:** Epic 15
+
+**Rationale:** Epic 11 (The Trust Layer) is AHPRA-focused and UK/GDPR-aligned. This is a distinct set of obligations:
+- **TGA (AU)** — Therapeutic Goods Advertising Code. Every Sage-generated supplement claim must be TGA-compliant. Non-compliant claim = legal liability per protocol.
+- **Australian Privacy Act 1988 + APPs** — breach notification within 30 days (not GDPR's 72h), explicit sensitive health data consent, right to access and correction. Different framework to GDPR.
+- **HCANZA recognition** — required for any HCANZA-accredited coach to recommend Janet. The coach network is the AU distribution channel.
+- **Singapore PDPA** — 3-day breach notification, data residency options.
+- **Indonesian PDP Law 2022** — data localisation requirements.
+- **Thai PDPA** — DPO appointment required at scale.
+- **ISO 27001 roadmap** — Naluri and ThoughtFull cite this as SEA enterprise sales gate.
+
+**Engineering entry points:**
+- Data residency config: Supabase region selection per `profiles.country`
+- Consent schema: extend `consent_records` with `market` and `policy_version_market` fields
+- Breach notification: background job monitors Supabase audit log; alerts admin within market-specific TTL
+- Supplement catalog: `tga_compliant boolean` + `tga_claim_level text` on each item
+- Export bundle: APPs-compliant format (extends existing export-everything at `/api/export`)
+
+**What needs James:** TGA legal review of the supplement catalog. Privacy solicitor engagement per market. HCANZA application process.
+
+---
+
+## P2 — Insurer Partnership Layer
+
+**Classification:** APAC must-have (consumer pricing viability)
+**Equivalent epic if approved:** Epic 16
+
+**Rationale:** AIA Vitality is available at S$8/month because AIA cross-subsidises it against insurance premium discounts. Janet's direct pricing (~S$30–50/month equivalent) cannot compete without an insurer subsidy model. The window to partner with smaller APAC insurers (Income/Singlife, FWD, Great Eastern) before they sign exclusivity with AIA Vitality is open now — likely 12–18 months.
+
+**Engineering entry points:**
+- `insurer_accounts` table in `billing` schema: insurer FK, PEPM rate, region, API webhook URL
+- `wellness_score` computed view: derived from check-in streak, risk score delta over 90 days, alert resolution rate — pure read, no new data
+- Outbound webhook: weekly `wellness_score` push to insurer API (configurable per `insurer_accounts.webhook_url`)
+- Insurer admin portal: `/insurer/` route group, aggregate cohort data only (no individual PII), RLS scoped to `insurer_id`
+- Co-branded onboarding: `?ref=insurer_slug` query param → `profiles.insurer_id` FK at signup
+
+**What needs James:** Insurer partnership negotiations. Deciding which insurer to pilot with first. Agreeing on the wellness score definition with the insurer's actuarial team.
+
+---
+
+## P3 — Localisation Engine
+
+**Classification:** ASEAN must-have (non-EN markets)
+**Equivalent epic if approved:** Epic 17
+
+**Rationale:** Bahasa Malaysia and Indonesian together cover ~280M people. Mandarin covers SG/MY Chinese-speaking communities. Thai covers 70M. English-only is a demographic ceiling of ~15% of addressable ASEAN population. Beyond translation, the supplement protocols are built on Western dietary science and must be validated for Asian dietary contexts — rice-based diets, hawker food, halal requirements, and TCM contraindication awareness.
+
+**Engineering entry points:**
+- `next-intl` (or `next-i18next`) for Next.js App Router i18n
+- `profiles.locale` column: captured at signup from `Accept-Language` or user preference
+- Translation strings: `messages/{en,ms,zh-Hans,th}.json`
+- Supplement catalog schema: `halal_certified boolean`, `tcm_contraindications text[]`
+- Sage prompt: conditional halal filter when `profiles.locale` is `ms` or `id` and user has Muslim dietary preference
+- Nova pipeline: add "Asian health / SEA dietary science" category scan
+
+**What needs James:** Regional dietitian contracts for protocol localisation review. Halal certification scope. Decision on which languages to ship first.
+
+---
+
+## P4 — Epigenetic Layer
+
+**Classification:** AU highly compatible · Global differentiator
+**Equivalent epic if approved:** Epic 18
+
+**Rationale:** DNA methylation clocks (DunedinPACE, GrimAge, PhenoAge) are becoming the gold standard for biological age measurement. Every premium AU competitor offers this (Vively via PhenoAge, MFM, Biogenix) and InsideTracker/TruDiagnostic in the US. This is a **partnership import model only** — no lab infrastructure required.
+
+**Engineering entry points:**
+- `biomarkers.epigenetic_scores`: `(user_uuid, source, score_type, score_value, test_date, raw_report_url)`
+- Import flow: CSV upload via `/uploads` + automated column-map parsing (reuses Janet upload infrastructure)
+- Risk engine: when `epigenetic_scores` row exists, `confidence_level` upgrades to `epigenetic_confirmed`
+- Bio age dashboard tile: dual display — "Questionnaire: 38" / "Epigenetic (TruDiagnostic): 35"
+- Repeat test reminder: Janet surfaces at month 11 post-test-date
+
+**What needs James:** TruDiagnostic affiliate agreement. MFM or Biogenix partnership agreement for AU. Chi Longevity or Alexandra Hospital HEAL for SG.
+
+---
+
+## P5 — Coach Ecosystem
+
+**Classification:** ANZ must-have (distribution channel)
+**Equivalent epic if approved:** Epic 19
+
+**Rationale:** Janet's "no-staff ecosystem" model depends on an activated HCANZA coach network. Coaches need a portal, patient assignment tooling, and commission tracking to make Janet their practice platform of choice. This is explicitly distinct from the clinician layer (Epic 9).
+
+| | Clinician | Coach |
+|---|---|---|
+| Registration | AHPRA | HCANZA |
+| Liability | Clinical | Wellness |
+| Portal purpose | Care notes, clinical briefs, appointments | Habit coaching, supplement guidance |
+| Commission | N/A | % of supplement / test orders |
+| Volume | Low (specialist) | High (mass market) |
+
+**Engineering entry points:**
+- `coach_profiles`: credentials, bio, specialties, `is_public`, `hcanza_id`
+- `coach_assignments`: `(coach_uuid, patient_uuid, assigned_at, status)`
+- `coach_commissions`: `(coach_uuid, order_id, order_type, amount_cents, payout_status)`
+- Commission hook: `provider_orders` write (Epic 13) → check `coach_assignments` → insert `coach_commissions` row
+- `/coach/` portal: patient list, patient summary, commission ledger
+- `/find-a-coach`: public listing, filterable by specialty and location
+- PDF report: coach name + credentials in footer when `coach_assignment` exists
+
+**What needs James:** HCANZA recognition application. Commission rate decision. Whether coaches can be non-HCANZA in phase 1.
+
+---
+
+## P6 — White-Label / Clinic Licensing
+
+**Classification:** APAC highly compatible · AU high-value
+**Equivalent epic if approved:** Epic 20
+
+**Rationale:** APAC private hospital networks (Bumrungrad TH, Mount Elizabeth SG, Gleneagles SG/MY, Siloam ID) and AU functional medicine clinics want a longevity platform branded as their own. White-label licensing gives Janet APAC distribution without competing directly in consumer marketing.
+
+**Engineering entry points:**
+- `tenants` table in `billing` schema: `(id, name, domain, theme_json, approved_supplement_categories, active_plan_id)`
+- `profiles.tenant_id` nullable FK: null = direct consumer; set = white-label patient
+- Tenant resolution in `proxy.ts`: hostname → `tenants.domain` lookup at request time
+- CSS variables override: tenant's `theme_json` injected as `<style>` in root layout
+- Janet persona: system prompt includes `tenant.janet_name` and `tenant.guardrails` when `tenant_id` is set
+- Billing: per-patient PEPM invoice via Stripe (no checkout shown to patient)
+
+**What needs James:** Clinic licensing pricing decision (PEPM rate). Minimum patient commitment per tenant. How much of the product can a tenant suppress?
+
+---
+
+## P7 — Microbiome Pipeline
+
+**Classification:** SG highly compatible · Global medium-term
+**Equivalent epic if approved:** Epic 21
+
+**Rationale:** Gut microbiome composition predicts supplement absorption more accurately than blood panels alone. Magnesium form and probiotic strain efficacy are highly microbiome-dependent. AMILI (SG) is launching a personalised nutrition app with Google in April 2026. Viome leads globally. Neither has a longevity coaching layer — Janet can import their output and use it to improve Sage's protocol specificity.
+
+**Engineering entry points:**
+- `biomarkers.microbiome_scores`: `(user_uuid, source, diversity_score, keystone_presence jsonb, deficiency_flags text[], test_date)`
+- Import flow: CSV/JSON upload via `/uploads`, parsed by Janet upload infrastructure
+- Sage prompt extension: when `microbiome_scores` present, include deficiency flags and keystone species summary
+- `PatientContext.load()`: microbiome scores as 11th parallel read
+- Nova pipeline: add "microbiome and longevity" category scan
+
+**What needs James:** AMILI API agreement. Viome affiliate agreement. Decision on whether to build an in-app "order a microbiome test" flow or import-only initially.
+
+---
+
+## Recommended phasing
+
+| Phase | Features to include |
+|---|---|
+| Before AU consumer launch | P1 (compliance) · P5 (coach ecosystem) |
+| Before APAC consumer launch | P1 (compliance) · P2 (insurer) · P3 (localisation) |
+| After first 1,000 users | P4 (epigenetic) · P7 (microbiome) — low engineering lift, high credibility |
+| Phase 6+ (Scale) | P6 (white-label) — high effort, high ceiling |</script>
+
 <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
 <script>
   const docs = {
@@ -2414,13 +3243,61 @@ Live QA via skill:
     'ai-vision':   { eyebrow: 'Architecture', filename: 'ai-vision.md' },
     'qa-plan':     { eyebrow: 'Quality',      filename: 'qa-plan.md' },
     'qa-report':   { eyebrow: 'Quality',      filename: '2026-04-27-qa-report.md' },
+    'plan':        { eyebrow: 'Planning',     filename: 'Sprint 1 Plans' },
+    'proposals':   { eyebrow: 'Planning',     filename: 'au-asean-expansion/feature-proposal.md' },
   };
+
+  const planTabs = [
+    { key: 'plan-a', label: 'Plan A — Business Features' },
+    { key: 'plan-b', label: 'Plan B — Engineering Completeness' },
+  ];
 
   marked.setOptions({ gfm: true, breaks: false, headerIds: true, mangle: false });
 
   const slugify = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 
+  function renderPlanTabs(activeKey) {
+    return '<div class="plan-tabs">' +
+      planTabs.map(t =>
+        `<button class="plan-tab${t.key === activeKey ? ' active' : ''}" onclick="switchPlanTab('${t.key}')">${t.label}</button>`
+      ).join('') +
+      '</div>';
+  }
+
+  function switchPlanTab(planKey) {
+    const md = document.getElementById('md-' + planKey).textContent;
+    const article = document.getElementById('content');
+    article.innerHTML = renderPlanTabs(planKey) + marked.parse(md);
+    article.querySelectorAll('h1, h2, h3').forEach((h) => {
+      if (!h.id) h.id = slugify(h.textContent);
+    });
+    buildToc(article, 'plan');
+    window.scrollTo(0, 0);
+    history.replaceState(null, '', '#plan/' + planKey);
+  }
+
   function loadDoc(key) {
+    if (key === 'plan') {
+      const subKey = (location.hash.split('/')[1]) || 'plan-a';
+      const activeTab = planTabs.some(t => t.key === subKey) ? subKey : 'plan-a';
+      const md = document.getElementById('md-' + activeTab).textContent;
+      const article = document.getElementById('content');
+      article.innerHTML = renderPlanTabs(activeTab) + marked.parse(md);
+      article.querySelectorAll('h1, h2, h3').forEach((h) => {
+        if (!h.id) h.id = slugify(h.textContent);
+      });
+      document.getElementById('docEyebrow').textContent = 'Planning';
+      document.getElementById('docMeta').textContent = 'Sprint 1 Plans';
+      document.title = 'Longevity Coach · Sprint 1 Plans';
+      document.querySelectorAll('.nav-item').forEach((n) => {
+        n.classList.toggle('active', n.dataset.doc === 'plan');
+      });
+      buildToc(article, 'plan');
+      window.scrollTo(0, 0);
+      if (!location.hash.startsWith('#plan')) history.replaceState(null, '', '#plan');
+      return;
+    }
+
     const meta = docs[key];
     if (!meta) return;
     const md = document.getElementById('md-' + key).textContent;
@@ -2492,7 +3369,7 @@ Live QA via skill:
   });
 
   const initialKey = (location.hash || '#epic-status').slice(1).split('/')[0];
-  loadDoc(docs[initialKey] ? initialKey : 'epic-status');
+  loadDoc((docs[initialKey] || initialKey === 'plan') ? initialKey : 'epic-status');
 </script>
 
 </body>
