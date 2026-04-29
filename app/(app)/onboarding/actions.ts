@@ -102,7 +102,7 @@ export async function submitAssessment(
   }
 
   // Run the deterministic risk engine and persist `risk_scores`. This is the
-  // synchronous, evidence-based scoring layer (Atlas adds the LLM narrative
+  // synchronous, evidence-based scoring layer (risk_analyzer adds the LLM narrative
   // asynchronously after this). Wrapped in try/catch so onboarding never
   // fails because of scorer errors.
   try {
@@ -149,13 +149,13 @@ export async function submitAssessment(
       console.error("[risk-engine] risk_scores upsert failed:", upsertError);
     }
   } catch (err) {
-    // Non-fatal: onboarding continues even if scoring fails. Atlas pipeline
+    // Non-fatal: onboarding continues even if scoring fails. risk_analyzer pipeline
     // will retry on its own schedule.
     console.error("[risk-engine] deterministic scorer failed:", err);
   }
 
   // Fire async pipeline workers (non-blocking — each runs in its own function invocation)
-  // Atlas (risk-narrative) is intentionally NOT triggered here — it runs on daily check-in only.
+  // risk_analyzer (risk-narrative) is intentionally NOT triggered here — it runs on daily check-in only.
   triggerPipeline("supplement-protocol", user.id);
 
   revalidatePath("/dashboard");

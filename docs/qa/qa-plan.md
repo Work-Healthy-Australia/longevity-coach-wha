@@ -18,8 +18,8 @@ Most QA plans optimise for "no bugs." That's the wrong target for Longevity Coac
 So the QA hierarchy is:
 
 1. **Trust integrity** (RLS, PII boundary, consent records, signed URL TTL, never-train clause). Existential.
-2. **Loop integrity** (questionnaire submits → Atlas writes narrative → Sage writes protocol → `/report` renders → Janet replies). The product.
-3. **AI quality** (Atlas narrative, Sage protocol, Janet coaching, Janet document analyser). The moat.
+2. **Loop integrity** (questionnaire submits → risk_analyzer writes narrative → supplement_advisor writes protocol → `/report` renders → Janet replies). The product.
+3. **AI quality** (risk_analyzer narrative, supplement_advisor protocol, Janet coaching, Janet document analyser). The moat.
 4. **Vibe** (does `/report` feel like medicine; does Janet feel like a coach who remembers). The brand.
 5. **Everything else** (perf, polish, accessibility). Important but ranked.
 
@@ -59,8 +59,8 @@ Already shipped: 29 tests across `tests/integration/auth/`, `tests/integration/o
 | `tests/integration/auth/actions.test.ts` | All 13 paths through `signIn`, `signUp`, `requestPasswordReset`, `updatePassword`. |
 | `tests/integration/onboarding/actions.test.ts` | `saveDraft` and `submitAssessment` happy paths plus the no-user error path. |
 | `tests/integration/stripe/webhook.test.ts` | All 8 lifecycle event types plus signature failure plus missing user metadata. |
-| **(new) Atlas pipeline** | Trigger Atlas with a fixture `health_profiles.responses`. Assert `risk_scores.narrative` is populated, scores are present, idempotent on second run. |
-| **(new) Sage pipeline** | Trigger Sage with a fixture `risk_scores`. Assert `supplement_plans.items` has ≥ 3 critical-tier items with rationale strings under 200 chars. |
+| **(new) risk_analyzer pipeline** | Trigger risk_analyzer with a fixture `health_profiles.responses`. Assert `risk_scores.narrative` is populated, scores are present, idempotent on second run. |
+| **(new) supplement_advisor pipeline** | Trigger supplement_advisor with a fixture `risk_scores`. Assert `supplement_plans.items` has ≥ 3 critical-tier items with rationale strings under 200 chars. |
 | **(new) Janet streaming response** | Mock Anthropic SDK. Assert `PatientContext.load()` is called once, the system prompt includes the patient summary, and turns persist to `agent_conversations`. |
 
 #### 2b. Real-Supabase integration (RLS + trigger truth)
@@ -75,7 +75,7 @@ Spin up a separate Supabase project named `longevity-coach-test` (mirrors the pr
 | **Service-role bypass scope** | Confirm service-role can write to `risk_scores`, `supplement_plans`, `subscriptions`. Confirm service-role does NOT bypass FK constraints. |
 | **Auth trigger** | New `auth.users` row → `handle_new_user` populates `profiles.id` and `profiles.full_name`. |
 | **Consent append-only** | Insert one consent record, attempt UPDATE → policy denies. Attempt DELETE → policy denies. |
-| **Pipeline idempotency** | Run Atlas twice on the same `(user_uuid, computed_at_date)`. Assert no duplicate row, second run updates the first. |
+| **Pipeline idempotency** | Run risk_analyzer twice on the same `(user_uuid, computed_at_date)`. Assert no duplicate row, second run updates the first. |
 | **Migration safety** | After every new migration: run all prior tests against the new schema. Migrations that break tests get rolled back, not patched. |
 
 The pgTAP file at `supabase/tests/rls.sql` (20 assertions, written 2026-04-27) is the starting point. **Wire it into CI on every PR via `supabase db test`.** This is the single highest-value QA investment we are not yet making.
@@ -91,13 +91,13 @@ Headless on every push to main. Already exist at `tests/e2e/` for auth and the p
 2. Land on /onboarding (no health profile yet)
 3. Complete the 6-step questionnaire with fixture answers
 4. Submit, land on /dashboard?onboarding=complete
-5. Wait for Atlas pipeline (poll risk_scores until narrative is present, max 60s)
-6. Wait for Sage pipeline (poll supplement_plans until items present, max 30s)
+5. Wait for risk_analyzer pipeline (poll risk_scores until narrative is present, max 60s)
+6. Wait for supplement_advisor pipeline (poll supplement_plans until items present, max 30s)
 7. Open /report — assert bio-age, all 5 domain scores, narrative paragraph, supplement table render
 8. Open Janet chat panel, send "what is my biggest risk", assert a streaming response that names the patient's actual top driver
 9. Upload a fixture blood-panel PDF
 10. Wait for Janet document analyser (poll patient_uploads.janet_status until 'complete')
-11. Wait for Sage re-run (poll supplement_plans for new row newer than original)
+11. Wait for supplement_advisor re-run (poll supplement_plans for new row newer than original)
 12. Sign out, /login renders
 13. Sign back in, /report still shows the same narrative + protocol
 ```
@@ -202,8 +202,8 @@ Snapshot targets:
 Members are on home Wi-Fi and middle-aged iPhones. Budgets:
 - LCP `< 2.5s` on `/dashboard` and `/report`
 - TTI `< 3.5s` on every signed-in route
-- Atlas pipeline p95 latency `< 45s` end-to-end
-- Sage pipeline p95 latency `< 25s` end-to-end
+- risk_analyzer pipeline p95 latency `< 45s` end-to-end
+- supplement_advisor pipeline p95 latency `< 25s` end-to-end
 - Janet first-token latency `< 800ms`
 - Janet full-response p95 `< 12s` for a 200-token reply
 - No bundle larger than 250 KB gzipped per route
@@ -227,7 +227,7 @@ This catches Anthropic API outages, Supabase regional flakes, and Stripe webhook
 
 Longevity Coach's moat is AI quality. Evals get their own pipeline, separate from CI, run on a schedule and after every prompt or model change.
 
-### 2a. Atlas (risk narrative) evals
+### 2a. risk_analyzer (risk narrative) evals
 
 **Golden dataset:** 30 anonymised completed assessments. Diverse:
 - Lifestyle-only (no biomarker uploads)
@@ -246,9 +246,9 @@ Longevity Coach's moat is AI quality. Evals get their own pipeline, separate fro
 
 **Pass bar:** specificity mean ≥ 4.0, no-overclaim 100%, driver-to-score linkage 100%, GP-readability mean ≥ 4.0. If a model upgrade regresses any dimension by `> 0.5`, we don't ship it.
 
-### 2b. Sage (supplement protocol) evals
+### 2b. supplement_advisor (supplement protocol) evals
 
-**Golden dataset:** the same 30 assessments above, paired with the protocol Sage produces for each.
+**Golden dataset:** the same 30 assessments above, paired with the protocol supplement_advisor produces for each.
 
 **Metrics:**
 - **Item-to-driver linkage**: every item has a rationale that names the patient's specific risk driver.
@@ -384,7 +384,7 @@ What blocks a deploy:
 - Tier 3 critical-path E2E fails.
 - Tier 4 `qa_public.py` fails.
 - Lighthouse budget regression > 10%.
-- Eval suite 2a (Atlas) regression > 0.5 on any dimension.
+- Eval suite 2a (risk_analyzer) regression > 0.5 on any dimension.
 - Eval suite 2d (Janet document analyser) regression > 5% on any biomarker.
 - Visual regression on the four "vibe" surfaces (`/`, `/dashboard`, `/report`, Janet chat panel).
 
@@ -417,10 +417,10 @@ The agent layer just landed (2026-04-28). Phase 2 isn't user-reviewed yet. We ca
 
 | Week | QA build |
 |---|---|
-| 1 | Wire `pgTAP` RLS suite into CI. Atlas + Sage integration tests in 2a. Pre-pilot-invite checklist run for the first time on the new Phase 2 surfaces. |
+| 1 | Wire `pgTAP` RLS suite into CI. risk_analyzer + supplement_advisor integration tests in 2a. Pre-pilot-invite checklist run for the first time on the new Phase 2 surfaces. |
 | 2 | Critical-path E2E in Playwright TS, including a seeded test-user fixture. Live-QA `qa_report.py` and `qa_uploads.py` under the `webapp-testing` skill. |
-| 3 | Atlas eval suite (2a) live with first golden dataset of 10 fixture assessments; Sage eval (2b) the same. Synthetic monitor in production. |
-| 4 | Janet eval suite (2c) live with first 20 fixture conversations. Doctor panel scheduled for Atlas + Sage. |
+| 3 | risk_analyzer eval suite (2a) live with first golden dataset of 10 fixture assessments; supplement_advisor eval (2b) the same. Synthetic monitor in production. |
+| 4 | Janet eval suite (2c) live with first 20 fixture conversations. Doctor panel scheduled for risk_analyzer + supplement_advisor. |
 | 5 | Visual regression (Chromatic) on the four vibe surfaces. Lighthouse budgets enforced. |
 | 6 | Mobile Safari runs on BrowserStack. Bug-bash before pilot invites. |
 | 7 | Trust audit. Pre-pilot-invite checklist run on every new test phone. |

@@ -10,7 +10,7 @@ vi.mock('@/lib/ai/agent-factory', () => ({
   createPipelineAgent: vi.fn(() => ({ run: mockRun })),
 }));
 
-import { sageSummaryTool } from '@/lib/ai/tools/sage-tool';
+import { supplementAdvisorTool } from '@/lib/ai/tools/supplement-advisor-tool';
 
 const BASE_CTX: Partial<PatientContext> = {
   userId: 'test-user',
@@ -71,30 +71,30 @@ beforeEach(() => {
   });
 });
 
-describe('sageSummaryTool', () => {
+describe('supplementAdvisorTool', () => {
   it('returns a valid AI SDK tool object', () => {
-    const t = sageSummaryTool(BASE_CTX as PatientContext);
+    const t = supplementAdvisorTool(BASE_CTX as PatientContext);
     expect(t.description).toBeTruthy();
     expect(t.inputSchema).toBeDefined();
     expect(t.execute).toBeTypeOf('function');
   });
 
-  it('calls createPipelineAgent("sage") when supplement plan exists', async () => {
+  it('calls createPipelineAgent("supplement_advisor") when supplement plan exists', async () => {
     const { createPipelineAgent } = await import('@/lib/ai/agent-factory');
-    const t = sageSummaryTool(BASE_CTX as PatientContext);
+    const t = supplementAdvisorTool(BASE_CTX as PatientContext);
     await t.execute({ focus: undefined }, { messages: [], toolCallId: 'tc1' });
-    expect(createPipelineAgent).toHaveBeenCalledWith('sage');
+    expect(createPipelineAgent).toHaveBeenCalledWith('supplement_advisor');
   });
 
   it('passes focus into the prompt when provided', async () => {
-    const t = sageSummaryTool(BASE_CTX as PatientContext);
+    const t = supplementAdvisorTool(BASE_CTX as PatientContext);
     await t.execute({ focus: 'omega-3' }, { messages: [], toolCallId: 'tc1' });
     const promptArg = mockRun.mock.calls[0][1] as string;
     expect(promptArg).toContain('omega-3');
   });
 
   it('includes supplement items in the prompt', async () => {
-    const t = sageSummaryTool(BASE_CTX as PatientContext);
+    const t = supplementAdvisorTool(BASE_CTX as PatientContext);
     await t.execute({ focus: undefined }, { messages: [], toolCallId: 'tc1' });
     const promptArg = mockRun.mock.calls[0][1] as string;
     expect(promptArg).toContain('Omega-3 Fish Oil');
@@ -103,7 +103,7 @@ describe('sageSummaryTool', () => {
 
   it('returns early without LLM call when supplementPlan is null', async () => {
     const ctxNoplan = { ...BASE_CTX, supplementPlan: null } as PatientContext;
-    const t = sageSummaryTool(ctxNoplan);
+    const t = supplementAdvisorTool(ctxNoplan);
     const result = await t.execute({ focus: undefined }, { messages: [], toolCallId: 'tc1' });
     expect(mockRun).not.toHaveBeenCalled();
     expect(result).toEqual({ summary: 'No supplement protocol has been generated yet.', highlighted_items: [] });

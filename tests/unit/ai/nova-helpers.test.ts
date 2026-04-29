@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { chunkText } from '@/lib/ai/pipelines/nova';
+import { chunkText } from '@/lib/ai/pipelines/health-researcher';
 
 describe('chunkText', () => {
   it('returns empty array for empty string', () => {

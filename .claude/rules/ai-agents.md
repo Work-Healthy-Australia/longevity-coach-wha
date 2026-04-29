@@ -34,14 +34,14 @@ Rules:
 
 | Priority | Agent | Type | Status |
 |---|---|---|---|
-| P1 | Sage (Supplement Protocol) | Pipeline worker | Phase 2 |
-| P2 | Atlas (Risk Narrative) | Pipeline worker | Phase 2 |
+| P1 | supplement_advisor (Supplement Protocol) | Pipeline worker | Phase 2 |
+| P2 | risk_analyzer (Risk Narrative) | Pipeline worker | Phase 2 |
 | P3 | Janet (Health Coach) | Real-time agent | Phase 3 |
 | P4 | Janet-Clinician Brief | Pipeline worker | Phase 5 |
-| P5 | PT Coach (live + monthly plan) | Agent + pipeline | Phase 3 |
-| P5 | Alex (Support) | Real-time agent | Phase 3 |
-| P6 | Marco (Meal Plan) | Pipeline worker | Phase 3 |
-| P7 | Nova (Research Digest) | Pipeline worker | Phase 4 |
+| P5 | pt_coach (live + monthly plan) | Agent + pipeline | Phase 3 |
+| P5 | support | Real-time agent | Phase 3 |
+| P6 | chef (Meal Plan) | Pipeline worker | Phase 3 |
+| P7 | health_researcher (Research Digest) | Pipeline worker | Phase 4 |
 
 Do not build ahead of the current phase without product owner sign-off.
 
@@ -66,7 +66,7 @@ The context is read-only inside the agent turn. Writes happen after the LLM resp
 - Embedding model: `perplexity/pplx-embed-v1-4b` via OpenRouter (2560 dims, 32K context, INT8, MRL).
 - Search strategy: hybrid — HNSW vector similarity + BM25 full-text + RRF fusion.
 - Target query time: under 30 ms.
-- Knowledge is populated by the Nova research pipeline worker — never written directly by agents.
+- Knowledge is populated by the health_researcher pipeline worker — never written directly by agents.
 
 ---
 
@@ -82,7 +82,7 @@ The context is read-only inside the agent turn. Writes happen after the LLM resp
 
 ## Janet sub-agent pattern
 
-Janet is the primary patient-facing agent. When a specialist sub-agent (Atlas for risk narrative, Sage for supplements, PT Coach for exercise) is needed:
+Janet is the primary patient-facing agent. When a specialist sub-agent (risk_analyzer for risk narrative, supplement_advisor for supplements, pt_coach for exercise) is needed:
 
 1. Janet makes a `tool_use` call to the sub-agent.
 2. The sub-agent returns a `tool_result`.

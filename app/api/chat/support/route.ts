@@ -1,6 +1,6 @@
 import { type UIMessage } from 'ai';
 import { createClient } from '@/lib/supabase/server';
-import { streamAlexTurn } from '@/lib/ai/agents/alex';
+import { streamSupportTurn } from '@/lib/ai/agents/support';
 
 export async function POST(req: Request) {
   const supabase = await createClient();
@@ -29,6 +29,6 @@ export async function POST(req: Request) {
     });
   }
 
-  const result = await streamAlexTurn(messages, currentPath);
+  const result = await streamSupportTurn(messages, currentPath);
   return result.toUIMessageStreamResponse();
 }

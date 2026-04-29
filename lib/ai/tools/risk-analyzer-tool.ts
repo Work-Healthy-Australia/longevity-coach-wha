@@ -3,13 +3,13 @@ import { z } from 'zod';
 import { createPipelineAgent } from '@/lib/ai/agent-factory';
 import type { PatientContext } from '@/lib/ai/patient-context';
 
-const AtlasOutputSchema = z.object({
+const RiskAnalyzerOutputSchema = z.object({
   narrative: z.string().min(50).max(600),
   top_drivers: z.array(z.string()).max(4),
   key_action: z.string().max(200),
 });
 
-function buildAtlasPrompt(ctx: PatientContext): string {
+function buildRiskAnalyzerPrompt(ctx: PatientContext): string {
   const parts: string[] = [];
 
   const r = ctx.riskScores;
@@ -42,13 +42,13 @@ function buildAtlasPrompt(ctx: PatientContext): string {
   return parts.join('\n');
 }
 
-export function atlasRiskSummaryTool(ctx: PatientContext): Tool {
+export function riskAnalyzerTool(ctx: PatientContext): Tool {
   return {
     description:
       'Get a specialist risk narrative for this patient. Returns a structured 2–4 sentence interpretation of their five-domain risk scores, top drivers, and one key action. Call this when the patient asks to explain their risk results in depth or wants to understand what is driving their health risk.',
     inputSchema: zodSchema(z.object({ _context: z.string().optional() })),
     execute: async () => {
-      return createPipelineAgent('atlas').run(AtlasOutputSchema, buildAtlasPrompt(ctx));
+      return createPipelineAgent('risk_analyzer').run(RiskAnalyzerOutputSchema, buildRiskAnalyzerPrompt(ctx));
     },
   };
 }

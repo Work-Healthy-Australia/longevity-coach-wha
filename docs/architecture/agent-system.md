@@ -106,8 +106,8 @@ Both blueprints call `PatientContext.load()` before execution. All Supabase read
 | Research digests (latest 3) | `health_updates` | Janet |
 | Subscription + entitlements | `subscriptions`, `entitlements` | Janet (appointment booking) |
 | **RAG knowledge chunks** | **`health_knowledge` (pgvector)** | **Janet (injected into system prompt)** |
-| Role + organisation | `profiles.role`, `organisations`, `patient_assignments` | Alex Support |
-| Support ticket history | `support_tickets` | Alex Support |
+| Role + organisation | `profiles.role`, `organisations`, `patient_assignments` | Support Agent |
+| Support ticket history | `support_tickets` | Support Agent |
 
 **Rules:**
 - Read-only. No component mutates PatientContext.
@@ -131,7 +131,7 @@ One component, one write target.
 | Research Digest Pipeline | `health_updates` | Digest records |
 | Janet-Clinician Pipeline | `checkin_reviews`, `monthly_programs` | Clinical brief, 30-day plan |
 | Onboarding Flow | `profiles.onboarding_step` | Progress marker |
-| Alex Support Agent | `agent_conversations`, `support_tickets` | Conversation turns, escalation records |
+| Support Agent | `agent_conversations`, `support_tickets` | Conversation turns, escalation records |
 
 ---
 
@@ -141,14 +141,14 @@ One component, one write target.
 |---|---|---|
 | **User message** | WhatsApp, in-app chat | Synchronous (Agent blueprint) |
 | **Lifecycle event** | `completed_at` set, upload processed | Async (Pipeline blueprint) |
-| **Scheduled** | Weekly Nova, monthly PT plan | Async (Pipeline blueprint, Vercel Cron) |
+| **Scheduled** | Weekly health_researcher, monthly PT plan | Async (Pipeline blueprint, Vercel Cron) |
 | **Clinician action** | Monthly review initiated in CRM | Async (Pipeline blueprint, human-gated) |
 
 ---
 
 ### 1.6 Vector DB and Hybrid RAG
 
-Janet uses a hybrid retrieval layer to ground responses in current medical and longevity research. The knowledge base lives in Supabase as a `pgvector` table and is populated exclusively by the Research Digest Pipeline (Nova).
+Janet uses a hybrid retrieval layer to ground responses in current medical and longevity research. The knowledge base lives in Supabase as a `pgvector` table and is populated exclusively by the Research Digest Pipeline (health_researcher).
 
 **Why hybrid (not vector-only):** Pure semantic search misses exact clinical terms (drug names, gene variants, biomarker thresholds). Pure keyword search misses conceptual synonymy. Reciprocal Rank Fusion (RRF) over both gives competitive accuracy with no reranker latency overhead.
 
@@ -232,7 +232,7 @@ $$;
 
 Total RAG overhead added to PatientContext.load(): **~30 ms** (runs in parallel — adds zero sequential latency).
 
-**Chunking strategy (Nova writes this):** Each research digest is split into 400-token chunks with 80-token overlap. Each chunk inherits the digest's `metadata.category` and `metadata.evidence_level` so Janet can cite them with appropriate confidence.
+**Chunking strategy (health_researcher writes this):** Each research digest is split into 400-token chunks with 80-token overlap. Each chunk inherits the digest's `metadata.category` and `metadata.evidence_level` so Janet can cite them with appropriate confidence.
 
 ---
 
@@ -270,13 +270,13 @@ Total RAG overhead added to PatientContext.load(): **~30 ms** (runs in parallel 
   └──┬──────────┘                │         │   patient/clinician  │
      │                           │         │   /B2B persona mode  │
      │ tool_use (real-time)      │         └──────────────────────┘
-     ├──→ Risk Narrative sub-agent (Atlas)    blocks current turn; user waits
-     ├──→ Supplement Protocol sub-agent (Sage)
+     ├──→ Risk Narrative sub-agent (risk_analyzer)    blocks current turn; user waits
+     ├──→ Supplement Protocol sub-agent (supplement_advisor)
      └──→ PT Coach live sub-agent
 
   ┌──────────────────────────────────────────────────────┐
   │  VECTOR DB (pgvector + HNSW)                         │
-  │  health_knowledge — populated by Nova                │
+  │  health_knowledge — populated by health_researcher    │
   │  Janet hybrid-searches at every session start        │
   └──────────────────────────────────────────────────────┘
 
@@ -287,7 +287,7 @@ Total RAG overhead added to PatientContext.load(): **~30 ms** (runs in parallel 
   Assessment completed ──→ PT Coach Monthly Plan Pipeline
                       ──→ Meal Plan Pipeline (if triggered)
 
-  Weekly cron          ──→ Research Digest Pipeline (Nova)
+  Weekly cron          ──→ Research Digest Pipeline (health_researcher)
                                 └─→ health_updates (structured)
                                 └─→ health_knowledge (pgvector chunks)
 
@@ -311,12 +311,12 @@ Total RAG overhead added to PatientContext.load(): **~30 ms** (runs in parallel 
 | RAG query overhead | ~30 ms | Parallel with PatientContext.load(); Voyage embed + HNSW search |
 | Assessment submit → redirect | < 2 s | Deterministic engine sync (no LLM); async pipeline triggers post-redirect |
 | PT Coach Monthly Plan Pipeline | < 60 s | Async, 1st-of-month; user not waiting |
-| Research Digest Pipeline | < 200 s | Weekly cron; parallel web search + batch embed; see §Nova design |
+| Research Digest Pipeline | < 200 s | Weekly cron; parallel web search + batch embed; see §health_researcher design |
 
 **Critical constraints:**
 - The only synchronous LLM calls in a user-facing path are Janet and its real-time sub-agents.
 - RAG query runs in parallel with other `PatientContext.load()` reads — zero sequential overhead.
-- Background pipelines (PT monthly, Nova, Janet-Clinician, Meal Plan) never block any user response.
+- Background pipelines (PT monthly, health_researcher, Janet-Clinician, Meal Plan) never block any user response.
 
 ---
 
@@ -365,8 +365,8 @@ LLM call (streaming)             ← Turn 1
         │
         └── Response is tool_use (specialist needed)?
                   │
-                  ├── invoke_risk_analyzer   → Atlas sub-agent LLM call (~1–2 s)
-                  ├── invoke_supplement_advisor → Sage sub-agent LLM call (~1–2 s)
+                  ├── invoke_risk_analyzer   → risk_analyzer sub-agent LLM call (~1–2 s)
+                  ├── invoke_supplement_advisor → supplement_advisor sub-agent LLM call (~1–2 s)
                   └── invoke_pt_coach         → PT Coach sub-agent LLM call (~1 s)
                             │
                             ▼
@@ -380,7 +380,7 @@ LLM call (streaming)             ← Turn 1
 
 **Sub-agent calls are real-time** — they block the current HTTP request and the user waits. This is correct and expected for substantive analytical requests (risk analysis, supplement review). Streaming Turn 2 means the user sees Janet's synthesis arriving as the sub-agent result is processed.
 
-**Background pipelines (PT monthly, Nova, Meal Plan, Janet-Clinician) are async** — Nova writes to the vector DB and `health_updates`; Janet reads from both at session start. No real-time delegation to these.
+**Background pipelines (PT monthly, health_researcher, Meal Plan, Janet-Clinician) are async** — health_researcher writes to the vector DB and `health_updates`; Janet reads from both at session start. No real-time delegation to these.
 
 ---
 
@@ -390,12 +390,12 @@ The key distinction: **does the user need the result right now?**
 
 | Component | Delegation type | Why |
 |---|---|---|
-| Risk Narrative (Atlas) | Real-time tool_use | User asked about their risk — they're waiting for the answer |
-| Supplement Protocol (Sage) | Real-time tool_use | User asked about supplements — they want a live response |
+| Risk Narrative (risk_analyzer) | Real-time tool_use | User asked about their risk — they're waiting for the answer |
+| Supplement Protocol (supplement_advisor) | Real-time tool_use | User asked about supplements — they want a live response |
 | PT Coach (live session) | Real-time tool_use | User is mid-session — they need guidance immediately |
 | PT Coach (monthly plan) | Background (async cron) | Monthly program; user isn't waiting for it |
 | Meal Plan | Background (async) | Weekly plan; generated ahead of time |
-| Research Digest (Nova) | Background (async cron) | Knowledge base maintenance; feeds Janet via RAG, not live calls |
+| Research Digest (health_researcher) | Background (async cron) | Knowledge base maintenance; feeds Janet via RAG, not live calls |
 | Janet-Clinician | Background (clinician-gated) | Clinician initiates asynchronously; no patient waiting |
 
 **Tool_use flow for real-time sub-agents:**
@@ -455,8 +455,8 @@ Active window: last 20 turns per `(user_uuid, agent)`. Older turns are summarize
 
 | Tool | Sub-agent | When Janet uses it |
 |---|---|---|
-| `invoke_risk_analyzer` | Risk Narrative (Atlas) | User asks about risk profile, bio-age, or modifiable factors |
-| `invoke_supplement_advisor` | Supplement Protocol (Sage) | User asks about supplements or a new upload was just processed |
+| `invoke_risk_analyzer` | Risk Narrative (risk_analyzer) | User asks about risk profile, bio-age, or modifiable factors |
+| `invoke_supplement_advisor` | Supplement Protocol (supplement_advisor) | User asks about supplements or a new upload was just processed |
 | `invoke_pt_coach` | PT Coach live | Training-related message; active session in progress |
 
 **Appointment booking:**
@@ -674,13 +674,13 @@ Active window: last 20 turns per `(user_uuid, agent)`. Older turns are summarize
 
 ---
 
-### Component 7 — Research Digest Pipeline (Nova)
+### Component 7 — Research Digest Pipeline (health_researcher)
 
 **Type:** Pipeline worker
 **Priority:** P7 (background; feeds Janet's knowledge base — not real-time)
 **Model:** `claude-sonnet-4-6`
 
-**What it does:** Runs weekly to scan current scientific literature, synthesize actionable digests, and write them to two targets: the structured `health_updates` table (for display) and the `health_knowledge` pgvector table (for Janet's RAG layer). Nova is the sole writer to the knowledge base.
+**What it does:** Runs weekly to scan current scientific literature, synthesize actionable digests, and write them to two targets: the structured `health_updates` table (for display) and the `health_knowledge` pgvector table (for Janet's RAG layer). The health_researcher pipeline is the sole writer to the knowledge base.
 
 **Trigger:** Vercel Cron — weekly. Designed to run within Vercel Pro's 300 s max function duration.
 
@@ -821,7 +821,7 @@ Total: ~100 s
 
 ---
 
-### Component 10 — Alex (Support Agent)
+### Component 10 — Support Agent
 
 **Type:** Agent
 **Priority:** P5 alongside PT Coach — build when WhatsApp channels launch
@@ -829,7 +829,7 @@ Total: ~100 s
 
 **What it does:** Conversational support agent for all non-health platform questions. Handles three distinct customer personas — patient, clinician, and B2B client — each with different platform access, workflows, and concerns. Resolves blockers directly where possible; creates escalation tickets when it cannot.
 
-Alex does NOT read health data. It reads only platform context (role, subscription, organisation, ticket history). This is a hard privacy boundary — support conversations must never expose clinical details.
+The support agent does NOT read health data. It reads only platform context (role, subscription, organisation, ticket history). This is a hard privacy boundary — support conversations must never expose clinical details.
 
 **Trigger:** Inbound message on the support channel (WhatsApp / in-app support tab).
 
@@ -979,13 +979,13 @@ Common resolution scripts:
 |---|---|
 | Supabase Storage bucket + RLS | Supplement Protocol Pipeline (biomarker extraction path) |
 | Stripe price IDs | Janet (entitlement check for appointment booking) |
-| WhatsApp Business API credentials | Janet, PT Coach live, Alex Support, Onboarding Flow |
-| Separate WhatsApp number / channel for support | Alex Support (must not share Janet's health channel) |
+| WhatsApp Business API credentials | Janet, PT Coach live, Support Agent, Onboarding Flow |
+| Separate WhatsApp number / channel for support | Support Agent (must not share Janet's health channel) |
 | Clinician CRM portal | Janet-Clinician Pipeline |
 | `training_sessions` schema | PT Coach (both components) |
 | `meal_plans`, `recipes`, `shopping_lists` schemas | Meal Plan Pipeline |
 | `health_updates` + `health_knowledge` schemas + pgvector migration | Research Digest Pipeline, Janet RAG |
-| Supabase pgvector extension enabled on project | Janet RAG, Nova |
+| Supabase pgvector extension enabled on project | Janet RAG, health_researcher |
 | `monthly_checkins`, `checkin_reviews` schemas | Janet-Clinician Pipeline |
 
 ---
@@ -998,7 +998,7 @@ Supplement Protocol Pipeline (P1)
     → Janet Agent (P3)
       → Janet-Clinician Pipeline (P4)
       → PT Coach Live Agent + Monthly Plan Pipeline (P5)  ←┐
-      → Alex Support Agent (P5, parallel)               ←──┘ both need WhatsApp channels
+      → Support Agent (P5, parallel)                    ←──┘ both need WhatsApp channels
       → Meal Plan Pipeline (P6)
 
 Research Digest Pipeline (P7) — independent, any time
@@ -1006,4 +1006,4 @@ Research Digest Pipeline (P7) — independent, any time
 Onboarding Flow — deferred until WhatsApp drop-off rate justifies it
 ```
 
-Hard dependency: Supplement Protocol Pipeline cannot reach tier 2–4 recommendations without Atlas risk scores. Risk Narrative Pipeline feeds domain thresholds for the Supplement Protocol. Janet is most useful only after both pipelines have run at least once.
+Hard dependency: Supplement Protocol Pipeline cannot reach tier 2–4 recommendations without risk_analyzer scores. Risk Narrative Pipeline feeds domain thresholds for the Supplement Protocol. Janet is most useful only after both pipelines have run at least once.

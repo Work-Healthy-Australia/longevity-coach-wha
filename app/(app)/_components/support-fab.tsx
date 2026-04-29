@@ -6,10 +6,10 @@ import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { useChatStore } from '@/lib/stores/chat-store';
 import { AssistantBubble } from './chat-message';
-import './alex-fab.css';
+import './support-fab.css';
 
-export function AlexFAB() {
-  const { alex, toggleAlex, closeAlex } = useChatStore();
+export function SupportFAB() {
+  const { support, toggleSupport, closeSupport } = useChatStore();
   const pathname = usePathname();
   const [input, setInput] = useState('');
 
@@ -18,11 +18,11 @@ export function AlexFAB() {
       {
         id: 'intro',
         role: 'assistant' as const,
-        parts: [{ type: 'text' as const, text: "Hi! I'm Alex. How can I help you today?" }],
+        parts: [{ type: 'text' as const, text: "Hi! How can I help you?" }],
       },
     ],
     transport: new DefaultChatTransport({
-      api: '/api/chat/alex',
+      api: '/api/chat/support',
       body: { currentPath: pathname },
     }),
   });
@@ -31,19 +31,19 @@ export function AlexFAB() {
 
   return (
     <>
-      {alex.isOpen && (
-        <div className="alex-panel">
-          <div className="alex-panel-header">
-            <span className="alex-panel-title">Alex · Support</span>
-            <button className="alex-panel-close" onClick={closeAlex} type="button" aria-label="Close">
+      {support.isOpen && (
+        <div className="support-panel">
+          <div className="support-panel-header">
+            <span className="support-panel-title">Support</span>
+            <button className="support-panel-close" onClick={closeSupport} type="button" aria-label="Close">
               ✕
             </button>
           </div>
 
-          <div className="alex-messages">
+          <div className="support-messages">
             {messages.map((msg, idx) => (
-              <div key={msg.id} className={`alex-msg alex-msg-${msg.role}`}>
-                <div className="alex-bubble">
+              <div key={msg.id} className={`support-msg support-msg-${msg.role}`}>
+                <div className="support-bubble">
                   {msg.parts.map((part, i) =>
                     part.type === 'text' ? (
                       msg.role === 'assistant' ? (
@@ -61,8 +61,8 @@ export function AlexFAB() {
               </div>
             ))}
             {status === 'submitted' && (
-              <div className="alex-msg alex-msg-assistant">
-                <div className="alex-bubble alex-typing">
+              <div className="support-msg support-msg-assistant">
+                <div className="support-bubble support-typing">
                   <span /><span /><span />
                 </div>
               </div>
@@ -70,7 +70,7 @@ export function AlexFAB() {
           </div>
 
           <form
-            className="alex-form"
+            className="support-form"
             onSubmit={(e) => {
               e.preventDefault();
               if (!input.trim() || status !== 'ready') return;
@@ -79,15 +79,15 @@ export function AlexFAB() {
             }}
           >
             <input
-              className="alex-input"
+              className="support-input"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               disabled={status !== 'ready'}
-              placeholder="Ask Alex anything…"
+              placeholder="Ask anything…"
               autoComplete="off"
             />
             <button
-              className="alex-send"
+              className="support-send"
               type="submit"
               disabled={status !== 'ready' || !input.trim()}
             >
@@ -98,14 +98,14 @@ export function AlexFAB() {
       )}
 
       <button
-        className="alex-fab"
-        onClick={toggleAlex}
+        className="support-fab"
+        onClick={toggleSupport}
         type="button"
-        aria-label={alex.isOpen ? 'Close Alex support' : 'Open Alex support'}
+        aria-label={support.isOpen ? 'Close support chat' : 'Open support chat'}
       >
-        {alex.isOpen ? '✕' : '?'}
-        {!alex.isOpen && alex.unread > 0 && (
-          <span className="alex-badge">{alex.unread}</span>
+        {support.isOpen ? '✕' : '?'}
+        {!support.isOpen && support.unread > 0 && (
+          <span className="support-badge">{support.unread}</span>
         )}
       </button>
     </>

@@ -1,4 +1,4 @@
-// Nova research digest pipeline — Phase 4
+// health-researcher pipeline — Phase 4
 // Populates health_knowledge via pgvector embeddings for RAG retrieval.
 // Triggered by cron or admin action — never called from a user request.
 
@@ -73,7 +73,7 @@ async function searchPubMed(category: string, query: string): Promise<string[]> 
     const data = await res.json() as { esearchresult?: { idlist?: string[] } };
     return data?.esearchresult?.idlist ?? [];
   } catch {
-    console.warn(`[Nova] PubMed search failed for category ${category}`);
+    console.warn(`[health-researcher] PubMed search failed for category ${category}`);
     return [];
   }
 }
@@ -146,7 +146,7 @@ function parseEfetchText(text: string, pmids: string[]): PubMedArticle[] {
 // Main pipeline
 // ---------------------------------------------------------------------------
 
-export async function runNovaDigestPipeline(): Promise<void> {
+export async function runHealthResearcherPipeline(): Promise<void> {
   try {
     const admin = createAdminClient();
 
@@ -168,7 +168,7 @@ export async function runNovaDigestPipeline(): Promise<void> {
     // -----------------------------------------------------------------------
     const allPmids = [...new Set(Object.values(categoryPmids).flat())];
     if (allPmids.length === 0) {
-      console.warn('[Nova] No PMIDs found — pipeline exiting early');
+      console.warn('[health-researcher cron] No PMIDs found — pipeline exiting early');
       return;
     }
 
@@ -184,7 +184,7 @@ export async function runNovaDigestPipeline(): Promise<void> {
         articles = parseEfetchText(text, allPmids);
       }
     } catch (err) {
-      console.error('[Nova] efetch failed:', err);
+      console.error('[health-researcher pipeline] efetch failed:', err);
     }
 
     // Deduplicate against recent health_knowledge
@@ -215,7 +215,7 @@ export async function runNovaDigestPipeline(): Promise<void> {
     // -----------------------------------------------------------------------
     // Phase 3 — Synthesize (2 batches of 3 parallel LLM calls)
     // -----------------------------------------------------------------------
-    const agent = createPipelineAgent('nova');
+    const healthResearcher = createPipelineAgent('health_researcher');
     const batches: string[][] = [
       ['cv', 'metabolic', 'neuro'],
       ['onco', 'msk', 'supplements'],
@@ -235,7 +235,7 @@ export async function runNovaDigestPipeline(): Promise<void> {
 
           const prompt = `Category: ${category}\n\nRecent PubMed abstracts:\n---\n${articlesText}\n---\n\nSynthesise a digest following your instructions. Return JSON matching the schema.`;
 
-          const result = await agent.run(DigestSchema, prompt);
+          const result = await healthResearcher.run(DigestSchema, prompt);
           return { category, digest: result };
         })
       );
@@ -245,13 +245,13 @@ export async function runNovaDigestPipeline(): Promise<void> {
         if (r.status === 'fulfilled' && r.value !== null) {
           successfulResults.push(r.value);
         } else if (r.status === 'rejected') {
-          console.error(`[Nova] Category ${batch[i]} failed:`, r.reason);
+          console.error(`[health-researcher pipeline] Category ${batch[i]} failed:`, r.reason);
         }
       }
     }
 
     if (successfulResults.length === 0) {
-      console.warn('[Nova] No digests produced — pipeline exiting early');
+      console.warn('[health-researcher pipeline] No digests produced — pipeline exiting early');
       return;
     }
 
@@ -337,9 +337,9 @@ export async function runNovaDigestPipeline(): Promise<void> {
       (admin as any).schema('agents').from('health_updates').delete().lt('created_at', ninetyDaysAgo),
     ]);
 
-    console.log(`[Nova] Pipeline complete — run_id=${runId}, digests=${successfulResults.length}, chunks=${knowledgeRows.length}`);
+    console.log(`[health-researcher pipeline] Pipeline complete — run_id=${runId}, digests=${successfulResults.length}, chunks=${knowledgeRows.length}`);
   } catch (err) {
     // Top-level catch: log but never rethrow — cron route handles return code
-    console.error('[Nova] Pipeline error:', err);
+    console.error('[health-researcher pipeline] Pipeline error:', err);
   }
 }

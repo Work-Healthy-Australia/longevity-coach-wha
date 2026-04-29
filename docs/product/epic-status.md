@@ -99,43 +99,43 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 3: The Number
 
 `●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 75%** — Atlas pipeline ships risk narratives end-to-end. Deterministic risk engine ported from Base44 and unit tested; engine output now feeds Atlas for higher-confidence narratives. BUG-003 closed. **Numeric systolic BP scoring shipped 2026-04-29** (AHA-aligned bands replacing the binary `hypertension` flag while preserving zero-regression fallback). GP-panel review still outstanding.
+**Estimate: 70%** — risk_analyzer pipeline ships risk narratives end-to-end. Deterministic risk engine ported from Base44 and unit tested; engine output now feeds risk_analyzer for higher-confidence narratives. BUG-003 closed. GP-panel review still outstanding.
 
 **Shipped:**
-- Atlas pipeline at `lib/ai/pipelines/risk-narrative.ts`.
+- risk_analyzer pipeline at `lib/ai/pipelines/risk-narrative.ts`.
 - Pipeline endpoint at `app/api/pipelines/risk-narrative/route.ts` (secured with `x-pipeline-secret`).
 - Pipeline triggered by `submitAssessment()`, by every successful upload, and now by every daily check-in.
 - `risk_scores` table extended with `narrative`, `engine_output`, `data_gaps` columns (migration `0014_agent_tables.sql`).
 - Idempotent upsert keyed on `(user_uuid, computed_at_date)`.
 - **Deterministic risk engine ported** from Base44 to `lib/risk/` (migration `0034_risk_scores_unique_and_array_fixes.sql`) — five scoring domains (CV, metabolic, brain, cancer, MSK), biological age estimator, confidence levels based on data completeness, modifiable-risk-factor ranking, 6-month projected improvement.
 - Unit tests: `tests/unit/risk/scorer.test.ts`, `tests/unit/risk/_gp-panel-pack.test.ts`, `tests/unit/risk/assemble.test.ts` (snapshot coverage).
-- **Check-in → Atlas trigger** (2026-04-28) — daily check-in submission fires a background Atlas pipeline refresh, completing the data loop: questionnaire → check-in → Atlas → dashboard.
+- **Check-in → risk_analyzer trigger** (2026-04-28) — daily check-in submission fires a background risk_analyzer pipeline refresh, completing the data loop: questionnaire → check-in → risk_analyzer → dashboard.
 
 **Outstanding:**
-- Atlas narrative quality: currently reads raw `engine_output`; narrative tone and domain weighting still tuned via Atlas prompt, not the engine.
+- risk_analyzer narrative quality: currently reads raw `engine_output`; narrative tone and domain weighting still tuned via risk_analyzer prompt, not the engine.
 - GP-panel review of 10 sample narratives.
 - Per-domain regression tests in CI (currently unit only).
 
 **Open bugs:** none.
 
 **Closed bugs:**
-- **BUG-003** (P1, CLOSED 2026-04-28): Atlas was writing `confidence_level = 'moderate'` for every patient because the deterministic engine was not ported. Deterministic engine now live in `lib/risk/`; scores are evidence-grounded.
+- **BUG-003** (P1, CLOSED 2026-04-28): risk_analyzer was writing `confidence_level = 'moderate'` for every patient because the deterministic engine was not ported. Deterministic engine now live in `lib/risk/`; scores are evidence-grounded.
 
 ---
 
 ### Epic 4: The Protocol
 
 `●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 60%** — Sage pipeline ships a 30-day protocol after every Atlas run; Sage eval suite shipped 2026-04-28 with 4 rubrics. No deterministic supplement catalog yet — items are LLM-derived.
+**Estimate: 60%** — supplement_advisor pipeline ships a 30-day protocol after every risk_analyzer run; supplement_advisor eval suite shipped 2026-04-28 with 4 rubrics. No deterministic supplement catalog yet — items are LLM-derived.
 
 **Shipped:**
-- Sage pipeline at `lib/ai/pipelines/supplement-protocol.ts`.
+- supplement_advisor pipeline at `lib/ai/pipelines/supplement-protocol.ts`.
 - Pipeline endpoint at `app/api/pipelines/supplement-protocol/route.ts` (secured with `x-pipeline-secret`).
-- Triggered after Atlas completion and after every Janet document analysis.
+- Triggered after risk_analyzer completion and after every Janet document analysis.
 - `supplement_plans` table with `items JSONB`, `status` check constraint, `valid_from`/`valid_to`.
 - Per-item rationale tied to the patient's specific risk drivers.
 - Tier label per item (`critical` / `high` / `recommended` / `performance`).
-- **Sage eval suite** (`tests/evals/sage.eval.ts`, 2026-04-28) — 4 rubrics: protocol completeness, safe language, personalisation to patient's risk drivers, citation of specific supplements.
+- **supplement_advisor eval suite** (`tests/evals/sage.eval.ts`, 2026-04-28) — 4 rubrics: protocol completeness, safe language, personalisation to patient's risk drivers, citation of specific supplements.
 
 **Outstanding:**
 - Hand-curated supplement catalog (~40 evidence-backed items) for deterministic Phase 1 generation.
@@ -177,7 +177,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 6: The Coach
 
 `●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 90%** — Janet streaming chat, cross-session history, stale-data nudge, Nova digests, Alex route, RAG, Atlas + Sage `tool_use` sub-agents, conversation-summary compression, and eval suites all shipped. Remaining work is end-to-end regression suite and user review.
+**Estimate: 90%** — Janet streaming chat, cross-session history, stale-data nudge, health_researcher digests, support agent route, RAG, risk_analyzer + supplement_advisor `tool_use` sub-agents, conversation-summary compression, and eval suites all shipped. Remaining work is end-to-end regression suite and user review.
 
 **Shipped:**
 - Janet agent at `lib/ai/agents/janet.ts` (Claude Sonnet 4.6, streaming).
@@ -187,18 +187,18 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - Janet chat panel embedded in `/report`.
 - Cross-session conversation history — Janet loads last 20 turns from `agent_conversations` on each call.
 - Stale-data nudge — `summariseContext` warns Janet when risk scores are >30 days old.
-- Nova research digests surfaced in `summariseContext` — Janet sees latest evidence from `health_updates`.
-- Alex support agent API route at `app/api/chat/alex/route.ts` (same auth pattern as Janet).
+- health_researcher research digests surfaced in `summariseContext` — Janet sees latest evidence from `health_updates`.
+- Support agent API route at `app/api/chat/alex/route.ts` (same auth pattern as Janet).
 - RAG layer active — `hybrid_search_health()` runs on each Janet turn (pgvector now enabled).
 - **Conversation-summary compression** (2026-04-28) — `lib/ai/compression.ts` summarises turns older than 20 per session; summaries persisted in `conversation_summaries` table (migration `0030_conversation_summaries.sql`); Janet loads the summary on session start.
-- **Atlas as real-time `tool_use` sub-agent** (2026-04-28) — `lib/ai/tools/atlas-tool.ts`; Janet invokes Atlas mid-conversation when a patient asks about their risk profile. Unit tests in `tests/unit/ai/tools/atlas-tool.test.ts`.
-- **Sage as real-time `tool_use` sub-agent** (2026-04-28) — `lib/ai/tools/sage-tool.ts`; Janet invokes Sage mid-conversation for supplement questions. Unit tests in `tests/unit/ai/tools/sage-tool.test.ts`.
+- **risk_analyzer as real-time `tool_use` sub-agent** (2026-04-28) — `lib/ai/tools/atlas-tool.ts`; Janet invokes risk_analyzer mid-conversation when a patient asks about their risk profile. Unit tests in `tests/unit/ai/tools/atlas-tool.test.ts`.
+- **supplement_advisor as real-time `tool_use` sub-agent** (2026-04-28) — `lib/ai/tools/sage-tool.ts`; Janet invokes supplement_advisor mid-conversation for supplement questions. Unit tests in `tests/unit/ai/tools/sage-tool.test.ts`.
 - **Janet eval suite** (2026-04-28) — `tests/evals/janet.eval.ts`; 5 rubrics: context grounding, supplement grounding, no hallucination, coaching tone, conversation memory. Judge at `tests/evals/judge.ts`.
 - Eval runner at `tests/evals/runner.ts`; patient-context and supplement-plan fixtures.
 
 **Outstanding:**
 - End-to-end regression Playwright test of the full Janet conversation loop.
-- Latency benchmarking under load (three-LLM-call turns when both Atlas and Sage are invoked).
+- Latency benchmarking under load (three-LLM-call turns when both risk_analyzer and supplement_advisor are invoked).
 - PT Coach `tool_use` integration (Phase 3, after PT Coach agent is built).
 - Clinical review of sub-agent prompts for appropriate medical language.
 
@@ -212,7 +212,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 7: The Daily Return
 
 `●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 70%** — daily check-in UI, streak math, Mon-Sun dot strip, steps + water capture, and Atlas trigger all shipped; remaining work is personalised goals, reminders, weekly digest, and journal.
+**Estimate: 70%** — daily check-in UI, streak math, Mon-Sun dot strip, steps + water capture, and risk_analyzer trigger all shipped; remaining work is personalised goals, reminders, weekly digest, and journal.
 
 **Shipped:**
 - Drip-email cron at `app/api/cron/drip-emails/route.ts`.
@@ -225,7 +225,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - **Steps + water capture in check-in** — `parseCheckInForm()` validates ranges (0–60000 steps, 0–20 glasses), 6 unit tests in `tests/unit/check-in/validation.test.ts`; dashboard Steps/Water tiles now populate from real data (2026-04-28).
 - New dashboard surface: streak hero, today-strip (sleep/energy/steps/water with progress bars), single-action picker, three big numbers (bio age, top risk, supplement adherence), what's-new row, quick links, coming-soon shelf.
 - Migration `0020_expose_schemas_to_postgrest.sql` + Supabase Cloud API config to expose `biomarkers` and `billing` schemas.
-- **Check-in → Atlas trigger** (2026-04-28) — `app/(app)/check-in/actions.ts` fires the Atlas pipeline in the background on each check-in submit. Completes the data loop: questionnaire → daily check-in → Atlas risk refresh → dashboard.
+- **Check-in → risk_analyzer trigger** (2026-04-28) — `app/(app)/check-in/actions.ts` fires the risk_analyzer pipeline in the background on each check-in submit. Completes the data loop: questionnaire → daily check-in → risk_analyzer risk refresh → dashboard.
 
 **Outstanding:**
 - Personalised daily goals tied to risk profile (currently goals are static defaults like 8 hours sleep, 8000 steps).
@@ -298,18 +298,18 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 10: The Knowledge Engine
 
 `●◐◐○○` Planned · ◐ Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 60%** — Nova pipeline fully implemented 2026-04-28: PubMed search, LLM synthesis, chunk+embed, cron route, Vercel weekly schedule, PatientContext integration, unit + integration tests. Member-facing insights feed and full semantic search (pgvector enable) still outstanding.
+**Estimate: 60%** — health_researcher pipeline fully implemented 2026-04-28: PubMed search, LLM synthesis, chunk+embed, cron route, Vercel weekly schedule, PatientContext integration, unit + integration tests. Member-facing insights feed and full semantic search (pgvector enable) still outstanding.
 
 **Shipped:**
 - `health_updates` table for structured digest display (`0015_health_updates.sql`).
-- `agents.health_updates` table + `nova` agent_definition row (migration `0027_nova_health_updates.sql`).
+- `agents.health_updates` table + `health_researcher` agent_definition row (migration `0027_nova_health_updates.sql`).
 - pgvector / health knowledge migrations (`0037_health_knowledge_embeddings.sql` and supporting migrations).
-- **Nova pipeline** (`lib/ai/pipelines/nova.ts`, 2026-04-28) — 5-phase: PubMed search → abstract fetch → LLM synthesis (Claude) → chunk+embed → upsert+prune (90-day rolling window). `chunkText()` helper with 300-word chunks, 60-word overlap.
+- **health_researcher pipeline** (`lib/ai/pipelines/nova.ts`, 2026-04-28) — 5-phase: PubMed search → abstract fetch → LLM synthesis (Claude) → chunk+embed → upsert+prune (90-day rolling window). `chunkText()` helper with 300-word chunks, 60-word overlap.
 - **`/api/cron/nova` route** (`app/api/cron/nova/route.ts`) — secured with `CRON_SECRET`, returns 200 on error to suppress Vercel retry.
 - **Vercel weekly cron** — Monday 02:00 UTC entry in `vercel.json`.
 - **`PatientContext` integration** — `recentDigests` loaded as 8th parallel read; Janet sees latest 3 digests on every turn.
 - Unit tests: `tests/unit/ai/nova-helpers.test.ts` — 5 tests for `chunkText`.
-- Integration tests: `tests/integration/ai/nova.test.ts` — 5 tests for `runNovaDigestPipeline` with mocked PubMed + Supabase.
+- Integration tests: `tests/integration/ai/nova.test.ts` — 5 tests for `runHealthResearcherPipeline` with mocked PubMed + Supabase.
 
 **Outstanding:**
 - Enable the `vector` pgvector extension in Supabase dashboard (one-click action) — improves semantic search precision; keyword search still functional without it.

@@ -133,13 +133,13 @@ export async function runSupplementProtocolPipeline(userId: string): Promise<voi
     // Standards unavailable — proceed without; system prompt contains baseline interaction rules
   }
 
-  const agent = createPipelineAgent('sage');
+  const agent = createPipelineAgent('supplement_advisor');
 
   let output: SupplementOutput;
   try {
     output = await agent.run(SupplementOutputSchema, buildSagePrompt({ ageYears, responses, riskSummary, uploadSummaries, supplementStandardsContext, drugInteractionContext }));
   } catch (err) {
-    console.error(`[Sage] Supplement protocol pipeline failed for user ${userId}:`, err);
+    console.error(`[supplement-advisor pipeline] Supplement protocol pipeline failed for user ${userId}:`, err);
     return;
   }
 
@@ -160,5 +160,5 @@ export async function runSupplementProtocolPipeline(userId: string): Promise<voi
     notes: `${output.data_completeness_note} | interactions_checked=${output.interactions_checked}`,
   });
 
-  if (error) console.error(`[Sage] Failed to insert supplement_plans for user ${userId}:`, error);
+  if (error) console.error(`[supplement-advisor pipeline] Failed to insert supplement_plans for user ${userId}:`, error);
 }
