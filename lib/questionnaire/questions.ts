@@ -201,8 +201,16 @@ export const onboardingQuestionnaire: QuestionnaireDef = {
       id: "family",
       label: "Family history",
       description:
-        "For each condition, mark which relatives were affected and (if known) the earliest age it appeared. This feeds your inherited-risk score.",
+        "Add family members below for the richest picture, or fill the per-condition fields further down if you prefer.",
       fields: [
+        {
+          id: "family_members",
+          label: "Family members",
+          type: "family_members",
+          optional: true,
+          helpText:
+            "Add each family member you know about. Mark which conditions they had and at what age. The richest data feeds the most accurate risk picture. You can also use the per-condition fields below if you prefer — both will work.",
+        },
         ...familyConditionFields("cardiovascular", "Heart disease or stroke"),
         {
           id: "cancer_history",

@@ -2,11 +2,25 @@
 
 import { useCallback, useState, useTransition } from "react";
 import type {
+  AlcoholValue,
   AllergyEntry,
   CancerHistoryEntry,
   CancerHistoryValue,
+  CardConditionType,
+  CauseCategory,
+  FamilyMemberCard,
+  FamilyMemberConditionEntry,
+  FamilyRelationship,
   FieldDef,
   ResponsesByStep,
+  SmokingValue,
+} from "@/lib/questionnaire/schema";
+import {
+  ALCOHOL_VALUES,
+  CARD_CONDITIONS,
+  CAUSE_CATEGORIES,
+  FAMILY_RELATIONSHIPS,
+  SMOKING_VALUES,
 } from "@/lib/questionnaire/schema";
 import { CANCER_TYPES, RELATIVES, onboardingQuestionnaire } from "@/lib/questionnaire/questions";
 import { requiredMissing } from "@/lib/questionnaire/validation";
@@ -355,7 +369,482 @@ function FieldRenderer({
       return (
         <CancerHistoryField field={field} value={value} onChange={onChange} />
       );
+    case "family_members":
+      return (
+        <FamilyMembersField field={field} value={value} onChange={onChange} />
+      );
   }
+}
+
+// ---------------------------------------------------------------------------
+// Family members — per-relative card UX. Mirrors <CancerHistoryField> shape:
+// fully controlled component, internal state limited to expand/collapse only.
+// ---------------------------------------------------------------------------
+
+const RELATIONSHIP_LABELS: Record<FamilyRelationship, string> = {
+  mother: "Mother",
+  father: "Father",
+  sister: "Sister",
+  brother: "Brother",
+  maternal_grandmother: "Maternal grandmother",
+  maternal_grandfather: "Maternal grandfather",
+  paternal_grandmother: "Paternal grandmother",
+  paternal_grandfather: "Paternal grandfather",
+  aunt: "Aunt",
+  uncle: "Uncle",
+};
+
+const CAUSE_LABELS: Record<CauseCategory, string> = {
+  cardiovascular: "Heart/Cardiovascular",
+  cancer: "Cancer",
+  neurovascular: "Stroke/Neurovascular",
+  neurodegenerative: "Dementia/Alzheimer's",
+  trauma_accident: "Accident/Trauma",
+  suicide_mental_health: "Mental Health",
+  other: "Other",
+  unknown: "Unknown",
+};
+
+const SMOKING_LABELS: Record<SmokingValue, string> = {
+  never: "Never smoked",
+  former: "Former smoker",
+  current_social: "Current — social",
+  current_light: "Current — light",
+  current_moderate: "Current — moderate",
+  current_heavy: "Current — heavy",
+  unknown: "Don't know",
+};
+
+const ALCOHOL_LABELS: Record<AlcoholValue, string> = {
+  never: "Never",
+  light: "Light",
+  moderate: "Moderate",
+  heavy: "Heavy",
+  unknown: "Don't know",
+};
+
+const CONDITION_LABELS: Record<CardConditionType, string> = {
+  cardiovascular: "Heart disease / stroke",
+  neurodegenerative: "Dementia / Alzheimer's / Parkinson's",
+  diabetes: "Type 2 diabetes",
+  osteoporosis: "Osteoporosis / fractures",
+};
+
+// Smoking options shown when relative is alive vs. deceased.
+// Alive: full set. Deceased: drops "former" — final state is what's recorded.
+const SMOKING_OPTIONS_ALIVE: readonly SmokingValue[] = SMOKING_VALUES;
+const SMOKING_OPTIONS_DECEASED: readonly SmokingValue[] = SMOKING_VALUES.filter(
+  (v) => v !== "former",
+);
+
+function uid(): string {
+  return typeof crypto !== "undefined" && crypto.randomUUID
+    ? crypto.randomUUID()
+    : `r-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+// Pure helpers exposed for testing — no DOM, no hooks.
+export function addCard(cards: FamilyMemberCard[]): FamilyMemberCard[] {
+  return [
+    ...cards,
+    {
+      id: uid(),
+      relationship: "",
+      is_alive: true,
+      conditions: [],
+    },
+  ];
+}
+
+export function setCardField<K extends keyof FamilyMemberCard>(
+  cards: FamilyMemberCard[],
+  id: string,
+  key: K,
+  value: FamilyMemberCard[K],
+): FamilyMemberCard[] {
+  return cards.map((c) => (c.id === id ? { ...c, [key]: value } : c));
+}
+
+export function toggleCondition(
+  cards: FamilyMemberCard[],
+  id: string,
+  type: CardConditionType,
+): FamilyMemberCard[] {
+  return cards.map((c) => {
+    if (c.id !== id) return c;
+    const has = c.conditions.find((e) => e.type === type);
+    if (has) {
+      return { ...c, conditions: c.conditions.filter((e) => e.type !== type) };
+    }
+    const entry: FamilyMemberConditionEntry = { type };
+    return { ...c, conditions: [...c.conditions, entry] };
+  });
+}
+
+export function setConditionAge(
+  cards: FamilyMemberCard[],
+  id: string,
+  type: CardConditionType,
+  age: number | undefined,
+): FamilyMemberCard[] {
+  return cards.map((c) => {
+    if (c.id !== id) return c;
+    return {
+      ...c,
+      conditions: c.conditions.map((e) =>
+        e.type === type ? { ...e, age_onset: age } : e,
+      ),
+    };
+  });
+}
+
+export function removeCard(
+  cards: FamilyMemberCard[],
+  id: string,
+): FamilyMemberCard[] {
+  return cards.filter((c) => c.id !== id);
+}
+
+export function FamilyMembersField({
+  field,
+  value,
+  onChange,
+}: {
+  field: FieldDef;
+  value: unknown;
+  onChange: (v: unknown) => void;
+}) {
+  const cards: FamilyMemberCard[] = Array.isArray(value)
+    ? (value as FamilyMemberCard[])
+    : [];
+
+  // Internal expand/collapse state only. Default-expand any card with empty
+  // relationship (fresh adds open up so the member fills them in).
+  const [expanded, setExpanded] = useState<Set<string>>(() => {
+    const init = new Set<string>();
+    for (const c of cards) {
+      if (!c.relationship) init.add(c.id);
+    }
+    return init;
+  });
+
+  const isExpanded = (id: string) => expanded.has(id);
+
+  const toggleExpanded = (id: string) => {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const handleAdd = () => {
+    const next = addCard(cards);
+    const newCard = next[next.length - 1]!;
+    setExpanded((prev) => {
+      const e = new Set(prev);
+      e.add(newCard.id);
+      return e;
+    });
+    onChange(next);
+  };
+
+  const handleRemove = (id: string) => {
+    setExpanded((prev) => {
+      const e = new Set(prev);
+      e.delete(id);
+      return e;
+    });
+    onChange(removeCard(cards, id));
+  };
+
+  const updateField = <K extends keyof FamilyMemberCard>(
+    id: string,
+    key: K,
+    v: FamilyMemberCard[K],
+  ) => {
+    onChange(setCardField(cards, id, key, v));
+  };
+
+  const handleToggleCondition = (id: string, type: CardConditionType) => {
+    onChange(toggleCondition(cards, id, type));
+  };
+
+  const handleConditionAge = (
+    id: string,
+    type: CardConditionType,
+    age: number | undefined,
+  ) => {
+    onChange(setConditionAge(cards, id, type, age));
+  };
+
+  return (
+    <div className="field family-members-field">
+      <label>
+        {field.label}
+        {field.optional && <span className="optional">(optional)</span>}
+      </label>
+      {field.helpText && <p className="field-help">{field.helpText}</p>}
+
+      <div className="family-members-list">
+        {cards.map((card) => {
+          const open = isExpanded(card.id);
+          const relLabel = card.relationship
+            ? RELATIONSHIP_LABELS[card.relationship as FamilyRelationship]
+            : "Relative";
+          const meta = card.is_alive
+            ? `Living · age ${card.current_age ?? "?"}`
+            : `Deceased · died at ${card.age_at_death ?? "?"}`;
+          const ageValue = card.is_alive ? card.current_age : card.age_at_death;
+          const smokingOptions = card.is_alive
+            ? SMOKING_OPTIONS_ALIVE
+            : SMOKING_OPTIONS_DECEASED;
+
+          return (
+            <div
+              key={card.id}
+              className={`family-card ${open ? "family-card-expanded" : ""}`}
+            >
+              <div
+                className="family-card-head"
+                onClick={(e) => {
+                  // Don't toggle if the click came from the remove button.
+                  if ((e.target as HTMLElement).closest(".family-card-remove")) {
+                    return;
+                  }
+                  toggleExpanded(card.id);
+                }}
+              >
+                <div className="family-card-head-who">
+                  <div className="family-card-avatar" aria-hidden="true">
+                    👤
+                  </div>
+                  <div>
+                    <div className="family-card-rel">{relLabel}</div>
+                    <div className="family-card-meta">{meta}</div>
+                  </div>
+                </div>
+                <div className="family-card-actions">
+                  <span className="family-card-chevron" aria-hidden="true">
+                    {open ? "▲" : "▼"}
+                  </span>
+                  <button
+                    type="button"
+                    className="btn btn-ghost family-card-remove"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemove(card.id);
+                    }}
+                    aria-label={`Remove ${relLabel}`}
+                  >
+                    ×
+                  </button>
+                </div>
+              </div>
+
+              {open && (
+                <div className="family-card-body">
+                  <div className="field">
+                    <label className="family-card-sub-label">Relationship</label>
+                    <select
+                      value={card.relationship}
+                      onChange={(e) =>
+                        updateField(
+                          card.id,
+                          "relationship",
+                          e.target.value as FamilyRelationship | "",
+                        )
+                      }
+                      aria-label="Relationship"
+                    >
+                      <option value="" disabled>
+                        Select…
+                      </option>
+                      {FAMILY_RELATIONSHIPS.map((r) => (
+                        <option key={r} value={r}>
+                          {RELATIONSHIP_LABELS[r]}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="family-card-vital-toggle">
+                    <span className="family-card-sub-label">Vital status</span>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={card.is_alive}
+                      aria-label={
+                        card.is_alive ? "Living (toggle to deceased)" : "Deceased (toggle to living)"
+                      }
+                      className={`family-card-switch ${card.is_alive ? "alive" : "deceased"}`}
+                      onClick={() =>
+                        updateField(card.id, "is_alive", !card.is_alive)
+                      }
+                    >
+                      <span className="family-card-switch-track">
+                        <span className="family-card-switch-thumb" />
+                      </span>
+                      <span className="family-card-switch-text">
+                        {card.is_alive ? "Living" : "Deceased"}
+                      </span>
+                    </button>
+                  </div>
+
+                  <div className="field">
+                    <label className="family-card-sub-label">
+                      {card.is_alive ? "Current age" : "Age at death"}
+                    </label>
+                    <div className="input-suffix">
+                      <input
+                        type="number"
+                        min={0}
+                        max={130}
+                        step={1}
+                        value={ageValue ?? ""}
+                        onChange={(e) => {
+                          const v = e.target.value === "" ? undefined : Number(e.target.value);
+                          updateField(
+                            card.id,
+                            card.is_alive ? "current_age" : "age_at_death",
+                            v,
+                          );
+                        }}
+                        aria-label={card.is_alive ? "Current age" : "Age at death"}
+                      />
+                      <span className="suffix">years</span>
+                    </div>
+                  </div>
+
+                  {!card.is_alive && (
+                    <div className="field">
+                      <label className="family-card-sub-label">Cause of death</label>
+                      <div className="family-card-cause-grid">
+                        {CAUSE_CATEGORIES.map((cat) => {
+                          const on = card.cause_category === cat;
+                          return (
+                            <button
+                              key={cat}
+                              type="button"
+                              className={`family-card-cause-btn ${on ? "on" : ""}`}
+                              onClick={() => updateField(card.id, "cause_category", cat)}
+                            >
+                              {CAUSE_LABELS[cat]}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="family-card-grid-2">
+                    <div className="field">
+                      <label className="family-card-sub-label">Smoking</label>
+                      <select
+                        value={card.smoking_status ?? ""}
+                        onChange={(e) =>
+                          updateField(
+                            card.id,
+                            "smoking_status",
+                            (e.target.value || undefined) as SmokingValue | undefined,
+                          )
+                        }
+                        aria-label="Smoking status"
+                      >
+                        <option value="">Select…</option>
+                        {smokingOptions.map((s) => (
+                          <option key={s} value={s}>
+                            {SMOKING_LABELS[s]}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="field">
+                      <label className="family-card-sub-label">Alcohol</label>
+                      <select
+                        value={card.alcohol_use ?? ""}
+                        onChange={(e) =>
+                          updateField(
+                            card.id,
+                            "alcohol_use",
+                            (e.target.value || undefined) as AlcoholValue | undefined,
+                          )
+                        }
+                        aria-label="Alcohol use"
+                      >
+                        <option value="">Select…</option>
+                        {ALCOHOL_VALUES.map((a) => (
+                          <option key={a} value={a}>
+                            {ALCOHOL_LABELS[a]}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="field">
+                    <label className="family-card-sub-label">Conditions</label>
+                    <div className="family-card-conditions-list">
+                      {CARD_CONDITIONS.map((type) => {
+                        const entry = card.conditions.find((c) => c.type === type);
+                        const on = !!entry;
+                        return (
+                          <div key={type} className="family-card-condition-row">
+                            <button
+                              type="button"
+                              role="checkbox"
+                              aria-checked={on}
+                              aria-label={CONDITION_LABELS[type]}
+                              className={`family-card-condition-btn ${on ? "on" : ""}`}
+                              onClick={() => handleToggleCondition(card.id, type)}
+                            >
+                              <span className="family-card-condition-tick">
+                                {on ? "✓" : ""}
+                              </span>
+                              {CONDITION_LABELS[type]}
+                            </button>
+                            {on && (
+                              <div className="family-card-condition-age">
+                                <span>at age</span>
+                                <input
+                                  type="number"
+                                  min={0}
+                                  max={130}
+                                  step={1}
+                                  value={entry?.age_onset ?? ""}
+                                  onChange={(e) => {
+                                    const v =
+                                      e.target.value === ""
+                                        ? undefined
+                                        : Number(e.target.value);
+                                    handleConditionAge(card.id, type, v);
+                                  }}
+                                  aria-label={`${CONDITION_LABELS[type]} age of onset`}
+                                />
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+
+        <button
+          type="button"
+          className="family-card-add"
+          onClick={handleAdd}
+        >
+          + Add family member
+        </button>
+      </div>
+    </div>
+  );
 }
 
 function CancerHistoryField({

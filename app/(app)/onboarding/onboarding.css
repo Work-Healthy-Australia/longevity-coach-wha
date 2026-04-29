@@ -293,6 +293,254 @@
   color: var(--lc-grey);
   align-self: center;
 }
+/* ---------- Family members (per-relative cards) ---------- */
+.lc-onboarding .family-members-field { gap: 10px; }
+.lc-onboarding .family-members-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+.lc-onboarding .family-card {
+  background: #fff;
+  border: 1px solid var(--lc-line);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+.lc-onboarding .family-card-expanded {
+  border-color: var(--lc-primary);
+}
+.lc-onboarding .family-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  cursor: pointer;
+  gap: 12px;
+}
+.lc-onboarding .family-card-head:hover {
+  background: var(--lc-line-soft);
+}
+.lc-onboarding .family-card-head-who {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+.lc-onboarding .family-card-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--lc-primary-50);
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.lc-onboarding .family-card-rel {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--lc-ink);
+}
+.lc-onboarding .family-card-meta {
+  font-size: 12px;
+  color: var(--lc-grey);
+}
+.lc-onboarding .family-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.lc-onboarding .family-card-chevron {
+  font-size: 11px;
+  color: var(--lc-grey);
+}
+.lc-onboarding .family-card-remove {
+  padding: 2px 10px;
+  font-size: 18px;
+  line-height: 1;
+}
+.lc-onboarding .family-card-body {
+  border-top: 1px solid var(--lc-line);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.lc-onboarding .family-card-sub-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--lc-ink-soft);
+  margin-bottom: 6px;
+}
+.lc-onboarding .family-card-vital-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--lc-primary-50);
+  border-radius: 10px;
+  gap: 12px;
+}
+.lc-onboarding .family-card-switch {
+  font: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--lc-ink);
+  padding: 4px 8px;
+}
+.lc-onboarding .family-card-switch-track {
+  width: 36px;
+  height: 20px;
+  border-radius: 999px;
+  background: var(--lc-line);
+  position: relative;
+  transition: background 0.15s;
+  display: inline-block;
+}
+.lc-onboarding .family-card-switch-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.15s;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+.lc-onboarding .family-card-switch.alive .family-card-switch-track {
+  background: var(--lc-primary);
+}
+.lc-onboarding .family-card-switch.alive .family-card-switch-thumb {
+  transform: translateX(16px);
+}
+.lc-onboarding .family-card-switch-text {
+  font-size: 13px;
+  font-weight: 500;
+}
+.lc-onboarding .family-card-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 480px) {
+  .lc-onboarding .family-card-grid-2 { grid-template-columns: 1fr; }
+}
+.lc-onboarding .family-card-cause-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+@media (max-width: 480px) {
+  .lc-onboarding .family-card-cause-grid { grid-template-columns: 1fr; }
+}
+.lc-onboarding .family-card-cause-btn {
+  font: inherit;
+  font-size: 13px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--lc-line);
+  background: #fff;
+  color: var(--lc-ink-soft);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.12s;
+}
+.lc-onboarding .family-card-cause-btn:hover { border-color: var(--lc-grey); }
+.lc-onboarding .family-card-cause-btn.on {
+  background: var(--lc-primary-50);
+  border-color: var(--lc-primary);
+  color: var(--lc-primary-700);
+  font-weight: 500;
+}
+.lc-onboarding .family-card-conditions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.lc-onboarding .family-card-condition-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.lc-onboarding .family-card-condition-btn {
+  font: inherit;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--lc-line);
+  background: #fff;
+  color: var(--lc-ink-soft);
+  cursor: pointer;
+  flex: 1;
+  text-align: left;
+  transition: all 0.12s;
+}
+.lc-onboarding .family-card-condition-btn:hover { border-color: var(--lc-grey); }
+.lc-onboarding .family-card-condition-btn.on {
+  background: var(--lc-primary-50);
+  border-color: var(--lc-primary);
+  color: var(--lc-primary-700);
+  font-weight: 500;
+}
+.lc-onboarding .family-card-condition-tick {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  border: 1px solid var(--lc-line);
+  display: inline-grid;
+  place-items: center;
+  font-size: 12px;
+  background: #fff;
+  color: var(--lc-primary);
+}
+.lc-onboarding .family-card-condition-btn.on .family-card-condition-tick {
+  background: var(--lc-primary);
+  border-color: var(--lc-primary);
+  color: #fff;
+}
+.lc-onboarding .family-card-condition-age {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--lc-ink-soft);
+}
+.lc-onboarding .family-card-condition-age input {
+  width: 80px;
+  padding: 6px 8px;
+  font-size: 13px;
+}
+.lc-onboarding .family-card-add {
+  font: inherit;
+  font-size: 13px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1.5px dashed var(--lc-line);
+  background: transparent;
+  color: var(--lc-primary);
+  cursor: pointer;
+  font-weight: 500;
+  width: 100%;
+  transition: all 0.12s;
+}
+.lc-onboarding .family-card-add:hover {
+  border-color: var(--lc-primary);
+  background: var(--lc-primary-50);
+}
+
 .lc-onboarding .err {
   background: #FDECEA;
   color: var(--lc-error);
