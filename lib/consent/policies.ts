@@ -11,6 +11,9 @@ export const CONSENT_POLICIES = {
   // Care-team access: AHPRA-required record of patient nominating a clinician
   // (or revoking) — one row per acceptance, paired with the patient_assignments row.
   care_team_access: { version: "2026-04-29-1" },
+  // "We never train AI models on your personal data" — positive commitment
+  // surfaced in the consent step and on /account.
+  data_no_training: { version: "2026-04-29-1" },
 } as const;
 
 export type PolicyId = keyof typeof CONSENT_POLICIES;
