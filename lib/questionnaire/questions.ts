@@ -337,7 +337,7 @@ export const onboardingQuestionnaire: QuestionnaireDef = {
       id: "consent",
       label: "Consent",
       description:
-        "Before we generate your risk scores we need three confirmations. Please read the linked Personal information collection notice — it lists every third party we share your data with and your rights under the Australian Privacy Principles.",
+        "Before we generate your risk scores we need four confirmations. Please read the linked Personal information collection notice — it lists every third party we share your data with and your rights under the Australian Privacy Principles.",
       fields: [
         {
           id: "data_processing",
@@ -351,6 +351,14 @@ export const onboardingQuestionnaire: QuestionnaireDef = {
           label:
             "I understand this service is informational and is not a substitute for medical advice, diagnosis or treatment from a qualified health practitioner.",
           type: "toggle",
+        },
+        {
+          id: "data_no_training",
+          label:
+            "I understand Longevity Coach does not train AI models on my personal data.",
+          type: "toggle",
+          helpText:
+            "Required. See the data handling page for details on how we work with AI providers.",
         },
         {
           id: "terms",

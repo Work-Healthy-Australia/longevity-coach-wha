@@ -1,6 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { loose } from "@/lib/supabase/loose-table";
 import { createClient } from "@/lib/supabase/server";
+import { policyVersion } from "@/lib/consent/policies";
 import { CareTeamSection, type AssignedClinician } from "./_components/care-team-section";
 import { DeleteAccountButton } from "./_components/delete-account-button";
 import { pauseAccount, unpauseAccount } from "./pause-actions";
@@ -46,6 +47,23 @@ export default async function AccountPage({
 
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
   const showPausedBanner = resolvedSearchParams?.paused === "true";
+
+  // Surface the patient's most-recent acceptance of the current data_no_training
+  // policy version so the "How we use your data" card can show when (or whether)
+  // they confirmed it.
+  const dataNoTrainingVersion = policyVersion("data_no_training");
+  const { data: acceptanceRow } = await supabase
+    .from("consent_records")
+    .select("accepted_at")
+    .eq("user_uuid", user!.id)
+    .eq("policy_id", "data_no_training")
+    .eq("policy_version", dataNoTrainingVersion)
+    .order("accepted_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  const dataNoTrainingAcceptedAt =
+    (acceptanceRow?.accepted_at as string | null) ?? null;
 
   // Active care-team assignments (clinicians the patient has nominated).
   // Service-role read so we can join across patient_assignments + auth.users +
@@ -116,6 +134,32 @@ export default async function AccountPage({
             <dd>{dob}</dd>
           </div>
         </dl>
+      </section>
+
+      <section className="lc-account-card">
+        <h2>How we use your data</h2>
+        <p className="lc-account-info">
+          Your data powers your personalised risk scores, supplement protocol,
+          and clinician reviews — and nothing more. We never train AI models on
+          your data, never sell it, and never share it with employers.{" "}
+          <a href="/legal/data-handling">Read the full data-handling statement →</a>
+        </p>
+        {dataNoTrainingAcceptedAt ? (
+          <p className="lc-account-meta">
+            You agreed to this policy on{" "}
+            {new Date(dataNoTrainingAcceptedAt).toLocaleDateString("en-AU", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+            .
+          </p>
+        ) : (
+          <p className="lc-account-meta">
+            Not yet confirmed.{" "}
+            <a href="/legal/data-handling">Review the data-handling statement →</a>
+          </p>
+        )}
       </section>
 
       <CareTeamSection clinicians={clinicians} />

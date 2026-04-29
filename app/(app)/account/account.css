@@ -70,6 +70,22 @@
   color: var(--lc-ink-soft);
 }
 
+.lc-account-info a {
+  color: var(--lc-primary);
+  text-decoration: underline;
+}
+
+.lc-account-meta {
+  margin: 0;
+  font-size: 13px;
+  color: var(--lc-sage);
+}
+
+.lc-account-meta a {
+  color: var(--lc-primary);
+  text-decoration: underline;
+}
+
 .lc-account-button {
   align-self: flex-start;
   display: inline-block;
@@ -190,4 +206,93 @@
   border: 1px solid var(--lc-line);
   border-radius: 6px;
   font: inherit;
+}
+
+.lc-delete-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 18px;
+  background: #fdf6f6;
+  border: 1px solid #f4a4a4;
+  border-radius: 8px;
+}
+
+.lc-delete-confirm h4 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #a02020;
+}
+
+.lc-delete-confirm-section-label {
+  margin: 4px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--lc-ink);
+}
+
+.lc-delete-confirm ul {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 13px;
+  color: var(--lc-ink-soft);
+  line-height: 1.5;
+}
+
+.lc-delete-confirm ul li + li {
+  margin-top: 2px;
+}
+
+.lc-delete-confirm-note {
+  margin: 0;
+  font-size: 13px;
+  color: var(--lc-ink-soft);
+  font-style: italic;
+}
+
+.lc-delete-confirm-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--lc-ink-soft);
+  margin-top: 4px;
+}
+
+.lc-delete-confirm-label input {
+  padding: 9px 12px;
+  border: 1px solid var(--lc-line);
+  border-radius: 6px;
+  font: inherit;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  letter-spacing: 0.05em;
+  background: var(--lc-surface);
+}
+
+.lc-delete-confirm-label input:focus {
+  outline: 2px solid #f4a4a4;
+  outline-offset: 1px;
+  border-color: #f4a4a4;
+}
+
+.lc-delete-confirm-label input:disabled {
+  background: #f4f4f4;
+  cursor: not-allowed;
+}
+
+.lc-delete-confirm-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.lc-delete-error {
+  margin: 0;
+  padding: 8px 12px;
+  background: #ffefef;
+  color: #a02020;
+  border: 1px solid #f4a4a4;
+  border-radius: 6px;
+  font-size: 13px;
 }
