@@ -903,7 +903,6 @@ function TierEditor({
               {isPending ? "Saving…" : "Save changes"}
             </button>
           </div>
-        </div>
     </div>
   );
 }
