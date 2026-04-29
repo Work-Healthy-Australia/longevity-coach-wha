@@ -5,10 +5,7 @@ import { randomBytes } from "node:crypto";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
-import {
-  sendClinicianInviteEmail,
-  sendClinicianPromotedEmail,
-} from "@/lib/email/clinician-invite";
+import { sendClinicianPromotedEmail } from "@/lib/email/clinician-invite";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { loose } from "@/lib/supabase/loose-table";
 import { createClient } from "@/lib/supabase/server";
@@ -104,9 +101,7 @@ export async function inviteClinician(
     return { success: `${role} access granted to ${lower}.` };
   }
 
-  // New user — record a single-use token in clinician_invites and send the
-  // Supabase invite. The token is the audit anchor; status flips to 'accepted'
-  // when the user signs up via the invite link.
+  // New user — record the audit token then send via Supabase (uses custom SMTP).
   const token = randomBytes(24).toString("hex");
   const { error: insertError } = await loose(admin)
     .from("clinician_invites")
@@ -123,34 +118,14 @@ export async function inviteClinician(
     );
   if (insertError) return { error: "Failed to record invite." };
 
-  // Generate the invite link without sending Supabase's default email so we can
-  // send our own branded Resend message instead.
-  const { data: linkData, error: linkError } = await admin.auth.admin.generateLink({
-    type: "invite",
-    email: lower,
-    options: {
-      redirectTo: `${siteUrl}/auth/callback`,
-      data: { invited_as: role, clinician_invite_token: token },
-    },
+  const { error: inviteError } = await admin.auth.admin.inviteUserByEmail(lower, {
+    redirectTo: `${siteUrl}/auth/callback`,
+    data: { invited_as: role, clinician_invite_token: token },
   });
 
-  if (linkError || !linkData?.properties?.action_link) {
+  if (inviteError) {
     await loose(admin).from("clinician_invites").delete().eq("token", token);
-    return { error: linkError?.message ?? "Failed to generate invite link." };
-  }
-
-  try {
-    await sendClinicianInviteEmail({
-      to: lower,
-      inviteUrl: linkData.properties.action_link,
-      inviterName,
-      role,
-      fullName: full_name ?? null,
-    });
-  } catch (e) {
-    console.error("[admin/clinicians] invite email failed:", e);
-    await loose(admin).from("clinician_invites").delete().eq("token", token);
-    return { error: "Failed to send invite email. Check Resend configuration." };
+    return { error: inviteError.message };
   }
 
   return { success: `Invite sent to ${lower}. They will have ${role} access on sign-up.` };
