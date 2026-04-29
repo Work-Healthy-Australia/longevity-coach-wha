@@ -6,6 +6,7 @@
     { "path": "/api/cron/pt-plan", "schedule": "0 3 1 * *" },
     { "path": "/api/cron/clinician-briefs", "schedule": "0 1 1 * *" },
     { "path": "/api/cron/meal-plan", "schedule": "0 7 * * 1" },
-    { "path": "/api/cron/cost-rollup", "schedule": "0 1 * * *" }
+    { "path": "/api/cron/cost-rollup", "schedule": "0 1 * * *" },
+    { "path": "/api/cron/check-in-reminder", "schedule": "0 9 * * *" }
   ]
 }
