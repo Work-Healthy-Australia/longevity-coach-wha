@@ -39,6 +39,21 @@ async function putJson(url: string, body: unknown) {
   }
 }
 
+function flagsToCsv(flags: Record<string, boolean>): string {
+  return Object.entries(flags ?? {})
+    .filter(([, on]) => on)
+    .map(([k]) => k)
+    .join(", ");
+}
+
+function csvToFlags(csv: string): Record<string, boolean> {
+  const flags: Record<string, boolean> = {};
+  for (const k of csv.split(",").map((s) => s.trim()).filter(Boolean)) {
+    flags[k] = true;
+  }
+  return flags;
+}
+
 export function PlansClient({ initialRows }: { initialRows: PlanRow[] }) {
   return (
     <CrudTable<PlanRow>
@@ -51,6 +66,38 @@ export function PlansClient({ initialRows }: { initialRows: PlanRow[] }) {
         { header: "Stripe Price ID", cell: (r) => <code>{r.stripe_price_id}</code> },
       ]}
       onPatch={(id, body) => putJson(`/api/admin/plans/${id}`, body)}
+      onUpdate={async (id, form) => {
+        const fd = new FormData(form);
+        await putJson(`/api/admin/plans/${id}`, {
+          name: String(fd.get("name") ?? ""),
+          stripe_price_id: String(fd.get("stripe_price_id") ?? ""),
+          base_price_cents: Number(fd.get("base_price_cents") ?? 0),
+          annual_discount_pct: Number(fd.get("annual_discount_pct") ?? 0),
+          feature_flags: csvToFlags(String(fd.get("feature_flags") ?? "")),
+        });
+      }}
+      editForm={(row) => (
+        <>
+          <label>Name<input name="name" defaultValue={row.name} required /></label>
+          <label>Stripe Price ID<input name="stripe_price_id" defaultValue={row.stripe_price_id} required /></label>
+          <label>Base price (cents)
+            <input name="base_price_cents" type="number" min="0" defaultValue={row.base_price_cents} required />
+          </label>
+          <label>Annual discount %
+            <input
+              name="annual_discount_pct"
+              type="number"
+              min="0"
+              max="100"
+              step="0.01"
+              defaultValue={row.annual_discount_pct}
+            />
+          </label>
+          <label>Feature flags (csv)
+            <input name="feature_flags" defaultValue={flagsToCsv(row.feature_flags ?? {})} />
+          </label>
+        </>
+      )}
       onCreate={async (form) => {
         const fd = new FormData(form);
         const flags: Record<string, boolean> = {};
