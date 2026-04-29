@@ -1,6 +1,6 @@
 # Longevity Coach — Epic Status Dashboard
 
-Last updated **2026-04-29** (Sprint 2 Engineering Completeness; right-to-erasure flow shipped end-to-end across PRs #46, #48, #50).
+Last updated **2026-04-29** (post-Sprint 2 catch-up; right-to-erasure waves 1–3, pipeline stability, admin tier/plan-builder, org members, rest-day streaks all landed).
 
 Companion to [epics.md](./epics.md) (strategy, stable) and [product.md](./product.md) (vision). This file is the **at-a-glance status** of each epic: how far through the build pipeline, what's still outstanding, what's broken right now.
 
@@ -26,15 +26,15 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 | 2 | The Intake | `●●●◐○` | 99% | 0 | 0 |
 | 3 | The Number | `●●●○○` | 85% | 0 | 1 |
 | 4 | The Protocol | `●●●○○` | 80% | 0 | 0 |
-| 5 | The Report | `●●●○○` | 80% | 0 | 1 |
+| 5 | The Report | `●●●○○` | 85% | 0 | 1 |
 | 6 | The Coach | `●●●○○` | 95% | 0 | 1 |
-| 7 | The Daily Return | `●●●○○` | 90% | 0 | 0 |
+| 7 | The Daily Return | `●●●○○` | 92% | 0 | 0 |
 | 8 | The Living Record | `●●●○○` | 85% | 0 | 0 |
 | 9 | The Care Team | `●●●◐○` | 75% | 0 | 0 |
 | 10 | The Knowledge Engine | `●◐◐○○` | 60% | 0 | 1 |
 | 11 | The Trust Layer | `●●●○○` | 95% | 0 | 1 |
-| 12 | The Distribution | `●●◐○○` | 55% | 0 | 0 |
-| 13 | The Business Model | `●●◐○○` | 45% | 0 | 0 |
+| 12 | The Distribution | `●●◐○○` | 60% | 0 | 0 |
+| 13 | The Business Model | `●●◐○○` | 50% | 0 | 0 |
 | 14 | The Platform Foundation | `●●○○○` | 65% | 0 | 0 |
 
 **Bug totals:** 0 open, 8 closed. (Bug log: forthcoming `qa/QA-bugs.md`.)
@@ -151,7 +151,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 5: The Report
 
 `●●●○○` Planned · Feature Complete · Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 80%** — `/report` page + branded PDF both shipped. PDF includes logo, cover page, big-number summary, domain-coloured swatches, supplement table with tier colours and overflow handling, footer disclaimer.
+**Estimate: 85%** — `/report` page + branded PDF + regenerate-on-demand button all shipped. PDF includes logo, cover page, big-number summary, domain-coloured swatches, supplement table with tier colours and overflow handling, footer disclaimer.
 
 **Shipped:**
 - `/report` page (`app/(app)/report/page.tsx`) showing risk narrative, domain scores, supplement protocol, Janet chat panel.
@@ -159,10 +159,10 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - `app/(app)/report/_components/janet-chat.tsx` streaming chat client component.
 - PDF endpoint at `app/api/report/pdf/route.tsx`.
 - **Branded PDF** at `lib/pdf/report-doc.tsx` (442 lines) — logo header, cover page, big-number summary, domain colour swatches, supplement table with tier colours (max 12 visible + overflow count), AHPRA-compliant footer disclaimer.
+- **Regenerate report button** (2026-04-29) — `RegenerateButton` client component + `regenerateReport` server action. Triggers `runRiskNarrativePipeline()` then `runSupplementProtocolPipeline()` sequentially (risk first, supplement reads risk scores). `useActionState` with disabled/"Generating…" pending state. Appears in both existing-scores hero and pending-state view. `revalidatePath('/report')` refreshes on completion.
+- **Last-updated timestamp** (2026-04-29) — prominent in bio-age hero, derived from latest of `risk_scores.assessment_date` and `supplement_plans.created_at`.
 
 **Outstanding:**
-- Last-updated timestamp prominent on `/report`.
-- Regenerate-on-demand button.
 - "What changed since last report" diff when run twice.
 - Visual regression coverage (Chromatic) on `/report` and the PDF.
 - Unit-test coverage on the PDF render path.
@@ -212,7 +212,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 7: The Daily Return
 
 `●●●○○` Planned · Feature Complete · Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 90%** — daily check-in UI, streak math, Mon-Sun dot strip, steps + water capture, and risk_analyzer trigger all shipped; remaining work is personalised goals, reminders, weekly digest, and journal.
+**Estimate: 92%** — daily check-in UI, streak math, Mon-Sun dot strip with rest-day support, steps + water capture, risk_analyzer trigger, and journal quick-link all shipped; remaining work is personalised goals, reminders, and weekly digest.
 
 **Shipped:**
 - Drip-email cron at `app/api/cron/drip-emails/route.ts`.
@@ -226,13 +226,15 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - New dashboard surface: streak hero, today-strip (sleep/energy/steps/water with progress bars), single-action picker, three big numbers (bio age, top risk, supplement adherence), what's-new row, quick links, coming-soon shelf.
 - Migration `0020_expose_schemas_to_postgrest.sql` + Supabase Cloud API config to expose `biomarkers` and `billing` schemas.
 - **Check-in → risk_analyzer trigger** (2026-04-28) — `app/(app)/check-in/actions.ts` fires the risk_analyzer pipeline in the background on each check-in submit. Completes the data loop: questionnaire → daily check-in → risk_analyzer risk refresh → dashboard.
+- **Rest-day streak dots** (2026-04-29, #47) — `streakDots()` delegates to `calculateStreak()` which has rest-day tolerance; days in a 1–2 day rest gap render at 25% opacity, distinct from logged and missed. 4 new test cases.
+- **Journal quick-link** (2026-04-29, #47) — `/journal` tile added to the dashboard quick-links grid.
+- **Janet latency logging** (2026-04-29, #47) — `agent-factory` `onFinish` now emits `tools_invoked` alongside `patient_context_ms` / `total_ms`.
 
 **Outstanding:**
 - Personalised daily goals tied to risk profile (currently goals are static defaults like 8 hours sleep, 8000 steps).
-- Rest-day mechanic for travel and grief.
 - Push / SMS / email reminder for the daily check-in.
 - Weekly insights digest from check-in patterns.
-- Health journal for free-form notes.
+- Health journal full UI (quick-link exists, page not yet built).
 
 **Open bugs:** none.
 **Closed bugs:** 0.
@@ -292,6 +294,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - **`/clinician/profile`** — full self-service editor (specialties, languages, bio, contact, working hours, lunch break, session duration, timezone, active flag).
 - **`janet_clinician` real-time agent** — `lib/ai/agents/janet-clinician.ts` + `lib/ai/tools/submit-program-tool.ts`; the submit tool writes `program_30_day` and flips `review_status` to `program_ready` (per C6 — replaces text sentinel). `POST /api/clinician/chat` gates on admin OR (clinician AND assigned via `patient_assignments`).
 - **Patient program-delivery email** — `lib/email/program-delivery.ts`; clicking Approve & send sends a branded Resend message with the program body to the patient's auth email; non-fatal if Resend fails (status transition still holds, program visible in-app).
+- **Pipeline JSON parse stability** (2026-04-29, #49) — clinician-brief and PT-plan pipelines now retry up to 3 times with progressive fallback (strict → conservative → text-parse). Silent failures eliminated; all recovery attempts logged.
 
 **Outstanding:**
 - Real clinician pilot use (User Reviewed gate) — schema, UI, and AI loop are live but no actual clinician has run a monthly review end-to-end yet.
@@ -379,7 +382,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 12: The Distribution
 
 `●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 55%** — admin CRM expanded into a full back-office (plans, add-ons, suppliers, products, test-orders) with shared CrudTable + admin-gated APIs (Sprint 2 W5). Admin overview now ships MRR / active members / churn / pipeline runs / uploads tiles (Sprint 2 W6). Corporate invite scaffolding (`billing.org_invites`, email + CSV) shipped at the schema layer 2026-04-29; marketplace + employer dashboard UI still outstanding.
+**Estimate: 60%** — admin CRM expanded into a full back-office (plans, add-ons, suppliers, products, test-orders, tiers, plan-builder) with shared CrudTable + admin-gated APIs. Admin overview ships MRR / active members / churn / pipeline runs / uploads tiles. Corporate invite scaffolding (`billing.org_invites`, email + CSV) shipped at the schema layer. Org members page and B2B plan admin APIs shipped 2026-04-29. Marketplace + employer dashboard UI still outstanding.
 
 **Shipped:**
 - `app/(admin)/admin.css` styling.
@@ -402,6 +405,8 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 **Recently shipped (Sprint 2):**
 - Wave 5 (2026-04-29) — `/admin/plans`, `/admin/addons`, `/admin/suppliers`, `/admin/products` CRUD pages + 10 admin-gated API routes; shared `CrudTable` component; `lib/admin/guard.ts` requireAdmin helper.
 - Wave 6 (2026-04-29) — `/admin` overview tiles for MRR, active members, new signups, churn, pipeline runs, uploads.
+- #49 (2026-04-29) — `/admin/tiers` tier management, `/admin/plan-builder` plan builder UI, `/org/members` org member page, B2B plan admin APIs (CRUD + seat audit + allocations + product inclusions), feature-keys admin, Janet services admin, supplier inline edit.
+- #52/#53 (2026-04-29) — tier seed migration (`0053`), open-tier migration (`0054`), TiersClient build fix.
 
 **Open bugs:** none.
 **Closed bugs:** 0.
@@ -411,7 +416,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 13: The Business Model
 
 `●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 45%** — Sprint 2 (2026-04-29) shipped the customer-facing pricing rail end-to-end: public `/pricing` page driven from DB, four-path feature-flag resolver, account add-on management, full admin catalog. Decisions D1–D4 resolved by James (flat corporate pricing, flat per-add-on Stripe billing, email + CSV invites, fixed feature-key enum). Provider-partner / Stripe Connect / patient disclosure work still outstanding.
+**Estimate: 50%** — Sprint 2 (2026-04-29) shipped the customer-facing pricing rail end-to-end: public `/pricing` page driven from DB, four-path feature-flag resolver, account add-on management, full admin catalog. Decisions D1–D4 resolved by James. Admin tier management + plan builder shipped (#49/#52). Provider-partner / Stripe Connect / patient disclosure work still outstanding.
 
 **Shipped:**
 - B2C subscription rail (Stripe checkout + webhook lifecycle) — see Epic 1.
@@ -427,6 +432,9 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - `POST/GET/DELETE /api/subscription/addons`, `GET/POST /api/test-orders` with Stripe sub-item / payment-intent helpers (Sprint 2 W4).
 - Admin plan + add-on catalog UI (`/admin/plans`, `/admin/addons`) and 4 admin API routes (Sprint 2 W5).
 - Admin supplier + product catalog UI (`/admin/suppliers`, `/admin/products`) — wholesale price hidden from non-admin views via `billing.products_public` (Sprint 2 W5).
+- **Admin tier management** (`/admin/tiers`) — CRUD for billing tiers with tier seed migration (`0053_seed_tier_plans.sql`) and open-tier migration (`0054_plans_open_tier.sql`) (2026-04-29, #49/#52).
+- **Plan builder** (`/admin/plan-builder`) — admin UI for assembling plans from tiers + inclusions + allocations (2026-04-29, #49).
+- **Pricing admin foundation migration** (`0052_pricing_admin_foundation.sql`) — `feature_keys`, `janet_services`, `tier_inclusions`, `platform_settings`, `b2b_plans`, `b2b_plan_tier_allocations`, `b2b_plan_product_inclusions`, `b2b_plan_seat_audit`, `organisation_member_products` tables (2026-04-29, #49).
 
 **Outstanding:**
 - `provider_partners` table — admin-managed; contract terms, margin %, region, status.
@@ -458,7 +466,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - PII boundary enforced at write time (`lib/profiles/pii-split.ts`).
 - Service-role admin client confined to webhook routes, pipeline workers, PDF generation.
 - Pipeline routes secured with `x-pipeline-secret` header.
-- 19 numbered idempotent migrations with `IF NOT EXISTS` / `ON CONFLICT DO NOTHING`.
+- 57 numbered idempotent migrations (0001–0057, monotonic) with `IF NOT EXISTS` / `ON CONFLICT DO NOTHING`.
 - Engineering rules canonical in `.claude/rules/` (data-management, security, nextjs-conventions, database, ai-agents).
 - `.env` files git-ignored; never committed.
 - TypeScript schema types regenerated after every migration (`lib/supabase/database.types.ts`).
@@ -466,6 +474,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - Supabase Storage MIME whitelist + 50 MB cap on uploads.
 - Encryption at rest (Supabase default) + TLS in transit.
 - **Gitleaks secret-scan workflow** at `.github/workflows/secrets.yml` — runs on every PR and every push to `main`; fails the check on a hit. Default ruleset extended via `.gitleaks.toml` (2026-04-28).
+- **Pipeline JSON parse stability** (2026-04-29, #49) — 3-attempt progressive retry with fallback for all LLM pipelines (clinician-brief, PT-plan, risk-narrative, supplement-protocol). Silent pipeline failures eliminated.
 
 **Outstanding:**
 - CI workflow file extension — Playwright + Lighthouse on every PR (Vitest + pgTAP already running).
@@ -480,8 +489,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - Production-readiness checklist (`docs/operations/checklist.md`) and enforcement in PR template.
 - AHPRA breach-notification protocol document.
 - Data residency confirmation per region.
-- Architecture-level enforcement of "we never train on patient data" (no training endpoints, no model fine-tune jobs, no third-party data shares).
-- **Migration filename collisions** at `0031_*.sql` (member_alerts vs patient_uploads_file_hash) and `0032_*.sql` (lab_results_idempotency vs seed_admins). Both pairs landed via parallel branches; all four are applied to the production DB and Supabase tracks them by name so the chain is functional. Cosmetic only — worth a one-shot renumber to keep history monotonic before Epic 14 hits "Regression Tested" status.
+- ~~Migration filename collisions~~ **RESOLVED** (2026-04-29) — one-shot renumber collapsed collision groups at 0046, 0051, 0052 into monotonic 0046–0056. Tracking reconciliation migration at `0057_renumber_tracking.sql` updates `supabase_migrations.schema_migrations` in production. 57 migrations, all uniquely numbered.
 
 **Open bugs:** none directly.
 **Closed bugs:** 0.

@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { cleanLegacyDriver } from "@/lib/risk/format-driver";
 import { JanetChat } from "./_components/janet-chat";
+import { RegenerateButton } from "./_components/regenerate-button";
 import type { UIMessage } from "ai";
 import "./report.css";
 
@@ -90,6 +91,11 @@ export default async function ReportPage() {
     ["Musculoskeletal", risk?.msk_risk ?? null],
   ];
 
+  const lastUpdated = [risk?.assessment_date, supplement?.created_at]
+    .filter(Boolean)
+    .sort()
+    .pop();
+
   return (
     <div className="report">
       {/* Bio-age hero */}
@@ -103,6 +109,10 @@ export default async function ReportPage() {
                 {risk.confidence_level} confidence
               </span>
             )}
+            {lastUpdated && (
+              <div className="report-updated">Last updated {formatDate(lastUpdated)}</div>
+            )}
+            <RegenerateButton />
           </>
         ) : (
           <div className="pending-state">
@@ -112,6 +122,7 @@ export default async function ReportPage() {
               It takes a few minutes to analyse your assessment. Check back shortly or
               ask Janet a question below — she can help while your report processes.
             </p>
+            <RegenerateButton />
           </div>
         )}
       </section>

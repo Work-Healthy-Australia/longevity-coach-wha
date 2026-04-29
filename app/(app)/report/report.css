@@ -39,16 +39,58 @@
   letter-spacing: 0.5px;
 }
 
+.report-updated {
+  margin-top: 12px;
+  font-size: 13px;
+  opacity: 0.6;
+}
+
 .confidence-high { background: rgba(255,255,255,0.25); }
 .confidence-moderate { background: rgba(255,200,100,0.3); }
 .confidence-low { background: rgba(255,150,100,0.3); }
 .confidence-insufficient { background: rgba(255,100,100,0.3); }
+
+/* Regenerate button */
+.regenerate-form {
+  margin-top: 16px;
+}
+
+.btn-regenerate {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-regenerate:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.btn-regenerate:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.regen-error {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #ffb3b3;
+}
 
 /* Pending state */
 .pending-state { padding: 8px 0; }
 .pending-icon { font-size: 40px; margin-bottom: 12px; }
 .pending-state h2 { font-size: 22px; margin: 0 0 8px; }
 .pending-state p { opacity: 0.8; max-width: 400px; margin: 0 auto; line-height: 1.6; }
+.pending-state .regenerate-form { margin-top: 20px; }
 
 /* Cards */
 .card {
