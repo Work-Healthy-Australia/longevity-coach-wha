@@ -1,9 +1,16 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const PROTECTED_PREFIXES = ["/dashboard", "/onboarding", "/admin", "/uploads", "/check-in", "/report", "/account", "/labs", "/trends", "/simulator"];
+const PROTECTED_PREFIXES = ["/dashboard", "/onboarding", "/admin", "/uploads", "/check-in", "/report", "/account", "/labs", "/trends", "/simulator", "/clinician", "/coach"];
 const PAUSE_REDIRECTED_PREFIXES = ["/dashboard", "/report", "/check-in", "/trends", "/labs", "/uploads", "/journal", "/insights"];
 const AUTH_ONLY_PREFIXES = ["/login", "/signup", "/forgot-password"];
+
+// Role-gated prefixes — user's profiles.role must be in the allowed set.
+// Platform admins (is_admin = true) bypass all role gates.
+const CLINICIAN_PREFIXES = ["/clinician"];
+const COACH_PREFIXES = ["/coach"];
+const CLINICIAN_ALLOWED_ROLES = new Set(["clinician", "admin"]);
+const COACH_ALLOWED_ROLES = new Set(["coach", "clinician", "admin"]);
 
 function matches(pathname: string, prefixes: string[]): boolean {
   return prefixes.some((p) => pathname === p || pathname.startsWith(`${p}/`));
@@ -55,6 +62,32 @@ export async function updateSession(request: NextRequest) {
     dash.pathname = "/dashboard";
     dash.search = "";
     return NextResponse.redirect(dash);
+  }
+
+  // Role gates for /clinician and /coach. Platform admins bypass via is_admin.
+  if (user && (matches(pathname, CLINICIAN_PREFIXES) || matches(pathname, COACH_PREFIXES))) {
+    try {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role, is_admin")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      const role = profile?.role ?? "user";
+      const isAdmin = profile?.is_admin === true;
+
+      if (!isAdmin) {
+        if (matches(pathname, CLINICIAN_PREFIXES) && !CLINICIAN_ALLOWED_ROLES.has(role)) {
+          return NextResponse.redirect(new URL("/dashboard", request.url));
+        }
+        if (matches(pathname, COACH_PREFIXES) && !COACH_ALLOWED_ROLES.has(role)) {
+          return NextResponse.redirect(new URL("/dashboard", request.url));
+        }
+      }
+    } catch {
+      // Fail closed for role gates — bounce to dashboard if the role check errors.
+      return NextResponse.redirect(new URL("/dashboard", request.url));
+    }
   }
 
   // Paused account check — fail open on DB error to avoid permanent lockout.
