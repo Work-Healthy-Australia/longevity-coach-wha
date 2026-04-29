@@ -286,7 +286,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - **Periodic review workspace columns** (migration `0049`) — `program_30_day`, `program_sent_at`, `clinician_conversation_id` + clinician-can-update RLS via `patient_assignments`.
 - **`janet_clinician` agent definition** (migration `0051`) — sonnet-4-6, clinician-colleague persona, instructed to call the submit tool.
 - **Patient consent surface** at `/account` — "Care team access" form nominating a clinician by email; writes append-only `consent_records` row (new `care_team_access` policy) paired with the `patient_assignments` row.
-- **Admin clinician invite** at `/admin/clinicians` — existing user → role updated in place + clinician_profiles row + branded Resend notification email; new user → single-use 14-day token in `clinician_invites` + Supabase invite email (template configured in Supabase dashboard → Authentication → Email Templates → Invite User).
+- **Admin clinician invite** at `/admin/clinicians` — existing user → role updated in place + clinician_profiles row + branded Resend notification email; new user → single-use 14-day token in `clinician_invites` + Supabase invite email via custom SMTP.
 - **`/clinician` review workspace** — two-pane layout, queue grouped by status (awaiting / in_review / program_ready / sent_to_patient), urgent flag for `needs_attention` or stress ≥ 8; right pane: Patient card (Janet brief + structured fields), live Janet chat, 30-Day Program tab with Save draft + Approve & send.
 - **`/clinician/schedule`** — upcoming/past toggle, expandable appointment rows, status transitions, post-session notes.
 - **`/clinician/profile`** — full self-service editor (specialties, languages, bio, contact, working hours, lunch break, session duration, timezone, active flag).
@@ -308,7 +308,8 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - [#35](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/35) — foundation: role expansion + schema + proxy gates
 - [#36](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/36) — patient consent + admin clinician invite
 - [#37](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/37) — review workspace + schedule + profile
-- [#41](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/41) — clinician invite email (reverted to Supabase template; existing-user promotion still uses Resend)
+- [#41](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/41) — clinician invite email via Supabase custom SMTP
+- [#45](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/45) — fix invite form feedback visibility + apply migrations 0038–0051 to production
 - [#42](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/42) — janet_clinician real-time agent + submit_30_day_program tool
 - [#43](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/43) — patient program-delivery email on Approve & send
 
