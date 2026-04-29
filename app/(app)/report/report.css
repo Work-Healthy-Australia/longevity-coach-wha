@@ -672,3 +672,32 @@
   margin: 0;
 }
 .lc-report .supplement-refresh-error { color: var(--lc-danger); }
+
+/* Progress narrative */
+.progress-section { }
+.progress-trend {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+.progress-trend-icon { font-size: 20px; }
+.progress-trend-improving { background: #EBF5F0; color: #2A7A5C; }
+.progress-trend-stable { background: #EEF3F6; color: #2F6F8F; }
+.progress-trend-declining { background: #FDF2EE; color: #B5452F; }
+.progress-bullets {
+  margin: 0;
+  padding: 0 0 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.progress-bullets li {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #4B4B4B;
+}
