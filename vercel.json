@@ -1,12 +1,7 @@
 {
   "crons": [
-    {
-      "path": "/api/cron/drip-emails",
-      "schedule": "0 9 * * *"
-    },
-    {
-      "path": "/api/cron/nova",
-      "schedule": "0 2 * * 1"
-    }
+    { "path": "/api/cron/nova", "schedule": "0 2 * * 1" },
+    { "path": "/api/cron/drip-emails", "schedule": "0 8 * * *" },
+    { "path": "/api/cron/repeat-tests", "schedule": "0 6 * * *" }
   ]
 }

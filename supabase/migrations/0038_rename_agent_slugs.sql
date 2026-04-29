@@ -1,4 +1,4 @@
--- Migration 0036: rename agent slugs from human names to role-based names
+-- Migration 0038: rename agent slugs from human names to role-based names
 --
 -- atlas  → risk_analyzer      (Risk Analyzer)
 -- sage   → supplement_advisor (Supplement Advisor)
@@ -67,7 +67,7 @@ BEGIN
 END $$;
 
 -- ============================================================================
--- 2. Fix CHECK constraint on public.agent_conversations.agent
+-- 2. Fix CHECK constraint on agents.agent_conversations.agent
 --    Old: ('janet', 'pt_coach_live', 'alex')
 --    New: ('janet', 'pt_coach_live', 'support')
 --
@@ -80,8 +80,7 @@ END $$;
 
 DO $$
 DECLARE
-  v_constraint_exists boolean;
-  v_has_alex          boolean;
+  v_has_alex boolean;
 BEGIN
   -- Check whether the old constraint (containing 'alex') is still present
   SELECT EXISTS (
@@ -89,17 +88,17 @@ BEGIN
     FROM   pg_constraint c
     JOIN   pg_class      t ON t.oid = c.conrelid
     JOIN   pg_namespace  n ON n.oid = t.relnamespace
-    WHERE  n.nspname  = 'public'
+    WHERE  n.nspname  = 'agents'
     AND    t.relname  = 'agent_conversations'
     AND    c.conname  = 'agent_conversations_agent_check'
     AND    pg_get_constraintdef(c.oid) LIKE '%alex%'
   ) INTO v_has_alex;
 
   IF v_has_alex THEN
-    ALTER TABLE public.agent_conversations
+    ALTER TABLE agents.agent_conversations
       DROP CONSTRAINT agent_conversations_agent_check;
 
-    ALTER TABLE public.agent_conversations
+    ALTER TABLE agents.agent_conversations
       ADD CONSTRAINT agent_conversations_agent_check
         CHECK (agent IN ('janet', 'pt_coach_live', 'support'));
   END IF;
@@ -114,9 +113,9 @@ END $$;
 DO $$
 BEGIN
   IF EXISTS (
-    SELECT 1 FROM public.agent_conversations WHERE agent = 'alex' LIMIT 1
+    SELECT 1 FROM agents.agent_conversations WHERE agent = 'alex' LIMIT 1
   ) THEN
-    UPDATE public.agent_conversations
+    UPDATE agents.agent_conversations
     SET    agent = 'support'
     WHERE  agent = 'alex';
   END IF;
