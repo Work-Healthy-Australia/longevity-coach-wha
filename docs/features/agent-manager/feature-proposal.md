@@ -13,7 +13,7 @@ Agent system prompts, models, and tool connections are hardcoded in source files
 ## Solution
 
 An admin UI at `/admin/agents` backed by a `agent_definitions` database table. Admins can:
-1. View all registered agents (Janet, Alex, Atlas, Sage)
+1. View all registered agents (Janet, support, risk_analyzer, supplement_advisor)
 2. Edit system prompt, model, provider, temperature, max tokens
 3. Add / remove MCP server connections per agent (stored as JSONB)
 4. Enable / disable agents
@@ -32,10 +32,10 @@ Admin UI: /admin/agents
   → Server action saves to agent_definitions
 
 Runtime agents:
-  lib/ai/agents/janet.ts — loads definition by slug 'janet' at request time
-  lib/ai/agents/alex.ts  — loads definition by slug 'alex'
+  lib/ai/agents/janet.ts   — loads definition by slug 'janet' at request time
+  lib/ai/agents/support.ts — loads definition by slug 'support'
   
-Pipelines (Atlas, Sage):
+Pipelines (risk_analyzer, supplement_advisor):
   lib/ai/pipelines/* — load by slug at invocation time
 ```
 

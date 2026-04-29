@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { NextRequest } from "next/server";
 
 // vi.mock is hoisted, so variables referenced inside factories need vi.hoisted().
-const { mockStreamJanetTurn, mockStreamAlexTurn, mockToUIMessageStreamResponse } =
+const { mockStreamJanetTurn, mockStreamSupportTurn, mockToUIMessageStreamResponse } =
   vi.hoisted(() => {
     const mockToUIMessageStreamResponse = vi.fn(
       () => new Response("stream-ok", { status: 200 }),
@@ -10,7 +10,7 @@ const { mockStreamJanetTurn, mockStreamAlexTurn, mockToUIMessageStreamResponse }
     const streamResult = { toUIMessageStreamResponse: mockToUIMessageStreamResponse };
     return {
       mockStreamJanetTurn: vi.fn(() => Promise.resolve(streamResult)),
-      mockStreamAlexTurn: vi.fn(() => Promise.resolve(streamResult)),
+      mockStreamSupportTurn: vi.fn(() => Promise.resolve(streamResult)),
       mockToUIMessageStreamResponse,
     };
   });
@@ -19,8 +19,8 @@ vi.mock("@/lib/ai/agents/janet", () => ({
   streamJanetTurn: mockStreamJanetTurn,
 }));
 
-vi.mock("@/lib/ai/agents/alex", () => ({
-  streamAlexTurn: mockStreamAlexTurn,
+vi.mock("@/lib/ai/agents/support", () => ({
+  streamSupportTurn: mockStreamSupportTurn,
 }));
 
 // ── Auth mock ─────────────────────────────────────────────────────────────────
@@ -32,7 +32,7 @@ vi.mock("@/lib/supabase/server", () => ({
 }));
 
 import { POST as janetPOST } from "@/app/api/chat/route";
-import { POST as alexPOST } from "@/app/api/chat/alex/route";
+import { POST as alexPOST } from "@/app/api/chat/support/route";
 
 function makeRequest(
   body: unknown,
@@ -97,14 +97,14 @@ describe("POST /api/chat (Janet)", () => {
   });
 });
 
-// ── /api/chat/alex (Alex) ────────────────────────────────────────────────────
-describe("POST /api/chat/alex (Alex)", () => {
+// ── /api/chat/support (Support) ─────────────────────────────────────────────
+describe("POST /api/chat/support (Support)", () => {
   it("returns 401 when the user is not signed in", async () => {
     mockGetUser.mockResolvedValueOnce({ data: { user: null } });
     const res = await alexPOST(
       makeRequest(
         { messages: validMessages, currentPath: "/dashboard" },
-        "http://localhost/api/chat/alex",
+        "http://localhost/api/chat/support",
       ),
     );
     expect(res.status).toBe(401);
@@ -116,7 +116,7 @@ describe("POST /api/chat/alex (Alex)", () => {
     const res = await alexPOST(
       makeRequest(
         { currentPath: "/dashboard" },
-        "http://localhost/api/chat/alex",
+        "http://localhost/api/chat/support",
       ),
     );
     expect(res.status).toBe(400);
@@ -126,34 +126,34 @@ describe("POST /api/chat/alex (Alex)", () => {
     const res = await alexPOST(
       makeRequest(
         { messages: [], currentPath: "/dashboard" },
-        "http://localhost/api/chat/alex",
+        "http://localhost/api/chat/support",
       ),
     );
     expect(res.status).toBe(400);
   });
 
-  it("calls streamAlexTurn with messages and currentPath", async () => {
+  it("calls streamSupportTurn with messages and currentPath", async () => {
     await alexPOST(
       makeRequest(
         { messages: validMessages, currentPath: "/report" },
-        "http://localhost/api/chat/alex",
+        "http://localhost/api/chat/support",
       ),
     );
-    expect(mockStreamAlexTurn).toHaveBeenCalledWith(validMessages, "/report");
+    expect(mockStreamSupportTurn).toHaveBeenCalledWith(validMessages, "/report");
   });
 
   it("defaults currentPath to '/' when not provided", async () => {
     await alexPOST(
-      makeRequest({ messages: validMessages }, "http://localhost/api/chat/alex"),
+      makeRequest({ messages: validMessages }, "http://localhost/api/chat/support"),
     );
-    expect(mockStreamAlexTurn).toHaveBeenCalledWith(validMessages, "/");
+    expect(mockStreamSupportTurn).toHaveBeenCalledWith(validMessages, "/");
   });
 
-  it("returns the stream response from streamAlexTurn", async () => {
+  it("returns the stream response from streamSupportTurn", async () => {
     const res = await alexPOST(
       makeRequest(
         { messages: validMessages, currentPath: "/dashboard" },
-        "http://localhost/api/chat/alex",
+        "http://localhost/api/chat/support",
       ),
     );
     expect(mockToUIMessageStreamResponse).toHaveBeenCalledTimes(1);

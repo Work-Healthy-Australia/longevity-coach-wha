@@ -142,7 +142,7 @@ export async function loadPatientContext(
       // RAG knowledge chunks — hybrid BM25 + vector search (vector falls back to BM25-only when unavailable)
       retrieveKnowledge("longevity health risk prevention assessment", 4).catch((): string[] => []),
 
-      // Recent Nova research digests (last 3)
+      // Recent health_researcher digests (last 3)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (admin as any)
         .schema('agents')

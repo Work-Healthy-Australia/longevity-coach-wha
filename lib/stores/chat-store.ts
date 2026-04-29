@@ -3,10 +3,10 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 interface ChatStore {
-  alex: { isOpen: boolean; unread: number };
-  openAlex: () => void;
-  closeAlex: () => void;
-  toggleAlex: () => void;
+  support: { isOpen: boolean; unread: number };
+  openSupport: () => void;
+  closeSupport: () => void;
+  toggleSupport: () => void;
   clearUnread: () => void;
   incUnread: () => void;
 }
@@ -14,19 +14,19 @@ interface ChatStore {
 export const useChatStore = create<ChatStore>()(
   persist(
     (set) => ({
-      alex: { isOpen: false, unread: 0 },
-      openAlex: () => set((s) => ({ alex: { ...s.alex, isOpen: true, unread: 0 } })),
-      closeAlex: () => set((s) => ({ alex: { ...s.alex, isOpen: false } })),
-      toggleAlex: () =>
+      support: { isOpen: false, unread: 0 },
+      openSupport: () => set((s) => ({ support: { ...s.support, isOpen: true, unread: 0 } })),
+      closeSupport: () => set((s) => ({ support: { ...s.support, isOpen: false } })),
+      toggleSupport: () =>
         set((s) => ({
-          alex: {
-            ...s.alex,
-            isOpen: !s.alex.isOpen,
-            unread: s.alex.isOpen ? s.alex.unread : 0,
+          support: {
+            ...s.support,
+            isOpen: !s.support.isOpen,
+            unread: s.support.isOpen ? s.support.unread : 0,
           },
         })),
-      clearUnread: () => set((s) => ({ alex: { ...s.alex, unread: 0 } })),
-      incUnread: () => set((s) => ({ alex: { ...s.alex, unread: s.alex.unread + 1 } })),
+      clearUnread: () => set((s) => ({ support: { ...s.support, unread: 0 } })),
+      incUnread: () => set((s) => ({ support: { ...s.support, unread: s.support.unread + 1 } })),
     }),
     { name: 'lc-chat' },
   ),

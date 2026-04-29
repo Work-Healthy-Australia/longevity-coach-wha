@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { createPipelineAgent } from '@/lib/ai/agent-factory';
 import type { PatientContext } from '@/lib/ai/patient-context';
 
-const SageOutputSchema = z.object({
+const SupplementAdvisorOutputSchema = z.object({
   summary: z.string().min(50).max(600),
   highlighted_items: z
     .array(
@@ -16,7 +16,7 @@ const SageOutputSchema = z.object({
     .max(5),
 });
 
-function buildSageToolPrompt(ctx: PatientContext, focus?: string): string {
+function buildSupplementAdvisorPrompt(ctx: PatientContext, focus?: string): string {
   const parts: string[] = [];
 
   if (ctx.supplementPlan?.items.length) {
@@ -46,7 +46,7 @@ function buildSageToolPrompt(ctx: PatientContext, focus?: string): string {
   return parts.join('\n');
 }
 
-export function sageSummaryTool(ctx: PatientContext): Tool {
+export function supplementAdvisorTool(ctx: PatientContext): Tool {
   return {
     description:
       "Get a specialist explanation of this patient's supplement protocol. Returns a rationale for the top supplements linked to their specific risk drivers. Call this when the patient asks why they are taking a specific supplement, or asks for a deep-dive on their protocol.",
@@ -62,7 +62,7 @@ export function sageSummaryTool(ctx: PatientContext): Tool {
       if (!ctx.supplementPlan) {
         return { summary: 'No supplement protocol has been generated yet.', highlighted_items: [] };
       }
-      return createPipelineAgent('sage').run(SageOutputSchema, buildSageToolPrompt(ctx, focus));
+      return createPipelineAgent('supplement_advisor').run(SupplementAdvisorOutputSchema, buildSupplementAdvisorPrompt(ctx, focus));
     },
   };
 }

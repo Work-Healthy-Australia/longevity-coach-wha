@@ -10,7 +10,7 @@ vi.mock('@/lib/ai/agent-factory', () => ({
   createPipelineAgent: vi.fn(() => ({ run: mockRun })),
 }));
 
-import { atlasRiskSummaryTool } from '@/lib/ai/tools/atlas-tool';
+import { riskAnalyzerTool } from '@/lib/ai/tools/risk-analyzer-tool';
 
 const SEED_CTX: Pick<PatientContext, 'riskScores' | 'healthProfile' | 'uploads' | 'supplementPlan' | 'recentConversation' | 'knowledgeChunks' | 'recentDigests' | 'conversationSummary' | 'userId' | 'profile'> = {
   userId: 'test-user',
@@ -57,23 +57,23 @@ beforeEach(() => {
   });
 });
 
-describe('atlasRiskSummaryTool', () => {
+describe('riskAnalyzerTool', () => {
   it('returns a valid AI SDK tool object with description and parameters', () => {
-    const t = atlasRiskSummaryTool(SEED_CTX as PatientContext);
+    const t = riskAnalyzerTool(SEED_CTX as PatientContext);
     expect(t.description).toBeTruthy();
     expect(t.inputSchema).toBeDefined();
     expect(t.execute).toBeTypeOf('function');
   });
 
-  it('calls createPipelineAgent("atlas") when executed', async () => {
+  it('calls createPipelineAgent("risk_analyzer") when executed', async () => {
     const { createPipelineAgent } = await import('@/lib/ai/agent-factory');
-    const t = atlasRiskSummaryTool(SEED_CTX as PatientContext);
+    const t = riskAnalyzerTool(SEED_CTX as PatientContext);
     await t.execute({}, { messages: [], toolCallId: 'tc1' });
-    expect(createPipelineAgent).toHaveBeenCalledWith('atlas');
+    expect(createPipelineAgent).toHaveBeenCalledWith('risk_analyzer');
   });
 
-  it('includes risk scores in the prompt passed to atlas', async () => {
-    const t = atlasRiskSummaryTool(SEED_CTX as PatientContext);
+  it('includes risk scores in the prompt passed to risk_analyzer', async () => {
+    const t = riskAnalyzerTool(SEED_CTX as PatientContext);
     await t.execute({}, { messages: [], toolCallId: 'tc1' });
     const promptArg = mockRun.mock.calls[0][1] as string;
     expect(promptArg).toContain('CV=72');
@@ -81,7 +81,7 @@ describe('atlasRiskSummaryTool', () => {
   });
 
   it('includes pathology summary in the prompt', async () => {
-    const t = atlasRiskSummaryTool(SEED_CTX as PatientContext);
+    const t = riskAnalyzerTool(SEED_CTX as PatientContext);
     await t.execute({}, { messages: [], toolCallId: 'tc1' });
     const promptArg = mockRun.mock.calls[0][1] as string;
     expect(promptArg).toContain('LDL 4.8');
@@ -90,7 +90,7 @@ describe('atlasRiskSummaryTool', () => {
   it('does not call createAdminClient (no DB writes)', async () => {
     const adminMock = vi.fn();
     vi.doMock('@/lib/supabase/admin', () => ({ createAdminClient: adminMock }));
-    const t = atlasRiskSummaryTool(SEED_CTX as PatientContext);
+    const t = riskAnalyzerTool(SEED_CTX as PatientContext);
     await t.execute({}, { messages: [], toolCallId: 'tc1' });
     expect(adminMock).not.toHaveBeenCalled();
   });

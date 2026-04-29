@@ -138,9 +138,9 @@ beforeEach(() => {
 afterEach(() => vi.resetAllMocks());
 
 describe("runSupplementProtocolPipeline", () => {
-  it("creates the sage pipeline agent", async () => {
+  it("creates the supplement_advisor pipeline agent", async () => {
     await runSupplementProtocolPipeline("user-123");
-    expect(createPipelineAgent).toHaveBeenCalledWith("sage");
+    expect(createPipelineAgent).toHaveBeenCalledWith("supplement_advisor");
   });
 
   it("calls agent.run with the correct schema and a prompt string", async () => {

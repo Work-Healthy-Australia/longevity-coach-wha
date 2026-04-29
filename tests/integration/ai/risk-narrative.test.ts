@@ -119,9 +119,9 @@ beforeEach(() => {
 afterEach(() => vi.resetAllMocks());
 
 describe("runRiskNarrativePipeline", () => {
-  it("creates the atlas pipeline agent", async () => {
+  it("creates the risk_analyzer pipeline agent", async () => {
     await runRiskNarrativePipeline("user-123");
-    expect(createPipelineAgent).toHaveBeenCalledWith("atlas");
+    expect(createPipelineAgent).toHaveBeenCalledWith("risk_analyzer");
   });
 
   it("calls agent.run with the correct schema and a prompt string", async () => {

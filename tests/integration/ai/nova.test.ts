@@ -27,7 +27,7 @@ vi.mock('@/lib/ai/rag', () => ({
   retrieveKnowledge: vi.fn(() => Promise.resolve([])),
 }));
 
-import { runNovaDigestPipeline } from '@/lib/ai/pipelines/nova';
+import { runHealthResearcherPipeline } from '@/lib/ai/pipelines/health-researcher';
 
 // Canned PubMed API responses
 const ESEARCH_RESPONSE = JSON.stringify({
@@ -70,9 +70,9 @@ afterEach(() => {
   vi.resetAllMocks();
 });
 
-describe('runNovaDigestPipeline', () => {
+describe('runHealthResearcherPipeline', () => {
   it('inserts health_updates rows after successful synthesis', async () => {
-    await runNovaDigestPipeline();
+    await runHealthResearcherPipeline();
     expect(mockFrom).toHaveBeenCalledWith('health_updates');
     expect(mockInsert).toHaveBeenCalled();
     const insertArg = mockInsert.mock.calls.find((call) =>
@@ -82,13 +82,13 @@ describe('runNovaDigestPipeline', () => {
   });
 
   it('inserts health_knowledge rows with embeddings', async () => {
-    await runNovaDigestPipeline();
+    await runHealthResearcherPipeline();
     expect(mockEmbedText).toHaveBeenCalled();
     expect(mockFrom).toHaveBeenCalledWith('health_knowledge');
   });
 
   it('calls delete with 90-day date filter on both tables', async () => {
-    await runNovaDigestPipeline();
+    await runHealthResearcherPipeline();
     expect(mockDelete).toHaveBeenCalled();
     expect(mockLt).toHaveBeenCalled();
   });
@@ -107,11 +107,11 @@ describe('runNovaDigestPipeline', () => {
       });
     });
     // Should not throw even with one failure
-    await expect(runNovaDigestPipeline()).resolves.toBeUndefined();
+    await expect(runHealthResearcherPipeline()).resolves.toBeUndefined();
   });
 
   it('does not throw when all categories fail', async () => {
     mockRun.mockRejectedValue(new Error('All LLM calls failed'));
-    await expect(runNovaDigestPipeline()).resolves.toBeUndefined();
+    await expect(runHealthResearcherPipeline()).resolves.toBeUndefined();
   });
 });

@@ -3,8 +3,8 @@ import { createStreamingAgent } from '@/lib/ai/agent-factory';
 import { loadPatientContext, summariseContext } from '@/lib/ai/patient-context';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { compressConversation } from '@/lib/ai/compression';
-import { atlasRiskSummaryTool } from '@/lib/ai/tools/atlas-tool';
-import { sageSummaryTool } from '@/lib/ai/tools/sage-tool';
+import { riskAnalyzerTool } from '@/lib/ai/tools/risk-analyzer-tool';
+import { supplementAdvisorTool } from '@/lib/ai/tools/supplement-advisor-tool';
 
 export async function streamJanetTurn(userId: string, messages: UIMessage[]) {
   const [ctx] = await Promise.all([
@@ -15,8 +15,8 @@ export async function streamJanetTurn(userId: string, messages: UIMessage[]) {
   return agent.stream(messages, {
     systemSuffix: '\n\n' + summariseContext(ctx),
     tools: {
-      atlas_risk_summary: atlasRiskSummaryTool(ctx),
-      sage_supplement_summary: sageSummaryTool(ctx),
+      risk_analyzer_summary: riskAnalyzerTool(ctx),
+      supplement_advisor_summary: supplementAdvisorTool(ctx),
     },
     onFinish: async ({ text }) => {
       const admin = createAdminClient();

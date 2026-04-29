@@ -79,7 +79,7 @@ export async function runRiskNarrativePipeline(userId: string): Promise<void> {
   try {
     await _run(userId);
   } catch (err) {
-    console.error('[Atlas] Risk narrative pipeline failed (non-fatal):', err);
+    console.error('[risk-analyzer pipeline] Risk narrative pipeline failed (non-fatal):', err);
   }
 }
 
@@ -161,7 +161,7 @@ async function _run(userId: string): Promise<void> {
 
   const dailyTrends = buildDailyTrendsSummary(logs);
 
-  const agent = createPipelineAgent('atlas');
+  const agent = createPipelineAgent('risk_analyzer');
 
   const output: RiskNarrativeOutput = await agent.run(
     RiskNarrativeOutputSchema,
@@ -191,5 +191,5 @@ async function _run(userId: string): Promise<void> {
     { onConflict: 'user_uuid' },
   );
 
-  if (error) console.error(`[Atlas] Failed to upsert risk_scores for user ${userId}:`, error);
+  if (error) console.error(`[risk-analyzer pipeline] Failed to upsert risk_scores for user ${userId}:`, error);
 }

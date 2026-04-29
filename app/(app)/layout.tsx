@@ -4,7 +4,7 @@ import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { signOut } from "../(auth)/actions";
-import { AlexFAB } from "./_components/alex-fab";
+import { SupportFAB } from "./_components/support-fab";
 
 export default async function AppLayout({
   children,
@@ -92,7 +92,7 @@ export default async function AppLayout({
       <main style={{ maxWidth: 960, margin: "0 auto", padding: "32px 24px" }}>
         {children}
       </main>
-      <AlexFAB />
+      <SupportFAB />
     </div>
   );
 }

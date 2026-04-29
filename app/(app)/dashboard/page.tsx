@@ -603,7 +603,7 @@ function pickAction(args: {
   if (!args.hasSupplement) {
     return {
       title: "Your protocol is being prepared",
-      body: "Sage is generating your supplement plan from your latest risk scores. Back shortly.",
+      body: "Your supplement protocol is being generated from your latest risk scores. Back shortly.",
       cta: "View report",
       href: "/report",
     };
