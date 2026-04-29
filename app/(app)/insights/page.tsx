@@ -1,8 +1,34 @@
 import { createClient } from '@/lib/supabase/server';
 import { generateWeeklyInsights } from '@/lib/insights/weekly';
 import { deriveGoals } from '@/lib/goals/derive';
+import './insights.css';
 
-export const metadata = { title: 'Weekly insights · Longevity Coach' };
+export const metadata = { title: 'Insights · Longevity Coach' };
+
+type HealthUpdate = {
+  id: string;
+  title: string;
+  content: string;
+  category: string;
+  source: string;
+  evidence_level: string;
+  posted_date: string;
+};
+
+const CATEGORY_LABELS: Record<string, string> = {
+  longevity: 'Longevity',
+  biohacking: 'Biohacking',
+  supplements: 'Supplements',
+  exercise: 'Exercise',
+  nutrition: 'Nutrition',
+  sleep: 'Sleep',
+};
+
+const EVIDENCE_LABELS: Record<string, string> = {
+  strong: 'Strong evidence',
+  moderate: 'Moderate evidence',
+  preliminary: 'Preliminary',
+};
 
 export default async function InsightsPage() {
   const supabase = await createClient();
@@ -11,7 +37,7 @@ export default async function InsightsPage() {
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-  const [{ data: logsData }, { data: riskData }] = await Promise.all([
+  const [{ data: logsData }, { data: riskData }, { data: updatesData }] = await Promise.all([
     supabase
       .schema('biomarkers' as never)
       .from('daily_logs')
@@ -26,6 +52,11 @@ export default async function InsightsPage() {
       .order('computed_at', { ascending: false })
       .limit(1)
       .maybeSingle(),
+    supabase
+      .from('health_updates')
+      .select('id, title, content, category, source, evidence_level, posted_date')
+      .order('posted_date', { ascending: false })
+      .limit(12),
   ]);
 
   const goals = deriveGoals({
@@ -39,21 +70,71 @@ export default async function InsightsPage() {
 
   const logs = (logsData ?? []) as import('@/lib/insights/weekly').DailyLogRow[];
   const insights = generateWeeklyInsights(logs, goals.steps, goals.sleepHours);
+  const updates = (updatesData ?? []) as HealthUpdate[];
 
   return (
     <div className="lc-insights">
-      <h1>Weekly insights</h1>
-      {insights.length === 0 ? (
-        <p>Keep logging daily check-ins — your weekly patterns will appear here after 3+ days of data.</p>
-      ) : (
-        <ul className="insights-list">
-          {insights.map(insight => (
-            <li key={insight.id} className={`insight-item insight-${insight.type}`}>
-              {insight.message}
-            </li>
-          ))}
-        </ul>
-      )}
+      {/* Weekly check-in trends */}
+      <section className="insights-section">
+        <h1>Weekly insights</h1>
+        {insights.length === 0 ? (
+          <p className="insights-empty">
+            Keep logging daily check-ins — your weekly patterns will appear here after 3+ days of data.
+          </p>
+        ) : (
+          <ul className="insights-list">
+            {insights.map(insight => (
+              <li key={insight.id} className={`insight-item insight-${insight.type}`}>
+                {insight.message}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      {/* Research digests */}
+      <section className="insights-section">
+        <h2 className="digests-heading">Research updates</h2>
+        <p className="digests-subheading">
+          Curated research from longevity and health literature, updated weekly.
+        </p>
+        {updates.length === 0 ? (
+          <p className="insights-empty">
+            Research digests will appear here once our health researcher begins publishing.
+          </p>
+        ) : (
+          <div className="digests-grid">
+            {updates.map((u) => (
+              <article key={u.id} className="digest-card">
+                <div className="digest-meta">
+                  <span className={`digest-category digest-category-${u.category}`}>
+                    {CATEGORY_LABELS[u.category] ?? u.category}
+                  </span>
+                  <span className={`digest-evidence digest-evidence-${u.evidence_level}`}>
+                    {EVIDENCE_LABELS[u.evidence_level] ?? u.evidence_level}
+                  </span>
+                </div>
+                <h3 className="digest-title">{u.title}</h3>
+                <p className="digest-content">{u.content}</p>
+                <div className="digest-footer">
+                  <span className="digest-source">{u.source}</span>
+                  <time className="digest-date" dateTime={u.posted_date}>
+                    {formatDate(u.posted_date)}
+                  </time>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
     </div>
   );
+}
+
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString(undefined, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
 }

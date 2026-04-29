@@ -25,13 +25,13 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 | 1 | The Front Door | `●●●●●` | 100% | 0 | 3 |
 | 2 | The Intake | `●●●◐○` | 99% | 0 | 0 |
 | 3 | The Number | `●●●○○` | 85% | 0 | 1 |
-| 4 | The Protocol | `●●●○○` | 80% | 0 | 0 |
+| 4 | The Protocol | `●●●○○` | 85% | 0 | 0 |
 | 5 | The Report | `●●●○○` | 85% | 0 | 1 |
 | 6 | The Coach | `●●●○○` | 95% | 0 | 1 |
 | 7 | The Daily Return | `●●●○○` | 92% | 0 | 0 |
 | 8 | The Living Record | `●●●○○` | 85% | 0 | 0 |
 | 9 | The Care Team | `●●●◐○` | 75% | 0 | 0 |
-| 10 | The Knowledge Engine | `●◐◐○○` | 60% | 0 | 1 |
+| 10 | The Knowledge Engine | `●●◐○○` | 70% | 0 | 1 |
 | 11 | The Trust Layer | `●●●○○` | 95% | 0 | 1 |
 | 12 | The Distribution | `●●◐○○` | 60% | 0 | 0 |
 | 13 | The Business Model | `●●◐○○` | 50% | 0 | 0 |
@@ -126,7 +126,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 4: The Protocol
 
 `●●●○○` Planned · Feature Complete · Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 80%** — supplement_advisor pipeline ships a 30-day protocol after every risk_analyzer run; supplement_advisor eval suite shipped 2026-04-28 with 4 rubrics. No deterministic supplement catalog yet — items are LLM-derived.
+**Estimate: 85%** — supplement_advisor pipeline ships a 30-day protocol after every risk_analyzer run; supplement_advisor eval suite shipped 2026-04-28 with 4 rubrics. Deterministic supplement catalog (42 evidence-backed items) seeded and live; `recommendFromRisk()` resolver fully wired.
 
 **Shipped:**
 - supplement_advisor pipeline at `lib/ai/pipelines/supplement-protocol.ts`.
@@ -136,9 +136,9 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - Per-item rationale tied to the patient's specific risk drivers.
 - Tier label per item (`critical` / `high` / `recommended` / `performance`).
 - **supplement_advisor eval suite** (`tests/evals/sage.eval.ts`, 2026-04-28) — 4 rubrics: protocol completeness, safe language, personalisation to patient's risk drivers, citation of specific supplements.
+- **Hand-curated supplement catalog** — 42 evidence-backed items seeded to `supplement_catalog` via `supabase/seeds/supplement_catalog.sql`. Covers all 6 domains (7 CV, 7 metabolic, 6 neuro, 5 onco, 4 MSK, 11 general). Each item has predicate-based `triggers_when` keyed to canonical engine factor names, medication `contraindicates`, evidence tags (A/B/C), and AUD cost. Deterministic resolver `recommendFromRisk()` at `lib/supplements/catalog.ts` fully operational.
 
 **Outstanding:**
-- Hand-curated supplement catalog (~40 evidence-backed items) for deterministic Phase 1 generation.
 - Janet (Supplement Advisor mode) tool surface for "tell me more about this item."
 - Integrative-medicine doctor panel review of 10 sample protocols.
 - Supplement-marketplace integration so a tap on an item adds it to a basket (Epic 12).
@@ -320,8 +320,8 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 10: The Knowledge Engine
 
-`●◐◐○○` Planned · ◐ Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 60%** — health_researcher pipeline fully implemented 2026-04-28: PubMed search, LLM synthesis, chunk+embed, cron route, Vercel weekly schedule, PatientContext integration, unit + integration tests. Member-facing insights feed and full semantic search (pgvector enable) still outstanding.
+`●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 70%** — health_researcher pipeline fully implemented 2026-04-28: PubMed search, LLM synthesis, chunk+embed, cron route, Vercel weekly schedule, PatientContext integration, unit + integration tests. **Member-facing insights feed shipped 2026-04-29** — `/insights` page now shows research digest cards from `health_updates` alongside existing weekly check-in trends.
 
 **Shipped:**
 - `health_updates` table for structured digest display (`0015_health_updates.sql`).
@@ -333,10 +333,11 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - **`PatientContext` integration** — `recentDigests` loaded as 8th parallel read; Janet sees latest 3 digests on every turn.
 - Unit tests: `tests/unit/ai/nova-helpers.test.ts` — 5 tests for `chunkText`.
 - Integration tests: `tests/integration/ai/nova.test.ts` — 5 tests for `runHealthResearcherPipeline` with mocked PubMed + Supabase.
+- **Member-facing insights feed** (2026-04-29) — `/insights` page extended with a "Research updates" section. Queries `public.health_updates` (latest 12), renders digest cards with category badge, evidence-level badge, title, 4-line content clamp, source attribution, and date. Responsive grid (2-col desktop, 1-col mobile). Scoped `insights.css` with colour-coded category and evidence badges. Empty state for zero digests.
 
 **Outstanding:**
 - Enable the `vector` pgvector extension in Supabase dashboard (one-click action) — improves semantic search precision; keyword search still functional without it.
-- Member-facing insights feed UI (in-app page showing weekly digests, filterable by health category).
+- Category filter on the insights feed (currently shows all categories in reverse-chronological order).
 - NCBI API key (`NCBI_API_KEY`) for scale — raises PubMed rate limit from 3 to 10 req/s; not needed at weekly cadence.
 - medRxiv integration — scoped for v2.
 - Clinical reviewer rubric for digest quality.
