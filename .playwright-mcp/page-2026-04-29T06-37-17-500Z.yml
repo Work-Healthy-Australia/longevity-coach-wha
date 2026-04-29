@@ -1,0 +1,88 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - button "1 · Inbox" [ref=e3] [cursor=pointer]
+    - button "2 · Message thread" [ref=e4] [cursor=pointer]
+    - button "3 · Consent gate" [ref=e5] [cursor=pointer]
+    - button "4 · Notification prefs" [ref=e6] [cursor=pointer]
+  - generic [ref=e7]:
+    - paragraph [ref=e8]: Patient view · /messages
+    - generic [ref=e9]:
+      - generic [ref=e10]:
+        - generic [ref=e13]: Longevity Coach
+        - generic [ref=e14]:
+          - generic [ref=e15] [cursor=pointer]: Dashboard
+          - generic [ref=e16] [cursor=pointer]: Report
+          - generic [ref=e17] [cursor=pointer]:
+            - text: Messages
+            - generic [ref=e18]: "2"
+          - generic [ref=e19] [cursor=pointer]: Account
+        - generic [ref=e20] [cursor=pointer]: JD
+      - generic [ref=e21]:
+        - generic [ref=e22]:
+          - generic [ref=e23]:
+            - heading "Messages" [level=2] [ref=e24]
+            - button "+ New message" [ref=e25] [cursor=pointer]
+          - generic [ref=e26]:
+            - generic [ref=e27] [cursor=pointer]:
+              - generic [ref=e28]: DR
+              - generic [ref=e29]:
+                - generic [ref=e30]:
+                  - generic [ref=e31]: Dr. Rachel Kim
+                  - generic [ref=e32]: 10:24 am
+                - generic [ref=e33]: GP · Assigned clinician
+                - generic [ref=e34]: Your LDL panel came back — let's discuss the results
+            - generic [ref=e36] [cursor=pointer]:
+              - generic [ref=e37]: MN
+              - generic [ref=e38]:
+                - generic [ref=e39]:
+                  - generic [ref=e40]: Dr. Mark Nguyen
+                  - generic [ref=e41]: Yesterday
+                - generic [ref=e42]: Cardiologist
+                - generic [ref=e43]: Thanks for sending through the DEXA results.
+            - generic [ref=e44] [cursor=pointer]:
+              - generic [ref=e45]: SC
+              - generic [ref=e46]:
+                - generic [ref=e47]:
+                  - generic [ref=e48]: Sarah Chen
+                  - generic [ref=e49]: Mon
+                - generic [ref=e50]: Health Coach
+                - generic [ref=e51]: I've updated your supplement protocol for Q2.
+        - generic [ref=e53]:
+          - generic [ref=e54]:
+            - generic [ref=e55]: DR
+            - generic [ref=e56]:
+              - generic [ref=e57]: Dr. Rachel Kim
+              - generic [ref=e58]: Online · GP · Assigned clinician
+            - generic [ref=e60]:
+              - button "📋" [ref=e61] [cursor=pointer]
+              - button "📞" [ref=e62] [cursor=pointer]
+          - generic [ref=e63]:
+            - generic [ref=e64]: Today — 29 April 2026
+            - generic [ref=e65]:
+              - generic [ref=e66]: Dr. Rachel Kim
+              - generic [ref=e67]: Good morning! I've just reviewed your latest lab results. Your LDL has come down nicely — 3.4 mmol/L, down from 4.1 in January. Well done on staying consistent with the protocol.
+              - generic [ref=e68]: 9:48 am
+            - generic [ref=e69]:
+              - generic [ref=e70]:
+                - text: I've attached the annotated report. The one item I'd like to discuss is your hs-CRP — it's still slightly elevated at 2.8. Can you let me know if you've had any infections or heavy exercise in the past week?
+                - generic [ref=e71] [cursor=pointer]:
+                  - generic [ref=e72]: 📄
+                  - generic [ref=e73]:
+                    - generic [ref=e74]: LDL-panel-annotated-Apr26.pdf
+                    - generic [ref=e75]: 284 KB · PDF
+                  - generic [ref=e76]: ↓
+              - generic [ref=e77]: 9:49 am
+            - generic [ref=e78]:
+              - generic [ref=e79]: "Hi Dr. Kim! Thank you — really glad to see the LDL moving in the right direction. Re the hs-CRP: I did have a cold about 10 days ago, so that might explain it. Should I retest in 4 weeks?"
+              - generic [ref=e80]: 10:12 am
+            - generic [ref=e81]:
+              - generic [ref=e82]: Yes, exactly — a recent infection will elevate hs-CRP temporarily. Let's retest at the 4-week mark. I'll flag it as a reminder in your protocol. In the meantime, the omega-3 dose in your supplement plan should help.
+              - generic [ref=e83]: 10:24 am
+            - generic [ref=e84]: Read · 10:25 am
+          - generic [ref=e85]:
+            - generic [ref=e86]:
+              - textbox "Write a message…" [ref=e87]
+              - generic [ref=e88]:
+                - button "📎" [ref=e89] [cursor=pointer]
+                - button "↑" [ref=e90] [cursor=pointer]
+            - generic [ref=e91]: 🔒 End-to-end encrypted · messages are private between you and Dr. Kim

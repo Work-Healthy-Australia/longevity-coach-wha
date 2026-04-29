@@ -1,6 +1,6 @@
 # Longevity Coach — Epic Status Dashboard
 
-Last updated **2026-04-29**.
+Last updated **2026-04-29** (Sprint 2 Engineering Completeness).
 
 Companion to [epics.md](./epics.md) (strategy, stable) and [product.md](./product.md) (vision). This file is the **at-a-glance status** of each epic: how far through the build pipeline, what's still outstanding, what's broken right now.
 
@@ -24,18 +24,18 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 |---|---|---|---:|---:|---:|
 | 1 | The Front Door | `●●●●●` | 100% | 0 | 3 |
 | 2 | The Intake | `●●●◐○` | 97% | 0 | 0 |
-| 3 | The Number | `●●◐○○` | 75% | 0 | 1 |
-| 4 | The Protocol | `●●◐○○` | 60% | 0 | 0 |
-| 5 | The Report | `●●○○○` | 65% | 0 | 1 |
-| 6 | The Coach | `●●◐○○` | 90% | 0 | 1 |
-| 7 | The Daily Return | `●●◐○○` | 70% | 0 | 0 |
-| 8 | The Living Record | `●●◐○○` | 70% | 0 | 0 |
-| 9 | The Care Team | `●○○○○` | 5% | 0 | 0 |
+| 3 | The Number | `●●●○○` | 85% | 0 | 1 |
+| 4 | The Protocol | `●●●○○` | 80% | 0 | 0 |
+| 5 | The Report | `●●●○○` | 80% | 0 | 1 |
+| 6 | The Coach | `●●●○○` | 95% | 0 | 1 |
+| 7 | The Daily Return | `●●●○○` | 90% | 0 | 0 |
+| 8 | The Living Record | `●●●○○` | 85% | 0 | 0 |
+| 9 | The Care Team | `●●○○○` | 30% | 0 | 0 |
 | 10 | The Knowledge Engine | `●◐◐○○` | 60% | 0 | 1 |
-| 11 | The Trust Layer | `●●◐○○` | 65% | 0 | 1 |
+| 11 | The Trust Layer | `●●●○○` | 90% | 0 | 1 |
 | 12 | The Distribution | `●◐○○○` | 20% | 0 | 0 |
 | 13 | The Business Model | `●○○○○` | 0% | 0 | 0 |
-| 14 | The Platform Foundation | `●◐○○○` | 45% | 0 | 0 |
+| 14 | The Platform Foundation | `●●○○○` | 65% | 0 | 0 |
 
 **Bug totals:** 0 open, 8 closed. (Bug log: forthcoming `qa/QA-bugs.md`.)
 
