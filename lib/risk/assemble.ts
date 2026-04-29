@@ -353,6 +353,7 @@ export function buildPatientInput(sources: AssembleSources): PatientInput {
       sex,
       height_cm: num(basics.height_cm),
       weight_kg: num(basics.weight_kg),
+      systolic_bp_mmHg: num(basics.systolic_bp_mmHg),
     },
     family_history: buildFamilyHistory(family),
     medical_history: {

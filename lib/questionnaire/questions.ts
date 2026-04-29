@@ -66,6 +66,19 @@ export const onboardingQuestionnaire: QuestionnaireDef = {
         { id: "height_cm", label: "Height", type: "number", placeholder: "178", suffix: "cm" },
         { id: "weight_kg", label: "Weight", type: "number", placeholder: "82", suffix: "kg" },
         {
+          id: "systolic_bp_mmHg",
+          label: "Recent systolic BP reading",
+          type: "number",
+          optional: true,
+          placeholder: "120",
+          suffix: "mmHg",
+          min: 70,
+          max: 250,
+          step: 1,
+          helpText:
+            "If you have a recent reading from a clinic, home monitor, or pharmacy. Skip if you don't have one. The top number on a BP reading.",
+        },
+        {
           id: "ethnicity",
           label: "Ethnicity",
           type: "select",
