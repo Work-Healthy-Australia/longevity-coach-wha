@@ -26,41 +26,92 @@ subscriptions
 
 ## S1 — Plans
 
+### `feature_keys`
+
+The canonical registry of all valid feature identifiers. Fully managed by platform admin from the admin UI.
+
+```sql
+create table public.feature_keys (
+  key         text primary key,   -- e.g. 'supplement_protocol', 'pdf_export'
+  label       text not null,      -- human-readable: 'Supplement Protocol'
+  description text,
+  is_active   boolean not null default true,
+  created_at  timestamptz not null default now(),
+  updated_at  timestamptz not null default now()
+);
+
+-- Initial seed in migration 0007:
+insert into public.feature_keys (key, label) values
+  ('supplement_protocol',  'Supplement Protocol'),
+  ('pdf_export',           'Branded PDF Export'),
+  ('genome_access',        'Genome Analysis Access'),
+  ('advanced_risk_report', 'Advanced Risk Report'),
+  ('dexa_ordering',        'DEXA Scan Ordering');
+```
+
+**Notes:**
+- Admin can create, edit, and delete feature keys from the admin UI. Deletion of a key that is referenced by `plan_features` or `plan_addons` must be blocked at the application layer (or via FK constraint) — deactivate instead.
+- `is_active = false` soft-deletes the key; existing plan/add-on references are preserved for audit.
+
+---
+
 ### `plans`
+
+One row per tier. Monthly and annual billing are two Stripe price IDs on the same plan — admins do not create separate plans for each interval.
 
 ```sql
 create table public.plans (
-  id                  uuid primary key default gen_random_uuid(),
-  name                text not null,
-  tier                text not null check (tier in ('individual', 'professional', 'corporate')),
-  billing_interval    text not null check (billing_interval in ('month', 'year')),
-  stripe_price_id     text not null unique,         -- soft-matches subscriptions.price_id
-  base_price_cents    int  not null check (base_price_cents >= 0),
-  annual_discount_pct numeric(5,2) not null default 0 check (annual_discount_pct between 0 and 100),
-  feature_flags       jsonb not null default '{}'::jsonb,  -- ceiling of what this tier permits
-  is_active           boolean not null default true,
-  created_at          timestamptz not null default now(),
-  updated_at          timestamptz not null default now()
+  id                      uuid primary key default gen_random_uuid(),
+  name                    text not null,
+  tier                    text not null unique check (tier in ('individual', 'professional', 'corporate')),
+  stripe_price_id_monthly text not null unique,
+  stripe_price_id_annual  text unique,                     -- null if annual billing not offered for this tier
+  base_price_cents        int  not null check (base_price_cents >= 0),
+  annual_discount_pct     numeric(5,2) not null default 20 check (annual_discount_pct between 0 and 100),
+  annual_price_cents      int  not null check (annual_price_cents >= 0),  -- stored, derived on write
+  is_per_seat             boolean not null default false,   -- true for corporate
+  is_active               boolean not null default true,
+  created_at              timestamptz not null default now(),
+  updated_at              timestamptz not null default now()
 );
 ```
 
 **Notes:**
-- `feature_flags` is the ceiling. No user or org can enable a flag not set here.
-- `annual_discount_pct` drives the pricing calculator: `annual_total = base_price_cents × 12 × (1 - discount_pct/100)`.
-- `base_price_cents` is per-seat for corporate plans; flat for individual/professional.
+- `unique (tier)` enforces one plan per tier — each row is a tier definition, not a billing interval.
+- `annual_price_cents` is stored but always derived: `floor(base_price_cents * 12 * (1 - annual_discount_pct / 100))`. The application layer (or a DB trigger on `0007`) recalculates it whenever `base_price_cents` or `annual_discount_pct` changes. Admin never inputs this value directly.
+- Resolving a subscription to a plan: `WHERE stripe_price_id_monthly = $1 OR stripe_price_id_annual = $1`.
+- `base_price_cents` is per-seat for corporate (`is_per_seat = true`); flat for individual/professional.
+
+---
+
+### `plan_features`
+
+Which feature keys are bundled into each plan tier at no extra charge (the "included" column in the employer dashboard).
+
+```sql
+create table public.plan_features (
+  plan_id     uuid not null references public.plans(id) on delete cascade,
+  feature_key text not null references public.feature_keys(key),
+  primary key (plan_id, feature_key)
+);
+```
+
+**Notes:**
+- Admin UI presents this as a checkbox list sourced from `feature_keys` — no free-text input.
+- The feature flag resolver checks this table for bundled access before checking `subscription_addons` / `organisation_addons`.
 
 ---
 
 ### `plan_addons`
 
-Optional recurring feature add-ons, scoped to a tier.
+Optional recurring feature add-ons, scoped to a minimum tier.
 
 ```sql
 create table public.plan_addons (
   id                       uuid primary key default gen_random_uuid(),
   name                     text not null,
   description              text,
-  feature_key              text not null unique,   -- e.g. 'supplement_protocol', 'pdf_export'
+  feature_key              text not null unique references public.feature_keys(key),
   stripe_price_id_monthly  text not null unique,
   stripe_price_id_annual   text not null unique,
   price_monthly_cents      int  not null check (price_monthly_cents >= 0),
@@ -73,8 +124,8 @@ create table public.plan_addons (
 ```
 
 **Notes:**
-- `min_tier` gates which tiers can purchase this add-on (e.g. `genome_access` may require `professional` or above).
-- `feature_key` is the canonical string used inside `feature_flags` JSONB across all tables.
+- `feature_key` is a FK to `feature_keys.key` — admins pick from a dropdown, no free-text entry.
+- `min_tier` gates which tiers can purchase this add-on (e.g. `genome_access` requires `professional` or above).
 
 ---
 
@@ -237,7 +288,9 @@ create index products_category_idx    on public.products(category);
 
 | Table | patient | health_manager | platform admin |
 |---|---|---|---|
+| `feature_keys` | SELECT active | SELECT active | ALL |
 | `plans` | SELECT active | SELECT active | ALL |
+| `plan_features` | SELECT | SELECT | ALL |
 | `plan_addons` | SELECT active | SELECT active | ALL |
 | `subscription_addons` | SELECT/INSERT/DELETE own | — | ALL |
 | `test_orders` | SELECT/INSERT own | SELECT own org's | ALL |
@@ -284,7 +337,7 @@ auth.users
 
 | # | File | Content |
 |---|---|---|
-| 0007 | `0007_plans.sql` | `plans`, `plan_addons` tables + RLS + seed comment |
+| 0007 | `0007_plans.sql` | `feature_keys` (+ seed rows), `plans`, `plan_features`, `plan_addons` tables + RLS |
 | 0008 | `0008_subscription_addons.sql` | `subscription_addons`, `test_orders` tables + RLS |
 | 0009 | `0009_organisations.sql` | `organisations`, `organisation_addons`, `organisation_members` + RLS |
 | 0010 | `0010_suppliers_products.sql` | `suppliers`, `products`, `products_public` view + RLS |
@@ -294,12 +347,16 @@ auth.users
 ## Seeding `plans` from existing env vars
 
 ```sql
--- Run manually after 0007, substituting real Stripe price IDs:
+-- Run manually after 0007, substituting real values:
 -- insert into public.plans
---   (name, tier, billing_interval, stripe_price_id, base_price_cents, annual_discount_pct)
+--   (name, tier, stripe_price_id_monthly, stripe_price_id_annual,
+--    base_price_cents, annual_discount_pct, annual_price_cents)
 -- values
---   ('Individual Monthly', 'individual', 'month', '<STRIPE_PRICE_MONTHLY>', 0, 0),
---   ('Individual Annual',  'individual', 'year',  '<STRIPE_PRICE_ANNUAL>',  0, 0);
+--   ('Individual', 'individual', '<STRIPE_PRICE_MONTHLY>', '<STRIPE_PRICE_ANNUAL>',
+--    <monthly_cents>, 20, floor(<monthly_cents> * 12 * 0.80));
+--
+-- One row per tier. annual_price_cents is computed here and kept in sync by
+-- the trigger installed in 0007 on any update to base_price_cents or annual_discount_pct.
 ```
 
 `priceIdForPlan()` in `lib/stripe/client.ts` is deprecated once checkout reads from `plans`.
@@ -308,7 +365,6 @@ auth.users
 
 ## Open questions (data layer)
 
-1. **Per-seat vs flat corporate pricing** — if corporate is per-seat, `organisations.seat_count` drives the total; if flat, `seat_count` is informational only.
-2. **`feature_key` enum** — the exact string values for `plan_addons.feature_key` must be agreed and typed before migrations run. Suggested starting set: `supplement_protocol`, `pdf_export`, `genome_access`, `advanced_risk_report`, `dexa_ordering`.
-3. **Org add-on billing** — corporate add-ons: does the org get a single Stripe subscription item per add-on (flat) or per-seat? This affects whether `organisation_addons` needs a Stripe subscription item ID column.
-4. **Single-org constraint** — the unique index on `organisation_members.user_uuid` enforces one org per user. Remove it if multi-org membership is ever needed.
+1. **Per-seat vs flat corporate pricing** — if corporate is per-seat, `organisations.seat_count` drives the total; if flat, `seat_count` is informational only. This also determines whether `is_per_seat` on `plans` is needed or can be dropped.
+2. **Org add-on billing** — corporate add-ons: does the org get a single Stripe subscription item per add-on (flat) or per-seat? This affects whether `organisation_addons` needs a Stripe subscription item ID column.
+3. **Single-org constraint** — the unique index on `organisation_members.user_uuid` enforces one org per user. Remove it if multi-org membership is ever needed.

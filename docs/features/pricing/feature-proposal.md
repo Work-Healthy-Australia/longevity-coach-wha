@@ -24,9 +24,11 @@ S1: Pricing Tiers & Plans
 Subscription plan definitions with tiers (Individual / Professional / Corporate), each with a billing interval (monthly / annual) and a defined feature ceiling. Replaces the current two hardcoded env-var price IDs with a DB-managed plan catalog.
 
 ### What it needs
-- A `plans` table: tier name, Stripe price IDs, billing interval, base price, feature flags ceiling
-- Admin UI to create/edit plans without touching env vars or code
-- Stripe checkout updated to resolve plan by `plan_id` from DB
+- A `plans` table: one row per tier (Individual / Professional / Corporate), with two Stripe price IDs per plan (monthly + annual) and an `annual_discount_pct` that drives the annual price calculation — admins never create two plans for the same tier
+- A `feature_keys` registry table fully managed from the admin UI — admin can create, edit, and delete feature keys
+- A `plan_features` join table linking which `feature_keys` are bundled into each plan tier at no extra charge — managed from the admin UI via checkboxes, not free-text input
+- Admin UI to create, edit, and delete plans, feature keys, plan features, and add-ons — everything configurable without touching code
+- Stripe checkout updated to resolve plan by `plan_id` + `billing_interval` toggle from DB
 - Public pricing page showing tier comparison with monthly/annual toggle and auto-calculated annual savings
 
 ### Actors
@@ -35,8 +37,10 @@ Subscription plan definitions with tiers (Individual / Professional / Corporate)
 
 ### Success criteria
 - New plan can be published from the admin UI and immediately appear at checkout
-- Annual pricing auto-calculates as `monthly_price × 12 × discount_pct` and displays savings
+- Annual pricing auto-calculates as `base_price_cents × 12 × (1 - annual_discount_pct / 100)` — no manual annual price entry
 - No Stripe price IDs remain hardcoded in application code
+- Admin UI uses checkboxes/dropdowns for plan feature assignment — no free-text feature key input when assigning features to plans
+- Annual price is auto-calculated and stored on every save (`base_price_cents × 12 × (1 - annual_discount_pct / 100)`) — admin only controls the monthly price and the discount percentage
 
 ---
 
@@ -175,5 +179,5 @@ Each product carries a `stripe_price_id` so that when a test order is placed, th
 
 1. **Corporate invite model** — email invite, bulk CSV, or email-domain auto-match?
 2. **Per-seat vs flat corporate pricing** — is the corporate plan priced per employee seat or as a flat organisational rate?
-3. **Feature flag keys** — what are the exact feature identifiers? (e.g. `supplement_protocol`, `pdf_export`, `genome_access`) — a TS enum must be agreed before migrations are written
+3. **Feature key registry** — resolved: a `feature_keys` table fully managed by admin (create, edit, delete from the admin UI). The starting set is: `supplement_protocol`, `pdf_export`, `genome_access`, `advanced_risk_report`, `dexa_ordering`. See `database-design.md` for the schema.
 4. **Supplier order routing** — how does the platform notify a supplier of a new test order? (email, webhook, portal?) — out of scope for this sprint but needs a decision before S4 goes live
