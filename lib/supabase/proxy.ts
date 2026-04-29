@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const PROTECTED_PREFIXES = ["/dashboard", "/onboarding", "/admin", "/uploads", "/check-in", "/report", "/account", "/labs", "/trends", "/simulator", "/clinician", "/coach"];
+const PROTECTED_PREFIXES = ["/dashboard", "/onboarding", "/admin", "/uploads", "/check-in", "/report", "/account", "/labs", "/trends", "/simulator", "/clinician", "/coach", "/org"];
 const PAUSE_REDIRECTED_PREFIXES = ["/dashboard", "/report", "/check-in", "/trends", "/labs", "/uploads", "/journal", "/insights"];
 const AUTH_ONLY_PREFIXES = ["/login", "/signup", "/forgot-password"];
 

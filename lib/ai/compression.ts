@@ -51,7 +51,7 @@ Turns to summarise:
 ${turnLines}`;
 
     const result = await generateText({
-      model: anthropic('claude-haiku-4.5'),
+      model: anthropic('claude-sonnet-4-6'),
       temperature: 0,
       prompt,
       output: Output.object({ schema: SummarySchema }),

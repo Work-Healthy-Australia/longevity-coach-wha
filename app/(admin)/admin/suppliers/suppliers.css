@@ -1,0 +1,487 @@
+/* ============================================================
+   Admin Suppliers page — scoped styles
+   Tokens: hardcoded hex from admin.css, no CSS custom properties
+   ============================================================ */
+
+.suppliers-page {
+  padding: 28px 32px;
+}
+
+.suppliers-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.suppliers-header-text h1 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1A3A4A;
+  margin: 0 0 2px;
+}
+
+.suppliers-header-text p {
+  font-size: 13px;
+  color: #6B7C85;
+  margin: 0;
+}
+
+/* ---- Add Supplier button ---- */
+.btn-add-supplier {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+  background: #2F6F8F;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-add-supplier:hover {
+  background: #1A3A4A;
+}
+
+/* ---- Supplier card ---- */
+.supplier-card {
+  background: #fff;
+  border: 1px solid #D4E0E8;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+/* ---- Card header row (always visible, clickable) ---- */
+.supplier-header-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 24px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.supplier-header-row:hover {
+  background: #F8FAFB;
+}
+
+.supplier-header-row.expanded {
+  border-bottom: 1px solid #D4E0E8;
+}
+
+.supplier-chevron {
+  font-size: 12px;
+  color: #9AABBA;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.supplier-chevron.open {
+  transform: rotate(90deg);
+}
+
+.supplier-header-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.supplier-name {
+  font-weight: 700;
+  font-size: 15px;
+  color: #1A3A4A;
+}
+
+.supplier-subtitle {
+  font-size: 12px;
+  color: #6B7C85;
+  margin-top: 2px;
+}
+
+.supplier-product-count {
+  font-size: 13px;
+  color: #9AABBA;
+  white-space: nowrap;
+}
+
+/* ---- Status / type pills ---- */
+.pill-active {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 5px;
+  background: #D1FAE5;
+  color: #065F46;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+}
+
+.pill-inactive {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 5px;
+  background: #FEE2E2;
+  color: #991B1B;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+}
+
+.pill-contract-active   { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; background: #D1FAE5; color: #065F46; }
+.pill-contract-pending  { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; background: #FEF3C7; color: #92400E; }
+.pill-contract-expired  { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; background: #FEE2E2; color: #991B1B; }
+.pill-contract-terminated { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; background: #F0F4F7; color: #6B7C85; }
+.pill-contract-none     { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; background: #F0F4F7; color: #9AABBA; }
+
+.supplier-type-pill {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: #E8F3F8;
+  color: #2F6F8F;
+}
+
+/* ---- Expanded body ---- */
+.supplier-body {
+  display: none;
+}
+
+.supplier-body.open {
+  display: block;
+}
+
+/* 2-col contact / billing grid */
+.detail-grid-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid #D4E0E8;
+}
+
+.contact-col {
+  padding: 20px 24px;
+  border-right: 1px solid #D4E0E8;
+}
+
+.billing-col {
+  padding: 20px 24px;
+}
+
+.detail-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6B7C85;
+  margin: 0 0 14px;
+}
+
+/* key/value rows inside each col */
+.detail-kv {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 6px 12px;
+  font-size: 13px;
+  margin-bottom: 0;
+}
+
+.detail-label {
+  color: #9AABBA;
+  font-size: 13px;
+}
+
+.detail-val {
+  color: #1A3A4A;
+  font-size: 13px;
+  word-break: break-word;
+}
+
+.detail-val a {
+  color: #2F6F8F;
+  text-decoration: none;
+}
+
+.detail-val a:hover {
+  text-decoration: underline;
+}
+
+.billing-col-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+/* ---- Products section ---- */
+.product-section {
+  padding: 20px 24px;
+}
+
+.product-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.product-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1A3A4A;
+}
+
+.product-section-title span {
+  font-weight: 400;
+  color: #9AABBA;
+}
+
+/* Products table */
+.products-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.products-table th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6B7C85;
+  padding: 7px 10px;
+  border-bottom: 2px solid #D4E0E8;
+}
+
+.products-table th.right {
+  text-align: right;
+}
+
+.products-table th.center {
+  text-align: center;
+}
+
+.products-table td {
+  padding: 9px 10px;
+  border-bottom: 1px solid #EEF2F5;
+  vertical-align: top;
+}
+
+.products-table tr:last-child td {
+  border-bottom: none;
+}
+
+.products-table td.right {
+  text-align: right;
+}
+
+.products-table td.center {
+  text-align: center;
+}
+
+.product-code-cell {
+  font-family: monospace;
+  font-size: 12px;
+  color: #6B7C85;
+}
+
+.product-name-cell {
+  font-weight: 500;
+  color: #1A3A4A;
+}
+
+.sub-icon-onetime {
+  font-size: 15px;
+  color: #1A3A4A;
+}
+
+.sub-icon-recurring {
+  font-size: 15px;
+  color: #2F6F8F;
+}
+
+.products-legend {
+  font-size: 12px;
+  color: #9AABBA;
+  margin: 10px 0 0;
+}
+
+/* ---- Category pills (products table) ---- */
+.cat-pill {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: #E8F3F8;
+  color: #2F6F8F;
+}
+
+/* ---- Inline edit/add forms ---- */
+.supplier-edit-panel,
+.product-inline-form {
+  background: #F8FAFB;
+  border-top: 1px solid #D4E0E8;
+  padding: 20px 24px;
+}
+
+.product-inline-form {
+  border-top: none;
+  background: #F8FAFB;
+}
+
+.form-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 20px;
+}
+
+.form-full {
+  grid-column: 1 / -1;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6B7C85;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  padding: 8px 10px;
+  border: 1px solid #D4E0E8;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #1A3A4A;
+  background: #fff;
+  font-family: inherit;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: #2F6F8F;
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 72px;
+}
+
+.form-checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.form-checkbox-row input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.form-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  justify-content: flex-end;
+}
+
+.btn-save {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 18px;
+  background: #2F6F8F;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-save:hover { background: #1A3A4A; }
+.btn-save:disabled { background: #9AABBA; cursor: not-allowed; }
+
+.btn-cancel {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 18px;
+  background: transparent;
+  color: #6B7C85;
+  border: 1px solid #D4E0E8;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-cancel:hover { background: #F0F4F7; }
+
+.btn-edit-sm {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  background: transparent;
+  color: #2F6F8F;
+  border: 1px solid #D4E0E8;
+  border-radius: 5px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-edit-sm:hover { background: #F0F4F7; }
+
+.btn-add-product {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  background: #2F6F8F;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-add-product:hover { background: #1A3A4A; }
+
+/* ---- Error banner ---- */
+.suppliers-error {
+  background: #FEE2E2;
+  color: #991B1B;
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin-bottom: 14px;
+  font-size: 13px;
+}
+
+/* ---- Add supplier form card ---- */
+.add-supplier-card {
+  background: #fff;
+  border: 1px solid #2F6F8F;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.add-supplier-card-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid #D4E0E8;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1A3A4A;
+}
+
+.add-supplier-card-body {
+  padding: 20px 24px;
+}

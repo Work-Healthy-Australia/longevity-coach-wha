@@ -14,7 +14,7 @@ const SupplementItemSchema = z.object({
 });
 
 const SupplementOutputSchema = z.object({
-  supplements: z.array(SupplementItemSchema).min(1).max(20),
+  supplements: z.array(SupplementItemSchema),
   generated_at: z.string(),
   data_completeness_note: z.string(),
   interactions_checked: z.boolean(),
@@ -160,5 +160,5 @@ export async function runSupplementProtocolPipeline(userId: string): Promise<voi
     notes: `${output.data_completeness_note} | interactions_checked=${output.interactions_checked}`,
   });
 
-  if (error) console.error(`[supplement-advisor pipeline] Failed to insert supplement_plans for user ${userId}:`, error);
+  if (error) throw new Error(`[supplement-advisor pipeline] Failed to insert supplement_plans for user ${userId}: ${JSON.stringify(error)}`);
 }

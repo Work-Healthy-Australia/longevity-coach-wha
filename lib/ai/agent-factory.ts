@@ -1,5 +1,14 @@
-import { generateText, Output, streamText, stepCountIs, convertToModelMessages, NoObjectGeneratedError, type UIMessage, type Tool } from 'ai';
-import type { ZodTypeAny, infer as ZodInfer } from 'zod';
+import {
+  generateText,
+  Output,
+  streamText,
+  stepCountIs,
+  convertToModelMessages,
+  NoObjectGeneratedError,
+  type UIMessage,
+  type Tool,
+} from 'ai';
+import { type ZodTypeAny, type infer as ZodInfer } from 'zod';
 import { loadAgentDef, getAnthropicModel } from '@/lib/ai/loader';
 
 export interface StreamingAgentOptions {
@@ -34,40 +43,198 @@ export function createStreamingAgent(slug: string) {
   };
 }
 
+// ─── JSON extraction helpers ──────────────────────────────────────────────
+
+/**
+ * Try every extraction strategy to get a JSON value from arbitrary text.
+ * Returns null only if nothing parseable is found.
+ */
+function extractJson(text: string): unknown {
+  // 1. Direct parse
+  try { return JSON.parse(text.trim()); } catch {}
+
+  // 2. Fenced code block: ```json … ``` or ``` … ```
+  const fenceMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/);
+  if (fenceMatch) {
+    try { return JSON.parse(fenceMatch[1].trim()); } catch {}
+  }
+
+  // 3. First { … last } or first [ … last ]
+  for (const [open, close] of [['{', '}'], ['[', ']']] as const) {
+    const start = text.indexOf(open);
+    const end = text.lastIndexOf(close);
+    if (start !== -1 && end > start) {
+      try { return JSON.parse(text.slice(start, end + 1)); } catch {}
+    }
+  }
+
+  return null;
+}
+
+/** Return field names from a ZodObject schema. Returns [] for non-object schemas. */
+function getFieldNames(schema: ZodTypeAny): string[] {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const shape = (schema as any).shape;
+  return shape ? Object.keys(shape as object) : [];
+}
+
+/**
+ * Parse a format-escape response where each field is preceded by ===FIELD: name===.
+ * Split produces: [pre-text, field1, content1, field2, content2, …]
+ */
+function extractLabeledFields(text: string): Record<string, string> {
+  const result: Record<string, string> = {};
+  const parts = text.split(/===FIELD:\s*(\w+)===\n?/);
+  for (let i = 1; i < parts.length - 1; i += 2) {
+    result[parts[i].trim()] = (parts[i + 1] ?? '').trim();
+  }
+  return result;
+}
+
+/**
+ * Convert labeled sections into a plain object.
+ * Tries JSON.parse on each section value; falls back to the raw string.
+ */
+function assembleFromSections(sections: Record<string, string>): Record<string, unknown> {
+  const obj: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(sections)) {
+    const asJson = extractJson(value);
+    obj[key] = asJson !== null ? asJson : value;
+  }
+  return obj;
+}
+
+/**
+ * Attempt to heal a failed LLM response by extracting JSON from raw text and
+ * running it through the schema. Returns null if either step fails.
+ */
+function tryHeal<T extends ZodTypeAny>(rawText: string, schema: T): ZodInfer<T> | null {
+  const json = extractJson(rawText);
+  if (json === null) return null;
+  const parsed = schema.safeParse(json);
+  return parsed.success ? parsed.data : null;
+}
+
+// ─── Pipeline agent ───────────────────────────────────────────────────────
+
+/**
+ * Three-tier resilience chain for structured LLM output:
+ *
+ *   Tier 1 — Output.object (tool_use) at configured temperature
+ *   Tier 2 — Output.object (tool_use) at temperature=0
+ *             ↳ After each tool_use failure: attempt raw-text JSON extraction (no extra LLM call)
+ *   Tier 3 — Format-escape: plain generateText with labeled sections, no tool_use at all
+ *             ↳ Labeled extraction → JSON extraction fallback
+ *
+ * Only infrastructure failures (timeouts, auth errors) can escape all three tiers.
+ */
 export function createPipelineAgent(slug: string) {
   return {
     async run<T extends ZodTypeAny>(schema: T, prompt: string): Promise<ZodInfer<T>> {
       const def = await loadAgentDef(slug);
-
+      const fields = getFieldNames(schema);
+      let lastRawText: string | undefined;
       let lastErr: unknown;
-      for (let attempt = 1; attempt <= 2; attempt++) {
-        try {
-          const result = await generateText({
-            model: getAnthropicModel(def),
-            system: def.system_prompt,
-            prompt,
-            output: Output.object({ schema }),
-            maxOutputTokens: def.max_tokens,
-            // Use temperature=0 on retry for maximally deterministic JSON output
-            temperature: attempt === 1 ? def.temperature : 0,
-          });
 
-          if (result.output == null) {
-            throw new Error('Output.object returned null — model did not call the tool');
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        try {
+          if (attempt <= 2) {
+            // ── Tier 1 & 2: structured output via Anthropic tool_use ──────────
+            const result = await generateText({
+              model: getAnthropicModel(def),
+              system: def.system_prompt,
+              prompt,
+              output: Output.object({ schema }),
+              maxOutputTokens: def.max_tokens,
+              temperature: attempt === 1 ? def.temperature : 0,
+            });
+
+            if (result.output == null) {
+              throw new Error('Output.object returned null — model did not invoke the tool');
+            }
+
+            return result.output as ZodInfer<T>;
+
+          } else {
+            // ── Tier 3: format-escape — no tool_use, labeled sections ─────────
+            // Bypass the tool_use mechanism entirely. Ask the model to emit each
+            // field under a deterministic ===FIELD: name=== header so we can
+            // extract values with a regex split rather than relying on JSON fidelity.
+            const fieldBlock = fields
+              .map((f) => `===FIELD: ${f}===\n<value for ${f}>`)
+              .join('\n\n');
+
+            const escapePrompt =
+              `${prompt}\n\n` +
+              `---\n` +
+              `IMPORTANT: previous attempts to get a JSON response failed. ` +
+              `You MUST respond using ONLY the labeled format below — one section per field. ` +
+              `Replace each placeholder with the real value. ` +
+              `For array or object fields, write valid JSON after the === header line. ` +
+              `Write NOTHING outside these labeled sections.\n\n` +
+              fieldBlock;
+
+            const result = await generateText({
+              model: getAnthropicModel(def),
+              system: def.system_prompt,
+              prompt: escapePrompt,
+              maxOutputTokens: def.max_tokens,
+              temperature: 0,
+            });
+
+            lastRawText = result.text;
+
+            // Strategy A: labeled section extraction → Zod parse
+            const sections = extractLabeledFields(result.text);
+            if (Object.keys(sections).length > 0) {
+              const assembled = assembleFromSections(sections);
+              const parsed = schema.safeParse(assembled);
+              if (parsed.success) {
+                console.warn(JSON.stringify({ event: 'pipeline_format_escape_success', agent: slug }));
+                return parsed.data;
+              }
+              console.warn(JSON.stringify({
+                event: 'pipeline_format_escape_zod_fail',
+                agent: slug,
+                error: parsed.error.message.slice(0, 300),
+              }));
+            }
+
+            // Strategy B: fall back to plain JSON extraction from the escape response
+            const rawJson = extractJson(result.text);
+            if (rawJson !== null) {
+              return schema.parse(rawJson);
+            }
+
+            throw new Error('format-escape produced no parseable content');
           }
 
-          return result.output as ZodInfer<T>;
         } catch (err) {
           lastErr = err;
-          if (attempt < 2) {
-            console.warn(JSON.stringify({
-              event: 'pipeline_parse_retry',
-              agent: slug,
-              attempt,
-              error: err instanceof Error ? err.message : String(err),
-              // Capture the raw model text to aid diagnosis
-              raw_preview: NoObjectGeneratedError.isInstance(err) ? err.text?.slice(0, 400) : undefined,
-            }));
+
+          // Capture raw text emitted by the model before tool_use parsing failed
+          if (NoObjectGeneratedError.isInstance(err) && err.text) {
+            lastRawText = err.text;
+          }
+
+          // Before spending another LLM call, try to heal from whatever raw text we have
+          if (lastRawText && attempt < 3) {
+            const healed = tryHeal(lastRawText, schema);
+            if (healed !== null) {
+              console.warn(JSON.stringify({ event: 'pipeline_healed_from_raw', agent: slug, attempt }));
+              return healed;
+            }
+          }
+
+          console.warn(JSON.stringify({
+            event: 'pipeline_parse_attempt_failed',
+            agent: slug,
+            attempt,
+            error: err instanceof Error ? err.message : String(err),
+            raw_preview: lastRawText?.slice(0, 400),
+          }));
+
+          if (attempt < 3) {
             await new Promise((r) => setTimeout(r, 500));
           }
         }

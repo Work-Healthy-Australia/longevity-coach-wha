@@ -124,7 +124,22 @@ export function UploadClient({ initialUploads }: Props) {
           fileHash,
         });
 
-        if (result.error) addError(`${file.name}: ${result.error}`);
+        if (result.error) {
+          addError(`${file.name}: ${result.error}`);
+        } else if (result.id) {
+          // recordUpload returns immediately — Janet analysis runs asynchronously.
+          // Poll until janet_status leaves 'processing' (max 90s, 3s intervals).
+          const uploadId = result.id;
+          for (let i = 0; i < 30; i++) {
+            await new Promise<void>((r) => setTimeout(r, 3000));
+            const { data: row } = await supabase
+              .from("patient_uploads")
+              .select("janet_status")
+              .eq("id", uploadId)
+              .single();
+            if (!row || row.janet_status !== "processing") break;
+          }
+        }
       } catch (err) {
         addError(`${file.name}: ${err instanceof Error ? err.message : "Upload failed"}`);
       } finally {

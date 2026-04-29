@@ -2,16 +2,24 @@
 // ai-elements: @vercel/ai-elements not published; using react-markdown via shared AssistantBubble.
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
-import { useState } from 'react';
+import type { UIMessage } from 'ai';
+import { useState, useEffect, useRef } from 'react';
 import { AssistantBubble } from '@/app/(app)/_components/chat-message';
 
-export function JanetChat() {
+export function JanetChat({ initialMessages = [] }: { initialMessages?: UIMessage[] }) {
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({ api: '/api/chat' }),
+    messages: initialMessages,
   });
   const [input, setInput] = useState('');
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   const lastIdx = messages.length - 1;
+
+  // Scroll to bottom when a new message arrives or the typing indicator appears
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages.length, status]);
 
   return (
     <div className="chat-container">
@@ -67,6 +75,7 @@ export function JanetChat() {
             </div>
           </div>
         )}
+        <div ref={bottomRef} />
       </div>
 
       <form

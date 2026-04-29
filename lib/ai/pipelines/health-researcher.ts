@@ -22,7 +22,7 @@ const DigestSchema = z.object({
   title: z.string(),
   content: z.string().min(50),
   evidence_level: z.enum(['strong', 'moderate', 'preliminary']),
-  key_passages: z.array(z.string()).min(1).max(5),
+  key_passages: z.array(z.string()),
   source_url: z.string(),
 });
 type Digest = z.infer<typeof DigestSchema>;

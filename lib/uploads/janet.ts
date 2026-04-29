@@ -1,4 +1,39 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { z } from "zod";
+
+// ─── Zod schemas (source of truth for runtime types) ─────────────────────
+
+// .catch() on every field means a wrong value becomes a safe default instead
+// of rejecting the entire parse. Critical for enums and coerced numbers.
+const BiomarkerExtractionSchema = z.object({
+  biomarker: z.string().catch(""),
+  value: z.coerce.number().catch(0),
+  unit: z.string().catch(""),
+  reference_min: z.coerce.number().nullable().catch(null),
+  reference_max: z.coerce.number().nullable().catch(null),
+  test_date: z.string().nullable().catch(null).optional(),
+  panel_name: z.string().nullable().catch(null).optional(),
+  lab_provider: z.string().nullable().catch(null).optional(),
+});
+
+const JanetResultSchema = z.object({
+  category: z
+    .enum(["blood_work", "imaging", "genetic", "microbiome", "metabolic", "other"])
+    .catch("other"),
+  summary: z.string().catch(""),
+  findings: z
+    .object({
+      document_type: z.string().catch(""),
+      key_values: z.record(z.string(), z.string()).optional().catch(undefined),
+      notable_findings: z.array(z.string()).optional().catch(undefined),
+      date_of_test: z.string().nullable().catch(null).optional(),
+      ordering_provider: z.string().nullable().catch(null).optional(),
+      biomarkers: z.array(BiomarkerExtractionSchema).optional().catch(undefined),
+    })
+    .catch({ document_type: "" }),
+});
+
+// ─── Exported types (derived from schema, not hand-written interfaces) ────
 
 export type JanetCategory =
   | "blood_work"
@@ -8,29 +43,10 @@ export type JanetCategory =
   | "metabolic"
   | "other";
 
-export interface BiomarkerExtraction {
-  biomarker: string;
-  value: number;
-  unit: string;
-  reference_min: number | null;
-  reference_max: number | null;
-  test_date: string | null;
-  panel_name: string | null;
-  lab_provider: string | null;
-}
+export type BiomarkerExtraction = z.infer<typeof BiomarkerExtractionSchema>;
+export type JanetResult = z.infer<typeof JanetResultSchema>;
 
-export interface JanetResult {
-  category: JanetCategory;
-  summary: string;
-  findings: {
-    document_type: string;
-    key_values?: Record<string, string>;
-    notable_findings?: string[];
-    date_of_test?: string;
-    ordering_provider?: string;
-    biomarkers?: BiomarkerExtraction[];
-  };
-}
+// ─── System prompt ────────────────────────────────────────────────────────
 
 export const SYSTEM_PROMPT = `You are Janet, an AI clinical analyst for a longevity coaching platform.
 Your role is to read medical documents and pathology reports uploaded by patients and extract structured information.
@@ -79,12 +95,72 @@ When category is not "blood_work", omit the biomarkers array entirely.
 
 Do not include any text outside the JSON object. Do not wrap in markdown code blocks.`;
 
+// ─── JSON extraction helpers ──────────────────────────────────────────────
+
+/** Try every extraction strategy to get a JSON value from arbitrary text. */
+function extractJson(text: string): unknown {
+  try { return JSON.parse(text.trim()); } catch {}
+
+  const fenceMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/);
+  if (fenceMatch) {
+    try { return JSON.parse(fenceMatch[1].trim()); } catch {}
+  }
+
+  for (const [open, close] of [["{", "}"], ["[", "]"]] as const) {
+    const start = text.indexOf(open);
+    const end = text.lastIndexOf(close);
+    if (start !== -1 && end > start) {
+      try { return JSON.parse(text.slice(start, end + 1)); } catch {}
+    }
+  }
+
+  return null;
+}
+
+/** Extract the text content from an Anthropic message, skipping thinking blocks. */
+function extractTextFromMessage(message: Anthropic.Message): string {
+  return message.content
+    .filter((b): b is Anthropic.TextBlock => b.type === "text")
+    .map((b) => b.text)
+    .join("");
+}
+
+/** Parse raw model text into a validated JanetResult. Throws if no JSON is extractable. */
+function parseJanetResult(rawText: string): JanetResult {
+  const json = extractJson(rawText);
+  if (json === null) {
+    throw new Error(`janet: no JSON extractable from response (preview: ${rawText.slice(0, 200)})`);
+  }
+  // safeParse is used so .catch() fallbacks apply field-by-field rather than hard-throwing
+  const parsed = JanetResultSchema.safeParse(json);
+  if (!parsed.success) {
+    // Should never reach here given .catch() on every field, but surface it if it does
+    throw new Error(`janet: Zod parse failed: ${parsed.error.message.slice(0, 300)}`);
+  }
+  return parsed.data;
+}
+
+// ─── Client ───────────────────────────────────────────────────────────────
+
 let _client: Anthropic | null = null;
 function getClient(): Anthropic {
   if (!_client) _client = new Anthropic();
   return _client;
 }
 
+// ─── analyzeUpload ────────────────────────────────────────────────────────
+
+/**
+ * Send a patient-uploaded document to Janet for structured analysis.
+ *
+ * Retry strategy:
+ *   Attempt 1 — normal call with adaptive thinking
+ *     ↳ On failure: try extractJson on whatever raw text was returned (no extra API call)
+ *   Attempt 2 — retry with thinking disabled, explicit JSON reminder in the user turn
+ *     ↳ On failure: try extractJson on raw text before giving up
+ *
+ * Only infrastructure failures (auth, network, timeout) escape both attempts.
+ */
 export async function analyzeUpload(
   fileBuffer: ArrayBuffer,
   mimeType: string,
@@ -108,35 +184,67 @@ export async function analyzeUpload(
           },
         });
 
-  const message = await getClient().messages.create({
-    model: "claude-opus-4-7",
-    max_tokens: 2048,
-    thinking: { type: "adaptive" },
-    system: [
-      {
-        type: "text",
-        text: SYSTEM_PROMPT,
-        cache_control: { type: "ephemeral" },
-      },
-    ],
-    messages: [
-      {
-        role: "user",
-        content: [
-          contentBlock,
+  let lastRawText: string | undefined;
+  let lastErr: unknown;
+
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      const userText =
+        attempt === 1
+          ? `Analyse this medical document (filename: ${filename}) and respond with structured JSON only.`
+          : `Analyse this medical document (filename: ${filename}) and respond with structured JSON only.\n\nCRITICAL: Return ONLY a valid JSON object. No markdown, no code fences, no explanation — just the JSON object starting with { and ending with }.`;
+
+      const message = await getClient().messages.create({
+        model: "claude-opus-4-7",
+        max_tokens: 2048,
+        // Disable thinking on retry — reduces chance of model generating non-JSON preamble
+        thinking: attempt === 1 ? { type: "adaptive" } : { type: "disabled" as never },
+        system: [
           {
             type: "text",
-            text: `Analyse this medical document (filename: ${filename}) and respond with structured JSON only.`,
+            text: SYSTEM_PROMPT,
+            cache_control: { type: "ephemeral" },
           },
         ],
-      },
-    ],
-  });
+        messages: [
+          {
+            role: "user",
+            content: [contentBlock, { type: "text", text: userText }],
+          },
+        ],
+      });
 
-  const text = message.content
-    .filter((b) => b.type === "text")
-    .map((b) => (b as { type: "text"; text: string }).text)
-    .join("");
+      lastRawText = extractTextFromMessage(message);
+      return parseJanetResult(lastRawText);
 
-  return JSON.parse(text) as JanetResult;
+    } catch (err) {
+      lastErr = err;
+
+      // Before spending a second LLM call, try extracting JSON from whatever
+      // raw text the model produced (e.g. valid JSON wrapped in markdown fences)
+      if (lastRawText && attempt < 2) {
+        try {
+          const healed = parseJanetResult(lastRawText);
+          console.warn(JSON.stringify({ event: "janet_upload_healed_from_raw", attempt, filename }));
+          return healed;
+        } catch {
+          // healing failed — fall through to retry
+        }
+      }
+
+      console.warn(JSON.stringify({
+        event: "janet_upload_parse_failed",
+        attempt,
+        filename,
+        error: err instanceof Error ? err.message : String(err),
+        raw_preview: lastRawText?.slice(0, 400),
+      }));
+
+      if (attempt < 2) {
+        await new Promise((r) => setTimeout(r, 500));
+      }
+    }
+  }
+
+  throw lastErr;
 }

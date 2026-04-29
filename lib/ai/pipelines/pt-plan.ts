@@ -2,13 +2,15 @@ import { z } from 'zod';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { createPipelineAgent } from '@/lib/ai/agent-factory';
 
+// z.coerce handles numeric strings ("3" → 3). .catch() on required fields means
+// the whole parse never fails — a bad value becomes a safe default instead.
 const PtPlanItemSchema = z.object({
-  day: z.number().min(1).max(30),
+  day: z.coerce.number().catch(1),
   exercise: z.string(),
-  sets: z.number().optional(),
+  sets: z.coerce.number().optional(),
   reps: z.string().optional(),
-  duration_min: z.number().optional(),
-  intensity: z.enum(['low', 'moderate', 'high']),
+  duration_min: z.coerce.number().optional(),
+  intensity: z.enum(['low', 'moderate', 'high']).catch('moderate'),
   notes: z.string().optional(),
 });
 
@@ -16,7 +18,7 @@ const PtPlanOutputSchema = z.object({
   plan_name: z.string(),
   // .min(7) removed — array minItems in JSON Schema is violated when the model generates
   // fewer items (e.g. sparse patients), causing a hard parse failure. Use prompt guidance instead.
-  exercises: z.array(PtPlanItemSchema).max(60),
+  exercises: z.array(PtPlanItemSchema),
   generated_at: z.string(),
   msk_considerations: z.string(),
 });

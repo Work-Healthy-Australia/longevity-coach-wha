@@ -2,11 +2,14 @@ import { z } from 'zod';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { createPipelineAgent } from '@/lib/ai/agent-factory';
 
+// .catch() on each field means a Zod validation failure for that field returns the
+// fallback instead of rejecting the whole object — critical for enum fields where
+// the model might produce a synonym ("declining" vs "worsening").
 const DomainHighlightSchema = z.object({
-  domain: z.string(),
-  score: z.number(),
-  trend: z.enum(['improving', 'stable', 'worsening', 'unknown']),
-  note: z.string(),
+  domain: z.string().catch(''),
+  score: z.coerce.number().catch(0),
+  trend: z.enum(['improving', 'stable', 'worsening', 'unknown']).catch('unknown'),
+  note: z.string().catch(''),
 });
 
 // String length constraints are intentionally omitted — LLMs cannot reliably count
@@ -14,8 +17,8 @@ const DomainHighlightSchema = z.object({
 // Array maxItems are kept because object-count instructions are reliably followed.
 const ClinicianBriefOutputSchema = z.object({
   janet_brief: z.string(),
-  domain_highlights: z.array(DomainHighlightSchema).max(5),
-  suggested_focus: z.array(z.string()).max(5),
+  domain_highlights: z.array(DomainHighlightSchema),
+  suggested_focus: z.array(z.string()),
   adherence_signals: z.string(),
   data_coverage_note: z.string(),
 });

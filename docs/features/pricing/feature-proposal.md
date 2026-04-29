@@ -1,145 +1,166 @@
 # Pricing Feature — Proposal
-**Date:** 2026-04-27
+**Date:** 2026-04-27 (updated 2026-04-29)
 **Status:** Draft — pending design approval
-**Source:** Voice brief (`docs/pricing-feature.md`) + extended requirements 2026-04-27
+**Source:** Voice brief + executive description (`docs/features/pricing/pricing-executive-description.md`)
 
 ---
 
 ## Overview
 
-The pricing feature covers four distinct subsystems. Each is independently deliverable and shares a clear dependency chain.
+```
+S4: Supplier & Product Catalog          ← built first; tiers depend on products
+    └── S1: Tiers, Janet Services & Inclusions
+            └── S2: User Add-ons (inferred from product catalog)
+            └── S3: B2B Plans (multi-tier seat allocation)
+```
 
-```
-S1: Pricing Tiers & Plans
-    └── S2: User Add-on Selection (Stripe-charged extras)
-    └── S3: Employer Feature Toggles (B2B health packages)
-            └── S4: Supplier & Product Catalog (fulfillment network)
-```
+Note: S4 is the foundation. Tier inclusions pull from both Janet services and supplier products, so the product catalog must exist before tiers can be fully configured.
 
 ---
 
-## Subsystem 1 — Pricing Tiers & Plans
+## Subsystem 1 — Tiers, Janet Services & Inclusions
 
 ### What it is
-Subscription plan definitions with tiers (Individual / Professional / Corporate), each with a billing interval (monthly / annual) and a defined feature ceiling. Replaces the current two hardcoded env-var price IDs with a DB-managed plan catalog.
+Three subscription tiers — **Core**, **Clinical**, **Elite** — each defining a monthly base price and a set of bundled inclusions. Inclusions are drawn from two sources: Janet-owned internal services (e.g. AI coach access, GP review coordination) and supplier products/services (e.g. DEXA scan, blood panel). A feature flags layer controls access to software capabilities bundled with each tier.
+
+Replaces the current two hardcoded Stripe price IDs with a DB-managed tier catalog.
+
+### Tier summary
+
+| Tier | Feature set | Who defines it |
+|---|---|---|
+| **Core** | Base UI + Janet AI (coach access, check-ins, risk report, supplement protocol, PDF export) | Fixed — these are the product foundation |
+| **Clinical** | All Core + personal Clinician access (human coaching sessions, GP review coordination, advanced risk report) | Fixed — clinician access IS the Clinical differentiator |
+| **Elite** | All Clinical + admin-defined premium features | **Admin controls this** — admin creates and assigns Elite-only feature keys freely |
+
+The tier model is additive and hierarchical. A feature has a `tier_affinity` (core / clinical / elite) which sets the **minimum tier** needed to access it. A Core-tier user gets all `core` features; a Clinical user gets `core` + `clinical` features; an Elite user gets all three.
+
+Admin's primary lever for Elite is creating new feature keys marked `elite` — e.g. genome analysis, DEXA ordering, priority queue access, white-glove onboarding. There is no upper limit on how many Elite-only features admin can define.
 
 ### What it needs
-- A `plans` table: one row per tier (Individual / Professional / Corporate), with two Stripe price IDs per plan (monthly + annual) and an `annual_discount_pct` that drives the annual price calculation — admins never create two plans for the same tier
-- A `feature_keys` registry table fully managed from the admin UI — admin can create, edit, and delete feature keys
-- A `plan_features` join table linking which `feature_keys` are bundled into each plan tier at no extra charge — managed from the admin UI via checkboxes, not free-text input
-- Admin UI to create, edit, and delete plans, feature keys, plan features, and add-ons — everything configurable without touching code
-- Stripe checkout updated to resolve plan by `plan_id` + `billing_interval` toggle from DB
-- Public pricing page showing tier comparison with monthly/annual toggle and auto-calculated annual savings
+- `plans` table: one row per tier (Core / Clinical / Elite), with monthly Stripe price ID, annual Stripe price ID, `annual_discount_pct`, stored `annual_price_cents` (auto-computed), `setup_fee`, `minimum_commitment_months`, `currency`, `public_description`, `internal_notes`
+- `janet_services` table: Janet-owned internal services with internal cost and retail value (e.g. AI coach access, monthly check-in, human health coaching, GP coordination, report generation, corporate dashboard access)
+- `tier_inclusions` join table: links a tier to a Janet service with `quantity`, `frequency`, `wholesale_cost_cents`, `retail_value_cents`, and derived margin — tracks what is bundled and what is customer-visible. Supplier products are **not** bundled into tiers.
+- `feature_keys` registry with `tier_affinity` field (core / clinical / elite): each feature key carries the minimum tier required to access it — no join table needed, access resolves by level comparison (`user_tier_rank >= feature.tier_affinity_rank`). Admin freely adds Elite-only keys from the admin UI.
+- Admin Plan Builder UI: single page covering tiers, Janet services, suppliers, and products — see Plan Builder section below
+- Stripe checkout updated to resolve by `plan_id` + billing interval toggle
+- Public pricing page: tier comparison with monthly/annual toggle, auto-calculated savings, and customer-facing inclusion list
 
 ### Actors
-- **Platform admin** — creates and manages plans
-- **Patient / standalone user** — selects a plan at signup or upgrades
+- **Platform admin** — creates and manages all tiers, services, suppliers, products
+- **Patient / standalone user** — selects a tier at signup or upgrades
 
 ### Success criteria
-- New plan can be published from the admin UI and immediately appear at checkout
-- Annual pricing auto-calculates as `base_price_cents × 12 × (1 - annual_discount_pct / 100)` — no manual annual price entry
-- No Stripe price IDs remain hardcoded in application code
-- Admin UI uses checkboxes/dropdowns for plan feature assignment — no free-text feature key input when assigning features to plans
-- Annual price is auto-calculated and stored on every save (`base_price_cents × 12 × (1 - annual_discount_pct / 100)`) — admin only controls the monthly price and the discount percentage
+- New tier published from admin UI and immediately available at checkout
+- Annual price auto-calculated as `base_price_cents × 12 × (1 - annual_discount_pct / 100)` and stored — admin never inputs annual price directly
+- Tier inclusion builder shows live margin summary (total wholesale cost vs total retail value)
+- No Stripe price IDs hardcoded in application code
 
 ---
 
-## Subsystem 2 — User Add-on Selection
+## Subsystem 2 — User Add-ons (inferred from product catalog)
 
 ### What it is
-A standalone user can purchase optional feature add-ons beyond their base plan. Add-ons are recurring extras (billed as Stripe subscription items on the same subscription) or one-time test orders (billed as Stripe payment intents). The running total auto-calculates as the user selects/deselects.
+After subscribing to a tier, a user can add any active supplier product not already included in their tier. There is no separately managed add-ons entity — available add-ons are derived at runtime from the product catalog minus the user's tier inclusions.
 
-### Two add-on categories
+### Two add-on types
 
-**Feature add-ons (recurring):**
-Software features that can be unlocked beyond the base tier. Examples: advanced supplement protocol, genome analysis access, branded PDF report export. Each has a monthly and annual Stripe price ID. Added as subscription items.
+**Recurring:** products with `subscription_type = 'recurring'` (e.g. ongoing coaching session, monthly supplement delivery). Billed as Stripe subscription items on the user's existing subscription.
 
-**Test orders (one-time):**
-Physical health tests fulfilled by a supplier (DEXA scan, blood panel, genetic test). Billed as one-time Stripe payment intents at retail price. Linked to a supplier product in the catalog.
+**One-time:** products with `subscription_type = 'one_time'` (e.g. DEXA scan, blood panel, genetic test). Billed as Stripe payment intents.
 
 ### What it needs
-- `plan_addons` table: which recurring add-ons are available per tier, each with Stripe price IDs
-- `subscription_addons` table: which recurring add-ons a user has active (Stripe subscription item IDs)
-- `test_orders` table: one-time test purchases with order status and supplier routing
-- Add-on picker UI on the pricing page and on the account/billing page
-- Running total component: base plan price + selected add-ons = total per month/year
-- API to add/remove recurring add-ons via Stripe subscription item create/delete
-- API to initiate a one-time test order via Stripe payment intent
+- `subscription_addons` table: active products a user has added on top of their tier (references `products.id`, not a separate plan_addons table)
+- `test_orders` table: one-time product purchases with Stripe payment intent ID and fulfillment status
+- Add-on picker UI on pricing page and account/billing page — populated from the live product catalog, filtered against tier inclusions
+- Running total component: base tier price + selected recurring add-on prices
 
 ### Actors
-- **Standalone user** — selects, pays for, and manages their add-ons
+- **Standalone user** — selects and manages their add-ons
 - **Platform** — routes test orders to the appropriate supplier
 
 ### Success criteria
-- User can add a recurring feature add-on; Stripe subscription item is created and billing adjusts immediately
-- User can order a one-time test; Stripe payment intent created, order record written to DB
-- Running total on the pricing/account page always reflects the current selection accurately
+- Available add-ons at checkout are always derived live from the product catalog minus the user's tier inclusions — no manual add-on list maintained by admin
+- One-time test orders create a Stripe payment intent at the product's retail price
+- No `plan_addons` table exists or is managed in the admin UI
 
 ---
 
-## Subsystem 3 — Employer Feature Toggles
+## Subsystem 3 — B2B Plans (multi-tier seat allocation)
 
 ### What it is
-A **Corporate** tier account (representing an employer) has one or more **Health Managers** who can enable or disable specific features for their employee health package. Toggles are constrained by what the corporate plan permits — a Health Manager cannot unlock features above their plan ceiling.
+A B2B plan lets an employer purchase a mix of Core, Clinical, and Elite seats for their employee base. A single org can hold **N Core + M Clinical + Z Elite seats**, where each count can be zero. The monthly charge is the sum of each tier's per-seat price × seat count.
+
+**Seat cap:** 10,000 per tier per plan. This covers enterprises up to ~30,000 employees at a 30% participation rate. Clients above this threshold require a custom offline contract.
+
+### Billing formula
+```
+b2b_monthly = sum(tier.base_price_cents × allocation.seat_count) across all allocations
+b2b_annual  = b2b_monthly × 12 × (1 - negotiated_annual_discount_pct / 100)
+```
 
 ### What it needs
-- `organisations` table: employer account linked to a corporate plan
-- `organisation_members` join table: employees → org, with `member | health_manager` role
-- `organisation_addons` table: which feature add-ons the org has enabled for all its members
-- Health Manager UI: feature toggle matrix showing available features with on/off and cost-per-employee impact
-- Cost impact calculator: toggling a feature shows the updated per-employee cost and total org cost
-- Employee management: invite employees by email, view member list, set health_manager role
-
-### Auto-calculation rule
-```
-org_monthly_total = plan.base_price_per_seat × member_count
-                  + sum(enabled_addon.price_per_seat) × member_count
-```
+- `b2b_plans` table: a named package linked to one org, with negotiated annual discount, contract dates, billing basis, and status
+- `b2b_plan_tier_allocations` join table: one row per tier in the plan, with seat count enforced 1–10,000
+- `b2b_plan_product_inclusions` join table: supplier products hand-picked by admin per tier allocation within a B2B plan — this is the only place supplier products are "bundled" rather than purchased a la carte
+- `organisations` updated to reference a `b2b_plan` instead of a single `plans` row
+- Health Manager UI: org's tier allocations, seat counts, and live monthly/annual cost breakdown
+- Employee management: invite employees by email, assign to a tier allocation, manage roles
+- Platform admin UI: create/edit B2B plans, tier allocations, and bundled products per tier inside the Plan Builder tab
 
 ### Actors
-- **Employer / Health Manager** — manages the employee health package
-- **Platform admin** — assigns org to a corporate plan
-- **Employee (org member)** — sees features that their org has enabled
+- **Platform admin** — creates B2B plans, sets tier allocations and contract terms
+- **Health Manager** — manages employee invitations, views cost breakdown
+- **Employee (org member)** — accesses features matching the tier they are allocated to
 
 ### Success criteria
-- Health Manager can toggle features; cost impact shows before confirming
-- Employees see only the features their org has enabled
-- A Health Manager cannot enable features not permitted by their plan tier
+- A B2B plan can hold any combination of tier allocations (e.g. 100 Core + 20 Clinical + 0 Elite)
+- Monthly and annual cost display updates live as seat counts change in the builder
+- An employee's feature access is determined by the tier they are allocated to
 
 ---
 
 ## Subsystem 4 — Supplier & Product Catalog
 
 ### What it is
-A back-office fulfillment registry. When a user orders a test (DEXA scan, blood panel, genetic test), the platform routes that order to a registered supplier. The catalog stores supplier contact details and identifiers, and the products each supplier can fulfill — with wholesale cost and retail price managed from the UI.
+The back-office fulfillment registry. Suppliers are registered with full contact, billing, invoicing, and contract details. Each supplier has products and services attached. Products feed two places: the **tier inclusions** builder (S1) and the **available add-ons** list (S2).
 
-### Design recommendation
-Keep the supplier catalog as **admin-only write access**. This is not a customer-facing marketplace — it is the platform's fulfillment network. Health Managers get read-only access to browse what tests can be offered to their employees.
-
-**Two pricing layers:**
-- **Wholesale price** — what the platform pays the supplier. Never shown to users or Health Managers.
+### Two pricing layers
+- **Wholesale price** — what the platform pays the supplier. Never visible to non-admin roles.
 - **Retail price** — what is charged to the patient or corporate account at checkout.
 
-**Product → Stripe mapping:**
-Each product carries a `stripe_price_id` so that when a test order is placed, the system calls `stripe.paymentIntents.create` with the product's retail price. No manual price entry at order time.
+### Product types from James's vision
+Supplier types: pathology, imaging, fitness, medical, coaching, supplements, recovery, wearable, other.
+Unit types: per test, per scan, per session, per month, per year, per unit, per employee.
+Delivery methods: digital, in-person, shipped, referral, lab, clinic, telehealth.
 
 ### What it needs
-- `suppliers` table: name, contact details, ABN/provider ID, status
-- `products` table: supplier FK, product code, name, category, wholesale/retail price, Stripe price ID, status
-- `test_orders` table: user FK, product FK, Stripe payment intent ID, fulfillment status
-- Admin UI: supplier list + create/edit form; product list + create/edit form
-- Health Manager UI: read-only product catalog (retail price only, no wholesale)
+- `suppliers` table: name, legal entity, ABN, primary contact, billing contact, accounts contact, bank/payment details, invoice terms, contract dates and status, notes
+- `products` table: supplier FK, product code, name, category, product type, unit type, description, wholesale/retail price, default markup, GST treatment, minimum order, lead time, delivery method, `subscription_type` (`one_time` | `recurring`), active status
+- `janet_services` table (Janet-owned services): service name, description, internal cost, retail value, unit type, delivery owner, active status
+- Admin UI: supplier directory, product catalog, Janet services catalog — all within the Plan Builder tab
 
 ### Actors
-- **Platform admin** — creates and maintains suppliers and products
-- **Corporate Health Manager** — browses available tests to include in employee packages
-- **Patient / standalone user** — orders a test (via the add-on flow in S2)
-- **Supplier** — receives order notification and fulfills the test (out of scope for this system; handled externally)
+- **Platform admin** — full CRUD on suppliers, products, Janet services
+- **Health Manager** — read-only product catalog (retail price only, no wholesale)
+- **Patient / standalone user** — orders products via the add-on flow
 
 ### Success criteria
-- Admin can register a supplier and add products with prices entirely from the UI
-- Ordering a product creates a Stripe payment intent at the correct retail price with no hardcoding
-- Wholesale price is never readable by non-admin roles
+- Admin registers a supplier with full contact/billing/contract detail
+- Products automatically appear in the tier inclusion picker and in the available add-ons list
+- Wholesale price never readable by non-admin roles
+
+---
+
+## Admin navigation structure
+
+Three distinct admin sections:
+
+**Tiers** (`/admin/tiers`) — B2C product configuration. Core, Clinical, and Elite tier cards. Click a tier to expand the editor: pricing, included Janet services, included supplier products, feature flags, live margin summary. This is not the "Plan Builder" — it is the definition of what each tier is.
+
+**Suppliers** (`/admin/suppliers`) — Supplier directory. Each supplier row expands inline to show full contact, billing, and contract details. Products for that supplier are nested directly below the supplier detail — there is no separate Products section. Admin adds and edits products from within the expanded supplier.
+
+**Plan Builder** (`/admin/plan-builder`) — B2B only. Build multi-tier seat allocation packages for corporate clients. Select org, define Core/Clinical/Elite seat counts (1–10,000 per tier, capped by platform setting), set contract terms and negotiated annual discount, view live monthly and annual cost.
 
 ---
 
@@ -147,22 +168,24 @@ Each product carries a `stripe_price_id` so that when a test order is placed, th
 
 | Sprint | Subsystem | Depends on |
 |---|---|---|
-| 1 | S1 — Pricing Tiers | Nothing |
-| 2 | S2 — Add-on Selection | S1 (plan_addons reference plans) |
-| 3 | S3 — Employer Toggles | S1 (org references plans), S2 (add-on model) |
-| 4 | S4 — Supplier Catalog | S2 (test_orders uses products), S3 (health_manager role) |
+| 1 | S4 — Supplier & Product Catalog | Nothing |
+| 2 | S1 — Tiers, Janet Services & Inclusions | S4 (products needed for tier inclusions) |
+| 3 | S2 — User Add-ons | S1 (tier inclusions define what is excluded from add-ons), S4 |
+| 4 | S3 — B2B Plans | S1 (allocations reference tiers) |
 
 ---
 
-## What changed from initial proposal
+## What changed from previous version
 
 | Item | Before | After |
 |---|---|---|
-| User add-ons | Not modelled | New Subsystem 2: recurring (Stripe sub items) + one-time (payment intents) |
-| Pricing calculator | Not specified | Auto-calc on pricing page and employer dashboard |
-| Supplier purpose | Vague | Explicit: fulfillment network for test orders, admin-only writes |
-| Products → Stripe | Open question | Each product carries `stripe_price_id`; used at order time |
-| Employer cost calc | Not specified | Per-seat formula across base plan + enabled add-ons × headcount |
+| Tier names | Individual / Professional / Corporate | Core / Clinical / Elite |
+| B2B tier model | "Corporate" single-tier with feature toggles | Multi-tier seat allocation: N Core + M Clinical + Z Elite |
+| Add-ons management | Separately managed `plan_addons` table | Inferred from product catalog minus tier inclusions; no admin add-on entity |
+| Janet services | Not modelled | New `janet_services` table; included in tier inclusions |
+| Tier inclusions | `feature_flags` JSONB ceiling | `tier_inclusions` join table with quantity, frequency, and margin tracking |
+| Admin UI structure | Split sections (tiers, suppliers, products, add-ons each separate) | Single Plan Builder tab; B2B Clients as a separate tab |
+| Build order | S1 → S2 → S3 → S4 | S4 → S1 → S2 → S3 |
 
 ---
 
@@ -170,14 +193,16 @@ Each product carries a `stripe_price_id` so that when a test order is placed, th
 
 | Question | Resolution |
 |---|---|
-| Tier names | Individual / Professional / Corporate |
-| Add-on billing model | Recurring → Stripe subscription items; one-time tests → payment intents |
+| Tier names | Core / Clinical / Elite |
+| Annual pricing | Stored but auto-calculated from `monthly × 12 × (1 - discount%)`; admin only sets monthly price and discount |
+| Add-on source | Inferred from product catalog minus tier inclusions; no separate admin entity |
 | Wholesale visibility | Never visible outside service_role / platform admin |
-| Products → Stripe | `products.stripe_price_id` populated by admin at product creation |
+| Products → Stripe | `products.stripe_price_id` populated by admin; used at order time |
+| Feature key registry | `feature_keys` table, admin-managed, starting set: `supplement_protocol`, `pdf_export`, `genome_access`, `advanced_risk_report`, `dexa_ordering` |
+| B2B seat limit | 10,000 seats per tier per plan; DB check constraint enforced |
 
 ## Open questions (still pending)
 
 1. **Corporate invite model** — email invite, bulk CSV, or email-domain auto-match?
-2. **Per-seat vs flat corporate pricing** — is the corporate plan priced per employee seat or as a flat organisational rate?
-3. **Feature key registry** — resolved: a `feature_keys` table fully managed by admin (create, edit, delete from the admin UI). The starting set is: `supplement_protocol`, `pdf_export`, `genome_access`, `advanced_risk_report`, `dexa_ordering`. See `database-design.md` for the schema.
-4. **Supplier order routing** — how does the platform notify a supplier of a new test order? (email, webhook, portal?) — out of scope for this sprint but needs a decision before S4 goes live
+2. **Supplier order routing** — how does the platform notify a supplier of a new test order? (email, webhook, portal?) — out of scope for this sprint but decision needed before S4 goes live
+3. **B2B Stripe billing model** — does each tier allocation map to a separate Stripe subscription item per tier, or does the org receive a single monthly invoice line?
