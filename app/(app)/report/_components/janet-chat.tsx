@@ -2,12 +2,14 @@
 // ai-elements: @vercel/ai-elements not published; using react-markdown via shared AssistantBubble.
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
+import type { UIMessage } from 'ai';
 import { useState } from 'react';
 import { AssistantBubble } from '@/app/(app)/_components/chat-message';
 
-export function JanetChat() {
+export function JanetChat({ initialMessages = [] }: { initialMessages?: UIMessage[] }) {
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({ api: '/api/chat' }),
+    messages: initialMessages,
   });
   const [input, setInput] = useState('');
 

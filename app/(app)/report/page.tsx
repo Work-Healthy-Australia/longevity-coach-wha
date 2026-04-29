@@ -1,7 +1,9 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { cleanLegacyDriver } from "@/lib/risk/format-driver";
 import { JanetChat } from "./_components/janet-chat";
+import type { UIMessage } from "ai";
 import "./report.css";
 
 export const metadata = { title: "Your Report · Longevity Coach" };
@@ -13,7 +15,11 @@ export default async function ReportPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const [riskResult, supplementResult, healthResult] = await Promise.all([
+  const admin = createAdminClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const agentsDb = (admin as any).schema('agents');
+
+  const [riskResult, supplementResult, healthResult, conversationResult] = await Promise.all([
     supabase
       .from("risk_scores")
       .select("biological_age, cv_risk, metabolic_risk, neuro_risk, onco_risk, msk_risk, narrative, top_risk_drivers, top_protective_levers, recommended_screenings, confidence_level, data_gaps, assessment_date")
@@ -38,11 +44,26 @@ export default async function ReportPage() {
       .not("completed_at", "is", null)
       .limit(1)
       .maybeSingle(),
+
+    agentsDb
+      .from("agent_conversations")
+      .select("role, content, created_at")
+      .eq("user_uuid", user.id)
+      .eq("agent", "janet")
+      .order("created_at", { ascending: false })
+      .limit(20),
   ]);
 
   const risk = riskResult.data;
   const supplement = supplementResult.data;
   const hasAssessment = !!healthResult.data;
+
+  const priorTurns = ([...(conversationResult.data ?? [])].reverse() as Array<{ role: string; content: string; created_at: string }>)
+    .map((t, i): UIMessage => ({
+      id: `prior-${i}`,
+      role: t.role as "user" | "assistant",
+      parts: [{ type: "text", text: t.content }],
+    }));
 
   if (!hasAssessment) {
     redirect("/onboarding");
@@ -219,7 +240,7 @@ export default async function ReportPage() {
           Janet is your longevity health coach. Ask about your results, supplements,
           lifestyle changes, or anything else on your mind.
         </p>
-        <JanetChat />
+        <JanetChat initialMessages={priorTurns} />
       </section>
     </div>
   );
