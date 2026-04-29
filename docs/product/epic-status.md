@@ -98,8 +98,8 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 3: The Number
 
-`●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 70%** — risk_analyzer pipeline ships risk narratives end-to-end. Deterministic risk engine ported from Base44 and unit tested; engine output now feeds risk_analyzer for higher-confidence narratives. BUG-003 closed. GP-panel review still outstanding.
+`●●●○○` Planned · Feature Complete · Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 85%** — risk_analyzer pipeline ships risk narratives end-to-end. Deterministic risk engine ported from Base44 and unit tested; engine output now feeds risk_analyzer for higher-confidence narratives. BUG-003 closed. GP-panel review still outstanding.
 
 **Shipped:**
 - risk_analyzer pipeline at `lib/ai/pipelines/risk-narrative.ts`.
@@ -125,8 +125,8 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 4: The Protocol
 
-`●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 60%** — supplement_advisor pipeline ships a 30-day protocol after every risk_analyzer run; supplement_advisor eval suite shipped 2026-04-28 with 4 rubrics. No deterministic supplement catalog yet — items are LLM-derived.
+`●●●○○` Planned · Feature Complete · Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 80%** — supplement_advisor pipeline ships a 30-day protocol after every risk_analyzer run; supplement_advisor eval suite shipped 2026-04-28 with 4 rubrics. No deterministic supplement catalog yet — items are LLM-derived.
 
 **Shipped:**
 - supplement_advisor pipeline at `lib/ai/pipelines/supplement-protocol.ts`.
@@ -150,8 +150,8 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 5: The Report
 
-`●●○○○` Planned · Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 65%** — `/report` page + branded PDF both shipped. PDF includes logo, cover page, big-number summary, domain-coloured swatches, supplement table with tier colours and overflow handling, footer disclaimer.
+`●●●○○` Planned · Feature Complete · Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 80%** — `/report` page + branded PDF both shipped. PDF includes logo, cover page, big-number summary, domain-coloured swatches, supplement table with tier colours and overflow handling, footer disclaimer.
 
 **Shipped:**
 - `/report` page (`app/(app)/report/page.tsx`) showing risk narrative, domain scores, supplement protocol, Janet chat panel.
@@ -176,8 +176,8 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 6: The Coach
 
-`●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 90%** — Janet streaming chat, cross-session history, stale-data nudge, health_researcher digests, support agent route, RAG, risk_analyzer + supplement_advisor `tool_use` sub-agents, conversation-summary compression, and eval suites all shipped. Remaining work is end-to-end regression suite and user review.
+`●●●○○` Planned · Feature Complete · Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 95%** — Janet streaming chat, cross-session history, stale-data nudge, health_researcher digests, support agent route, RAG, risk_analyzer + supplement_advisor `tool_use` sub-agents, conversation-summary compression, and eval suites all shipped. Remaining work is end-to-end regression suite and user review.
 
 **Shipped:**
 - Janet agent at `lib/ai/agents/janet.ts` (Claude Sonnet 4.6, streaming).
@@ -211,8 +211,8 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 7: The Daily Return
 
-`●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 70%** — daily check-in UI, streak math, Mon-Sun dot strip, steps + water capture, and risk_analyzer trigger all shipped; remaining work is personalised goals, reminders, weekly digest, and journal.
+`●●●○○` Planned · Feature Complete · Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 90%** — daily check-in UI, streak math, Mon-Sun dot strip, steps + water capture, and risk_analyzer trigger all shipped; remaining work is personalised goals, reminders, weekly digest, and journal.
 
 **Shipped:**
 - Drip-email cron at `app/api/cron/drip-emails/route.ts`.
@@ -241,8 +241,8 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 8: The Living Record
 
-`●●◐○○` Planned · Feature Complete (member labs surface) · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 70%** — five member-visible surfaces shipped: `/labs` (Lab Results UI), `/trends` (Daily-log trends), the alerts surface (`member_alerts` + dashboard chip + repeat-test cron + upload-flow lab-alert hook), the **Janet → `lab_results` structured writer**, and **`/simulator`** (real-time risk simulator with LDL/HbA1c/hsCRP/**Systolic BP**/Weight sliders running the deterministic risk engine in-browser via `useDeferredValue`, side-by-side baseline-vs-simulated display, empty-state CTA). Lab-alert path is now live — fires the moment any Janet-extracted biomarker is `low`/`high`/`critical`. SBP slider added 2026-04-29 with AHA-aligned numeric scoring bands.
+`●●●○○` Planned · Feature Complete (member labs surface) · Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 85%** — five member-visible surfaces shipped: `/labs` (Lab Results UI), `/trends` (Daily-log trends), the alerts surface (`member_alerts` + dashboard chip + repeat-test cron + upload-flow lab-alert hook), the **Janet → `lab_results` structured writer**, and **`/simulator`** (real-time risk simulator with LDL/HbA1c/hsCRP/**Systolic BP**/Weight sliders running the deterministic risk engine in-browser via `useDeferredValue`, side-by-side baseline-vs-simulated display, empty-state CTA). Lab-alert path is now live — fires the moment any Janet-extracted biomarker is `low`/`high`/`critical`. SBP slider added 2026-04-29 with AHA-aligned numeric scoring bands.
 
 **Shipped:**
 - `biomarkers` schema with `lab_results`, `wearable_summaries`, `daily_logs` tables (migrations `0009`, `0010`).
@@ -286,7 +286,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - **Periodic review workspace columns** (migration `0049`) — `program_30_day`, `program_sent_at`, `clinician_conversation_id` + clinician-can-update RLS via `patient_assignments`.
 - **`janet_clinician` agent definition** (migration `0051`) — sonnet-4-6, clinician-colleague persona, instructed to call the submit tool.
 - **Patient consent surface** at `/account` — "Care team access" form nominating a clinician by email; writes append-only `consent_records` row (new `care_team_access` policy) paired with the `patient_assignments` row.
-- **Admin clinician invite** at `/admin/clinicians` — existing user → role updated in place + clinician_profiles row + branded notification email; new user → single-use 14-day token in `clinician_invites` + branded Resend invite (replaces Supabase's default template).
+- **Admin clinician invite** at `/admin/clinicians` — existing user → role updated in place + clinician_profiles row + branded Resend notification email; new user → single-use 14-day token in `clinician_invites` + Supabase invite email (template configured in Supabase dashboard → Authentication → Email Templates → Invite User).
 - **`/clinician` review workspace** — two-pane layout, queue grouped by status (awaiting / in_review / program_ready / sent_to_patient), urgent flag for `needs_attention` or stress ≥ 8; right pane: Patient card (Janet brief + structured fields), live Janet chat, 30-Day Program tab with Save draft + Approve & send.
 - **`/clinician/schedule`** — upcoming/past toggle, expandable appointment rows, status transitions, post-session notes.
 - **`/clinician/profile`** — full self-service editor (specialties, languages, bio, contact, working hours, lunch break, session duration, timezone, active flag).
@@ -308,7 +308,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - [#35](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/35) — foundation: role expansion + schema + proxy gates
 - [#36](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/36) — patient consent + admin clinician invite
 - [#37](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/37) — review workspace + schedule + profile
-- [#41](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/41) — branded Resend clinician invite email
+- [#41](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/41) — clinician invite email (reverted to Supabase template; existing-user promotion still uses Resend)
 - [#42](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/42) — janet_clinician real-time agent + submit_30_day_program tool
 - [#43](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/43) — patient program-delivery email on Approve & send
 
@@ -346,8 +346,8 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 11: The Trust Layer
 
-`●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 65%** — RLS + PII boundary + consent records shipped and verified at the schema level, with the pgTAP RLS suite now running in CI on every PR; **export-everything bundle shipped 2026-04-28**. Remaining trust surfaces (deceased flow, ToS clause, pause/freeze, right-to-erasure) are not built.
+`●●●○○` Planned · Feature Complete · Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 90%** — RLS + PII boundary + consent records shipped and verified at the schema level, with the pgTAP RLS suite now running in CI on every PR; **export-everything bundle shipped 2026-04-28**. Remaining trust surfaces (deceased flow, ToS clause, pause/freeze, right-to-erasure) are not built.
 
 **Shipped:**
 - RLS on every table across `public`, `biomarkers`, `clinical`, `programs`, `billing` schemas.
@@ -445,8 +445,8 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 14: The Platform Foundation
 
-`●◐○○○` Planned · ◐ Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 45%** — substantial pieces already shipped via the existing `.claude/rules/` discipline (RLS, PII boundary, secret-key naming, pipeline auth, migration hygiene). CI Vitest+pgTAP and Gitleaks secret scanning shipped 2026-04-28. The remaining operational layer (Sentry, cost monitoring, DR drill, pen-test cadence) is unbuilt.
+`●●○○○` Planned · Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 65%** — substantial pieces already shipped via the existing `.claude/rules/` discipline (RLS, PII boundary, secret-key naming, pipeline auth, migration hygiene). CI Vitest+pgTAP and Gitleaks secret scanning shipped 2026-04-28. The remaining operational layer (Sentry, cost monitoring, DR drill, pen-test cadence) is unbuilt.
 
 **Shipped:**
 - RLS on every table across `public`, `biomarkers`, `clinical`, `programs`, `billing` schemas.

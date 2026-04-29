@@ -123,34 +123,16 @@ export async function inviteClinician(
     );
   if (insertError) return { error: "Failed to record invite." };
 
-  // Generate the invite link without sending Supabase's default email so we can
-  // send our own branded Resend message instead.
-  const { data: linkData, error: linkError } = await admin.auth.admin.generateLink({
-    type: "invite",
-    email: lower,
-    options: {
-      redirectTo: `${siteUrl}/auth/callback`,
-      data: { invited_as: role, clinician_invite_token: token },
-    },
+  // Send invite via Supabase — uses the template configured in the Supabase
+  // dashboard (Authentication → Email Templates → Invite User).
+  const { error: inviteError } = await admin.auth.admin.inviteUserByEmail(lower, {
+    redirectTo: `${siteUrl}/auth/callback`,
+    data: { invited_as: role, clinician_invite_token: token },
   });
 
-  if (linkError || !linkData?.properties?.action_link) {
+  if (inviteError) {
     await loose(admin).from("clinician_invites").delete().eq("token", token);
-    return { error: linkError?.message ?? "Failed to generate invite link." };
-  }
-
-  try {
-    await sendClinicianInviteEmail({
-      to: lower,
-      inviteUrl: linkData.properties.action_link,
-      inviterName,
-      role,
-      fullName: full_name ?? null,
-    });
-  } catch (e) {
-    console.error("[admin/clinicians] invite email failed:", e);
-    await loose(admin).from("clinician_invites").delete().eq("token", token);
-    return { error: "Failed to send invite email. Check Resend configuration." };
+    return { error: inviteError.message };
   }
 
   return { success: `Invite sent to ${lower}. They will have ${role} access on sign-up.` };
