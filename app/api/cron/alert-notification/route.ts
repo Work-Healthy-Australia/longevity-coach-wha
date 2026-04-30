@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const admin = createAdminClient() as any;
-  const appUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://longevity-coach.io";
+  const appUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://janet.care";
 
   const { data: alerts, error } = await admin
     .from("member_alerts")

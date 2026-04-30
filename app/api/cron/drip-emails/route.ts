@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
   }
 
   const admin = createAdminClient();
-  const appUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://longevity-coach.io";
+  const appUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://janet.care";
 
   // Load all users who have confirmed email addresses and no subscription cancellation.
   // auth.users is not directly queryable via the JS client with admin role in the same way,

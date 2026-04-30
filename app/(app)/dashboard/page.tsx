@@ -447,7 +447,7 @@ export default async function DashboardPage() {
         <QuickTile href="/simulator" label="Simulator" sub="Slide and see" icon="🎚️" />
         <QuickTile href="/onboarding" label="Update profile" sub="Refresh your answers" icon="👤" />
         <QuickTile href="/legal/collection-notice" label="Privacy" sub="What we store" icon="🔒" />
-        <QuickTile href="mailto:hello@longevity-coach.io" label="Get help" sub="Reach support" icon="💬" />
+        <QuickTile href="mailto:hello@janet.care" label="Get help" sub="Reach support" icon="💬" />
       </section>
 
       {/* Coming soon shelf */}

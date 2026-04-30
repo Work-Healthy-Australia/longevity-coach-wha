@@ -11,7 +11,7 @@
 
 A personal health optimisation platform that calculates a patient's biological age, produces a five-domain health risk breakdown, and delivers a personalised supplement protocol and daily coaching. Three audiences: individual members, corporate wellness buyers, and clinical practitioners.
 
-Live at: https://longevity-coach.io  
+Live at: https://janet.care  
 Stack: Next.js 16 App Router · TypeScript · Supabase · Stripe · Resend · Anthropic Claude API
 
 ---

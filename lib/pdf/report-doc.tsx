@@ -152,7 +152,7 @@ function PageFooter({ generatedAt }: { generatedAt: string }) {
       <View style={styles.footerLeft}>
         <Text style={styles.footerText}>{DISCLAIMER}</Text>
         <Text style={styles.footerText}>
-          Generated {formatDate(generatedAt)} · longevity-coach.io
+          Generated {formatDate(generatedAt)} · janet.care
         </Text>
       </View>
       <Text

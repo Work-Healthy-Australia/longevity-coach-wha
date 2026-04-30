@@ -142,7 +142,7 @@ export default function Home() {
                 <div className="dot" style={{ background: "#E57B6B" }} />
                 <div className="dot" style={{ background: "#E8C46B" }} />
                 <div className="dot" style={{ background: "#7DB87F" }} />
-                <span className="url">app.longevity-coach.io / dashboard</span>
+                <span className="url">janet.care / dashboard</span>
               </div>
 
               <div className="dp-side">

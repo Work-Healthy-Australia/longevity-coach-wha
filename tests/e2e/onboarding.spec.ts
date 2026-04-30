@@ -16,7 +16,7 @@ import { test, expect, type Page } from "@playwright/test";
  * already completed onboarding, the test verifies the resume/re-submit path.
  */
 
-const TEST_EMAIL = process.env.TEST_EMAIL ?? "test@longevity-coach.io";
+const TEST_EMAIL = process.env.TEST_EMAIL ?? "test@janet.care";
 const TEST_PASSWORD = process.env.TEST_PASSWORD ?? "";
 
 async function signIn(page: Page): Promise<void> {

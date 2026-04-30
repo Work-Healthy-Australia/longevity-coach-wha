@@ -4,7 +4,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 const mockSend = vi.fn().mockResolvedValue({ id: "mock-id" });
 vi.mock("@/lib/email/client", () => ({
   getResend: () => ({ emails: { send: mockSend } }),
-  getFromAddress: () => "noreply@longevity-coach.io",
+  getFromAddress: () => "noreply@janet.care",
 }));
 
 import { sendWeeklyDigestEmail } from "@/lib/email/weekly-digest";
@@ -12,7 +12,7 @@ import { sendWeeklyDigestEmail } from "@/lib/email/weekly-digest";
 const baseArgs = {
   to: "test@example.com",
   firstName: "Dave",
-  appUrl: "https://longevity-coach.io",
+  appUrl: "https://janet.care",
   daysLogged: 5,
   avgSleep: 7.2,
   avgMood: 7.5,
@@ -99,13 +99,13 @@ describe("sendWeeklyDigestEmail", () => {
   it("includes dashboard CTA link", async () => {
     await sendWeeklyDigestEmail(baseArgs);
     const html = mockSend.mock.calls[0][0].html as string;
-    expect(html).toContain("https://longevity-coach.io/dashboard");
+    expect(html).toContain("https://janet.care/dashboard");
   });
 
   it("includes unsubscribe link to account page", async () => {
     await sendWeeklyDigestEmail(baseArgs);
     const html = mockSend.mock.calls[0][0].html as string;
-    expect(html).toContain("https://longevity-coach.io/account");
+    expect(html).toContain("https://janet.care/account");
     expect(html).toContain("Turn off");
   });
 

@@ -136,7 +136,7 @@ longevity-coach/
 - [ ] GitHub repo created, Edge8 team added
 - [ ] Supabase project provisioned (production + staging)
 - [ ] Vercel project connected to GitHub repo
-- [ ] Custom domain (longevity-coach.io) pointed at Vercel, SSL active
+- [ ] Custom domain (janet.care) pointed at Vercel, SSL active
 - [ ] Stripe account live, test mode configured, product/price IDs created
 - [ ] Resend account + sending domain verified
 - [ ] `.env` variables shared securely with team (not in repo)
@@ -249,7 +249,7 @@ longevity-coach/
 - [ ] Deploy to production on Vercel
 
 **Smoke test (do this manually, in order)**
-- [ ] Visit longevity-coach.io as a new user — does the landing page load and look right?
+- [ ] Visit janet.care as a new user — does the landing page load and look right?
 - [ ] Sign up for a free trial — does auth work, does the welcome email arrive?
 - [ ] Complete the onboarding questionnaire — do all steps save correctly?
 - [ ] View bio-age and risk scores — do they calculate correctly?
@@ -281,7 +281,7 @@ longevity-coach/
 
 The sprint is complete when:
 
-1. A new user can visit **longevity-coach.io**, understand the offer, and sign up for a paid subscription via Stripe
+1. A new user can visit **janet.care**, understand the offer, and sign up for a paid subscription via Stripe
 2. After sign-up, the user completes a health intake questionnaire and receives their **biological age and risk scores**
 3. The user receives a **personalised supplement protocol** with a downloadable branded PDF
 4. The user has a **dashboard** showing their health data, scores, and recommended actions
