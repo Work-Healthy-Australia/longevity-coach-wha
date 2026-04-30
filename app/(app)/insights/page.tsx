@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { generateWeeklyInsights } from '@/lib/insights/weekly';
 import { deriveGoals, extractGoalInputs } from '@/lib/goals/derive';
+import DigestsClient from './_components/digests-client';
 import './insights.css';
 
 export const metadata = { title: 'Insights · Longevity Coach' };
@@ -22,12 +23,6 @@ const CATEGORY_LABELS: Record<string, string> = {
   exercise: 'Exercise',
   nutrition: 'Nutrition',
   sleep: 'Sleep',
-};
-
-const EVIDENCE_LABELS: Record<string, string> = {
-  strong: 'Strong evidence',
-  moderate: 'Moderate evidence',
-  preliminary: 'Preliminary',
 };
 
 export default async function InsightsPage() {
@@ -110,43 +105,8 @@ export default async function InsightsPage() {
         <p className="digests-subheading">
           Curated research from longevity and health literature, updated weekly.
         </p>
-        {updates.length === 0 ? (
-          <p className="insights-empty">
-            Research digests will appear here once our health researcher begins publishing.
-          </p>
-        ) : (
-          <div className="digests-grid">
-            {updates.map((u) => (
-              <article key={u.id} className="digest-card">
-                <div className="digest-meta">
-                  <span className={`digest-category digest-category-${u.category}`}>
-                    {CATEGORY_LABELS[u.category] ?? u.category}
-                  </span>
-                  <span className={`digest-evidence digest-evidence-${u.evidence_level}`}>
-                    {EVIDENCE_LABELS[u.evidence_level] ?? u.evidence_level}
-                  </span>
-                </div>
-                <h3 className="digest-title">{u.title}</h3>
-                <p className="digest-content">{u.content}</p>
-                <div className="digest-footer">
-                  <span className="digest-source">{u.source}</span>
-                  <time className="digest-date" dateTime={u.posted_date}>
-                    {formatDate(u.posted_date)}
-                  </time>
-                </div>
-              </article>
-            ))}
-          </div>
-        )}
+        <DigestsClient updates={updates} categoryLabels={CATEGORY_LABELS} />
       </section>
     </div>
   );
-}
-
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString(undefined, {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
 }

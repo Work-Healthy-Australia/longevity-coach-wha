@@ -73,6 +73,78 @@
   line-height: 1.5;
 }
 
+/* Category filter pills + search */
+.digest-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.digest-filter-pill {
+  appearance: none;
+  border: 1px solid #E3E8EC;
+  background: #fff;
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #2B2B2B;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  line-height: 1.4;
+}
+
+.digest-filter-pill:hover {
+  border-color: #c8d4de;
+}
+
+/* "All" pill */
+.digest-filter-pill-all.active {
+  background: #2F6F8F;
+  color: #fff;
+  border-color: #2F6F8F;
+}
+
+/* Category-specific active states — use the category badge colors */
+.digest-filter-pill-longevity.active  { background: #4338ca; color: #fff; border-color: #4338ca; }
+.digest-filter-pill-biohacking.active { background: #0f766e; color: #fff; border-color: #0f766e; }
+.digest-filter-pill-supplements.active { background: #c2410c; color: #fff; border-color: #c2410c; }
+.digest-filter-pill-exercise.active   { background: #047857; color: #fff; border-color: #047857; }
+.digest-filter-pill-nutrition.active  { background: #854d0e; color: #fff; border-color: #854d0e; }
+.digest-filter-pill-sleep.active      { background: #1d4ed8; color: #fff; border-color: #1d4ed8; }
+
+.digest-search-row {
+  margin-top: 12px;
+}
+
+.digest-search {
+  width: 100%;
+  max-width: 360px;
+  padding: 8px 14px;
+  border: 1px solid #E3E8EC;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #2B2B2B;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.digest-search::placeholder {
+  color: #8A9AA5;
+}
+
+.digest-search:focus {
+  border-color: #2F6F8F;
+}
+
+.digest-result-count {
+  font-size: 13px;
+  color: #8A9AA5;
+  margin: 8px 0 0;
+}
+
 .digests-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
