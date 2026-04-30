@@ -4,24 +4,12 @@ import { createClient } from "@/lib/supabase/server";
 import { policyVersion } from "@/lib/consent/policies";
 import { CareTeamSection, type AssignedClinician } from "./_components/care-team-section";
 import { DeleteAccountButton } from "./_components/delete-account-button";
+import { IdentityCard } from "./_components/identity-card";
 import { NotificationPrefs } from "./_components/NotificationPrefs";
 import { pauseAccount, unpauseAccount } from "./pause-actions";
 import "./account.css";
 
 export const dynamic = "force-dynamic";
-
-function formatDob(dob: string | null): string {
-  if (!dob) return "—";
-  try {
-    return new Date(dob).toLocaleDateString("en-AU", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  } catch {
-    return dob;
-  }
-}
 
 export default async function AccountPage({
   searchParams,
@@ -38,12 +26,17 @@ export default async function AccountPage({
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("full_name, date_of_birth, paused_at")
+    .select("full_name, date_of_birth, phone, address_postal, paused_at")
     .eq("id", user!.id)
     .maybeSingle();
 
-  const fullName = (profile?.full_name as string | null) ?? "—";
-  const dob = formatDob((profile?.date_of_birth as string | null) ?? null);
+  const identityInitial = {
+    full_name: (profile?.full_name as string | null) ?? "",
+    email: email === "—" ? "" : email,
+    date_of_birth: (profile?.date_of_birth as string | null) ?? "",
+    phone: (profile?.phone as string | null) ?? "",
+    address_postal: (profile?.address_postal as string | null) ?? "",
+  };
   const pausedAt = (profile?.paused_at as string | null) ?? null;
 
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
@@ -131,23 +124,7 @@ export default async function AccountPage({
         </div>
       )}
 
-      <section className="lc-account-card">
-        <h2>Identity</h2>
-        <dl className="lc-account-id">
-          <div>
-            <dt>Name</dt>
-            <dd>{fullName}</dd>
-          </div>
-          <div>
-            <dt>Email</dt>
-            <dd>{email}</dd>
-          </div>
-          <div>
-            <dt>Date of birth</dt>
-            <dd>{dob}</dd>
-          </div>
-        </dl>
-      </section>
+      <IdentityCard initial={identityInitial} />
 
       <section className="lc-account-card">
         <h2>How we use your data</h2>
