@@ -1,6 +1,9 @@
 import { z } from 'zod';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { createPipelineAgent } from '@/lib/ai/agent-factory';
+import { assemblePatientFromDB } from '@/lib/risk/assemble';
+import { scoreRisk } from '@/lib/risk/scorer';
+import type { EngineOutput } from '@/lib/risk/types';
 
 const RiskNarrativeOutputSchema = z.object({
   biological_age: z.number().min(18).max(120),
@@ -51,16 +54,59 @@ function buildDailyTrendsSummary(logs: DailyLog[]): string | null {
   ].join('\n');
 }
 
+function formatEngineBaseline(engine: EngineOutput): string {
+  const domainLines = (
+    Object.entries(engine.domains) as Array<[string, { score: number; risk_level: string; data_completeness: number }]>
+  ).map(([name, d]) =>
+    `  ${name}: ${d.score}/100 (${d.risk_level}, ${Math.round(d.data_completeness * 100)}% data)`,
+  );
+
+  const topRisks = engine.top_risks
+    .slice(0, 5)
+    .map((r) => `  - ${r.name} (${r.domain}, score ${r.score}, ${r.modifiable ? 'modifiable' : 'non-modifiable'})`)
+    .join('\n');
+
+  return [
+    `Biological age (engine estimate): ${engine.biological_age}`,
+    `Longevity score: ${engine.longevity_score}/100 (${engine.longevity_label})`,
+    `Composite risk: ${engine.composite_risk}/100 (${engine.risk_level})`,
+    `Data completeness: ${Math.round(engine.data_completeness * 100)}%`,
+    `Score confidence: ${engine.score_confidence}`,
+    '',
+    'Domain scores:',
+    ...domainLines,
+    '',
+    'Top modifiable risks:',
+    topRisks || '  (none identified)',
+    '',
+    'Recommended tests:',
+    engine.next_recommended_tests.length > 0
+      ? engine.next_recommended_tests.map((t) => `  - ${t}`).join('\n')
+      : '  (none)',
+  ].join('\n');
+}
+
 function buildPrompt(params: {
   ageYears: number | null;
   responses: Record<string, unknown>;
   uploadSummaries: string[];
   standardsContext?: string;
   dailyTrends?: string | null;
+  engineBaseline?: EngineOutput | null;
 }): string {
   const parts: string[] = [];
   if (params.standardsContext) {
     parts.push(`## Clinical scoring standards\n${params.standardsContext}`);
+  }
+  if (params.engineBaseline) {
+    parts.push(
+      `\n## Engine baseline scores (deterministic)\n` +
+      `The following scores were produced by a deterministic risk engine. Use them as ` +
+      `anchors for your own assessment. You may adjust scores up or down based on ` +
+      `qualitative context (uploads, daily trends, nuances the engine cannot capture), ` +
+      `but explain any deviation greater than 10 points from the engine baseline.\n\n` +
+      formatEngineBaseline(params.engineBaseline),
+    );
   }
   if (params.ageYears) parts.push(`Chronological age: ${params.ageYears} years`);
   if (Object.keys(params.responses).length > 0) {
@@ -161,11 +207,21 @@ async function _run(userId: string): Promise<void> {
 
   const dailyTrends = buildDailyTrendsSummary(logs);
 
+  // Run the deterministic engine to produce baseline scores that ground Atlas.
+  // Non-fatal: if assembly or scoring fails, Atlas proceeds without the baseline.
+  let engineBaseline: EngineOutput | null = null;
+  try {
+    const patientInput = await assemblePatientFromDB(admin, userId);
+    engineBaseline = scoreRisk(patientInput);
+  } catch (err) {
+    console.warn('[risk-analyzer pipeline] Engine baseline scoring failed (non-fatal):', err);
+  }
+
   const agent = createPipelineAgent('risk_analyzer');
 
   const output: RiskNarrativeOutput = await agent.run(
     RiskNarrativeOutputSchema,
-    buildPrompt({ ageYears, responses, uploadSummaries, standardsContext, dailyTrends }),
+    buildPrompt({ ageYears, responses, uploadSummaries, standardsContext, dailyTrends, engineBaseline }),
   );
 
   const now = new Date().toISOString();
@@ -188,7 +244,7 @@ async function _run(userId: string): Promise<void> {
       assessment_date: now.split('T')[0],
       computed_at: now,
     },
-    { onConflict: 'user_uuid' },
+    { onConflict: 'user_uuid, assessment_date' },
   );
 
   if (error) console.error(`[risk-analyzer pipeline] Failed to upsert risk_scores for user ${userId}:`, error);

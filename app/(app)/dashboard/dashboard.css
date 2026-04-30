@@ -564,6 +564,19 @@
   line-height: 1.4;
 }
 
+/* Coming tile — linked variant (active feature, not disabled) */
+.lc-coming-tile--linked {
+  opacity: 1;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+.lc-coming-tile--linked:hover {
+  border-color: var(--lc-primary, #2F6F8F);
+  box-shadow: 0 2px 8px rgba(47, 111, 143, 0.12);
+}
+
 /* ----- Footnote ----- */
 .lc-footnote {
   text-align: center;
