@@ -942,7 +942,7 @@ Common resolution scripts:
 }
 ```
 
-**Auto-escalation triggers** (ticket status = `escalated` + notify support@longevity-coach.io):
+**Auto-escalation triggers** (ticket status = `escalated` + notify support@janet.care):
 - Billing disputes or refund requests
 - Data deletion / right-to-erasure requests
 - GDPR / HIPAA / privacy compliance requests

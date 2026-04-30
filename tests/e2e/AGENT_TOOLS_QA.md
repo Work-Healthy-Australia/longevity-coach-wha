@@ -16,7 +16,7 @@ This document provides a comprehensive QA test plan for validating the **Chef Ag
 
 ```bash
 # Set credentials
-export TEST_EMAIL="test@longevity-coach.io"
+export TEST_EMAIL="test@janet.care"
 export TEST_PASSWORD="your-test-password"
 
 # Run all agent tool tests

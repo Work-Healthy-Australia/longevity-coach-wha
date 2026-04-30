@@ -373,7 +373,7 @@ on message INSERT → nudge(recipientId, conversationId):
   5. Send via Twilio REST
      Body (constant, never interpolated):
      "You have a new message from your care team.
-      Read it securely: https://longevity-coach.io/messages"
+      Read it securely: https://janet.care/messages"
   6. Log result → janet.notification_log
   7. Update whatsapp_last_user_msg_at if WhatsApp used
 ```

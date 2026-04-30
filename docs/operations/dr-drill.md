@@ -65,7 +65,7 @@ Compare against the baseline counts captured immediately before the drill in pro
 
 ### 4. Verify a known patient round-trips
 
-Pick one test user (the disposable `dr-drill+YYYYMMDD@longevity-coach.io` account — create one quarterly if it doesn't exist) and confirm:
+Pick one test user (the disposable `dr-drill+YYYYMMDD@janet.care` account — create one quarterly if it doesn't exist) and confirm:
 
 - `profiles` row present with expected `full_name`, `date_of_birth`.
 - `health_profiles.responses` JSONB matches the expected shape (`basics`, `medical`, `family`, `lifestyle`, `goals`, `consent`).

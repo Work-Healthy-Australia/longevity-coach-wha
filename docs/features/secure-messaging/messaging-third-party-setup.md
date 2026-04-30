@@ -131,7 +131,7 @@ Body:            You have a new message from your care team on Longevity Coach.
 Footer:          Reply STOP to opt out
 ```
 
-- `{{1}}` = deep-link URL to the conversation (e.g. `https://longevity-coach.io/messages`)
+- `{{1}}` = deep-link URL to the conversation (e.g. `https://janet.care/messages`)
 - **UTILITY** category approves faster than MARKETING
 - Do not include PHI, patient name, or message content in the template body
 

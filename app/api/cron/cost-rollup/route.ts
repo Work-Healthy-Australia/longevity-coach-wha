@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
       .filter((u: { id: string; email?: string | null }) => adminIds.includes(u.id) && u.email)
       .map((u: { email?: string | null }) => u.email as string);
 
-    const appUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://longevity-coach.io";
+    const appUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://janet.care";
     await Promise.all(
       adminEmails.map((to: string) =>
         sendCostAlertEmail({

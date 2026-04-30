@@ -1,6 +1,6 @@
 # Longevity Coach — Documentation Index
 
-**Project:** Longevity Coach (longevity-coach.io)  
+**Project:** Longevity Coach (janet.care)  
 **Stack:** Next.js 16 · TypeScript · Supabase · Stripe · Resend · Anthropic Claude API  
 **Product owner:** James Murray  
 **Last updated:** 2026-04-27

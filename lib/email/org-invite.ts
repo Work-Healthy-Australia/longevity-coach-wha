@@ -30,7 +30,7 @@ export async function sendOrgInviteEmail({
     return;
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://longevity-coach.io";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://janet.care";
   const inviteUrl = `${siteUrl}/signup?invite_token=${token}`;
   const greeting = name ? `Hi ${name},` : "Hi there,";
 

@@ -157,7 +157,7 @@ Required for a fully working preview:
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 SUPABASE_SECRET_KEY=                  # server only - webhook writes
-NEXT_PUBLIC_SITE_URL=                 # http://localhost:3000 locally; https://longevity-coach.io in prod
+NEXT_PUBLIC_SITE_URL=                 # http://localhost:3000 locally; https://janet.care in prod
 
 ANTHROPIC_API_KEY=                    # future: risk narratives + supplement gen
 RESEND_API_KEY=                       # welcome email (route no-ops if missing)

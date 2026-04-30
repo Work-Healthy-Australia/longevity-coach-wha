@@ -761,7 +761,7 @@ export async function GET(req: Request) {
   }
 
   const admin = createAdminClient();
-  const appUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://longevity-coach.io";
+  const appUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://janet.care";
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 

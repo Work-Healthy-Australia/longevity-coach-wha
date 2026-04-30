@@ -13,7 +13,7 @@ import { test, expect, type Page } from "@playwright/test";
  *   - Messages:    div.chat-message-assistant div.chat-bubble
  */
 
-const TEST_EMAIL = process.env.TEST_EMAIL ?? "test@longevity-coach.io";
+const TEST_EMAIL = process.env.TEST_EMAIL ?? "test@janet.care";
 const TEST_PASSWORD = process.env.TEST_PASSWORD ?? "";
 
 /** Sign in and navigate to /report, leaving the page ready for chat interaction. */
