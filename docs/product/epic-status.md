@@ -1,6 +1,6 @@
 # Longevity Coach — Epic Status Dashboard
 
-Last updated **2026-04-29** (post-Sprint 2 catch-up; right-to-erasure waves 1–3, pipeline stability, admin tier/plan-builder, org members, rest-day streaks all landed).
+Last updated **2026-04-30** (Sentry setup + DR drill runbooks landed at [docs/operations/](../operations/); pause/freeze account flow confirmed shipped — UI, server actions, and proxy redirect all wired).
 
 Companion to [epics.md](./epics.md) (strategy, stable) and [product.md](./product.md) (vision). This file is the **at-a-glance status** of each epic: how far through the build pipeline, what's still outstanding, what's broken right now.
 
@@ -24,12 +24,12 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 |---|---|---|---:|---:|---:|
 | 1 | The Front Door | `●●●●●` | 100% | 0 | 3 |
 | 2 | The Intake | `●●●●○` | 100% | 0 | 0 |
-| 3 | The Number | `●●●○○` | 85% | 0 | 1 |
+| 3 | The Number | `●●●○○` | 90% | 0 | 1 |
 | 4 | The Protocol | `●●●○○` | 85% | 0 | 0 |
-| 5 | The Report | `●●●○○` | 85% | 0 | 1 |
+| 5 | The Report | `●●●○○` | 92% | 0 | 1 |
 | 6 | The Coach | `●●●●○` | 100% | 0 | 1 |
 | 7 | The Daily Return | `●●●○○` | 96% | 0 | 0 |
-| 8 | The Living Record | `●●●○○` | 85% | 0 | 0 |
+| 8 | The Living Record | `●●●○○` | 88% | 0 | 0 |
 | 9 | The Care Team | `●●●◐○` | 75% | 0 | 0 |
 | 10 | The Knowledge Engine | `●●◐○○` | 70% | 0 | 1 |
 | 11 | The Trust Layer | `●●●○○` | 96% | 0 | 1 |
@@ -99,20 +99,20 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 3: The Number
 
 `●●●○○` Planned · Feature Complete · Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 85%** — risk_analyzer pipeline ships risk narratives end-to-end. Deterministic risk engine ported from Base44 and unit tested; engine output now feeds risk_analyzer for higher-confidence narratives. BUG-003 closed. GP-panel review still outstanding.
+**Estimate: 90%** — risk_analyzer pipeline ships risk narratives end-to-end. Deterministic risk engine ported from Base44 and unit tested; **engine output now injected into Atlas prompt as baseline anchors** (2026-04-29) — Atlas must explain deviations >10 points. BUG-003 closed. GP-panel review still outstanding.
 
 **Shipped:**
 - risk_analyzer pipeline at `lib/ai/pipelines/risk-narrative.ts`.
 - Pipeline endpoint at `app/api/pipelines/risk-narrative/route.ts` (secured with `x-pipeline-secret`).
 - Pipeline triggered by `submitAssessment()`, by every successful upload, and now by every daily check-in.
 - `risk_scores` table extended with `narrative`, `engine_output`, `data_gaps` columns (migration `0014_agent_tables.sql`).
-- Idempotent upsert keyed on `(user_uuid, computed_at_date)`.
+- Idempotent upsert keyed on `(user_uuid, assessment_date)`.
 - **Deterministic risk engine ported** from Base44 to `lib/risk/` (migration `0034_risk_scores_unique_and_array_fixes.sql`) — five scoring domains (CV, metabolic, brain, cancer, MSK), biological age estimator, confidence levels based on data completeness, modifiable-risk-factor ranking, 6-month projected improvement.
 - Unit tests: `tests/unit/risk/scorer.test.ts`, `tests/unit/risk/_gp-panel-pack.test.ts`, `tests/unit/risk/assemble.test.ts` (snapshot coverage).
 - **Check-in → risk_analyzer trigger** (2026-04-28) — daily check-in submission fires a background risk_analyzer pipeline refresh, completing the data loop: questionnaire → check-in → risk_analyzer → dashboard.
+- **Engine-grounded narratives** (2026-04-29) — `runRiskNarrativePipeline` now calls `assemblePatientFromDB()` + `scoreRisk()` and injects the deterministic engine output (domain scores, biological age, top modifiable risks, confidence, data completeness) into Atlas's prompt as an `## Engine baseline scores` section. Atlas is instructed to use these as anchors and explain any deviation >10 points. Non-fatal: if engine scoring fails, Atlas proceeds without baseline (logs a warning). Risk score history enabled via migration `0059_risk_scores_history.sql` — unique constraint changed from `(user_uuid)` to `(user_uuid, assessment_date)` so each assessment date preserves a separate row.
 
 **Outstanding:**
-- risk_analyzer narrative quality: currently reads raw `engine_output`; narrative tone and domain weighting still tuned via risk_analyzer prompt, not the engine.
 - GP-panel review of 10 sample narratives.
 - Per-domain regression tests in CI (currently unit only).
 
@@ -151,7 +151,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 5: The Report
 
 `●●●○○` Planned · Feature Complete · Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 85%** — `/report` page + branded PDF + regenerate-on-demand button all shipped. PDF includes logo, cover page, big-number summary, domain-coloured swatches, supplement table with tier colours and overflow handling, footer disclaimer.
+**Estimate: 92%** — `/report` page + branded PDF + regenerate-on-demand button + **progress diff section** all shipped. PDF includes logo, cover page, big-number summary, domain-coloured swatches, supplement table with tier colours and overflow handling, footer disclaimer.
 
 **Shipped:**
 - `/report` page (`app/(app)/report/page.tsx`) showing risk narrative, domain scores, supplement protocol, Janet chat panel.
@@ -161,9 +161,9 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - **Branded PDF** at `lib/pdf/report-doc.tsx` (442 lines) — logo header, cover page, big-number summary, domain colour swatches, supplement table with tier colours (max 12 visible + overflow count), AHPRA-compliant footer disclaimer.
 - **Regenerate report button** (2026-04-29) — `RegenerateButton` client component + `regenerateReport` server action. Triggers `runRiskNarrativePipeline()` then `runSupplementProtocolPipeline()` sequentially (risk first, supplement reads risk scores). `useActionState` with disabled/"Generating…" pending state. Appears in both existing-scores hero and pending-state view. `revalidatePath('/report')` refreshes on completion.
 - **Last-updated timestamp** (2026-04-29) — prominent in bio-age hero, derived from latest of `risk_scores.assessment_date` and `supplement_plans.created_at`.
+- **Progress diff section** (2026-04-29) — report page fetches `risk_scores ORDER BY assessment_date DESC LIMIT 2`; `generateProgressNarrative()` at `lib/insights/progress-narrative.ts` computes trend (improving/stable/declining/insufficient), headline, and per-domain bullets showing point changes. Rendered as a "Your progress" card with trend icon (↗/→/↘) and bullet list. First-assessment fallback message. Enabled by migration `0059_risk_scores_history.sql` which changed `risk_scores` unique constraint from `(user_uuid)` to `(user_uuid, assessment_date)`, allowing multiple historical rows.
 
 **Outstanding:**
-- "What changed since last report" diff when run twice.
 - Visual regression coverage (Chromatic) on `/report` and the PDF.
 - Unit-test coverage on the PDF render path.
 
@@ -244,7 +244,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 8: The Living Record
 
 `●●●○○` Planned · Feature Complete (member labs surface) · Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 85%** — five member-visible surfaces shipped: `/labs` (Lab Results UI), `/trends` (Daily-log trends), the alerts surface (`member_alerts` + dashboard chip + repeat-test cron + upload-flow lab-alert hook), the **Janet → `lab_results` structured writer**, and **`/simulator`** (real-time risk simulator with LDL/HbA1c/hsCRP/**Systolic BP**/Weight sliders running the deterministic risk engine in-browser via `useDeferredValue`, side-by-side baseline-vs-simulated display, empty-state CTA). Lab-alert path is now live — fires the moment any Janet-extracted biomarker is `low`/`high`/`critical`. SBP slider added 2026-04-29 with AHA-aligned numeric scoring bands.
+**Estimate: 88%** — five member-visible surfaces shipped: `/labs` (Lab Results UI), `/trends` (Daily-log trends), the alerts surface (`member_alerts` + dashboard chip + repeat-test cron + upload-flow lab-alert hook), the **Janet → `lab_results` structured writer**, and **`/simulator`** (real-time risk simulator with LDL/HbA1c/hsCRP/**Systolic BP**/Weight sliders running the deterministic risk engine in-browser via `useDeferredValue`, side-by-side baseline-vs-simulated display, empty-state CTA). Lab-alert path is now live — fires the moment any Janet-extracted biomarker is `low`/`high`/`critical`. SBP slider added 2026-04-29 with AHA-aligned numeric scoring bands. **Simulator added to top nav** (2026-04-29).
 
 **Shipped:**
 - `biomarkers` schema with `lab_results`, `wearable_summaries`, `daily_logs` tables (migrations `0009`, `0010`).
@@ -253,11 +253,11 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - **`/labs/[biomarker]` detail page** (2026-04-28) — Recharts time-series with reference-range band, header card, full history table; `notFound()` on zero-row biomarker; Next 16 async params.
 - **Pure helpers** at `lib/labs/` (`groupByBiomarker`, `formatRange`, `statusTone`, `categoryLabel`, `toChartData`) sourced off generated DB types — schema drift forces a compile error. 23 unit tests.
 - **Dashboard tile** replaced "Coming soon · Lab Results" with live `<QuickTile>` showing biomarker count + latest test date.
+- **Top-nav entries** (2026-04-29) — `/labs` and `/simulator` added to the app layout nav bar, visible to all signed-in members.
 - **`/trends` page** (2026-04-28) — 30-day sparklines for Sleep, Energy, Mood, Steps, Water from `biomarkers.daily_logs`. Empty-state CTA pointing to `/check-in`. `lib/trends/` pure helpers (`buildTrendSeries`, `summariseTrend`, `ML_PER_GLASS`) sourced off generated DB types. 10 unit tests. Dashboard quick-link tile.
 - **Member alerts surface** (2026-04-28) — `public.member_alerts` table (migration 0031, append-mostly, RLS owner-select + owner-update, service-role-only insert, unique partial index for idempotent re-runs). `lib/alerts/` pure evaluators (`evaluateLabAlerts`, `evaluateRepeatTests` with whole-token matching against a `SCREENING_KEYWORDS` map, `chipPayload`). Daily cron `/api/cron/repeat-tests` (Bearer-secret gated). Upload-flow lab-alert hook (defensive — no-op until Janet → `lab_results` writer lands). Dashboard hero chip with three severity tones (info/attention/urgent), `View →` link, dismiss server action. 20 unit tests.
 
 **Outstanding:**
-- B6 — risk simulator ("if I lower my LDL to X, my CV risk drops to Y").
 - `vercel.json` cron registration for `/api/cron/repeat-tests` (operator step).
 - Snooze / dismiss-suppression mechanism on alerts.
 - Auto-resolve when next reading is back in range.
@@ -266,7 +266,6 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - Wearable OAuth integrations (Oura, Apple Watch, Garmin).
 - Manual metric entry UI.
 - Source-upload back-link from each lab row to its `patient_uploads` document.
-- Top-nav entry for `/labs` (currently dashboard quick-link only).
 
 **Open bugs:** none.
 **Closed bugs:** 0.
@@ -368,10 +367,14 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
   - Wave 3 (#50): UX surfaces — fourth onboarding consent toggle wires `data_no_training`; new `/legal/data-handling` static page with named-processors table (Anthropic, Resend, Stripe, Supabase, Vercel); `/account` "How we use your data" card showing acceptance state per current policy version; hardened delete-account button with type-`DELETE` text input replacing the Wave 2 placeholder. Footer link added site-wide on public pages.
 - **Erasure flow smoke test** (2026-04-29) — full end-to-end walkthrough with a disposable test user created via Supabase admin API: signup → onboarding → type-DELETE confirmation → account deleted → `erasure_log` row confirmed → `auth.users` hard-delete verified → audit row survives (FK `ON DELETE SET NULL`). `/legal/data-handling` page verified (4 sections, named-processors table, no console errors). Footer "Data handling" link confirmed on `/` and `/pricing`.
 
+**Pause / freeze account flow — shipped 2026-04-30 (verified).** `app/(app)/account/pause-actions.ts` exposes `pauseAccount` / `unpauseAccount` server actions; `/account` renders the toggle button + paused banner; `lib/supabase/proxy.ts:102` redirects paused users away from `/dashboard`, `/report`, `/check-in` to `/account?paused=true`. Fail-open on DB error to avoid permanent lockout. Copy refinement still pending real-user feedback.
+
 **Outstanding:**
-- Pause / freeze account flow (refinement — basic pause already shipped).
+- Pause / freeze copy refinement (warm tone, "we'll keep your data" reassurance).
 - Deceased-flag flow with warm copy path (not a checkbox).
 - Quarterly trust audit cadence (logs scrub, signed-URL TTL check, deceased-flow walk-through).
+- DR drill — runbook drafted at [docs/operations/dr-drill.md](../operations/dr-drill.md); first drill scheduled for 2026-07-31.
+- Sentry — code wired, runbook at [docs/operations/sentry-setup.md](../operations/sentry-setup.md); `NEXT_PUBLIC_SENTRY_DSN` still needs to be set in Vercel before error monitoring goes live.
 
 **Open bugs:** none.
 
@@ -467,7 +470,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - PII boundary enforced at write time (`lib/profiles/pii-split.ts`).
 - Service-role admin client confined to webhook routes, pipeline workers, PDF generation.
 - Pipeline routes secured with `x-pipeline-secret` header.
-- 57 numbered idempotent migrations (0001–0057, monotonic) with `IF NOT EXISTS` / `ON CONFLICT DO NOTHING`.
+- 59 numbered idempotent migrations (0001–0059, monotonic) with `IF NOT EXISTS` / `ON CONFLICT DO NOTHING`.
 - Engineering rules canonical in `.claude/rules/` (data-management, security, nextjs-conventions, database, ai-agents).
 - `.env` files git-ignored; never committed.
 - TypeScript schema types regenerated after every migration (`lib/supabase/database.types.ts`).

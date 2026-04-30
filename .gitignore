@@ -30,10 +30,11 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files — never commit any .env file. Real values live only in
-# .env.local (which is gitignored). Document required vars in the README
-# or in code, not in a tracked example file.
+# env files — never commit a real .env file. Real values live only in
+# .env.local (which is gitignored). The shape of required vars is tracked
+# in .env.example (no real secrets).
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -46,5 +47,9 @@ supabase/.branches/
 *.tsbuildinfo
 next-env.d.ts
 .worktrees/
+.claude/worktrees/
+
+# sentry
+.sentryclirc
 
 tests/fixtures/uploads/*

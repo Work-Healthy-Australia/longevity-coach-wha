@@ -1,0 +1,55 @@
+/* Shared org navigation */
+.org-nav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  max-width: 900px;
+  margin: 0 auto 24px;
+  padding: 24px 24px 16px;
+  border-bottom: 1px solid #E3E8EC;
+}
+
+.org-nav-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1F3A4D;
+  margin-right: auto;
+}
+
+.org-nav-links {
+  display: flex;
+  gap: 4px;
+}
+
+.org-nav-link {
+  font-size: 13px;
+  font-weight: 500;
+  color: #8A9AA5;
+  text-decoration: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  transition: color 0.15s, background 0.15s;
+}
+
+.org-nav-link:hover {
+  color: #2B2B2B;
+  background: #F0F4F7;
+}
+
+.org-nav-link--active {
+  color: #2F6F8F;
+  background: #EDF5F9;
+  font-weight: 600;
+}
+
+@media (max-width: 480px) {
+  .org-nav {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 16px 16px 12px;
+  }
+
+  .org-nav-name {
+    width: 100%;
+  }
+}
