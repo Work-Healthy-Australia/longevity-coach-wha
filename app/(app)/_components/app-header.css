@@ -71,27 +71,6 @@
   border-radius: 1px;
 }
 
-.app-nav-signout-form {
-  display: inline-flex;
-  margin-left: 12px;
-}
-
-.app-nav-signout {
-  font: inherit;
-  font-size: 14px;
-  padding: 8px 12px;
-  background: transparent;
-  color: var(--lc-ink-soft);
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: color 0.15s ease, background 0.15s ease;
-}
-
-.app-nav-signout:hover {
-  color: var(--lc-primary);
-  background: var(--lc-line-soft);
-}
 
 @media (max-width: 768px) {
   .desktop-nav {

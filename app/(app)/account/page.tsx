@@ -6,6 +6,7 @@ import { CareTeamSection, type AssignedClinician } from "./_components/care-team
 import { DeleteAccountButton } from "./_components/delete-account-button";
 import { IdentityCard } from "./_components/identity-card";
 import { NotificationPrefs } from "./_components/NotificationPrefs";
+import { SecurityCard } from "./_components/security-card";
 import { pauseAccount, unpauseAccount } from "./pause-actions";
 import "./account.css";
 
@@ -125,6 +126,8 @@ export default async function AccountPage({
       )}
 
       <IdentityCard initial={identityInitial} />
+
+      <SecurityCard currentEmail={identityInitial.email} />
 
       <section className="lc-account-card">
         <h2>How we use your data</h2>
