@@ -1,27 +1,15 @@
-import { z } from 'zod';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { createPipelineAgent } from '@/lib/ai/agent-factory';
 import { assemblePatientFromDB } from '@/lib/risk/assemble';
 import { scoreRisk } from '@/lib/risk/scorer';
 import type { EngineOutput } from '@/lib/risk/types';
+import {
+  RiskNarrativeOutputSchema,
+  clampAtlasOutput,
+  type RiskNarrativeRaw,
+} from './risk-narrative-schema';
 
-const RiskNarrativeOutputSchema = z.object({
-  biological_age: z.number().min(18).max(120),
-  cv_risk: z.number().min(0).max(100),
-  metabolic_risk: z.number().min(0).max(100),
-  neuro_risk: z.number().min(0).max(100),
-  onco_risk: z.number().min(0).max(100),
-  msk_risk: z.number().min(0).max(100),
-  longevity_score: z.number().min(0).max(100),
-  narrative: z.string().min(50).max(800),
-  top_risk_drivers: z.array(z.string()),
-  top_protective_levers: z.array(z.string()),
-  recommended_screenings: z.array(z.string()),
-  confidence_level: z.enum(['low', 'moderate', 'high', 'insufficient']),
-  data_gaps: z.array(z.string()),
-});
-
-type RiskNarrativeOutput = z.infer<typeof RiskNarrativeOutputSchema>;
+export { RiskNarrativeOutputSchema };
 
 type DailyLog = {
   mood: number | null;
@@ -86,7 +74,7 @@ function formatEngineBaseline(engine: EngineOutput): string {
   ].join('\n');
 }
 
-function buildPrompt(params: {
+export function buildAtlasPrompt(params: {
   ageYears: number | null;
   responses: Record<string, unknown>;
   uploadSummaries: string[];
@@ -219,10 +207,11 @@ async function _run(userId: string): Promise<void> {
 
   const agent = createPipelineAgent('risk_analyzer');
 
-  const output: RiskNarrativeOutput = await agent.run(
+  const rawOutput: RiskNarrativeRaw = await agent.run(
     RiskNarrativeOutputSchema,
-    buildPrompt({ ageYears, responses, uploadSummaries, standardsContext, dailyTrends, engineBaseline }),
+    buildAtlasPrompt({ ageYears, responses, uploadSummaries, standardsContext, dailyTrends, engineBaseline }),
   );
+  const output = clampAtlasOutput(rawOutput);
 
   const now = new Date().toISOString();
   const { error } = await admin.from('risk_scores').upsert(

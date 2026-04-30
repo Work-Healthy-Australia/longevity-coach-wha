@@ -74,19 +74,19 @@ test.describe("Onboarding flow", () => {
     }
 
     // Click Next
-    await page.getByRole("button", { name: /next/i }).click();
+    await page.getByRole("button", { name: /continue/i }).click();
 
     // --- Step 2: Medical history ---
     await expect(page.locator("h2")).toContainText("Medical history");
 
     // Medical step fields are all optional — just proceed
-    await page.getByRole("button", { name: /next/i }).click();
+    await page.getByRole("button", { name: /continue/i }).click();
 
     // --- Step 3: Family history ---
     await expect(page.locator("h2")).toContainText("Family history");
 
     // Family history is optional — proceed
-    await page.getByRole("button", { name: /next/i }).click();
+    await page.getByRole("button", { name: /continue/i }).click();
 
     // --- Step 4: Lifestyle ---
     await expect(page.locator("h2")).toContainText("Lifestyle");
@@ -109,19 +109,37 @@ test.describe("Onboarding flow", () => {
       }
     }
 
-    await page.getByRole("button", { name: /next/i }).click();
+    await page.getByRole("button", { name: /continue/i }).click();
 
     // --- Step 5: Goals ---
     await expect(page.locator("h2")).toContainText("goals", { ignoreCase: true });
 
-    // Goals has a multiselect chips field — click at least one chip
-    const chips = page.locator(".chip, .chips button, [role='option'], .chip-option");
+    // Goals is a chips multiselect with a maxSelect cap — disabled chips
+    // appear when the user has already hit the limit (e.g. on re-edit). We
+    // need at least one selected to satisfy any required-field check, so
+    // pick the first chip that is BOTH visible and currently enabled. If
+    // every chip is disabled, the user is already at the limit, which means
+    // selections are already present — proceed without adding more.
+    const chips = page.locator(".chip");
     const chipCount = await chips.count();
-    if (chipCount > 0) {
-      await chips.first().click();
+    let clicked = false;
+    for (let i = 0; i < chipCount; i++) {
+      const chip = chips.nth(i);
+      const disabled = await chip.isDisabled();
+      if (!disabled) {
+        await chip.click();
+        clicked = true;
+        break;
+      }
+    }
+    // If none are clickable, verify at least one is already selected so the
+    // step still satisfies its requirement.
+    if (!clicked) {
+      const selectedChips = page.locator(".chip.selected");
+      await expect(selectedChips.first()).toBeVisible();
     }
 
-    await page.getByRole("button", { name: /next/i }).click();
+    await page.getByRole("button", { name: /continue/i }).click();
 
     // --- Step 6: Consent ---
     await expect(page.locator("h2")).toContainText("Consent", { ignoreCase: true });
@@ -139,8 +157,11 @@ test.describe("Onboarding flow", () => {
       }
     }
 
-    // Submit
-    const submitBtn = page.getByRole("button", { name: /submit/i });
+    // Submit. Button text is "Submit assessment" on first completion, or
+    // "Save updated responses" when re-editing a previously completed profile.
+    const submitBtn = page.getByRole("button", {
+      name: /submit assessment|save updated responses/i,
+    });
     await expect(submitBtn).toBeVisible();
     await submitBtn.click();
 
@@ -149,40 +170,43 @@ test.describe("Onboarding flow", () => {
       timeout: 30_000,
     });
 
-    await expect(page).toHaveURL(/\/dashboard$/);
+    await expect(page).toHaveURL(/\/dashboard(\?|$)/);
   });
 
-  test("save-and-resume preserves draft data", async ({ page }) => {
+  test("save-and-resume persists across full page reload", async ({ page }) => {
     await signIn(page);
     await page.goto("/onboarding");
     await page.waitForSelector(".lc-onboarding", { timeout: 10_000 });
 
     // Fill DOB on basics step
     const dobInput = page.locator('input[type="date"]');
-    if (await dobInput.isVisible()) {
-      await dobInput.fill("1990-03-20");
-    }
+    await expect(dobInput).toBeVisible();
+    await dobInput.fill("1990-03-20");
 
-    // Navigate to step 2 and back — data should persist
+    // Pick a non-placeholder sex option
     const sexSelect = page.locator("select").first();
-    if (await sexSelect.isVisible()) {
-      const options = await sexSelect.locator("option").allTextContents();
-      const validOption = options.find(
-        (o) => o && !o.toLowerCase().includes("select") && !o.toLowerCase().includes("choose"),
-      );
-      if (validOption) await sexSelect.selectOption({ label: validOption });
-    }
+    await expect(sexSelect).toBeVisible();
+    const options = await sexSelect.locator("option").allTextContents();
+    const validOption = options.find(
+      (o) => o && !o.toLowerCase().includes("select") && !o.toLowerCase().includes("choose"),
+    );
+    if (validOption) await sexSelect.selectOption({ label: validOption });
 
-    await page.getByRole("button", { name: /next/i }).click();
+    // Click Continue to advance to step 2 — this triggers saveDraft which
+    // must round-trip to health_profiles.responses.
+    await page.getByRole("button", { name: /continue/i }).click();
     await expect(page.locator("h2")).toContainText("Medical history");
 
-    // Go back
-    await page.getByRole("button", { name: /back/i }).click();
-    await expect(page.locator("h2")).toContainText("About you");
+    // FULL PAGE RELOAD — drops React state. The only way the form can
+    // re-populate is by hydrating from the saved draft on the server.
+    await page.reload();
+    await page.waitForSelector(".lc-onboarding", { timeout: 10_000 });
 
-    // Verify DOB is still filled
-    if (await dobInput.isVisible()) {
-      await expect(dobInput).toHaveValue("1990-03-20");
-    }
+    // After reload we land back on step 1 (the form starts at stepIdx=0).
+    // Required-field values must come back from the saved draft, proving the
+    // Continue press wrote to the database — not just to React state.
+    await expect(page.locator("h2")).toContainText("About you");
+    const dobAfterReload = page.locator('input[type="date"]');
+    await expect(dobAfterReload).toHaveValue("1990-03-20");
   });
 });
