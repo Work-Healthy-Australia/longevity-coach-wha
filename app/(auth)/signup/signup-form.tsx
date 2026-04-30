@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { signUp } from "../actions";
+import { PasswordInput } from "../_components/password-input";
 
 export function SignupForm() {
   const [state, action, pending] = useActionState(signUp, {});
@@ -31,8 +32,7 @@ export function SignupForm() {
       </label>
       <label>
         Password
-        <input
-          type="password"
+        <PasswordInput
           name="password"
           autoComplete="new-password"
           minLength={8}

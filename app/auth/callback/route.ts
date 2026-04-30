@@ -63,5 +63,14 @@ export async function GET(request: NextRequest) {
     }
   }
 
+  // After signup email confirmation, route through a thank-you page rather
+  // than dropping the user straight onto the dashboard — softer landing,
+  // clearer signal that the click worked.
+  if (type === "signup") {
+    const confirmedUrl = new URL("/email-confirmed", url);
+    confirmedUrl.searchParams.set("next", next);
+    return NextResponse.redirect(confirmedUrl);
+  }
+
   return NextResponse.redirect(new URL(next, url));
 }

@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { updatePassword } from "../actions";
+import { PasswordInput } from "../_components/password-input";
 
 export function ResetPasswordForm() {
   const [state, action, pending] = useActionState(updatePassword, {});
@@ -11,8 +12,7 @@ export function ResetPasswordForm() {
       {state.error && <div className="auth-error">{state.error}</div>}
       <label>
         New password
-        <input
-          type="password"
+        <PasswordInput
           name="password"
           autoComplete="new-password"
           minLength={8}

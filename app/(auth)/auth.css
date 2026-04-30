@@ -84,6 +84,36 @@
   box-shadow: 0 0 0 3px var(--lc-primary-50);
 }
 
+.lc-auth .auth-password-wrap {
+  position: relative;
+  display: flex;
+}
+.lc-auth .auth-password-wrap input {
+  flex: 1;
+  width: 100%;
+  padding-right: 40px;
+}
+.lc-auth .auth-password-toggle {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 6px;
+  cursor: pointer;
+  color: var(--lc-grey);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+.lc-auth .auth-password-toggle:hover { color: var(--lc-ink-soft); }
+.lc-auth .auth-password-toggle:focus-visible {
+  outline: 2px solid var(--lc-primary);
+  outline-offset: 1px;
+}
+
 .lc-auth button[type="submit"] {
   font: inherit;
   font-weight: 600;
@@ -97,6 +127,19 @@
 }
 .lc-auth button[type="submit"]:hover { background: var(--lc-primary-700); }
 .lc-auth button[type="submit"]:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.lc-auth .auth-cta {
+  display: inline-block;
+  font: inherit;
+  font-weight: 600;
+  padding: 11px 24px;
+  background: var(--lc-primary);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: background 0.15s;
+}
+.lc-auth .auth-cta:hover { background: var(--lc-primary-700); }
 
 .lc-auth .auth-error {
   background: var(--lc-danger-50);

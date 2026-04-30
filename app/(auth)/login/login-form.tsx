@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { useSearchParams } from "next/navigation";
 import { signIn } from "../actions";
+import { PasswordInput } from "../_components/password-input";
 
 export function LoginForm() {
   const params = useSearchParams();
@@ -29,7 +30,7 @@ export function LoginForm() {
       </label>
       <label>
         Password
-        <input type="password" name="password" autoComplete="current-password" required />
+        <PasswordInput name="password" autoComplete="current-password" required />
       </label>
       <a href="/forgot-password" className="auth-forgot">Forgot password?</a>
       <button type="submit" disabled={pending}>
