@@ -203,6 +203,30 @@
   color: #fff;
 }
 
+.lc-account-button-danger {
+  align-self: flex-start;
+  display: inline-block;
+  padding: 10px 18px;
+  background: var(--lc-danger);
+  color: #fff;
+  border: 1px solid var(--lc-danger);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.lc-account-button-danger:hover:not(:disabled) {
+  background: #993923;
+}
+
+.lc-account-button-danger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .lc-paused-banner {
   background: var(--lc-warning-50);
   border: 1px solid #f9c74f;
