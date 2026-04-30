@@ -1014,43 +1014,88 @@ export type Database = {
       }
       appointments: {
         Row: {
+          accepted_at: string | null
           appointment_type: string
+          clinician_notes: string | null
           clinician_uuid: string | null
           conversation_ref: string | null
           created_at: string
           duration_minutes: number
           id: string
           notes: string | null
+          patient_notes: string | null
           patient_uuid: string
+          requested_at: string | null
           scheduled_at: string
           status: string
           updated_at: string
+          video_link: string | null
         }
         Insert: {
+          accepted_at?: string | null
           appointment_type: string
+          clinician_notes?: string | null
           clinician_uuid?: string | null
           conversation_ref?: string | null
           created_at?: string
           duration_minutes?: number
           id?: string
           notes?: string | null
+          patient_notes?: string | null
           patient_uuid: string
+          requested_at?: string | null
           scheduled_at: string
           status?: string
           updated_at?: string
+          video_link?: string | null
         }
         Update: {
+          accepted_at?: string | null
           appointment_type?: string
+          clinician_notes?: string | null
           clinician_uuid?: string | null
           conversation_ref?: string | null
           created_at?: string
           duration_minutes?: number
           id?: string
           notes?: string | null
+          patient_notes?: string | null
           patient_uuid?: string
+          requested_at?: string | null
           scheduled_at?: string
           status?: string
           updated_at?: string
+          video_link?: string | null
+        }
+        Relationships: []
+      }
+      clinician_availability: {
+        Row: {
+          clinician_uuid: string
+          created_at: string
+          day_of_week: number
+          end_time: string
+          id: string
+          is_active: boolean
+          start_time: string
+        }
+        Insert: {
+          clinician_uuid: string
+          created_at?: string
+          day_of_week: number
+          end_time: string
+          id?: string
+          is_active?: boolean
+          start_time: string
+        }
+        Update: {
+          clinician_uuid?: string
+          created_at?: string
+          day_of_week?: number
+          end_time?: string
+          id?: string
+          is_active?: boolean
+          start_time?: string
         }
         Relationships: []
       }

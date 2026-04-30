@@ -1,0 +1,368 @@
+.lc-care {
+  --lc-primary: #2F6F8F;
+  --lc-sage: #6B8E83;
+  --lc-canvas: #FAFAF7;
+  --lc-surface: #FFFFFF;
+  --lc-line: #E3E8EC;
+  --lc-text: #1A2E3B;
+  --lc-muted: #6B7280;
+
+  color: var(--lc-text);
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.lc-care h1 {
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--lc-primary);
+}
+
+/* Section heading */
+.lc-care__section-heading {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--lc-text);
+  margin: 0 0 16px 0;
+}
+
+/* Empty state */
+.lc-care__empty {
+  color: var(--lc-muted);
+  font-size: 15px;
+  padding: 32px 0;
+}
+
+/* Clinician card */
+.lc-care__clinician-card {
+  background: var(--lc-surface);
+  border: 1px solid var(--lc-line);
+  border-radius: 14px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.lc-care__clinician-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.lc-care__avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--lc-primary);
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  letter-spacing: 0.02em;
+}
+
+.lc-care__clinician-name {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--lc-text);
+  margin: 0;
+}
+
+.lc-care__clinician-duration {
+  font-size: 13px;
+  color: var(--lc-muted);
+  margin: 2px 0 0 0;
+}
+
+.lc-care__specialties {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.lc-care__specialty-tag {
+  background: color-mix(in srgb, var(--lc-sage) 15%, transparent);
+  color: var(--lc-sage);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid color-mix(in srgb, var(--lc-sage) 30%, transparent);
+}
+
+.lc-care__bio {
+  font-size: 14px;
+  color: var(--lc-muted);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.lc-care__unavailable {
+  background: #FFF8ED;
+  border: 1px solid #F5C57A;
+  border-radius: 10px;
+  padding: 14px 18px;
+  font-size: 14px;
+  color: #7A5200;
+}
+
+/* -------- Calendar -------- */
+
+.lc-care__calendar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.lc-care__week-nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.lc-care__week-nav button {
+  background: none;
+  border: 1px solid var(--lc-line);
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--lc-primary);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.lc-care__week-nav button:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--lc-primary) 8%, transparent);
+  border-color: var(--lc-primary);
+}
+
+.lc-care__week-nav button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.lc-care__week-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--lc-text);
+  flex: 1;
+  text-align: center;
+}
+
+.lc-care__days {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.lc-care__day-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 120px;
+}
+
+.lc-care__day-heading {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--lc-muted);
+  margin: 0 0 4px 0;
+}
+
+.lc-care__slot-pill {
+  background: none;
+  border: 1px solid var(--lc-primary);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--lc-primary);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.lc-care__slot-pill:hover:not(:disabled) {
+  background: var(--lc-primary);
+  color: #ffffff;
+}
+
+.lc-care__slot-pill:disabled,
+.lc-care__slot-pill--booked {
+  border-color: var(--lc-line);
+  color: var(--lc-muted);
+  cursor: not-allowed;
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+.lc-care__slot-pill--selected {
+  background: var(--lc-primary);
+  color: #ffffff;
+}
+
+.lc-care__no-slots {
+  color: var(--lc-muted);
+  font-size: 14px;
+  padding: 12px 0;
+}
+
+/* Booking panel */
+.lc-care__booking-panel {
+  background: var(--lc-canvas);
+  border: 1px solid var(--lc-line);
+  border-radius: 14px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 8px;
+}
+
+.lc-care__booking-panel-slot {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--lc-text);
+}
+
+.lc-care__booking-panel label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--lc-text);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lc-care__booking-panel textarea {
+  resize: vertical;
+  min-height: 80px;
+  border: 1px solid var(--lc-line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: var(--lc-text);
+  font-family: inherit;
+  background: var(--lc-surface);
+  width: 100%;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.lc-care__booking-panel textarea:focus {
+  border-color: var(--lc-primary);
+}
+
+.lc-care__booking-panel-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.lc-care__submit-btn {
+  background: var(--lc-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.lc-care__submit-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.lc-care__cancel-link {
+  font-size: 13px;
+  color: var(--lc-muted);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.lc-care__booking-error {
+  font-size: 13px;
+  color: #C0392B;
+  padding: 8px 12px;
+  background: #FEECEC;
+  border-radius: 6px;
+}
+
+/* Confirm card */
+.lc-care__confirm-card {
+  background: #EDF7F2;
+  border: 1px solid #86D3B0;
+  border-radius: 12px;
+  padding: 18px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1A6040;
+}
+
+/* Upcoming sessions */
+.lc-care__upcoming {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lc-care__upcoming-item {
+  background: var(--lc-surface);
+  border: 1px solid var(--lc-line);
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.lc-care__upcoming-date {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--lc-text);
+}
+
+.lc-care__upcoming-duration {
+  font-size: 13px;
+  color: var(--lc-muted);
+}
+
+.lc-care__status-badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 12px;
+  text-transform: capitalize;
+}
+
+.lc-care__status-badge--pending {
+  background: #FFF3CD;
+  color: #856404;
+}
+
+.lc-care__status-badge--confirmed {
+  background: #D1F2EA;
+  color: #0A4C30;
+}
