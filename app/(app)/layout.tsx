@@ -1,11 +1,9 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
-import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { signOut } from "../(auth)/actions";
 import { SupportFAB } from "./_components/support-fab";
-import { MobileNav } from "./_components/mobile-nav";
+import { AppHeader } from "./_components/app-header";
 
 export default async function AppLayout({
   children,
@@ -22,15 +20,17 @@ export default async function AppLayout({
   const admin = createAdminClient();
   const { data: profile } = await admin
     .from("profiles")
-    .select("is_admin")
+    .select("is_admin, full_name")
     .eq("id", user.id)
     .single();
 
   const isAdmin = profile?.is_admin ?? false;
+  const userName = (profile?.full_name as string | null | undefined) ?? null;
+  const userEmail = user.email ?? null;
 
   const navItems = [
-    { href: "/dashboard", label: "Dashboard" },
-    { href: "/report", label: "My Report" },
+    { href: "/dashboard", label: "Today" },
+    { href: "/report", label: "Report" },
     { href: "/labs", label: "Labs" },
     { href: "/simulator", label: "Simulator" },
     { href: "/uploads", label: "Documents" },
@@ -39,63 +39,13 @@ export default async function AppLayout({
   ];
 
   return (
-    <div style={{ minHeight: "100dvh", background: "#F4F7F9" }}>
-      <header
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "16px 24px",
-          background: "#fff",
-          borderBottom: "1px solid #E3E8EC",
-        }}
-      >
-        <Link href="/dashboard" style={{ display: "flex", alignItems: "center" }}>
-          <Image
-            src="/janet-cares-logo.png"
-            alt="Janet Cares"
-            width={880}
-            height={203}
-            priority
-            style={{ height: 40, width: "auto" }}
-          />
-        </Link>
-        <nav className="desktop-nav" style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          {navItems.map(({ href, label }) => (
-            <Link
-              key={href}
-              href={href}
-              style={{
-                fontSize: 14,
-                fontWeight: 500,
-                color: "#2F6F8F",
-                textDecoration: "none",
-                padding: "6px 12px",
-                borderRadius: 6,
-              }}
-            >
-              {label}
-            </Link>
-          ))}
-          <form action={signOut}>
-            <button
-              type="submit"
-              style={{
-                font: "inherit",
-                padding: "8px 14px",
-                background: "transparent",
-                color: "#2F6F8F",
-                border: "1px solid #DDE8EE",
-                borderRadius: 8,
-                cursor: "pointer",
-              }}
-            >
-              Sign out
-            </button>
-          </form>
-        </nav>
-        <MobileNav items={navItems} signOutAction={signOut} />
-      </header>
+    <div style={{ minHeight: "100dvh", background: "var(--lc-bg)" }}>
+      <AppHeader
+        navItems={navItems}
+        signOutAction={signOut}
+        userName={userName}
+        userEmail={userEmail}
+      />
       <main style={{ maxWidth: 960, margin: "0 auto", padding: "32px 24px" }}>
         {children}
       </main>

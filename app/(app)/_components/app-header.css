@@ -1,0 +1,94 @@
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  background: var(--lc-surface);
+  border-bottom: 1px solid var(--lc-line);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.app-header--scrolled {
+  border-bottom-color: transparent;
+  box-shadow: 0 1px 12px rgba(0, 0, 0, 0.06);
+}
+
+.app-header-brand {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.app-header-logo {
+  height: 36px;
+  width: auto;
+}
+
+.desktop-nav {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.app-nav-link {
+  position: relative;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--lc-ink-soft);
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.app-nav-link:hover {
+  color: var(--lc-primary);
+  background: var(--lc-line-soft);
+}
+
+.app-nav-link.active {
+  color: var(--lc-primary);
+  font-weight: 600;
+}
+
+.app-nav-link.active::after {
+  content: "";
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 2px;
+  height: 2px;
+  background: var(--lc-primary);
+  border-radius: 1px;
+}
+
+.app-nav-signout-form {
+  display: inline-flex;
+  margin-left: 12px;
+}
+
+.app-nav-signout {
+  font: inherit;
+  font-size: 14px;
+  padding: 8px 12px;
+  background: transparent;
+  color: var(--lc-ink-soft);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.app-nav-signout:hover {
+  color: var(--lc-primary);
+  background: var(--lc-line-soft);
+}
+
+@media (max-width: 768px) {
+  .desktop-nav {
+    display: none !important;
+  }
+}
