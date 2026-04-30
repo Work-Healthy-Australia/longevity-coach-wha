@@ -1,0 +1,205 @@
+.org-dashboard {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px 24px;
+}
+
+/* Title */
+.org-dash-title {
+  font-family: Georgia, serif;
+  font-weight: 400;
+  font-size: 28px;
+  color: #1F3A4D;
+  margin: 0 0 24px;
+}
+
+/* KPI grid */
+.org-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.org-kpi {
+  background: #fff;
+  border: 1px solid #E3E8EC;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.org-kpi-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1F3A4D;
+  line-height: 1;
+}
+
+.org-kpi-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #8A9AA5;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.org-kpi-sub {
+  font-size: 12px;
+  color: #8A9AA5;
+  margin-top: 2px;
+}
+
+/* Cards */
+.org-card {
+  background: #fff;
+  border: 1px solid #E3E8EC;
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+}
+
+.org-card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1F3A4D;
+  margin: 0 0 16px;
+}
+
+/* Plan details */
+.org-plan-details {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.org-plan-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 14px;
+}
+
+.org-plan-row dt {
+  color: #8A9AA5;
+  font-weight: 500;
+}
+
+.org-plan-row dd {
+  margin: 0;
+  color: #2B2B2B;
+  font-weight: 600;
+}
+
+/* Seat bar */
+.org-seat-bar-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.org-seat-bar {
+  height: 10px;
+  background: #EDF1F4;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.org-seat-bar-fill {
+  height: 100%;
+  background: #2F6F8F;
+  border-radius: 5px;
+  transition: width 0.4s ease;
+}
+
+.org-seat-bar-fill--high {
+  background: #B5452F;
+}
+
+.org-seat-bar-label {
+  font-size: 13px;
+  color: #8A9AA5;
+}
+
+/* Invite table */
+.org-invite-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.org-invite-table th {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #8A9AA5;
+  padding: 8px 12px;
+  border-bottom: 2px solid #E3E8EC;
+  text-align: left;
+}
+
+.org-invite-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #EDF1F4;
+  color: #2B2B2B;
+}
+
+.org-invite-table tr:last-child td {
+  border-bottom: none;
+}
+
+.org-invite-date {
+  font-size: 12px;
+  color: #8A9AA5;
+}
+
+/* Status badges */
+.org-status-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: capitalize;
+}
+
+.org-status-pending {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.org-status-accepted {
+  background: #D1FAE5;
+  color: #065F46;
+}
+
+.org-status-expired {
+  background: #F3F4F6;
+  color: #6B7280;
+}
+
+.org-status-revoked {
+  background: #FEE2E2;
+  color: #991B1B;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .org-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .org-dashboard {
+    padding: 0 16px 16px;
+  }
+
+  .org-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+}
