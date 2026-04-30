@@ -15,7 +15,7 @@ export async function sendWelcomeEmail({ to, firstName, appUrl }: WelcomeArgs) {
   <body style="margin:0;padding:0;background:#F4F7F9;font-family:'Helvetica Neue',Arial,sans-serif;color:#2B2B2B;">
     <div style="max-width:520px;margin:40px auto;background:#fff;border:1px solid #E3E8EC;border-radius:16px;padding:40px 32px;">
       <h1 style="font-family:Georgia,serif;font-weight:400;font-size:26px;margin:0 0 16px;color:#2B2B2B;">
-        Welcome to Longevity Coach
+        Welcome to Janet Cares
       </h1>
       <p style="font-size:15px;line-height:1.55;margin:0 0 16px;color:#4B4B4B;">${greeting}</p>
       <p style="font-size:15px;line-height:1.55;margin:0 0 16px;color:#4B4B4B;">
@@ -34,25 +34,25 @@ export async function sendWelcomeEmail({ to, firstName, appUrl }: WelcomeArgs) {
       </p>
     </div>
     <p style="text-align:center;font-size:11px;color:#8A9AA5;margin:8px 0 24px;">
-      Longevity Coach · ${new Date().getFullYear()}
+      Janet Cares · ${new Date().getFullYear()}
     </p>
   </body>
 </html>`;
 
   const text = `${greeting}
 
-Your Longevity Coach account is ready. The next step is a short health assessment - about 10 minutes. We'll use it to calculate your biological age, your risk scores across five domains, and a personalised supplement protocol.
+Your Janet Cares account is ready. The next step is a short health assessment - about 10 minutes. We'll use it to calculate your biological age, your risk scores across five domains, and a personalised supplement protocol.
 
 Start your assessment: ${appUrl}/onboarding
 
 Questions? Just reply to this email.
 
-- The Longevity Coach team`;
+- The Janet Cares team`;
 
   return resend.emails.send({
     from: getFromAddress(),
     to,
-    subject: "Welcome to Longevity Coach - let's get started",
+    subject: "Welcome to Janet Cares - let's get started",
     html,
     text,
   });

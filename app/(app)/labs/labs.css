@@ -154,6 +154,7 @@
   font-weight: 500;
   line-height: 1;
   color: var(--lc-ink);
+  font-variant-numeric: tabular-nums;
 }
 .lc-labs-card-unit {
   font-family: var(--font-lc-sans), system-ui, sans-serif;
@@ -234,6 +235,7 @@
   font-size: 32px;
   font-weight: 500;
   line-height: 1;
+  font-variant-numeric: tabular-nums;
 }
 .lc-labs-detail-unit {
   font-size: 14px;
@@ -279,6 +281,7 @@
   padding: 10px 8px;
   border-bottom: 1px solid var(--lc-line-soft);
 }
+.lc-labs-table td { font-variant-numeric: tabular-nums; }
 .lc-labs-table th {
   font-size: 11px;
   letter-spacing: 0.06em;

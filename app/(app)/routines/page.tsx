@@ -4,7 +4,7 @@ import { DEFAULT_ROUTINES, ROUTINE_CATEGORIES } from "@/lib/wellness/routines";
 import { RoutineChecklist } from "./_components/routine-checklist";
 import "./routines.css";
 
-export const metadata = { title: "Daily Routines · Longevity Coach" };
+export const metadata = { title: "Daily routines · Janet Cares" };
 
 export default async function RoutinesPage() {
   const supabase = await createClient();
@@ -28,7 +28,7 @@ export default async function RoutinesPage() {
   return (
     <div className="lc-routines">
       <header className="lc-routines-header">
-        <h1>Daily Routines</h1>
+        <h1>Daily routines</h1>
         <p>
           Track your morning-to-evening longevity habits. Consistency compounds —
           aim for 80%+ completion daily.

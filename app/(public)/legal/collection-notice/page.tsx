@@ -4,9 +4,9 @@ import { CONSENT_POLICIES } from "@/lib/consent/policies";
 import "../legal.css";
 
 export const metadata: Metadata = {
-  title: "Personal information collection notice · Longevity Coach",
+  title: "Personal information collection notice · Janet Cares",
   description:
-    "How Longevity Coach collects, uses, stores and discloses your personal and health information, in line with the Australian Privacy Principles (APPs).",
+    "How Janet Cares collects, uses, stores and discloses your personal and health information, in line with the Australian Privacy Principles (APPs).",
 };
 
 export default function CollectionNoticePage() {
@@ -24,7 +24,7 @@ export default function CollectionNoticePage() {
         <section>
           <h2>1. Who collects the information</h2>
           <p>
-            Longevity Coach is operated by <strong>Work Healthy Australia Pty Ltd</strong>{" "}
+            Janet Cares is operated by <strong>Work Healthy Australia Pty Ltd</strong>{" "}
             (the &ldquo;Practice&rdquo;), the data controller for the purposes of the
             Australian <em>Privacy Act 1988</em> (Cth) and the Australian Privacy
             Principles (APPs).

@@ -354,7 +354,7 @@ export const onboardingQuestionnaire: QuestionnaireDef = {
         {
           id: "data_no_training",
           label:
-            "I understand Longevity Coach does not train AI models on my personal data.",
+            "I understand Janet Cares does not train AI models on my personal data.",
           type: "toggle",
           helpText:
             "Required. See the data handling page for details on how we work with AI providers.",

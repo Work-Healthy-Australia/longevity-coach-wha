@@ -12,7 +12,7 @@ import {
 import "./home.css";
 
 export const metadata: Metadata = {
-  title: "Longevity Coach - Live longer, on purpose.",
+  title: "Janet Cares - Live longer, on purpose.",
   description:
     "Seven minutes of honest questions. A clinically-grounded biological age, risk scores across five domains, and a supplement protocol made for you.",
 };

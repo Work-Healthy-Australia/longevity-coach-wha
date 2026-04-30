@@ -27,12 +27,6 @@
   letter-spacing: -0.01em;
 }
 
-.lc-uploads .subtitle {
-  color: var(--lc-ink-soft);
-  font-size: 15px;
-  margin: 0 0 32px;
-}
-
 /* Gate state */
 .lc-uploads .gate-card {
   background: var(--lc-primary-50);

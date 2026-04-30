@@ -26,7 +26,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Longevity Coach",
+  title: "Janet Cares",
   description:
     "Personalised longevity coaching: bio-age, risk scores, supplement protocols.",
 };

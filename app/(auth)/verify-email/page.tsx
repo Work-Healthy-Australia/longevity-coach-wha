@@ -1,4 +1,4 @@
-export const metadata = { title: "Verify your email · Longevity Coach" };
+export const metadata = { title: "Verify your email · Janet Cares" };
 
 export default async function VerifyEmailPage({
   searchParams,

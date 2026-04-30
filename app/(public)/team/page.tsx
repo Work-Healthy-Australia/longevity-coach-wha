@@ -5,9 +5,9 @@ import { Founder, FinalCTA } from "../_components/sections";
 import "../home.css";
 
 export const metadata: Metadata = {
-  title: "Team · Longevity Coach",
+  title: "Team · Janet Cares",
   description:
-    "The clinicians, data scientists and designers behind Longevity Coach.",
+    "The clinicians, data scientists and designers behind Janet Cares.",
 };
 
 export default function TeamPage() {

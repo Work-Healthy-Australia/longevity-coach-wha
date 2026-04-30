@@ -13,7 +13,7 @@ import Link from "next/link";
 import { SimulatorClient } from "./_components/simulator-client";
 import "./simulator.css";
 
-export const metadata = { title: "Risk Simulator · Longevity Coach" };
+export const metadata = { title: "Risk simulator · Janet Cares" };
 
 const POPULATION_DEFAULTS: Record<SimulatorMetric, number> = {
   ldl: 130,
@@ -93,7 +93,7 @@ export default async function SimulatorPage() {
     return (
       <div className="lc-sim">
         <header className="lc-sim-header">
-          <h1>Risk Simulator</h1>
+          <h1>Risk simulator</h1>
           <p className="lc-sim-subtitle">
             Move the sliders. See how each one shifts your risk and domain scores.
           </p>
@@ -134,7 +134,7 @@ export default async function SimulatorPage() {
   return (
     <div className="lc-sim">
       <header className="lc-sim-header">
-        <h1>Risk Simulator</h1>
+        <h1>Risk simulator</h1>
         <p className="lc-sim-subtitle">
           Move the sliders. See how each one shifts your risk and domain scores.
         </p>

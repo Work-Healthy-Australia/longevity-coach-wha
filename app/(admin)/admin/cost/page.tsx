@@ -1,6 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 
-export const metadata = { title: "Cost · Admin · Longevity Coach" };
+export const metadata = { title: "Cost · Admin · Janet Cares" };
 export const dynamic = "force-dynamic";
 
 type SearchParams = Promise<{ range?: string }>;

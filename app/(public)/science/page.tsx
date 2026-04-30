@@ -5,9 +5,9 @@ import { Science, HowItWorks, WhatYouGet, FinalCTA } from "../_components/sectio
 import "../home.css";
 
 export const metadata: Metadata = {
-  title: "Science · Longevity Coach",
+  title: "Science · Janet Cares",
   description:
-    "How Longevity Coach calculates your biological age and risk scores - the models, the methodology, and the limits we&apos;re honest about.",
+    "How Janet Cares calculates your biological age and risk scores - the models, the methodology, and the limits we&apos;re honest about.",
 };
 
 export default function SciencePage() {

@@ -56,9 +56,9 @@ export async function inviteAdmin(_prev: unknown, formData: FormData) {
       await resend.emails.send({
         from: getFromAddress(),
         to: email,
-        subject: "You've been granted admin access — Longevity Coach",
+        subject: "You've been granted admin access — Janet Cares",
         html: `<p>Hi${profile?.full_name ? ` ${profile.full_name}` : ""},</p>
-<p>${inviterName} has granted you admin access to the Longevity Coach platform.</p>
+<p>${inviterName} has granted you admin access to the Janet Cares platform.</p>
 <p><a href="${siteUrl}/admin">Go to admin dashboard →</a></p>`,
       });
     } catch {

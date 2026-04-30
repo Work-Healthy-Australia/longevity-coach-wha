@@ -134,6 +134,7 @@
   font-weight: 500;
   line-height: 1;
   color: var(--lc-ink);
+  font-variant-numeric: tabular-nums;
 }
 .lc-trend-card-unit {
   font-family: var(--font-lc-sans), system-ui, sans-serif;

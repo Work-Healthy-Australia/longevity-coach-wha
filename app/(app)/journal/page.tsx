@@ -3,7 +3,7 @@ import { JournalClient, type JournalEntry } from './_components/journal-client';
 import { saveJournalEntry } from './actions';
 import './journal.css';
 
-export const metadata = { title: 'Journal · Longevity Coach' };
+export const metadata = { title: 'Journal · Janet Cares' };
 
 export default async function JournalPage() {
   const supabase = await createClient();
@@ -19,8 +19,8 @@ export default async function JournalPage() {
 
   return (
     <div className="lc-journal">
-      <h1>Health journal</h1>
-      <p className="journal-lede">
+      <h1>Journal</h1>
+      <p className="lede">
         Notes for yourself — Janet reads your recent entries as context.
       </p>
       <JournalClient entries={(entries ?? []) as JournalEntry[]} />

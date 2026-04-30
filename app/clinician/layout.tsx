@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 
 import "./clinician.css";
 
-export const metadata = { title: "Clinician · Longevity Coach" };
+export const metadata = { title: "Clinician · Janet Cares" };
 
 export default async function ClinicianLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -30,7 +30,7 @@ export default async function ClinicianLayout({ children }: { children: React.Re
   return (
     <div className="clinician-shell">
       <nav className="clinician-nav">
-        <div className="clinician-nav-brand">Longevity Coach · Clinician</div>
+        <div className="clinician-nav-brand">Janet Cares · Clinician</div>
         <div className="clinician-nav-links">
           <Link href="/clinician">Reviews</Link>
           <Link href="/clinician/schedule">Schedule</Link>

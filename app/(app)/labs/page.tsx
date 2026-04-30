@@ -11,7 +11,7 @@ import {
 import { StatusBadge } from "./_components/status-badge";
 import "./labs.css";
 
-export const metadata = { title: "Lab Results · Longevity Coach" };
+export const metadata = { title: "Lab results · Janet Cares" };
 
 export default async function LabsPage() {
   const supabase = await createClient();
@@ -35,7 +35,7 @@ export default async function LabsPage() {
     return (
       <div className="lc-labs">
         <header className="lc-labs-header">
-          <h1>Lab Results</h1>
+          <h1>Lab results</h1>
         </header>
         <div className="lc-labs-empty">
           <h2>No lab data yet</h2>
@@ -67,7 +67,7 @@ export default async function LabsPage() {
   return (
     <div className="lc-labs">
       <header className="lc-labs-header">
-        <h1>Lab Results</h1>
+        <h1>Lab results</h1>
         <div className="lc-labs-header-meta">
           <span>
             <strong>{biomarkerCount}</strong>

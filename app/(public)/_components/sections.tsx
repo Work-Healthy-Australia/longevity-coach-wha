@@ -256,7 +256,7 @@ export function Founder() {
             <h2>Built by clinicians, <em>not marketers.</em></h2>
           </div>
           <div className="intro">
-            Longevity Coach is a small team of GPs, data scientists and
+            Janet Cares is a small team of GPs, data scientists and
             designers. We see patients in the morning and ship product in
             the afternoon.
           </div>
@@ -269,7 +269,7 @@ export function Founder() {
           <div>
             <blockquote className="founder-quote">
               &ldquo;I spent fifteen years telling patients to lose weight
-              and sleep better. Longevity Coach is what happens when you
+              and sleep better. Janet Cares is what happens when you
               give that advice the <em>specificity</em> it deserves - for
               one person, not the average patient.&rdquo;
             </blockquote>

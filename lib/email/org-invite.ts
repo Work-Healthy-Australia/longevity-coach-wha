@@ -43,7 +43,7 @@ export async function sendOrgInviteEmail({
       </h1>
       <p style="font-size:15px;line-height:1.55;margin:0 0 16px;color:#4B4B4B;">${greeting}</p>
       <p style="font-size:15px;line-height:1.55;margin:0 0 16px;color:#4B4B4B;">
-        ${inviterName} has invited you to join <strong>${orgName}</strong> on Longevity Coach.
+        ${inviterName} has invited you to join <strong>${orgName}</strong> on Janet Cares.
         Click below to create your account and get started.
       </p>
       <p style="margin:32px 0;text-align:center;">
@@ -64,14 +64,14 @@ export async function sendOrgInviteEmail({
       </p>
     </div>
     <p style="text-align:center;font-size:11px;color:#8A9AA5;margin:8px 0 24px;">
-      Longevity Coach &middot; ${new Date().getFullYear()}
+      Janet Cares &middot; ${new Date().getFullYear()}
     </p>
   </body>
 </html>`;
 
   const text = `${greeting}
 
-${inviterName} has invited you to join ${orgName} on Longevity Coach.
+${inviterName} has invited you to join ${orgName} on Janet Cares.
 
 Create your account and get started: ${inviteUrl}
 
@@ -79,12 +79,12 @@ This invitation expires in 7 days.
 
 Questions? Just reply to this email.
 
-- The Longevity Coach team`;
+- The Janet Cares team`;
 
   return resend.emails.send({
     from: getFromAddress(),
     to,
-    subject: `You've been invited to join ${orgName} on Longevity Coach`,
+    subject: `You've been invited to join ${orgName} on Janet Cares`,
     html,
     text,
   });

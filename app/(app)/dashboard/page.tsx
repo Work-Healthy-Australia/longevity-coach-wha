@@ -6,7 +6,7 @@ import { computeWellnessScore, scoreLabel, scoreColor, type WellnessInput } from
 import { dismissAlert } from "./_actions/dismiss-alert";
 import "./dashboard.css";
 
-export const metadata = { title: "Dashboard · Longevity Coach" };
+export const metadata = { title: "Dashboard · Janet Cares" };
 
 const ACTIVE_SUB_STATUSES = new Set(["trialing", "active", "past_due"]);
 

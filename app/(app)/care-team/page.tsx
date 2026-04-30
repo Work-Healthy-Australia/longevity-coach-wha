@@ -108,7 +108,7 @@ export default async function CareTeamPage() {
   if (!assignment?.clinician_uuid) {
     return (
       <div className="lc-care">
-        <h1>Care Team</h1>
+        <h1>Care team</h1>
         <p className="lc-care__empty">
           No care team assigned yet. Contact support to be matched with a
           clinician.
@@ -179,7 +179,7 @@ export default async function CareTeamPage() {
 
   return (
     <div className="lc-care">
-      <h1>Care Team</h1>
+      <h1>Care team</h1>
 
       {/* Clinician card */}
       <div className="lc-care__clinician-card">

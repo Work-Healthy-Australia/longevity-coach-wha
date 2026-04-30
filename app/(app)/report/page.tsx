@@ -9,7 +9,7 @@ import { RegenerateButton } from "./_components/regenerate-button";
 import type { UIMessage } from "ai";
 import "./report.css";
 
-export const metadata = { title: "Your Report · Longevity Coach" };
+export const metadata = { title: "Report · Janet Cares" };
 
 export default async function ReportPage() {
   const supabase = await createClient();

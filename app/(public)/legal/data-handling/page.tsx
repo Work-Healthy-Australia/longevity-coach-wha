@@ -5,9 +5,9 @@ import "./data-handling.css";
 export const dynamic = "force-static";
 
 export const metadata: Metadata = {
-  title: "Data handling · Longevity Coach",
+  title: "Data handling · Janet Cares",
   description:
-    "How Longevity Coach handles your personal and health data — what we do, what we never do, the third-party processors we use, and your rights.",
+    "How Janet Cares handles your personal and health data — what we do, what we never do, the third-party processors we use, and your rights.",
 };
 
 export default function DataHandlingPage() {

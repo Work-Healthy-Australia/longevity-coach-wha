@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { LoginForm } from "./login-form";
 
-export const metadata = { title: "Sign in · Longevity Coach" };
+export const metadata = { title: "Sign in · Janet Cares" };
 
 export default function LoginPage() {
   return (

@@ -105,11 +105,12 @@
 }
 
 .lc-report .bio-age-number {
-  font-size: 80px;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -2px;
+  font-size: 88px;
+  font-weight: 500;
+  line-height: 0.95;
+  letter-spacing: -0.035em;
   font-family: var(--font-lc-serif), Georgia, serif;
+  font-variant-numeric: tabular-nums;
 }
 
 .lc-report .bio-age-label {
@@ -237,10 +238,11 @@
 
 .lc-report .domain-value {
   font-size: 36px;
-  font-weight: 700;
+  font-weight: 500;
   line-height: 1;
   margin-bottom: 8px;
   font-family: var(--font-lc-serif), Georgia, serif;
+  font-variant-numeric: tabular-nums;
 }
 
 .lc-report .domain-value.pending { color: var(--lc-grey); }

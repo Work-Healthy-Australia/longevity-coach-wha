@@ -6,7 +6,7 @@ import { StatusBadge } from "../_components/status-badge";
 import { BiomarkerChart } from "./_components/biomarker-chart";
 import "../labs.css";
 
-export const metadata = { title: "Lab Detail · Longevity Coach" };
+export const metadata = { title: "Lab detail · Janet Cares" };
 
 export default async function BiomarkerDetailPage({
   params,

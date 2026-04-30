@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import "./admin.css";
 
-export const metadata = { title: "Admin · Longevity Coach" };
+export const metadata = { title: "Admin · Janet Cares" };
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -24,7 +24,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <div className="admin-shell">
       <nav className="admin-nav">
-        <div className="admin-nav-brand">Longevity Coach · Admin</div>
+        <div className="admin-nav-brand">Janet Cares · Admin</div>
         <div className="admin-nav-links">
           <a href="/admin">Overview</a>
           <a href="/admin/users">Users</a>

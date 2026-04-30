@@ -140,7 +140,7 @@ export function OnboardingClient({
               </a>
             </p>
             <p className="step-disclosure">
-              Longevity Coach does not use your health data to train AI models.
+              Janet Cares does not use your health data to train AI models.
               Your data is used solely to personalise your assessment and coaching.
             </p>
           </>

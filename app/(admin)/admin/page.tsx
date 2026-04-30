@@ -1,6 +1,6 @@
 import { getDashboardMetrics, parseRange, formatMrr, type DateRange } from "@/lib/admin/metrics";
 
-export const metadata = { title: "Overview · Admin · Longevity Coach" };
+export const metadata = { title: "Overview · Admin · Janet Cares" };
 export const dynamic = "force-dynamic";
 
 type SearchParams = Promise<{ range?: string }>;

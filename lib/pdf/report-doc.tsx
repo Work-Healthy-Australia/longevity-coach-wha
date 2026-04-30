@@ -73,7 +73,7 @@ export type ReportData = {
 // Logo lives in /public so it ships with the build.
 const LOGO_PATH = path.join(
   process.cwd(),
-  "public/longevity-coach-horizontal-logo.png",
+  "public/janet-cares-logo.png",
 );
 
 const DISCLAIMER =
@@ -172,8 +172,8 @@ export function ReportDocument({ data }: { data: ReportData }) {
   if (!engineOutput) {
     return (
       <Document
-        title="Longevity Coach — Health Report"
-        author="Longevity Coach"
+        title="Janet Cares — Health Report"
+        author="Janet Cares"
       >
         <Page size="A4" style={styles.page}>
           <Image src={LOGO_PATH} style={styles.coverLogo} />
@@ -218,8 +218,8 @@ export function ReportDocument({ data }: { data: ReportData }) {
 
   return (
     <Document
-      title="Longevity Coach — Health Report"
-      author="Longevity Coach"
+      title="Janet Cares — Health Report"
+      author="Janet Cares"
       subject="Personalised Health Risk Report"
     >
       {/* ---------- Page 1 — Cover (dashboard-style) ---------- */}
