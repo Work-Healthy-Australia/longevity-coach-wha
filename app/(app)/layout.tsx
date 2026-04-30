@@ -57,6 +57,7 @@ export default async function AppLayout({
             width={900}
             height={188}
             priority
+            style={{ height: 40, width: "auto" }}
           />
         </Link>
         <nav className="desktop-nav" style={{ display: "flex", alignItems: "center", gap: 8 }}>

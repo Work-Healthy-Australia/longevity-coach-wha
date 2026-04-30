@@ -469,7 +469,11 @@ export function buildPatientInput(sources: AssembleSources): PatientInput {
     lifestyle: {
       smoking_status: smoking,
       exercise_minutes_weekly: exerciseRaw,
-      exercise_type: typeof lifestyle.exercise_type === "string" ? lifestyle.exercise_type : undefined,
+      exercise_type: Array.isArray(lifestyle.exercise_type)
+        ? lifestyle.exercise_type.join(", ")
+        : typeof lifestyle.exercise_type === "string"
+          ? lifestyle.exercise_type
+          : undefined,
       sleep_hours: num(lifestyle.sleep_hours),
       diet_type: dietRaw,
       stress_level: stressRaw,
