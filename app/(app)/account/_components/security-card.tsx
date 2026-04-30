@@ -24,12 +24,13 @@ export function SecurityCard({ currentEmail }: { currentEmail: string }) {
 
   return (
     <section className="lc-account-card">
-      <div className="lc-account-card-header">
-        <h2>Security</h2>
+      <div className="lc-account-card-headline">
+        <span className="lc-account-card-eyebrow">Security</span>
+        <h2>Password &amp; email</h2>
       </div>
 
       <div className="lc-security-section">
-        <h3 className="lc-security-section-heading">Password</h3>
+        <span className="lc-account-card-eyebrow grey">Password</span>
         <p className="lc-account-info">
           Use at least 8 characters. Choose something you don&apos;t use elsewhere.
         </p>
@@ -38,34 +39,32 @@ export function SecurityCard({ currentEmail }: { currentEmail: string }) {
           <div className="lc-account-success">{pwState.success}</div>
         )}
         <form action={pwAction} className="lc-account-form">
-          <label className="lc-account-field">
-            <span>New password</span>
-            <input
-              type="password"
-              name="password"
-              autoComplete="new-password"
-              minLength={8}
-              required
-              disabled={pwPending}
-            />
-          </label>
-          <label className="lc-account-field">
-            <span>Confirm new password</span>
-            <input
-              type="password"
-              name="confirm_password"
-              autoComplete="new-password"
-              minLength={8}
-              required
-              disabled={pwPending}
-            />
-          </label>
+          <div className="lc-account-form-row">
+            <label className="lc-account-field">
+              <span>New password</span>
+              <input
+                type="password"
+                name="password"
+                autoComplete="new-password"
+                minLength={8}
+                required
+                disabled={pwPending}
+              />
+            </label>
+            <label className="lc-account-field">
+              <span>Confirm new password</span>
+              <input
+                type="password"
+                name="confirm_password"
+                autoComplete="new-password"
+                minLength={8}
+                required
+                disabled={pwPending}
+              />
+            </label>
+          </div>
           <div className="lc-account-form-actions">
-            <button
-              type="submit"
-              className="lc-account-button"
-              disabled={pwPending}
-            >
+            <button type="submit" className="btn btn-primary" disabled={pwPending}>
               {pwPending ? "Updating…" : "Update password"}
             </button>
           </div>
@@ -75,7 +74,7 @@ export function SecurityCard({ currentEmail }: { currentEmail: string }) {
       <div className="lc-security-divider" />
 
       <div className="lc-security-section">
-        <h3 className="lc-security-section-heading">Email</h3>
+        <span className="lc-account-card-eyebrow grey">Email</span>
         <p className="lc-account-info">
           Current: <strong>{currentEmail || "—"}</strong>. Changing your email
           sends a verification link to the new address. The change only takes
@@ -98,17 +97,12 @@ export function SecurityCard({ currentEmail }: { currentEmail: string }) {
             />
           </label>
           <div className="lc-account-form-actions">
-            <button
-              type="submit"
-              className="lc-account-button"
-              disabled={emPending}
-            >
+            <button type="submit" className="btn btn-primary" disabled={emPending}>
               {emPending ? "Sending…" : "Send verification"}
             </button>
           </div>
         </form>
       </div>
-
     </section>
   );
 }
