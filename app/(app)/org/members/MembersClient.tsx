@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 type TierPlan = { id: string; name: string; tier: string };
@@ -143,8 +144,27 @@ export function MembersClient({
   return (
     <div className="hm-page">
       <div className="hm-header">
-        <h1 className="hm-title">Team Members</h1>
-        <p className="hm-subtitle">{orgName}</p>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+          <div>
+            <h1 className="hm-title">Team Members</h1>
+            <p className="hm-subtitle">{orgName}</p>
+          </div>
+          <Link
+            href="/org/invite"
+            style={{
+              display: "inline-block",
+              fontSize: 14,
+              fontWeight: 600,
+              padding: "10px 20px",
+              borderRadius: 8,
+              background: "#2F6F8F",
+              color: "#fff",
+              textDecoration: "none",
+            }}
+          >
+            Invite members
+          </Link>
+        </div>
       </div>
 
       {error && <div className="hm-error">{error}</div>}
