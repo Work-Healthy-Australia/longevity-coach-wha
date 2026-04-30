@@ -4,7 +4,7 @@ import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import type { UIMessage } from 'ai';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { AssistantBubble } from '@/app/(app)/_components/chat-message';
 import { createClient } from '@/lib/supabase/client';
 
@@ -30,46 +30,49 @@ export function JanetChat({ initialMessages = [], userId }: { initialMessages?: 
   const [input, setInput] = useState('');
   type TaskEvent = { ts: string; text: string };
   type PendingTask = { id: string; label: string; since: string; events: TaskEvent[] };
-  const [pendingTasks, setPendingTasks] = useState<PendingTask[]>([]);
-  const seenToolCallsRef = useRef<Set<string>>(new Set());
+  // Supplement tasks are pushed via a `window` event from a sibling component
+  // (external subscription → state is the right tool).
+  const [supplementTasks, setSupplementTasks] = useState<PendingTask[]>([]);
+  // Meal-plan tasks are derived from `messages`. When a Realtime push arrives,
+  // we bump `mealplanResolvedAt` instead of mutating a list — any tool call
+  // whose `since` is older than this timestamp is treated as resolved. Pure
+  // derivation in render avoids the cascading-render anti-pattern.
+  const [mealplanResolvedAt, setMealplanResolvedAt] = useState<string | null>(null);
   const consumedRowIdsRef = useRef<Set<string>>(new Set());
   const bottomRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
   const lastIdx = messages.length - 1;
 
-  // Detect meal-plan tool calls in the assistant stream and surface the inline
-  // pending status. Resolution is push-based via Supabase Realtime below.
-  useEffect(() => {
+  // Derive meal-plan pending tasks during render — every assistant message
+  // with a `tool-request_meal_plan` part that hasn't been dismissed yet.
+  const mealplanTasks: PendingTask[] = useMemo(() => {
+    const tasks: PendingTask[] = [];
     for (const msg of messages) {
       if (msg.role !== 'assistant') continue;
       for (const part of msg.parts) {
         const partType = (part as { type?: string }).type ?? '';
         if (partType !== 'tool-request_meal_plan') continue;
-        if (seenToolCallsRef.current.has(msg.id)) continue;
-
         const output = (part as { output?: { since?: string } }).output;
         const since = output?.since;
         if (!since) continue;
-
-        seenToolCallsRef.current.add(msg.id);
+        if (mealplanResolvedAt && since <= mealplanResolvedAt) continue;
         const id = `mealplan-${msg.id}`;
-        setPendingTasks((prev) =>
-          prev.some((t) => t.id === id)
-            ? prev
-            : [
-                ...prev,
-                {
-                  id,
-                  label: 'Generating your 7-day meal plan',
-                  since,
-                  events: [{ ts: since, text: 'Pipeline started — chef agent invoked' }],
-                },
-              ],
-        );
+        tasks.push({
+          id,
+          label: 'Generating your 7-day meal plan',
+          since,
+          events: [{ ts: since, text: 'Pipeline started — chef agent invoked' }],
+        });
       }
     }
-  }, [messages]);
+    return tasks;
+  }, [messages, mealplanResolvedAt]);
+
+  const pendingTasks: PendingTask[] = useMemo(
+    () => [...mealplanTasks, ...supplementTasks],
+    [mealplanTasks, supplementTasks],
+  );
 
   // Push-based resolution: subscribe to Supabase Realtime for assistant message
   // INSERTs in agents.agent_conversations. Pipeline-completion messages have
@@ -89,7 +92,14 @@ export function JanetChat({ initialMessages = [], userId }: { initialMessages?: 
       if (consumedRowIdsRef.current.has(dedupKey)) return;
       consumedRowIdsRef.current.add(dedupKey);
 
-      setPendingTasks((prev) => prev.filter((t) => !t.id.startsWith(`${kind}-`)));
+      if (kind === 'mealplan') {
+        // Bump the resolution timestamp — every meal-plan tool call whose
+        // `since` is older than this will drop out of the derived list on
+        // the next render. No need to enumerate specific task ids.
+        setMealplanResolvedAt(row.created_at ?? new Date().toISOString());
+      } else {
+        setSupplementTasks((prev) => prev.filter((t) => !t.id.startsWith('supplement-')));
+      }
       setMessages((prev) => [
         ...prev,
         {
@@ -174,7 +184,7 @@ export function JanetChat({ initialMessages = [], userId }: { initialMessages?: 
       const since = (e as CustomEvent<{ since: string }>).detail?.since;
       if (!since) return;
       const id = `supplement-${since}`;
-      setPendingTasks((prev) =>
+      setSupplementTasks((prev) =>
         prev.some((t) => t.id === id)
           ? prev
           : [
