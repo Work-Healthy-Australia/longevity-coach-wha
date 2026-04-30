@@ -100,9 +100,37 @@ export default async function ReportPage() {
   return (
     <div className="lc-report">
 
-      {/* Hero row: Risk domains | Bio-age hero | Top risk factors */}
-      <div className="hero-row">
+      {/* Bio-age hero */}
+      <section className="bio-age-hero">
+        {risk?.biological_age != null ? (
+          <>
+            <div className="bio-age-number">{Math.round(risk.biological_age)}</div>
+            <div className="bio-age-label">Biological age</div>
+            {risk.confidence_level && (
+              <span className={`confidence-badge confidence-${risk.confidence_level}`}>
+                {risk.confidence_level} confidence
+              </span>
+            )}
+            {lastUpdated && (
+              <div className="report-updated">Last updated {formatDate(lastUpdated)}</div>
+            )}
+            <RegenerateButton />
+          </>
+        ) : (
+          <div className="pending-state">
+            <div className="pending-icon">⏳</div>
+            <h2>Your report is being prepared</h2>
+            <p>
+              It takes a few minutes to analyse your assessment. Ask Janet below —
+              she can help while your report processes.
+            </p>
+            <RegenerateButton />
+          </div>
+        )}
+      </section>
 
+      {/* Risk domains + Top risk factors */}
+      <div className="two-col">
         <section className="card">
           <h2>Risk domains</h2>
           <p className="section-note">0 = optimal · 100 = highest risk</p>
@@ -130,34 +158,6 @@ export default async function ReportPage() {
           </div>
         </section>
 
-        <section className="bio-age-hero">
-          {risk?.biological_age != null ? (
-            <>
-              <div className="bio-age-number">{Math.round(risk.biological_age)}</div>
-              <div className="bio-age-label">Biological age</div>
-              {risk.confidence_level && (
-                <span className={`confidence-badge confidence-${risk.confidence_level}`}>
-                  {risk.confidence_level} confidence
-                </span>
-              )}
-              {lastUpdated && (
-                <div className="report-updated">Last updated {formatDate(lastUpdated)}</div>
-              )}
-              <RegenerateButton />
-            </>
-          ) : (
-            <div className="pending-state">
-              <div className="pending-icon">⏳</div>
-              <h2>Your report is being prepared</h2>
-              <p>
-                It takes a few minutes to analyse your assessment. Ask Janet below —
-                she can help while your report processes.
-              </p>
-              <RegenerateButton />
-            </div>
-          )}
-        </section>
-
         <section className="card">
           <h2>Top risk factors to address</h2>
           {(risk?.top_risk_drivers as string[])?.length > 0 ? (
@@ -174,7 +174,6 @@ export default async function ReportPage() {
             </p>
           )}
         </section>
-
       </div>
 
       {/* Risk narrative — collapsible (long text, secondary read) */}

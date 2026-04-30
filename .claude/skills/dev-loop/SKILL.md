@@ -21,7 +21,7 @@ ASSESS
                             Each subagent: PLAN → EXECUTE → TEST → HANDOFF
                           COLLECT HANDOFFS
                           QA REPORT (wave-scoped)
-                          pnpm build → if PASS → push branch → merge PR
+                          pnpm build → if PASS → push branch (save to GitHub) → merge PR (ship + deploy)
                     └── DOCUMENT CHANGE (after all waves)
 ```
 
