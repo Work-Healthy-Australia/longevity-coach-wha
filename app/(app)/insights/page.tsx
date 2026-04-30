@@ -4,7 +4,7 @@ import { deriveGoals, extractGoalInputs } from '@/lib/goals/derive';
 import DigestsClient from './_components/digests-client';
 import './insights.css';
 
-export const metadata = { title: 'Insights · Longevity Coach' };
+export const metadata = { title: 'Insights · Janet Cares' };
 
 type HealthUpdate = {
   id: string;

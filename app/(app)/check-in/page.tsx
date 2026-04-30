@@ -3,7 +3,7 @@ import { CheckInForm, type LogEntry } from "./_components/check-in-form";
 import { deriveGoals, extractGoalInputs } from "@/lib/goals/derive";
 import "./check-in.css";
 
-export const metadata = { title: "Daily check-in · Longevity Coach" };
+export const metadata = { title: "Daily check-in · Janet Cares" };
 
 export default async function CheckInPage() {
   const supabase = await createClient();
@@ -60,7 +60,7 @@ export default async function CheckInPage() {
   return (
     <div className="lc-checkin">
       <h1>Daily check-in</h1>
-      <p className="checkin-lede">
+      <p className="lede">
         A quick log each day helps Janet track your progress.
       </p>
 

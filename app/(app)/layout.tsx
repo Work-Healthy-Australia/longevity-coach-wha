@@ -52,10 +52,10 @@ export default async function AppLayout({
       >
         <Link href="/dashboard" style={{ display: "flex", alignItems: "center" }}>
           <Image
-            src="/longevity-coach-horizontal-logo.png"
-            alt="Longevity Coach"
-            width={900}
-            height={188}
+            src="/janet-cares-logo.png"
+            alt="Janet Cares"
+            width={880}
+            height={203}
             priority
             style={{ height: 40, width: "auto" }}
           />

@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { UploadClient } from "./upload-client";
 import "./uploads.css";
 
-export const metadata = { title: "My Documents · Longevity Coach" };
+export const metadata = { title: "Documents · Janet Cares" };
 
 export default async function UploadsPage() {
   const supabase = await createClient();
@@ -30,8 +30,8 @@ export default async function UploadsPage() {
   if (!assessment) {
     return (
       <div className="lc-uploads">
-        <h1>My Documents</h1>
-        <p className="subtitle">
+        <h1>Documents</h1>
+        <p className="lede">
           Upload previous pathology, imaging, and test results for Janet to analyse.
         </p>
         <div className="gate-card">
@@ -50,8 +50,8 @@ export default async function UploadsPage() {
 
   return (
     <div className="lc-uploads">
-      <h1>My Documents</h1>
-      <p className="subtitle">
+      <h1>Documents</h1>
+      <p className="lede">
         Upload previous pathology, imaging, or any test results. Janet reads each file and
         categorises it automatically — this data improves your risk scores.
       </p>

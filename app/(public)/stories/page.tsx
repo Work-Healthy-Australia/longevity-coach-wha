@@ -5,9 +5,9 @@ import { Testimonials, FinalCTA } from "../_components/sections";
 import "../home.css";
 
 export const metadata: Metadata = {
-  title: "Member stories · Longevity Coach",
+  title: "Member stories · Janet Cares",
   description:
-    "Ninety-day deltas from real members of Longevity Coach.",
+    "Ninety-day deltas from real members of Janet Cares.",
 };
 
 export default function StoriesPage() {

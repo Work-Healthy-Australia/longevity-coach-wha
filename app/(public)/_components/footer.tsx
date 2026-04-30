@@ -7,13 +7,14 @@ export function PublicFooter() {
       <div className="wrap">
         <div className="brand-f">
           <Image
-            src="/longevity-coach-horizontal-logo.png"
-            alt="Longevity Coach"
-            width={900}
-            height={188}
+            src="/janet-cares-logo.png"
+            alt="Janet Cares"
+            width={880}
+            height={203}
           />
         </div>
         <div className="links">
+          <Link href="/stories">Stories</Link>
           <a href="#">Privacy</a>
           <a href="#">Terms</a>
           <Link href="/legal/data-handling">Data handling</Link>

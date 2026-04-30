@@ -4,9 +4,9 @@ import type { Metadata } from "next";
 import "./sample-report.css";
 
 export const metadata: Metadata = {
-  title: "Sample report · Longevity Coach",
+  title: "Sample report · Janet Cares",
   description:
-    "A worked example of a Longevity Coach report: biological age, five domain risk scores, top modifiable drivers, and a personalised supplement protocol.",
+    "A worked example of a Janet Cares report: biological age, five domain risk scores, top modifiable drivers, and a personalised supplement protocol.",
 };
 
 const SAMPLE = {
@@ -78,10 +78,10 @@ export default function SampleReportPage() {
       <header className="topbar">
         <Link href="/">
           <Image
-            src="/longevity-coach-horizontal-logo.png"
-            alt="Longevity Coach"
-            width={900}
-            height={188}
+            src="/janet-cares-logo.png"
+            alt="Janet Cares"
+            width={880}
+            height={203}
             priority
           />
         </Link>

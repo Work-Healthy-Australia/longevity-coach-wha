@@ -26,10 +26,78 @@
   --lc-surface: #FFFFFF;
   --lc-canvas: #FAFAF7;
   --lc-bg: #F4F7F9;
+
+  /* Type families — alias the next/font CSS variables so app pages
+     pick them up without each scoped stylesheet redefining them. */
+  --lc-serif: var(--font-lc-serif), "Iowan Old Style", Georgia, serif;
+  --lc-sans:  var(--font-lc-sans), ui-sans-serif, system-ui, sans-serif;
+  --lc-mono:  var(--font-lc-mono), ui-monospace, Menlo, monospace;
+
+  /* Type scale */
+  --type-display: clamp(40px, 5vw, 64px);
+  --type-h1:      28px;
+  --type-h2:      20px;
+  --type-h3:      16px;
+  --type-body:    15px;
+  --type-meta:    13px;
+  --type-eyebrow: 11px;
+
+  --leading-tight: 1.15;
+  --leading-snug:  1.35;
+  --leading-body:  1.55;
 }
 
 html, body { margin: 0; padding: 0; }
-body { background: #F4F7F9; color: #2B2B2B; }
+body {
+  background: var(--lc-bg);
+  color: var(--lc-ink);
+  font-family: var(--lc-sans);
+  font-size: var(--type-body);
+  line-height: var(--leading-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ── Base typographic elements ──────────────────────────────────────────
+   Defaults for signed-in app pages. Marketing pages (`.lc-home`) win on
+   specificity and are unaffected. Page-scoped CSS continues to override. */
+
+h1, h2 {
+  font-family: var(--lc-serif);
+  font-weight: 400;
+  letter-spacing: -0.012em;
+  line-height: var(--leading-tight);
+  color: var(--lc-ink);
+  margin: 0;
+}
+h1 { font-size: var(--type-h1); margin-bottom: 4px; }
+h2 { font-size: var(--type-h2); }
+h3 {
+  font-family: var(--lc-sans);
+  font-size: var(--type-h3);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  letter-spacing: 0;
+  color: var(--lc-ink);
+  margin: 0;
+}
+
+.lede {
+  font-size: 17px;
+  line-height: var(--leading-snug);
+  color: var(--lc-ink-soft);
+  margin: 0 0 24px;
+}
+
+.eyebrow {
+  font-family: var(--lc-mono);
+  font-size: var(--type-eyebrow);
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--lc-grey);
+}
+
+.tabular { font-variant-numeric: tabular-nums; }
 
 /* ── Shared chat message rendering ──────────────────────────────────────── */
 

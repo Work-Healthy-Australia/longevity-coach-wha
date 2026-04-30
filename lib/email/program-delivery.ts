@@ -55,7 +55,7 @@ export async function sendProgramDeliveryEmail({
       </p>
     </div>
     <p style="text-align:center;font-size:11px;color:#8A9AA5;margin:8px 0 24px;">
-      Longevity Coach · ${new Date().getFullYear()}
+      Janet Cares · ${new Date().getFullYear()}
     </p>
   </body>
 </html>`;
@@ -70,7 +70,7 @@ Open your dashboard: ${dashboardUrl}
 
 Reply to this email if anything is unclear.
 
-- The Longevity Coach team`;
+- The Janet Cares team`;
 
   return resend.emails.send({
     from: getFromAddress(),

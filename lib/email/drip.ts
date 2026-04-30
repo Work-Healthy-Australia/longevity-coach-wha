@@ -8,9 +8,9 @@ type DripArgs = {
 };
 
 const SUBJECTS: Record<number, string> = {
-  1: "Your Longevity Coach report is ready",
-  3: "A quick check-in from Longevity Coach",
-  7: "Your first week with Longevity Coach",
+  1: "Your Janet Cares report is ready",
+  3: "A quick check-in from Janet Cares",
+  7: "Your first week with Janet Cares",
 };
 
 function buildHtml(firstName: string | null | undefined, appUrl: string, day: 1 | 3 | 7): string {
@@ -41,7 +41,7 @@ function buildHtml(firstName: string | null | undefined, appUrl: string, day: 1 
     3: `
       <p style="font-size:15px;line-height:1.55;margin:0 0 16px;color:#4B4B4B;">${greeting}</p>
       <p style="font-size:15px;line-height:1.55;margin:0 0 16px;color:#4B4B4B;">
-        It's been a few days since you joined Longevity Coach. How are you tracking with your
+        It's been a few days since you joined Janet Cares. How are you tracking with your
         supplement protocol?
       </p>
       <p style="font-size:15px;line-height:1.55;margin:0 0 16px;color:#4B4B4B;">
@@ -85,7 +85,7 @@ function buildHtml(firstName: string | null | undefined, appUrl: string, day: 1 
       </p>
     </div>
     <p style="text-align:center;font-size:11px;color:#8A9AA5;margin:8px 0 24px;">
-      Longevity Coach · ${new Date().getFullYear()} ·
+      Janet Cares · ${new Date().getFullYear()} ·
       <a href="${appUrl}/account" style="color:#8A9AA5;">Manage preferences</a>
     </p>
   </body>

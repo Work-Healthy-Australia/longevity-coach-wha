@@ -32,12 +32,6 @@
   margin: 0 0 8px;
 }
 
-.lc-checkin .checkin-lede {
-  color: var(--lc-ink-soft);
-  margin: 0 0 32px;
-  font-size: 14px;
-}
-
 .checkin-form {
   display: flex;
   flex-direction: column;

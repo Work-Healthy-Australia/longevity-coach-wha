@@ -30,11 +30,11 @@ export async function sendClinicianInviteEmail({
   <body style="margin:0;padding:0;background:#F4F7F9;font-family:'Helvetica Neue',Arial,sans-serif;color:#2B2B2B;">
     <div style="max-width:520px;margin:40px auto;background:#fff;border:1px solid #E3E8EC;border-radius:16px;padding:40px 32px;">
       <h1 style="font-family:Georgia,serif;font-weight:400;font-size:26px;margin:0 0 16px;color:#2B2B2B;">
-        You&rsquo;ve been invited to Longevity Coach
+        You&rsquo;ve been invited to Janet Cares
       </h1>
       <p style="font-size:15px;line-height:1.55;margin:0 0 16px;color:#4B4B4B;">${greeting}</p>
       <p style="font-size:15px;line-height:1.55;margin:0 0 16px;color:#4B4B4B;">
-        ${inviterName} has invited you to join Longevity Coach as a <strong>${roleLabel}</strong>.
+        ${inviterName} has invited you to join Janet Cares as a <strong>${roleLabel}</strong>.
         Click below to set your password and access the portal.
       </p>
       <p style="margin:32px 0;text-align:center;">
@@ -55,14 +55,14 @@ export async function sendClinicianInviteEmail({
       </p>
     </div>
     <p style="text-align:center;font-size:11px;color:#8A9AA5;margin:8px 0 24px;">
-      Longevity Coach · ${new Date().getFullYear()}
+      Janet Cares · ${new Date().getFullYear()}
     </p>
   </body>
 </html>`;
 
   const text = `${greeting}
 
-${inviterName} has invited you to join Longevity Coach as a ${roleLabel}.
+${inviterName} has invited you to join Janet Cares as a ${roleLabel}.
 
 Set your password and access the portal: ${inviteUrl}
 
@@ -70,12 +70,12 @@ This invitation expires in 14 days.
 
 Questions? Just reply to this email.
 
-- The Longevity Coach team`;
+- The Janet Cares team`;
 
   return resend.emails.send({
     from: getFromAddress(),
     to,
-    subject: `You've been invited to Longevity Coach as a ${roleLabel}`,
+    subject: `You've been invited to Janet Cares as a ${roleLabel}`,
     html,
     text,
   });
@@ -115,7 +115,7 @@ export async function sendClinicianPromotedEmail({
       </h1>
       <p style="font-size:15px;line-height:1.55;margin:0 0 16px;color:#4B4B4B;">${greeting}</p>
       <p style="font-size:15px;line-height:1.55;margin:0 0 16px;color:#4B4B4B;">
-        ${inviterName} has granted you ${roleLabel} access on Longevity Coach.
+        ${inviterName} has granted you ${roleLabel} access on Janet Cares.
         Sign in with your existing account to open the portal.
       </p>
       <p style="margin:32px 0;text-align:center;">
@@ -129,23 +129,23 @@ export async function sendClinicianPromotedEmail({
       </p>
     </div>
     <p style="text-align:center;font-size:11px;color:#8A9AA5;margin:8px 0 24px;">
-      Longevity Coach · ${new Date().getFullYear()}
+      Janet Cares · ${new Date().getFullYear()}
     </p>
   </body>
 </html>`;
 
   const text = `${greeting}
 
-${inviterName} has granted you ${roleLabel} access on Longevity Coach. Sign in with your existing account to open the portal.
+${inviterName} has granted you ${roleLabel} access on Janet Cares. Sign in with your existing account to open the portal.
 
 ${portalUrl}
 
-- The Longevity Coach team`;
+- The Janet Cares team`;
 
   return resend.emails.send({
     from: getFromAddress(),
     to,
-    subject: `You're now a ${roleLabel} on Longevity Coach`,
+    subject: `You're now a ${roleLabel} on Janet Cares`,
     html,
     text,
   });

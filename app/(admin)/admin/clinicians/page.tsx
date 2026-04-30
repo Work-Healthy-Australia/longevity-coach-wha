@@ -4,7 +4,7 @@ import { loose } from "@/lib/supabase/loose-table";
 import "../_components/crud.css";
 import { CliniciansClient, type ClinicianRow, type InviteRow } from "./CliniciansClient";
 
-export const metadata = { title: "Clinicians · Admin · Longevity Coach" };
+export const metadata = { title: "Clinicians · Admin · Janet Cares" };
 export const dynamic = "force-dynamic";
 
 export default async function AdminCliniciansPage() {
@@ -60,7 +60,7 @@ export default async function AdminCliniciansPage() {
     <div>
       <h1>Clinicians</h1>
       <p className="muted">
-        Invite a clinician by email. If they already have a Longevity Coach account, their
+        Invite a clinician by email. If they already have a Janet Cares account, their
         role is updated immediately. Otherwise a Supabase invite is sent and access is
         granted automatically on sign-up.
       </p>

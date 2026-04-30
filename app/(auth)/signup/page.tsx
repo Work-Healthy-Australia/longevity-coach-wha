@@ -1,6 +1,6 @@
 import { SignupForm } from "./signup-form";
 
-export const metadata = { title: "Create account · Longevity Coach" };
+export const metadata = { title: "Create account · Janet Cares" };
 
 export default function SignupPage() {
   return (

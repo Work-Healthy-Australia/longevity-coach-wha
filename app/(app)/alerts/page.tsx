@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { dismissAlert } from "../dashboard/_actions/dismiss-alert";
 import "./alerts.css";
 
-export const metadata = { title: "Alerts · Longevity Coach" };
+export const metadata = { title: "Alerts · Janet Cares" };
 
 type AlertRow = {
   id: string;

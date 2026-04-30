@@ -78,7 +78,7 @@ describe("requiredMissing", () => {
         terms: true,
       }),
     ).toBe(
-      "I understand Longevity Coach does not train AI models on my personal data.",
+      "I understand Janet Cares does not train AI models on my personal data.",
     );
     expect(
       requiredMissing(consent, {

@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import "./sync.css";
 
-export const metadata = { title: "Wearable Sync · Longevity Coach" };
+export const metadata = { title: "Wearable sync · Janet Cares" };
 
 const PROVIDERS = [
   {
@@ -64,7 +64,7 @@ export default async function SyncSettingsPage() {
       <Link href="/account" className="lc-sync-back">
         ← Account
       </Link>
-      <h1>Wearable Sync</h1>
+      <h1>Wearable sync</h1>
       <p className="lc-sync-intro">
         Connect your wearable device to auto-populate your daily check-in with
         sleep, steps, heart rate, and HRV data. Less manual entry, better data.

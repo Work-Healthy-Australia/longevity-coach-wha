@@ -8,7 +8,7 @@ import { PricingClient, type PricingPlan, type PricingAddon } from "./PricingCli
 import "./pricing.css";
 
 export const metadata: Metadata = {
-  title: "Pricing — Longevity Coach",
+  title: "Pricing — Janet Cares",
   description:
     "Choose your plan. Toggle add-ons. Transparent monthly or annual pricing.",
 };

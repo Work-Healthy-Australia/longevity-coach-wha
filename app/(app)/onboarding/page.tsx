@@ -6,7 +6,7 @@ import { stripUnknownKeys } from "@/lib/questionnaire/hydrate";
 import { migrateLegacyFamily } from "@/lib/questionnaire/migrate-family";
 import { OnboardingClient } from "./onboarding-client";
 
-export const metadata = { title: "Health assessment · Longevity Coach" };
+export const metadata = { title: "Health assessment · Janet Cares" };
 
 export default async function OnboardingPage() {
   const supabase = await createClient();

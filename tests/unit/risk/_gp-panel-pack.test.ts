@@ -297,7 +297,7 @@ describe("GP-panel review pack", () => {
     head.push("");
     head.push("The deterministic risk engine has been ported from Base44 to TypeScript and is now wired into `submitAssessment()`. Before promoting it to a clinician-channel pilot we'd value a sanity check from the panel.");
     head.push("");
-    head.push("Below are 10 representative profiles spanning the demographic and risk landscape Longevity Coach is likely to encounter. For each, the engine produced biological age, composite risk, five-domain scores, top modifiable risks, and a confidence level reflecting data completeness.");
+    head.push("Below are 10 representative profiles spanning the demographic and risk landscape Janet Cares is likely to encounter. For each, the engine produced biological age, composite risk, five-domain scores, top modifiable risks, and a confidence level reflecting data completeness.");
     head.push("");
     head.push("## What we'd like you to check");
     head.push("");

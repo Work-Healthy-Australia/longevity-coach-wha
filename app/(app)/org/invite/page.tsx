@@ -47,7 +47,7 @@ export default async function OrgInvitePage() {
         <Link href="/org/members" className="inv-back">
           &larr; Back to members
         </Link>
-        <h1 className="inv-title">Invite Members</h1>
+        <h1 className="inv-title">Invite members</h1>
         <p className="inv-subtitle">Upload a CSV to invite people to {orgName}</p>
       </div>
       <InviteClient />

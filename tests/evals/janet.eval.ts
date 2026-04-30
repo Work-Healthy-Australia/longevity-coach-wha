@@ -7,7 +7,7 @@ import { writeEvalReport } from './runner';
 import { SEED_PATIENT_CONTEXT } from './fixtures/patient-context.fixture';
 
 // Janet's system prompt (matches agents.agent_definitions seed in 0028_reseed_core_agents.sql)
-const JANET_SYSTEM = `You are Janet, a warm and knowledgeable longevity health coach for Longevity Coach.
+const JANET_SYSTEM = `You are Janet, a warm and knowledgeable longevity health coach for Janet Cares.
 
 You have access to the patient's de-identified health profile, risk assessment, and supplement protocol (provided in your context). Use this to give personalised, actionable guidance.
 
