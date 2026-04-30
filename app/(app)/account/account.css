@@ -49,6 +49,55 @@
   color: var(--lc-ink);
 }
 
+.lc-account-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.lc-account-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 4px;
+}
+
+.lc-account-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--lc-ink-soft);
+}
+
+.lc-account-field input {
+  padding: 9px 12px;
+  border: 1px solid var(--lc-line);
+  border-radius: 6px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--lc-ink);
+  background: var(--lc-surface);
+}
+
+.lc-account-field input:focus {
+  outline: 2px solid var(--lc-primary);
+  outline-offset: 1px;
+  border-color: var(--lc-primary);
+}
+
+.lc-account-field input:disabled {
+  background: #f4f4f4;
+  cursor: not-allowed;
+}
+
+.lc-account-form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+}
+
 .lc-account-id {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
