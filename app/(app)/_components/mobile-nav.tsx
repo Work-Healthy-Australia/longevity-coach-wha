@@ -2,18 +2,31 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import "./mobile-nav.css";
 
 type NavItem = { href: string; label: string };
 
+function getInitials(name: string | null): string {
+  if (!name) return "·";
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+  return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+}
+
 export function MobileNav({
   items,
   signOutAction,
+  userName,
+  userEmail,
 }: {
   items: NavItem[];
   signOutAction: () => Promise<void>;
+  userName?: string | null;
+  userEmail?: string | null;
 }) {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <>
@@ -34,17 +47,37 @@ export function MobileNav({
             className="mobile-nav-drawer"
             onClick={(e) => e.stopPropagation()}
           >
-            {items.map(({ href, label }) => (
-              <Link
-                key={href}
-                href={href}
-                className="mobile-nav-link"
-                onClick={() => setOpen(false)}
-              >
-                {label}
-              </Link>
-            ))}
-            <form action={signOutAction}>
+            <div className="mobile-nav-header">
+              <div className="mobile-nav-avatar" aria-hidden="true">
+                {getInitials(userName ?? null)}
+              </div>
+              <div className="mobile-nav-identity">
+                {userName && (
+                  <div className="mobile-nav-name">{userName}</div>
+                )}
+                {userEmail && (
+                  <div className="mobile-nav-email">{userEmail}</div>
+                )}
+              </div>
+            </div>
+            <div className="mobile-nav-links">
+              {items.map(({ href, label }) => {
+                const isActive =
+                  pathname === href || pathname.startsWith(href + "/");
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    className={`mobile-nav-link${isActive ? " active" : ""}`}
+                    aria-current={isActive ? "page" : undefined}
+                    onClick={() => setOpen(false)}
+                  >
+                    {label}
+                  </Link>
+                );
+              })}
+            </div>
+            <form action={signOutAction} className="mobile-nav-signout-form">
               <button type="submit" className="mobile-nav-signout">
                 Sign out
               </button>
