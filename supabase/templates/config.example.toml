@@ -1,0 +1,69 @@
+# Supabase Email Templates Configuration
+# Copy relevant sections to your supabase/config.toml file
+
+# ============================================
+# AUTHENTICATION EMAIL TEMPLATES
+# ============================================
+
+[auth.email.template.confirmation]
+subject = "Confirm your email - Longevity Coach"
+content_path = "./supabase/templates/confirmation.html"
+
+[auth.email.template.recovery]
+subject = "Reset your password - Longevity Coach"
+content_path = "./supabase/templates/recovery.html"
+
+[auth.email.template.magic_link]
+subject = "Your magic link - Longevity Coach"
+content_path = "./supabase/templates/magic_link.html"
+
+[auth.email.template.invite]
+subject = "You're invited to Longevity Coach"
+content_path = "./supabase/templates/invite.html"
+
+[auth.email.template.email_change]
+subject = "Confirm email change - Longevity Coach"
+content_path = "./supabase/templates/email_change.html"
+
+[auth.email.template.reauthentication]
+subject = "Your verification code - Longevity Coach"
+content_path = "./supabase/templates/reauthentication.html"
+
+# ============================================
+# SECURITY NOTIFICATION EMAIL TEMPLATES
+# ============================================
+
+[auth.email.notification.password_changed]
+enabled = true
+subject = "Your password has been changed - Longevity Coach"
+content_path = "./supabase/templates/password_changed_notification.html"
+
+[auth.email.notification.email_changed]
+enabled = true
+subject = "Your email address has been changed - Longevity Coach"
+content_path = "./supabase/templates/email_changed_notification.html"
+
+[auth.email.notification.phone_changed]
+enabled = true
+subject = "Your phone number has been changed - Longevity Coach"
+content_path = "./supabase/templates/phone_changed_notification.html"
+
+[auth.email.notification.mfa_factor_enrolled]
+enabled = true
+subject = "New MFA factor enrolled - Longevity Coach"
+content_path = "./supabase/templates/mfa_factor_enrolled_notification.html"
+
+[auth.email.notification.mfa_factor_unenrolled]
+enabled = true
+subject = "MFA factor removed - Longevity Coach"
+content_path = "./supabase/templates/mfa_factor_unenrolled_notification.html"
+
+[auth.email.notification.identity_linked]
+enabled = true
+subject = "New identity linked - Longevity Coach"
+content_path = "./supabase/templates/identity_linked_notification.html"
+
+[auth.email.notification.identity_unlinked]
+enabled = true
+subject = "Identity unlinked - Longevity Coach"
+content_path = "./supabase/templates/identity_unlinked_notification.html"
