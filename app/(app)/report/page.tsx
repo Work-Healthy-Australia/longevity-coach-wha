@@ -160,23 +160,66 @@ export default async function ReportPage() {
           </div>
         </section>
 
-        <section className="card">
-          <h2>Top risk factors to address</h2>
-          {(risk?.top_risk_drivers as string[])?.length > 0 ? (
-            <ol className="driver-list">
-              {(risk?.top_risk_drivers as string[]).map((d, i) => (
-                <li key={i}>{cleanLegacyDriver(d)}</li>
-              ))}
-            </ol>
-          ) : (
-            <p className="muted-text placeholder-text">
-              Your personalised risk factors will appear here once your health
-              assessment has been fully analysed. This typically takes a few
-              minutes after completing the questionnaire.
-            </p>
-          )}
-        </section>
-      </div>
+      {/* Progress narrative */}
+      {risk && (() => {
+        const progress = generateProgressNarrative(risk, previousRisk);
+        if (progress.trend === "insufficient" && !previousRisk) {
+          return (
+            <section className="card progress-section">
+              <h2>Your progress</h2>
+              <p className="narrative">{progress.headline}</p>
+            </section>
+          );
+        }
+        return (
+          <section className="card progress-section">
+            <h2>Your progress</h2>
+            <div className={`progress-trend progress-trend-${progress.trend}`}>
+              <span className="progress-trend-icon">
+                {progress.trend === "improving" ? "↗" : progress.trend === "declining" ? "↘" : "→"}
+              </span>
+              <span>{progress.headline}</span>
+            </div>
+            {progress.bullets.length > 0 && (
+              <ul className="progress-bullets">
+                {progress.bullets.map((b, i) => (
+                  <li key={i}>{b}</li>
+                ))}
+              </ul>
+            )}
+          </section>
+        );
+      })()}
+
+      {/* Domain scores */}
+      <section className="card">
+        <h2>Risk domains</h2>
+        <p className="section-note">0 = optimal · 100 = highest risk</p>
+        <div className="domains-grid">
+          {domains.map(([label, value]) => (
+            <div key={label} className="domain-card">
+              <div className="domain-label">{label}</div>
+              {value != null ? (
+                <>
+                  <div
+                    className={`domain-value ${riskClass(value)}`}
+                  >
+                    {Math.round(value)}
+                  </div>
+                  <div className="domain-bar">
+                    <div
+                      className={`domain-bar-fill ${riskClass(value)}`}
+                      style={{ width: `${value}%` }}
+                    />
+                  </div>
+                </>
+              ) : (
+                <div className="domain-value pending">—</div>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
 
       {/* Risk narrative — collapsible (long text, secondary read) */}
       {risk?.narrative && (

@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { policyVersion } from "@/lib/consent/policies";
 import { CareTeamSection, type AssignedClinician } from "./_components/care-team-section";
 import { DeleteAccountButton } from "./_components/delete-account-button";
+import { NotificationPrefs } from "./_components/NotificationPrefs";
 import { pauseAccount, unpauseAccount } from "./pause-actions";
 import "./account.css";
 
@@ -64,6 +65,18 @@ export default async function AccountPage({
 
   const dataNoTrainingAcceptedAt =
     (acceptanceRow?.accepted_at as string | null) ?? null;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: prefsRow } = await (supabase as any)
+    .from("notification_prefs")
+    .select("check_in_reminders, weekly_digest, alert_emails")
+    .eq("user_uuid", user!.id)
+    .maybeSingle();
+  const notificationPrefs = {
+    check_in_reminders: prefsRow?.check_in_reminders ?? true,
+    weekly_digest: prefsRow?.weekly_digest ?? true,
+    alert_emails: prefsRow?.alert_emails ?? true,
+  };
 
   // Active care-team assignments (clinicians the patient has nominated).
   // Service-role read so we can join across patient_assignments + auth.users +
@@ -174,6 +187,14 @@ export default async function AccountPage({
         <a className="lc-account-button" href="/api/export" download>
           Download my data
         </a>
+      </section>
+
+      <section className="lc-account-card">
+        <h2>Notifications</h2>
+        <p className="lc-account-info">
+          Choose which reminders we email you. Changes save automatically.
+        </p>
+        <NotificationPrefs initial={notificationPrefs} />
       </section>
 
       <section className="lc-account-card">
