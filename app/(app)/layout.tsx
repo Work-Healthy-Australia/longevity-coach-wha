@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { signOut } from "../(auth)/actions";
 import { SupportFAB } from "./_components/support-fab";
 import { AppHeader } from "./_components/app-header";
 
@@ -42,7 +41,6 @@ export default async function AppLayout({
     <div style={{ minHeight: "100dvh", background: "var(--lc-bg)" }}>
       <AppHeader
         navItems={navItems}
-        signOutAction={signOut}
         userName={userName}
         userEmail={userEmail}
       />

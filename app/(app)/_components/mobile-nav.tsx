@@ -16,12 +16,10 @@ function getInitials(name: string | null): string {
 
 export function MobileNav({
   items,
-  signOutAction,
   userName,
   userEmail,
 }: {
   items: NavItem[];
-  signOutAction: () => Promise<void>;
   userName?: string | null;
   userEmail?: string | null;
 }) {
@@ -77,11 +75,6 @@ export function MobileNav({
                 );
               })}
             </div>
-            <form action={signOutAction} className="mobile-nav-signout-form">
-              <button type="submit" className="mobile-nav-signout">
-                Sign out
-              </button>
-            </form>
           </nav>
         </div>
       )}

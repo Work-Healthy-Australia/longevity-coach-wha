@@ -11,12 +11,10 @@ type NavItem = { href: string; label: string };
 
 export function AppHeader({
   navItems,
-  signOutAction,
   userName,
   userEmail,
 }: {
   navItems: NavItem[];
-  signOutAction: () => Promise<void>;
   userName?: string | null;
   userEmail?: string | null;
 }) {
@@ -58,15 +56,9 @@ export function AppHeader({
               </Link>
             );
           })}
-          <form action={signOutAction} className="app-nav-signout-form">
-            <button type="submit" className="app-nav-signout">
-              Sign out
-            </button>
-          </form>
         </nav>
         <MobileNav
           items={navItems}
-          signOutAction={signOutAction}
           userName={userName}
           userEmail={userEmail}
         />
