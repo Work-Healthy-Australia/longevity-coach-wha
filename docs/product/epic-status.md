@@ -1,6 +1,6 @@
 # Longevity Coach — Epic Status Dashboard
 
-Last updated **2026-04-30** (Sentry setup + DR drill runbooks landed at [docs/operations/](../operations/); pause/freeze account flow confirmed shipped — UI, server actions, and proxy redirect all wired).
+Last updated **2026-04-30** (Booking calendar W1-4 + alert-notification cron + cost monitoring + Sentry install + employer dashboard + journal enhancements + insights category filter + deceased-flag schema all landed since the last sync).
 
 Companion to [epics.md](./epics.md) (strategy, stable) and [product.md](./product.md) (vision). This file is the **at-a-glance status** of each epic: how far through the build pipeline, what's still outstanding, what's broken right now.
 
@@ -29,13 +29,13 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 | 5 | The Report | `●●●○○` | 92% | 0 | 1 |
 | 6 | The Coach | `●●●●○` | 100% | 0 | 1 |
 | 7 | The Daily Return | `●●●●○` | 100% | 0 | 0 |
-| 8 | The Living Record | `●●●○○` | 85% | 0 | 0 |
-| 9 | The Care Team | `●●●◐○` | 75% | 0 | 0 |
-| 10 | The Knowledge Engine | `●●◐○○` | 70% | 0 | 1 |
-| 11 | The Trust Layer | `●●●○○` | 96% | 0 | 1 |
-| 12 | The Distribution | `●●◐○○` | 60% | 0 | 0 |
+| 8 | The Living Record | `●●●○○` | 90% | 0 | 0 |
+| 9 | The Care Team | `●●●◐○` | 85% | 0 | 0 |
+| 10 | The Knowledge Engine | `●●◐○○` | 75% | 0 | 1 |
+| 11 | The Trust Layer | `●●●○○` | 97% | 0 | 1 |
+| 12 | The Distribution | `●●◐○○` | 75% | 0 | 0 |
 | 13 | The Business Model | `●●◐○○` | 50% | 0 | 0 |
-| 14 | The Platform Foundation | `●●○○○` | 65% | 0 | 0 |
+| 14 | The Platform Foundation | `●●◐○○` | 80% | 0 | 0 |
 
 **Bug totals:** 0 open, 8 closed. (Bug log: forthcoming `qa/QA-bugs.md`.)
 
@@ -233,6 +233,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - **Check-in email reminders** (2026-04-30) — daily cron at `app/api/cron/check-in-reminder/route.ts` (09:00 UTC via `vercel.json`). Checks `notification_prefs.check_in_reminders` opt-in (default true), enforces 20h minimum gap between sends, skips paused accounts. Email template at `lib/email/check-in-reminder.ts`. Migration `0064_notification_prefs.sql` adds the `notification_prefs` table with per-channel opt-in columns and last-sent timestamps.
 - **Weekly insights digest** (2026-04-30) — Monday 08:00 UTC cron at `app/api/cron/weekly-digest/route.ts`. Aggregates last 7 days of daily logs per member (avg sleep, mood, energy, steps), counts open alerts, sends a branded email with stats table + dashboard CTA. Respects `notification_prefs.weekly_digest` opt-in (default true), 6-day minimum gap, skips paused and < 7-day-old accounts. Email template at `lib/email/weekly-digest.ts`. 14 unit tests at `tests/unit/email/weekly-digest.test.ts`.
 - **Health journal** (2026-04-30) — `/journal` page with compose form (Zod-validated, 5000-char max) and reverse-chronological entry list. Server action at `app/(app)/journal/actions.ts`. Styled via `journal.css`. Table `public.journal_entries` (migration `0044_journal.sql`) with RLS owner policy and user+date index. Dashboard quick-link tile.
+- **Journal enhancements** ([#66](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/66), 2026-04-29) — title, mood enum, tag array, full-text search, pin-to-top, inline edit. Migration `0066_journal_enhancements.sql` adds the columns + GIN index. Weekly digest tests bundled.
 
 **Outstanding:** none — user review pending.
 
@@ -244,7 +245,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 8: The Living Record
 
 `●●●○○` Planned · Feature Complete (member labs surface) · Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 88%** — five member-visible surfaces shipped: `/labs` (Lab Results UI), `/trends` (Daily-log trends), the alerts surface (`member_alerts` + dashboard chip + repeat-test cron + upload-flow lab-alert hook), the **Janet → `lab_results` structured writer**, and **`/simulator`** (real-time risk simulator with LDL/HbA1c/hsCRP/**Systolic BP**/Weight sliders running the deterministic risk engine in-browser via `useDeferredValue`, side-by-side baseline-vs-simulated display, empty-state CTA). Lab-alert path is now live — fires the moment any Janet-extracted biomarker is `low`/`high`/`critical`. SBP slider added 2026-04-29 with AHA-aligned numeric scoring bands. **Simulator added to top nav** (2026-04-29).
+**Estimate: 90%** — five member-visible surfaces shipped: `/labs` (Lab Results UI), `/trends` (Daily-log trends), the alerts surface (`member_alerts` + dashboard chip + repeat-test cron + upload-flow lab-alert hook), the **Janet → `lab_results` structured writer**, and **`/simulator`** (real-time risk simulator with LDL/HbA1c/hsCRP/**Systolic BP**/Weight sliders running the deterministic risk engine in-browser via `useDeferredValue`, side-by-side baseline-vs-simulated display, empty-state CTA). Lab-alert path is now live — fires the moment any Janet-extracted biomarker is `low`/`high`/`critical`. SBP slider added 2026-04-29 with AHA-aligned numeric scoring bands. **Simulator added to top nav** (2026-04-29).
 
 **Shipped:**
 - `biomarkers` schema with `lab_results`, `wearable_summaries`, `daily_logs` tables (migrations `0009`, `0010`).
@@ -256,13 +257,13 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - **Top-nav entries** (2026-04-29) — `/labs` and `/simulator` added to the app layout nav bar, visible to all signed-in members.
 - **`/trends` page** (2026-04-28) — 30-day sparklines for Sleep, Energy, Mood, Steps, Water from `biomarkers.daily_logs`. Empty-state CTA pointing to `/check-in`. `lib/trends/` pure helpers (`buildTrendSeries`, `summariseTrend`, `ML_PER_GLASS`) sourced off generated DB types. 10 unit tests. Dashboard quick-link tile.
 - **Member alerts surface** (2026-04-28) — `public.member_alerts` table (migration 0031, append-mostly, RLS owner-select + owner-update, service-role-only insert, unique partial index for idempotent re-runs). `lib/alerts/` pure evaluators (`evaluateLabAlerts`, `evaluateRepeatTests` with whole-token matching against a `SCREENING_KEYWORDS` map, `chipPayload`). Daily cron `/api/cron/repeat-tests` (Bearer-secret gated). Upload-flow lab-alert hook (defensive — no-op until Janet → `lab_results` writer lands). Dashboard hero chip with three severity tones (info/attention/urgent), `View →` link, dismiss server action. 20 unit tests.
+- **Alert-email dispatcher** (2026-04-30) — `app/api/cron/alert-notification/route.ts` runs every 4 hours; emails any open `member_alerts` row that hasn't been emailed yet, then stamps `member_alerts.email_sent_at` for idempotency. Respects `notification_prefs.alert_emails` opt-in (default true) and `profiles.paused_at`. Email template at `lib/email/alert-notification.ts` with unsubscribe deep-link to `/account`.
 
 **Outstanding:**
-- `vercel.json` cron registration for `/api/cron/repeat-tests` (operator step).
 - Snooze / dismiss-suppression mechanism on alerts.
 - Auto-resolve when next reading is back in range.
-- `/alerts` index / triage page.
-- Push / SMS / email delivery of alerts.
+- `/alerts` index / triage page (route stub exists at `app/(app)/alerts/`).
+- SMS / push delivery of alerts (email shipped 2026-04-30).
 - Wearable OAuth integrations (Oura, Apple Watch, Garmin).
 - Manual metric entry UI.
 - Source-upload back-link from each lab row to its `patient_uploads` document.
@@ -275,7 +276,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 9: The Care Team
 
 `●●●◐○` Planned · Feature Complete · Unit Tested · ◐ Regression Tested · ○ User Reviewed
-**Estimate: 75%** — Plan B Wave-2-9 (2026-04-29) shipped the clinician portal end-to-end on top of the existing schema: role expansion, role-gated routes, patient consent surface, admin clinician invite (branded email), three-pane review workspace, schedule, profile editor, and the janet_clinician real-time agent with the `submit_30_day_program` tool replacing the Base44 PROGRAM_READY text sentinel (per C6). Decisions C1–C6 RESOLVED 2026-04-29 with default proposals — see `docs/architecture/clinician-portal-decisions.md`. What's left is real clinician pilot use plus the deferred items below.
+**Estimate: 85%** — Plan B Wave-2-9 (2026-04-29) shipped the clinician portal end-to-end; the two-sided booking calendar (Waves 1-4, 2026-04-30) closed the patient-side loop with availability publishing, request/accept flow, and patient cancellation guarded by a 24h cutoff. What's left is real clinician pilot use plus the deferred items below.
 
 **Shipped:**
 - `clinical` schema (migrations `0011_clinical_schema.sql`).
@@ -294,10 +295,11 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - **`janet_clinician` real-time agent** — `lib/ai/agents/janet-clinician.ts` + `lib/ai/tools/submit-program-tool.ts`; the submit tool writes `program_30_day` and flips `review_status` to `program_ready` (per C6 — replaces text sentinel). `POST /api/clinician/chat` gates on admin OR (clinician AND assigned via `patient_assignments`).
 - **Patient program-delivery email** — `lib/email/program-delivery.ts`; clicking Approve & send sends a branded Resend message with the program body to the patient's auth email; non-fatal if Resend fails (status transition still holds, program visible in-app).
 - **Pipeline JSON parse stability** (2026-04-29, #49) — clinician-brief and PT-plan pipelines now retry up to 3 times with progressive fallback (strict → conservative → text-parse). Silent failures eliminated; all recovery attempts logged.
+- **Two-sided booking calendar Waves 1-3** ([#57](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/57), 2026-04-30) — migration `0055_clinician_booking_calendar.sql` adds `clinician_availability` (per-clinician recurring weekly slots, day_of_week 0-6, RLS clinician-rw + assigned-patient-r), and extends `appointments` with `video_link`, `patient_notes`, `clinician_notes`, `requested_at`, `accepted_at` plus a `'pending'` status. Clinician schedule page gains `AvailabilityGrid` (30-min increments 06:00–20:00) and `BookingRequests` (Accept/Decline cards). Patient `/care-team` page lists active assignments, clinician profile, 28-day available-slot calendar with overlap-checking, and inline booking panel (`SlotCalendar` + `requestBooking` server action). Dashboard Care Team tile linked.
+- **Patient-side cancellation Wave 4** (2026-04-30) — migration `0067_appointment_cancellation.sql` extends `appointments.status` with `cancelled_by_patient` / `cancelled_by_clinician`, adds an append-only `appointments_cancellation_log` audit table written by a `SECURITY DEFINER` trigger on status transition, and a tightly-scoped `appointments_patient_update_cancel` RLS policy. `cancelBooking(appointmentId)` server action enforces ownership + 24h cutoff + status guard; UI shows a Cancel button (≥ 24h) or a static "contact your clinician" deflect (< 24h). 14 integration tests cover all rejection paths.
 
 **Outstanding:**
-- Real clinician pilot use (User Reviewed gate) — schema, UI, and AI loop are live but no actual clinician has run a monthly review end-to-end yet.
-- Patient-side appointment booking (deferred per C3 to Phase 5+ — clinician-initiated only in v1).
+- Real clinician pilot use (User Reviewed gate) — schema, UI, AI loop, and booking calendar are live but no actual clinician has run a monthly review + booked-session loop end-to-end yet.
 - Clinical notes UI (`care_notes` writes from the workspace — currently `appointments.notes` is the only writable surface).
 - Janet chat persistence (each tab open starts fresh; `clinician_conversation_id` column is in place but not yet populated).
 - Community feed and challenges (deferred sub-epic).
@@ -315,12 +317,16 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - [#42](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/42) — janet_clinician real-time agent + submit_30_day_program tool
 - [#43](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/43) — patient program-delivery email on Approve & send
 
+**Recently shipped (Booking calendar, 2026-04-30):**
+- [#57](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/57) — two-sided booking calendar (clinician availability + patient request/accept flow)
+- Booking calendar W4 — patient cancellation with 24h cutoff + audit log trigger
+
 ---
 
 ### Epic 10: The Knowledge Engine
 
 `●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 70%** — health_researcher pipeline fully implemented 2026-04-28: PubMed search, LLM synthesis, chunk+embed, cron route, Vercel weekly schedule, PatientContext integration, unit + integration tests. **Member-facing insights feed shipped 2026-04-29** — `/insights` page now shows research digest cards from `health_updates` alongside existing weekly check-in trends.
+**Estimate: 75%** — health_researcher pipeline fully implemented 2026-04-28: PubMed search, LLM synthesis, chunk+embed, cron route, Vercel weekly schedule, PatientContext integration, unit + integration tests. Member-facing insights feed shipped 2026-04-29 with **category filter pills + search** added the same day (commit `e00fcf3`).
 
 **Shipped:**
 - `health_updates` table for structured digest display (`0015_health_updates.sql`).
@@ -333,10 +339,10 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - Unit tests: `tests/unit/ai/nova-helpers.test.ts` — 5 tests for `chunkText`.
 - Integration tests: `tests/integration/ai/nova.test.ts` — 5 tests for `runHealthResearcherPipeline` with mocked PubMed + Supabase.
 - **Member-facing insights feed** (2026-04-29) — `/insights` page extended with a "Research updates" section. Queries `public.health_updates` (latest 12), renders digest cards with category badge, evidence-level badge, title, 4-line content clamp, source attribution, and date. Responsive grid (2-col desktop, 1-col mobile). Scoped `insights.css` with colour-coded category and evidence badges. Empty state for zero digests.
+- **Category filter + search** (2026-04-29, commit `e00fcf3`) — filter pills above the digest cards and free-text search input. Filtering is client-side; the server still returns the latest 12 across all categories.
 
 **Outstanding:**
-- Enable the `vector` pgvector extension in Supabase dashboard (one-click action) — improves semantic search precision; keyword search still functional without it.
-- Category filter on the insights feed (currently shows all categories in reverse-chronological order).
+- pgvector extension formalised in migration `0055_pgvector_extension.sql` (commit `d2a85df`); confirm it is applied in production Supabase and that `hybrid_search_health()` is using HNSW (not falling back to keyword-only).
 - NCBI API key (`NCBI_API_KEY`) for scale — raises PubMed rate limit from 3 to 10 req/s; not needed at weekly cadence.
 - medRxiv integration — scoped for v2.
 - Clinical reviewer rubric for digest quality.
@@ -351,7 +357,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 11: The Trust Layer
 
 `●●●○○` Planned · Feature Complete · Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 96%** — RLS + PII boundary + consent records shipped and verified at the schema level, with the pgTAP RLS suite now running in CI on every PR; **export-everything bundle shipped 2026-04-28**; **right-to-erasure flow + "we never train on your data" clause shipped 2026-04-29** across three waves (PRs #46, #48, #50). **Erasure flow smoke-tested end-to-end** with a disposable test user (2026-04-29). Remaining trust surfaces (deceased flow, pause/freeze copy refinement, quarterly audit cadence) still outstanding.
+**Estimate: 97%** — RLS + PII boundary + consent records shipped and verified at the schema level, with the pgTAP RLS suite now running in CI on every PR; **export-everything bundle shipped 2026-04-28**; **right-to-erasure flow + "we never train on your data" clause shipped 2026-04-29** across three waves (PRs #46, #48, #50). **Erasure flow smoke-tested end-to-end** with a disposable test user (2026-04-29). **Deceased-flag schema landed 2026-04-30** (migration `0065_deceased_flag.sql`) — column in place; warm-copy UI flow still pending. **Per-channel notification opt-in card shipped 2026-04-30**. Remaining trust surfaces (deceased-flag UI, pause/freeze copy refinement, quarterly audit cadence) still outstanding.
 
 **Shipped:**
 - RLS on every table across `public`, `biomarkers`, `clinical`, `programs`, `billing` schemas.
@@ -369,12 +375,16 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 **Pause / freeze account flow — shipped 2026-04-30 (verified).** `app/(app)/account/pause-actions.ts` exposes `pauseAccount` / `unpauseAccount` server actions; `/account` renders the toggle button + paused banner; `lib/supabase/proxy.ts:102` redirects paused users away from `/dashboard`, `/report`, `/check-in` to `/account?paused=true`. Fail-open on DB error to avoid permanent lockout. Copy refinement still pending real-user feedback.
 
+**Deceased-flag schema (migration `0065_deceased_flag.sql`, 2026-04-30).** `profiles.deceased_at` column landed; warm-copy UI path (not a checkbox) still to design and build.
+
+**Per-channel notification opt-in (2026-04-30).** `notification_prefs` table backs three independent toggles (`check_in_reminders`, `weekly_digest`, `alert_emails`) on `/account`; defaults to opted-in for legacy users; honoured by every dispatcher cron.
+
 **Outstanding:**
 - Pause / freeze copy refinement (warm tone, "we'll keep your data" reassurance).
-- Deceased-flag flow with warm copy path (not a checkbox).
+- Deceased-flag UI flow with warm copy path (not a checkbox) — schema in place.
 - Quarterly trust audit cadence (logs scrub, signed-URL TTL check, deceased-flow walk-through).
 - DR drill — runbook drafted at [docs/operations/dr-drill.md](../operations/dr-drill.md); first drill scheduled for 2026-07-31.
-- Sentry — code wired, runbook at [docs/operations/sentry-setup.md](../operations/sentry-setup.md); `NEXT_PUBLIC_SENTRY_DSN` still needs to be set in Vercel before error monitoring goes live.
+- Sentry — code wired (commit `11f52bd` installs `@sentry/nextjs` and wraps next.config), runbook at [docs/operations/sentry-setup.md](../operations/sentry-setup.md); `NEXT_PUBLIC_SENTRY_DSN` still needs to be set in Vercel before error monitoring goes live.
 
 **Open bugs:** none.
 
@@ -386,7 +396,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 12: The Distribution
 
 `●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 60%** — admin CRM expanded into a full back-office (plans, add-ons, suppliers, products, test-orders, tiers, plan-builder) with shared CrudTable + admin-gated APIs. Admin overview ships MRR / active members / churn / pipeline runs / uploads tiles. Corporate invite scaffolding (`billing.org_invites`, email + CSV) shipped at the schema layer. Org members page and B2B plan admin APIs shipped 2026-04-29. Marketplace + employer dashboard UI still outstanding.
+**Estimate: 75%** — admin CRM expanded into a full back-office (plans, add-ons, suppliers, products, test-orders, tiers, plan-builder) with shared CrudTable + admin-gated APIs. Admin overview ships MRR / active members / churn / pipeline runs / uploads tiles. **Employer dashboard at `/org` shipped 2026-04-29** (commit `129498b`) — KPIs, seat utilisation, plan details, org nav. **CSV bulk invite flow shipped 2026-04-29** (commit `dfae631`). Marketplace integration still outstanding.
 
 **Shipped:**
 - `app/(admin)/admin.css` styling.
@@ -400,17 +410,18 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - **Admin-only nav link** — "Admin" link in the top nav visible only to `is_admin` users.
 
 **Outstanding:**
-- Employer dashboard UI (`/employer`) — schema (`billing.organisations`, `organisation_addons`, `organisation_members`, `org_invites`) is in place; UI for the health-manager flow is not yet built.
-- Bulk CSV invite intake handler — schema row exists, server action to parse + insert pending tokens still outstanding.
 - Supplement marketplace integration (auto-replenishment, in-app purchase from protocol page).
 - Sign-in-with-Vercel for clinician partners.
 - Audit log for admin-configuration changes (who changed agent settings and when).
+- Aggregate-only org reporting hardening — `/org/dashboard` currently exposes seat utilisation; verify no individual PII is reachable from the health-manager role.
 
 **Recently shipped (Sprint 2):**
 - Wave 5 (2026-04-29) — `/admin/plans`, `/admin/addons`, `/admin/suppliers`, `/admin/products` CRUD pages + 10 admin-gated API routes; shared `CrudTable` component; `lib/admin/guard.ts` requireAdmin helper.
 - Wave 6 (2026-04-29) — `/admin` overview tiles for MRR, active members, new signups, churn, pipeline runs, uploads.
 - #49 (2026-04-29) — `/admin/tiers` tier management, `/admin/plan-builder` plan builder UI, `/org/members` org member page, B2B plan admin APIs (CRUD + seat audit + allocations + product inclusions), feature-keys admin, Janet services admin, supplier inline edit.
 - #52/#53 (2026-04-29) — tier seed migration (`0053`), open-tier migration (`0054`), TiersClient build fix.
+- [#69](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/69) (2026-04-29) — employer dashboard at `/org/dashboard`: KPIs, seat utilisation, plan details, org nav.
+- CSV bulk invite (2026-04-29, commit `dfae631`) — `/org/invite` parses CSV and inserts `billing.org_invites` rows.
 
 **Open bugs:** none.
 **Closed bugs:** 0.
@@ -461,8 +472,8 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 14: The Platform Foundation
 
-`●●○○○` Planned · Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 65%** — substantial pieces already shipped via the existing `.claude/rules/` discipline (RLS, PII boundary, secret-key naming, pipeline auth, migration hygiene). CI Vitest+pgTAP and Gitleaks secret scanning shipped 2026-04-28. The remaining operational layer (Sentry, cost monitoring, DR drill, pen-test cadence) is unbuilt.
+`●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 80%** — substantial pieces already shipped via the existing `.claude/rules/` discipline (RLS, PII boundary, secret-key naming, pipeline auth, migration hygiene). CI Vitest+pgTAP and Gitleaks secret scanning shipped 2026-04-28; **Playwright + Lighthouse CI jobs added 2026-04-29** (Sprint 2 W1). **Cost monitoring shipped 2026-04-30** — `agent_usage` telemetry, `/admin/cost` dashboard, daily rollup cron, $50 budget alert email. **Sentry installed 2026-04-30** (`@sentry/nextjs` wired into `next.config`); DSN env var still pending. The remaining operational layer (DR drill, pen-test cadence, log-scrub automation) is unbuilt.
 
 **Shipped:**
 - RLS on every table across `public`, `biomarkers`, `clinical`, `programs`, `billing` schemas.
@@ -479,21 +490,22 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - Encryption at rest (Supabase default) + TLS in transit.
 - **Gitleaks secret-scan workflow** at `.github/workflows/secrets.yml` — runs on every PR and every push to `main`; fails the check on a hit. Default ruleset extended via `.gitleaks.toml` (2026-04-28).
 - **Pipeline JSON parse stability** (2026-04-29, #49) — 3-attempt progressive retry with fallback for all LLM pipelines (clinician-brief, PT-plan, risk-narrative, supplement-protocol). Silent pipeline failures eliminated.
+- **Playwright + Lighthouse CI jobs** (2026-04-29, Sprint 2 W1) — added to `.github/workflows/ci.yml`; `.lighthouserc.json` thresholds: perf ≥ 0.8, a11y ≥ 0.9, best-practices ≥ 0.9.
+- **Cost monitoring** (2026-04-30) — migration `0063_agent_usage.sql` adds `agent_usage` (one row per Claude API call) and `agent_cost_alerts` (one row per breached daily-budget period) tables. Pricing helpers at `lib/ai/pricing.ts` cover Opus 4.7 / Sonnet 4.6 / Haiku 4.5; token capture wraps both `streamText` and `generateText` paths in `lib/ai/agent-factory.ts`. `/admin/cost` dashboard renders today's spend, range total, daily totals, by-agent breakdown, recent failures, open alerts. Daily 01:00 UTC cron `/api/cron/cost-rollup` upserts an alert row when over `COST_DAILY_BUDGET_USD` (default $50) and emails admins via `lib/email/cost-alert.ts`. 9 unit tests on pricing math.
+- **Sentry installed** (2026-04-30, commit `11f52bd`) — `@sentry/nextjs` package added; `next.config` wrapped via `withSentryConfig`. Runbook at `docs/operations/sentry-setup.md`. `NEXT_PUBLIC_SENTRY_DSN` env var still needs to be set in Vercel before error monitoring goes live.
 
 **Outstanding:**
-- CI workflow file extension — Playwright + Lighthouse on every PR (Vitest + pgTAP already running).
-- Sentry / Highlight / equivalent error monitoring + alert routing.
-- Anthropic API spend dashboard + 80%-of-budget alert.
+- Sentry DSN configuration in Vercel envs (code shipped, signal pending).
 - Supabase storage quota alert.
 - Vercel function execution-time monitoring.
-- Supabase point-in-time restore drill executed and runbook in `docs/operations/dr-runbook.md`.
+- Supabase point-in-time restore drill executed and runbook in `docs/operations/dr-runbook.md` — runbook drafted, first drill scheduled 2026-07-31.
 - Quarterly penetration test cadence on a staging mirror.
 - Monthly dependency CVE scan (dependabot + `pnpm audit`).
 - Weekly log scrub for PII regressions.
 - Production-readiness checklist (`docs/operations/checklist.md`) and enforcement in PR template.
 - AHPRA breach-notification protocol document.
 - Data residency confirmation per region.
-- ~~Migration filename collisions~~ **RESOLVED** (2026-04-29) — one-shot renumber collapsed collision groups at 0046, 0051, 0052 into monotonic 0046–0056. Tracking reconciliation migration at `0057_renumber_tracking.sql` updates `supabase_migrations.schema_migrations` in production. 57 migrations, all uniquely numbered.
+- ~~Migration filename collisions~~ **RESOLVED** (2026-04-29) — one-shot renumber collapsed collision groups into monotonic ordering. Tracking reconciliation migration at `0057_renumber_tracking.sql` updates `supabase_migrations.schema_migrations` in production. Latest migration is `0067_appointment_cancellation.sql`.
 
 **Open bugs:** none directly.
 **Closed bugs:** 0.

@@ -1,6 +1,6 @@
 # Longevity Coach — Epics
 
-Last updated **2026-04-28**. Drafted in the Dan Shipper school: bundled by thesis, not by phase number.
+Last updated **2026-04-30**. Drafted in the Dan Shipper school: bundled by thesis, not by phase number.
 
 **Companion docs:**
 - [product.md](./product.md) — who we serve, the four values, what makes us different.
@@ -173,7 +173,7 @@ An epic earns shipping when **the success criterion is true** — not when every
 - Periodic review record (`periodic_reviews` table — schema exists).
 - Community feed and challenges (deferred sub-epic).
 
-**Mechanism:** Clinician role gated via `profiles.role = 'clinician'` and `patient_assignments` rows. Clinician-side reads use the user client (RLS enforces patient consent), pipeline-side writes use the admin client. Janet-Clinician runs on a 1st-of-month cron per assignment.
+**Mechanism:** Clinician role gated via `profiles.role = 'clinician'` and `patient_assignments` rows. Clinician-side reads use the user client (RLS enforces patient consent), pipeline-side writes use the admin client. Janet-Clinician runs on a 1st-of-month cron per assignment. Two-sided booking: clinicians publish weekly recurring slots in `clinician_availability`; patients self-insert `pending` appointments via `requestBooking`; clinicians accept/decline from `BookingRequests`. Patient cancellations are gated by a 24-hour cutoff and audited via an append-only `appointments_cancellation_log` written by a `SECURITY DEFINER` DB trigger.
 
 **Success criterion:** A clinician opening a patient for the first time can summarise the patient's risk picture in under 3 minutes. Patient consent for care-team access is captured via the consent-record flow (AHPRA audit).
 
