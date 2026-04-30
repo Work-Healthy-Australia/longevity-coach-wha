@@ -1,4 +1,27 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
+import {
+  Activity,
+  BarChart3,
+  Brain,
+  Droplet,
+  FileText,
+  FlaskConical,
+  Footprints,
+  Handshake,
+  Lock,
+  MessageCircle,
+  Moon,
+  NotebookPen,
+  PencilLine,
+  Pill,
+  SlidersHorizontal,
+  Sun,
+  TrendingUp,
+  User,
+  Users,
+  Zap,
+} from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { calculateStreak } from "@/lib/streaks";
 import { deriveGoals, extractGoalInputs } from "@/lib/goals/derive";
@@ -428,7 +451,7 @@ export default async function DashboardPage() {
 
       {/* Quick links */}
       <section className="lc-quick">
-        <QuickTile href="/uploads" label="Documents" sub={uploadCount ? `${uploadCount} files` : "Upload your panels"} icon="📄" />
+        <QuickTile href="/uploads" label="Documents" sub={uploadCount ? `${uploadCount} files` : "Upload your panels"} icon={<FileText size={20} />} />
         <QuickTile
           href="/labs"
           label="Lab Results"
@@ -437,17 +460,17 @@ export default async function DashboardPage() {
               ? "Upload your first panel"
               : `${biomarkerCount} biomarker${biomarkerCount === 1 ? "" : "s"} · latest ${formatDate(latestLabDate)}`
           }
-          icon="🔬"
+          icon={<FlaskConical size={20} />}
         />
-        <QuickTile href="/report" label="Report" sub="Risk + supplements" icon="📊" />
-        <QuickTile href="/check-in" label="Check-in" sub={todayLog ? "Today logged" : "Log today"} icon="✏️" />
-        <QuickTile href="/routines" label="Routines" sub="Morning to evening" icon="☀️" />
-        <QuickTile href="/journal" label="Journal" sub="Free-form notes" icon="📓" />
-        <QuickTile href="/trends" label="Trends" sub="30-day patterns" icon="📈" />
-        <QuickTile href="/simulator" label="Simulator" sub="Slide and see" icon="🎚️" />
-        <QuickTile href="/onboarding" label="Update profile" sub="Refresh your answers" icon="👤" />
-        <QuickTile href="/legal/collection-notice" label="Privacy" sub="What we store" icon="🔒" />
-        <QuickTile href="mailto:hello@janet.care" label="Get help" sub="Reach support" icon="💬" />
+        <QuickTile href="/report" label="Report" sub="Risk + supplements" icon={<BarChart3 size={20} />} />
+        <QuickTile href="/check-in" label="Check-in" sub={todayLog ? "Today logged" : "Log today"} icon={<PencilLine size={20} />} />
+        <QuickTile href="/routines" label="Routines" sub="Morning to evening" icon={<Sun size={20} />} />
+        <QuickTile href="/journal" label="Journal" sub="Free-form notes" icon={<NotebookPen size={20} />} />
+        <QuickTile href="/trends" label="Trends" sub="30-day patterns" icon={<TrendingUp size={20} />} />
+        <QuickTile href="/simulator" label="Simulator" sub="Slide and see" icon={<SlidersHorizontal size={20} />} />
+        <QuickTile href="/onboarding" label="Update profile" sub="Refresh your answers" icon={<User size={20} />} />
+        <QuickTile href="/legal/collection-notice" label="Privacy" sub="What we store" icon={<Lock size={20} />} />
+        <QuickTile href="mailto:hello@janet.care" label="Get help" sub="Reach support" icon={<MessageCircle size={20} />} />
       </section>
 
       {/* Coming soon shelf */}
@@ -458,45 +481,45 @@ export default async function DashboardPage() {
         </div>
         <div className="lc-coming-grid">
           <ComingTile
-            icon="🩸"
+            icon={<Droplet size={20} />}
             title="Glucose Tracker"
             stat="Avg fasting · 5.4 mmol/L"
             sub="Time-in-range 81% · CGM not connected"
           />
           <ComingTile
-            icon="🏃"
+            icon={<Activity size={20} />}
             title="Training Log"
             stat="Zone 2 this week · 142 min"
             sub="VO₂ max 47 · Last session Tuesday"
           />
           <ComingTile
-            icon="💊"
+            icon={<Pill size={20} />}
             title="Medications"
             stat="Active prescriptions · 2"
             sub="Atorvastatin 20mg · Metformin 500mg"
           />
           <Link href="/care-team" className="lc-coming-tile lc-coming-tile--linked" aria-label="Care Team">
             <div className="lc-coming-head">
-              <span className="lc-coming-icon" aria-hidden="true">🤝</span>
+              <span className="lc-coming-icon" aria-hidden="true"><Handshake size={20} /></span>
             </div>
             <div className="lc-coming-title">Care Team</div>
             <div className="lc-coming-stat">Your GP · Dr Patel</div>
             <div className="lc-coming-sub">Book a session with your clinician →</div>
           </Link>
           <ComingTile
-            icon="📓"
+            icon={<NotebookPen size={20} />}
             title="Journal"
             stat="Entries this month · 12"
             sub="Avg purpose 8/10 · Last entry Sunday"
           />
           <ComingTile
-            icon="🧠"
+            icon={<Brain size={20} />}
             title="Cognitive Fitness"
             stat="Reaction time · 312 ms"
             sub="7% faster than 30 days ago · Memory 92%"
           />
           <ComingTile
-            icon="👥"
+            icon={<Users size={20} />}
             title="Community"
             stat="Your cohort · 138 members"
             sub="3 in your suburb · 12 in your age band"
@@ -531,9 +554,16 @@ function TodayTile({
 }) {
   const pct = value != null && target ? Math.min(100, Math.round((value / target) * 100)) : 0;
   const display = value != null ? formatNumber(value) : "—";
+  const IconCmp =
+    icon === "sleep" ? Moon
+    : icon === "energy" ? Zap
+    : icon === "steps" ? Footprints
+    : Droplet;
   return (
     <div className="lc-today-tile">
-      <div className={`lc-today-icon lc-today-icon-${icon}`} aria-hidden="true" />
+      <div className={`lc-today-icon lc-today-icon-${icon}`} aria-hidden="true">
+        <IconCmp size={18} strokeWidth={2} />
+      </div>
       <div className="lc-today-value">{display}<span className="lc-today-unit">{unit}</span></div>
       <div className="lc-today-label">{label}</div>
       <div className="lc-today-bar"><div className="lc-today-bar-fill" style={{ width: `${pct}%` }} /></div>
@@ -570,7 +600,7 @@ function QuickTile({
   href: string;
   label: string;
   sub: string;
-  icon: string;
+  icon: ReactNode;
 }) {
   return (
     <Link href={href} className="lc-quick-tile">
@@ -589,7 +619,7 @@ function ComingTile({
   stat,
   sub,
 }: {
-  icon: string;
+  icon: ReactNode;
   title: string;
   stat: string;
   sub: string;

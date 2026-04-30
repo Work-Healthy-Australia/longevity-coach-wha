@@ -17,9 +17,7 @@
 
   font-family: var(--font-lc-sans), system-ui, sans-serif;
   color: var(--lc-ink);
-  max-width: 1080px;
-  margin: 0 auto;
-  padding: 24px 20px 80px;
+  padding: 24px 0 80px;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -242,10 +240,6 @@
 .lc-today-icon-energy  { background: #FBF1E5; color: #B5722F; }
 .lc-today-icon-steps   { background: #E8F4EE; color: #2A7A5C; }
 .lc-today-icon-water   { background: #E5F1F8; color: #2F6F8F; }
-.lc-today-icon-sleep::before   { content: "☾"; }
-.lc-today-icon-energy::before  { content: "⚡"; }
-.lc-today-icon-steps::before   { content: "👣"; font-size: 16px; }
-.lc-today-icon-water::before   { content: "💧"; font-size: 16px; }
 .lc-today-value {
   font-family: var(--font-lc-serif), Georgia, serif;
   font-size: 24px;
@@ -621,7 +615,7 @@
   .lc-coming-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 640px) {
-  .lc-dash { padding: 16px 14px 60px; gap: 18px; }
+  .lc-dash { padding: 16px 0 60px; gap: 18px; }
   .lc-hero { padding: 22px 22px; }
   .lc-hero-row { flex-direction: column; align-items: flex-start; gap: 12px; }
   .lc-hero-streak { align-self: stretch; text-align: left; }

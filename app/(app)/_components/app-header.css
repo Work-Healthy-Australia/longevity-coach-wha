@@ -2,13 +2,18 @@
   position: sticky;
   top: 0;
   z-index: 20;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 24px;
   background: var(--lc-surface);
   border-bottom: 1px solid var(--lc-line);
   transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.app-header-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 14px 48px;
+  display: flex;
+  align-items: center;
+  gap: 32px;
 }
 
 .app-header--scrolled {
@@ -20,6 +25,7 @@
   display: flex;
   align-items: center;
   text-decoration: none;
+  margin-right: auto;
 }
 
 .app-header-logo {
