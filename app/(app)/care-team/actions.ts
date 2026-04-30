@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -7,6 +8,7 @@ import { createClient } from "@/lib/supabase/server";
 import { loose } from "@/lib/supabase/loose-table";
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const CANCEL_CUTOFF_HOURS = 24;
 
 const RequestBookingSchema = z.object({
   clinicianUuid: z.string().regex(UUID_REGEX, "clinicianUuid must be a valid UUID"),
@@ -81,4 +83,74 @@ export async function requestBooking(
   }
 
   return { success: true, appointmentId: appt.id };
+}
+
+const CancelBookingSchema = z.object({
+  appointmentId: z.string().regex(UUID_REGEX, "appointmentId must be a valid UUID"),
+});
+
+export type CancelBookingResult =
+  | { success: true }
+  | {
+      error: string;
+      reason?: "inside_24h" | "not_found" | "wrong_owner" | "wrong_status";
+    };
+
+export async function cancelBooking(appointmentId: string): Promise<CancelBookingResult> {
+  const parsed = CancelBookingSchema.safeParse({ appointmentId });
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Invalid input." };
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "You must be signed in." };
+
+  const { data: appt, error: fetchErr } = await supabase
+    .from("appointments")
+    .select("id, patient_uuid, status, scheduled_at")
+    .eq("id", appointmentId)
+    .maybeSingle();
+
+  if (fetchErr) {
+    console.error("[cancelBooking] fetch error:", fetchErr.message);
+    return { error: "Failed to load appointment." };
+  }
+  if (!appt) {
+    return { error: "Appointment not found.", reason: "not_found" };
+  }
+  if (appt.patient_uuid !== user.id) {
+    return { error: "You can only cancel your own appointments.", reason: "wrong_owner" };
+  }
+  if (appt.status !== "pending" && appt.status !== "confirmed") {
+    return {
+      error: "This appointment is no longer cancellable.",
+      reason: "wrong_status",
+    };
+  }
+
+  const scheduledAt = new Date(appt.scheduled_at as string);
+  const hoursUntilStart = (scheduledAt.getTime() - Date.now()) / (1000 * 60 * 60);
+
+  if (hoursUntilStart < CANCEL_CUTOFF_HOURS) {
+    return {
+      error: "Inside 24-hour window — please contact your clinician directly to cancel.",
+      reason: "inside_24h",
+    };
+  }
+
+  const { error: updateErr } = await supabase
+    .from("appointments")
+    .update({ status: "cancelled_by_patient" })
+    .eq("id", appointmentId);
+
+  if (updateErr) {
+    console.error("[cancelBooking] update error:", updateErr.message);
+    return { error: "Failed to cancel appointment." };
+  }
+
+  revalidatePath("/care-team");
+  return { success: true };
 }

@@ -3,9 +3,12 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { loose } from "@/lib/supabase/loose-table";
 import SlotCalendar from "@/app/(app)/care-team/SlotCalendar";
+import CancelSessionButton from "@/app/(app)/care-team/CancelSessionButton";
 import "./care-team.css";
 
 export const dynamic = "force-dynamic";
+
+const CANCEL_CUTOFF_HOURS = 24;
 
 // Generate concrete available slots for the next 28 days, capped at 20.
 function generateAvailableSlots(
@@ -241,19 +244,31 @@ export default async function CareTeamPage() {
                 minute: "2-digit",
                 hour12: true,
               });
+              const hoursUntilStart =
+                (dt.getTime() - Date.now()) / (1000 * 60 * 60);
+              const cancellable = hoursUntilStart >= CANCEL_CUTOFF_HOURS;
               return (
                 <li key={appt.id as string} className="lc-care__upcoming-item">
-                  <div>
+                  <div className="lc-care__upcoming-info">
                     <div className="lc-care__upcoming-date">{dateLabel}</div>
                     <div className="lc-care__upcoming-duration">
                       {appt.duration_minutes as number}min session
                     </div>
                   </div>
-                  <span
-                    className={`lc-care__status-badge lc-care__status-badge--${appt.status as string}`}
-                  >
-                    {appt.status as string}
-                  </span>
+                  <div className="lc-care__upcoming-actions">
+                    <span
+                      className={`lc-care__status-badge lc-care__status-badge--${appt.status as string}`}
+                    >
+                      {appt.status as string}
+                    </span>
+                    {cancellable ? (
+                      <CancelSessionButton appointmentId={appt.id as string} />
+                    ) : (
+                      <span className="lc-care__cancel-deflect">
+                        Inside 24h — contact {clinicianName} to cancel.
+                      </span>
+                    )}
+                  </div>
                 </li>
               );
             })}

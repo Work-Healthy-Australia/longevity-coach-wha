@@ -366,3 +366,101 @@
   background: #D1F2EA;
   color: #0A4C30;
 }
+
+.lc-care__upcoming-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lc-care__upcoming-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.lc-care__cancel-btn {
+  background: transparent;
+  border: 1px solid var(--lc-line);
+  color: var(--lc-text);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.lc-care__cancel-btn:hover {
+  background: var(--lc-canvas);
+  border-color: var(--lc-text);
+}
+
+.lc-care__cancel-deflect {
+  font-size: 12px;
+  color: var(--lc-muted);
+  font-style: italic;
+  max-width: 240px;
+  text-align: right;
+}
+
+.lc-care__cancel-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--lc-canvas);
+  border: 1px solid var(--lc-line);
+  border-radius: 8px;
+  min-width: 240px;
+}
+
+.lc-care__cancel-confirm-text {
+  margin: 0;
+  font-size: 13px;
+  color: var(--lc-text);
+}
+
+.lc-care__cancel-confirm-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.lc-care__cancel-keep,
+.lc-care__cancel-confirm-btn {
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid var(--lc-line);
+  transition: background 0.15s ease, opacity 0.15s ease;
+}
+
+.lc-care__cancel-keep {
+  background: transparent;
+  color: var(--lc-text);
+}
+
+.lc-care__cancel-keep:hover:not(:disabled) {
+  background: var(--lc-surface);
+}
+
+.lc-care__cancel-confirm-btn {
+  background: #B85450;
+  color: white;
+  border-color: #B85450;
+}
+
+.lc-care__cancel-confirm-btn:hover:not(:disabled) {
+  background: #9C3F3C;
+  border-color: #9C3F3C;
+}
+
+.lc-care__cancel-keep:disabled,
+.lc-care__cancel-confirm-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
