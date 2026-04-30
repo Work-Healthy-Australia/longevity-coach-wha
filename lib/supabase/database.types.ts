@@ -1069,6 +1069,41 @@ export type Database = {
         }
         Relationships: []
       }
+      appointments_cancellation_log: {
+        Row: {
+          appointment_id: string
+          cancelled_at: string
+          cancelled_by: string | null
+          cancelled_role: string
+          hours_before_start: number | null
+          id: string
+        }
+        Insert: {
+          appointment_id: string
+          cancelled_at?: string
+          cancelled_by?: string | null
+          cancelled_role: string
+          hours_before_start?: number | null
+          id?: string
+        }
+        Update: {
+          appointment_id?: string
+          cancelled_at?: string
+          cancelled_by?: string | null
+          cancelled_role?: string
+          hours_before_start?: number | null
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointments_cancellation_log_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       clinician_availability: {
         Row: {
           clinician_uuid: string
