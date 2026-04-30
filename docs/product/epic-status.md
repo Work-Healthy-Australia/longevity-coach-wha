@@ -28,8 +28,8 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 | 4 | The Protocol | `●●●○○` | 85% | 0 | 0 |
 | 5 | The Report | `●●●○○` | 92% | 0 | 1 |
 | 6 | The Coach | `●●●●○` | 100% | 0 | 1 |
-| 7 | The Daily Return | `●●●○○` | 96% | 0 | 0 |
-| 8 | The Living Record | `●●●○○` | 88% | 0 | 0 |
+| 7 | The Daily Return | `●●●●○` | 100% | 0 | 0 |
+| 8 | The Living Record | `●●●○○` | 85% | 0 | 0 |
 | 9 | The Care Team | `●●●◐○` | 75% | 0 | 0 |
 | 10 | The Knowledge Engine | `●●◐○○` | 70% | 0 | 1 |
 | 11 | The Trust Layer | `●●●○○` | 96% | 0 | 1 |
@@ -211,8 +211,8 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 7: The Daily Return
 
-`●●●○○` Planned · Feature Complete · Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 96%** — daily check-in UI, streak math, Mon-Sun dot strip with rest-day support, steps + water capture, risk_analyzer trigger, journal quick-link, and **personalised daily goals** all shipped; remaining work is reminders and weekly digest.
+`●●●●○` Planned · Feature Complete · Unit Tested · Regression Tested · ○ User Reviewed
+**Estimate: 100%** — daily check-in UI, streak math, Mon-Sun dot strip with rest-day support, steps + water capture, risk_analyzer trigger, personalised daily goals, **check-in email reminders**, **weekly insights digest**, and **health journal** all shipped. User review pending.
 
 **Shipped:**
 - Drip-email cron at `app/api/cron/drip-emails/route.ts`.
@@ -230,11 +230,11 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - **Journal quick-link** (2026-04-29, #47) — `/journal` tile added to the dashboard quick-links grid.
 - **Janet latency logging** (2026-04-29, #47) — `agent-factory` `onFinish` now emits `tools_invoked` alongside `patient_context_ms` / `total_ms`.
 - **Personalised daily goals** (2026-04-29) — `deriveGoals()` enriched with risk-profile-aware logic: steps (6k–10k based on MSK/CV risk), sleep (7.5–8.5h based on neuro/metabolic risk), water (weight-derived + metabolic bonus), meditation (10–15 min based on questionnaire stress level + neuro risk). New `extractGoalInputs()` helper reads weight and stress from questionnaire JSONB responses. Dashboard now calls `deriveGoals()` instead of hardcoding targets; check-in and insights pages wired identically. 28 unit tests (was 10) covering all risk thresholds, `extractGoalInputs`, and edge cases.
+- **Check-in email reminders** (2026-04-30) — daily cron at `app/api/cron/check-in-reminder/route.ts` (09:00 UTC via `vercel.json`). Checks `notification_prefs.check_in_reminders` opt-in (default true), enforces 20h minimum gap between sends, skips paused accounts. Email template at `lib/email/check-in-reminder.ts`. Migration `0064_notification_prefs.sql` adds the `notification_prefs` table with per-channel opt-in columns and last-sent timestamps.
+- **Weekly insights digest** (2026-04-30) — Monday 08:00 UTC cron at `app/api/cron/weekly-digest/route.ts`. Aggregates last 7 days of daily logs per member (avg sleep, mood, energy, steps), counts open alerts, sends a branded email with stats table + dashboard CTA. Respects `notification_prefs.weekly_digest` opt-in (default true), 6-day minimum gap, skips paused and < 7-day-old accounts. Email template at `lib/email/weekly-digest.ts`. 14 unit tests at `tests/unit/email/weekly-digest.test.ts`.
+- **Health journal** (2026-04-30) — `/journal` page with compose form (Zod-validated, 5000-char max) and reverse-chronological entry list. Server action at `app/(app)/journal/actions.ts`. Styled via `journal.css`. Table `public.journal_entries` (migration `0044_journal.sql`) with RLS owner policy and user+date index. Dashboard quick-link tile.
 
-**Outstanding:**
-- Push / SMS / email reminder for the daily check-in.
-- Weekly insights digest from check-in patterns.
-- Health journal full UI (quick-link exists, page not yet built).
+**Outstanding:** none — user review pending.
 
 **Open bugs:** none.
 **Closed bugs:** 0.
