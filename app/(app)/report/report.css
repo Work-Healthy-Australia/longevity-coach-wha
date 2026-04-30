@@ -21,62 +21,78 @@
   --lc-canvas: #FAFAF7;
   --lc-bg: #F4F7F9;
 
-  display: grid;
-  grid-template-columns: 1fr 340px;
+  display: flex;
+  flex-direction: column;
   gap: 24px;
-  align-items: start;
   font-family: var(--font-lc-sans), system-ui, sans-serif;
   color: var(--lc-ink);
 }
 
-/* Left column: scrollable report data */
-.lc-report .report-data {
+/* Collapsible info section (narrative, screenings) */
+.lc-report .info-accordion {
+  background: var(--lc-surface);
+  border-radius: 14px;
+  border: 1px solid var(--lc-line);
+}
+
+.lc-report .info-accordion-summary {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--lc-ink);
+  border-radius: 14px;
+  transition: background 0.15s;
+}
+.lc-report .info-accordion-summary::-webkit-details-marker { display: none; }
+.lc-report .info-accordion-summary:hover { background: var(--lc-canvas); }
+
+.lc-report .info-accordion-chevron {
+  font-size: 13px;
+  opacity: 0.45;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+.lc-report details.info-accordion:not([open]) .info-accordion-chevron {
+  transform: rotate(-90deg);
+}
+
+.lc-report .info-accordion-body {
+  padding: 0 24px 20px;
+}
+
+/* Chat */
+.lc-report .chat-section { display: flex; flex-direction: column; }
+
+/* Hero row: [Risk domains] [Bio-age] [Top risk factors] */
+.lc-report .hero-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 24px;
-  min-width: 0;
+  align-items: stretch;
 }
 
-/* Right column: Janet sticky alongside report */
-.lc-report .report-chat-panel {
-  position: sticky;
-  top: 24px;
+/* Domains grid inside the narrower hero-row column: fixed 2-col */
+.lc-report .hero-row .domains-grid {
+  grid-template-columns: repeat(2, 1fr);
 }
 
-/* Chat card fills sticky panel height */
-.lc-report .chat-card {
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - 120px);
-  max-height: 820px;
-  overflow: hidden;
+/* Scale down the large number slightly to fit the narrower column */
+.lc-report .hero-row .domain-value {
+  font-size: 28px;
 }
 
-.lc-report .chat-card-header { flex-shrink: 0; }
-.lc-report .chat-card h2 { margin-bottom: 4px; }
-
-/* Chat container grows to fill remaining card space */
-.lc-report .chat-card .chat-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  overflow: hidden;
-  margin-top: 8px;
-}
-
-/* Messages scroll within the fixed-height panel */
-.lc-report .chat-card .chat-messages {
-  flex: 1;
-  min-height: 0;
-  max-height: none;
-}
-
-@media (max-width: 860px) {
-  .lc-report { grid-template-columns: 1fr; }
-  .lc-report .report-chat-panel { position: static; }
-  .lc-report .chat-card { height: auto; }
-  .lc-report .chat-card .chat-messages { max-height: 400px; }
+/* Mobile: stack, bio-age hero first */
+@media (max-width: 720px) {
+  .lc-report .hero-row { grid-template-columns: 1fr; }
+  .lc-report .hero-row .bio-age-hero { order: -1; }
+  .lc-report .hero-row .domains-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+  .lc-report .hero-row .domain-value { font-size: 36px; }
 }
 
 /* Bio-age hero */
