@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Newsreader, Instrument_Sans, JetBrains_Mono } from "next/font/google";
+import { Toaster } from "./_components/toaster";
 import "./globals.css";
 
 const newsreader = Newsreader({
@@ -38,7 +39,7 @@ export default function RootLayout({
       lang="en"
       className={`${newsreader.variable} ${instrumentSans.variable} ${jetbrainsMono.variable}`}
     >
-      <body>{children}</body>
+      <body>{children}<Toaster /></body>
     </html>
   );
 }

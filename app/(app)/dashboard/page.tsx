@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { calculateStreak } from "@/lib/streaks";
 import { deriveGoals, extractGoalInputs } from "@/lib/goals/derive";
+import { computeWellnessScore, scoreLabel, scoreColor, type WellnessInput } from "@/lib/wellness/score";
 import { dismissAlert } from "./_actions/dismiss-alert";
 import "./dashboard.css";
 
@@ -176,6 +177,22 @@ export default async function DashboardPage() {
     stressLevel,
   });
 
+  // Wellness score: composite 0–100 from today's check-in vs goals
+  const wellnessInput: WellnessInput = {
+    sleepHours: todayLog?.sleep_hours ?? null,
+    energy: todayLog?.energy_level ?? null,
+    mood: todayLog?.mood ?? null,
+    steps: todayLog?.steps ?? null,
+    waterMl: todayLog?.water_ml ?? null,
+    exerciseMin: todayLog?.workout_duration_min ?? null,
+    hrv: null,
+    restingHr: null,
+    deepSleepPct: null,
+    supplementsTaken: (todayLog?.supplements_taken ?? []).length,
+    totalSupplements: supplementItems.length,
+  };
+  const wellness = todayLog ? computeWellnessScore(wellnessInput, goals) : null;
+
   // Top risk domain: the highest numeric value across the five domains.
   const topRisk = risk
     ? RISK_DOMAINS.map((d) => ({ ...d, value: risk[d.key as keyof typeof risk] as number | null }))
@@ -204,10 +221,25 @@ export default async function DashboardPage() {
             <p className="lc-hero-eyebrow">{greeting}</p>
             <h1>Welcome{firstName ? `, ${firstName}` : ""}.</h1>
           </div>
-          <div className="lc-hero-streak">
-            <div className="lc-hero-streak-value">{streak}</div>
-            <div className="lc-hero-streak-label">
-              day{streak === 1 ? "" : "s"} of check-ins
+          <div className="lc-hero-metrics">
+            {wellness && (
+              <div className="lc-hero-wellness">
+                <div
+                  className="lc-hero-wellness-value"
+                  style={{ color: scoreColor(wellness.total) }}
+                >
+                  {wellness.total}
+                </div>
+                <div className="lc-hero-wellness-label">
+                  {scoreLabel(wellness.total)}
+                </div>
+              </div>
+            )}
+            <div className="lc-hero-streak">
+              <div className="lc-hero-streak-value">{streak}</div>
+              <div className="lc-hero-streak-label">
+                day{streak === 1 ? "" : "s"}
+              </div>
             </div>
           </div>
         </div>
@@ -409,6 +441,7 @@ export default async function DashboardPage() {
         />
         <QuickTile href="/report" label="Report" sub="Risk + supplements" icon="📊" />
         <QuickTile href="/check-in" label="Check-in" sub={todayLog ? "Today logged" : "Log today"} icon="✏️" />
+        <QuickTile href="/routines" label="Routines" sub="Morning to evening" icon="☀️" />
         <QuickTile href="/journal" label="Journal" sub="Free-form notes" icon="📓" />
         <QuickTile href="/trends" label="Trends" sub="30-day patterns" icon="📈" />
         <QuickTile href="/simulator" label="Simulator" sub="Slide and see" icon="🎚️" />
