@@ -1,0 +1,120 @@
+.lc-sync {
+  max-width: 680px;
+  margin: 0 auto;
+}
+.lc-sync-back {
+  display: inline-block;
+  font-size: 13px;
+  color: #2F6F8F;
+  text-decoration: none;
+  margin-bottom: 16px;
+}
+.lc-sync h1 {
+  font-family: var(--font-lc-serif), Georgia, serif;
+  font-weight: 400;
+  font-size: 28px;
+  margin: 0 0 8px;
+  color: #2B2B2B;
+}
+.lc-sync-intro {
+  font-size: 14px;
+  color: #8A9AA5;
+  line-height: 1.5;
+  margin: 0 0 24px;
+}
+
+.lc-sync-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 32px;
+}
+.lc-sync-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 18px 20px;
+  background: #fff;
+  border: 1px solid #E3E8EC;
+  border-radius: 12px;
+  transition: border-color 0.15s;
+}
+.lc-sync-card.active {
+  border-color: #2A7A5C;
+  background: #F7FBF9;
+}
+.lc-sync-card.disabled {
+  opacity: 0.55;
+}
+.lc-sync-card-icon {
+  font-size: 28px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.lc-sync-card-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #2B2B2B;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.lc-sync-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: #2A7A5C;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.lc-sync-badge.coming {
+  background: #E3E8EC;
+  color: #8A9AA5;
+}
+.lc-sync-card-desc {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #8A9AA5;
+  line-height: 1.4;
+}
+
+.lc-sync-howto {
+  background: #fff;
+  border: 1px solid #E3E8EC;
+  border-radius: 12px;
+  padding: 24px;
+}
+.lc-sync-howto h2 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 12px;
+  color: #2B2B2B;
+}
+.lc-sync-howto ol {
+  margin: 0;
+  padding: 0 0 0 20px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #4B4B4B;
+}
+.lc-sync-howto li {
+  margin-bottom: 6px;
+}
+.lc-sync-endpoint {
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: #F4F7F9;
+  border-radius: 8px;
+  font-size: 13px;
+}
+.lc-sync-endpoint-label {
+  color: #8A9AA5;
+  margin-right: 8px;
+}
+.lc-sync-endpoint code {
+  font-family: var(--font-lc-mono), monospace;
+  color: #2F6F8F;
+  font-weight: 500;
+}

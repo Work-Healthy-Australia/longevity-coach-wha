@@ -78,7 +78,10 @@ const mockFrom = vi.fn((table: string) => {
 });
 
 vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: () => ({ from: mockFrom }),
+  createAdminClient: () => ({
+    from: mockFrom,
+    schema: () => ({ from: () => ({ insert: vi.fn(() => Promise.resolve({ error: null })) }) }),
+  }),
 }));
 
 import { createPipelineAgent } from "@/lib/ai/agent-factory";

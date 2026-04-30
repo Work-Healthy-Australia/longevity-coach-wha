@@ -1,0 +1,134 @@
+.lc-routines {
+  max-width: 680px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.lc-routines-header h1 {
+  font-family: var(--font-lc-serif), Georgia, serif;
+  font-weight: 400;
+  font-size: 28px;
+  margin: 0 0 8px;
+  color: #2B2B2B;
+}
+.lc-routines-header p {
+  margin: 0;
+  font-size: 14px;
+  color: #8A9AA5;
+  line-height: 1.5;
+}
+
+/* Overall progress */
+.lc-routines-progress {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.lc-routines-progress-bar {
+  flex: 1;
+  height: 8px;
+  background: #E3E8EC;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.lc-routines-progress-fill {
+  height: 100%;
+  background: #2A7A5C;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+.lc-routines-progress-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #4B4B4B;
+  white-space: nowrap;
+}
+
+/* Category */
+.lc-routines-category {
+  background: #fff;
+  border-radius: 14px;
+  padding: 20px 24px;
+  border: 1px solid #E3E8EC;
+}
+.lc-routines-cat-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.lc-routines-cat-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.lc-routines-cat-header h2 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  flex: 1;
+  color: #2B2B2B;
+}
+.lc-routines-cat-pct {
+  font-size: 13px;
+  font-weight: 600;
+  color: #8A9AA5;
+}
+
+/* Items */
+.lc-routines-items {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.lc-routine-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  color: #2B2B2B;
+  text-align: left;
+  transition: background 0.15s;
+}
+.lc-routine-item:hover {
+  background: #F4F7F9;
+}
+.lc-routine-item.done {
+  color: #8A9AA5;
+}
+.lc-routine-item.done .lc-routine-label {
+  text-decoration: line-through;
+}
+.lc-routine-check {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 14px;
+  flex-shrink: 0;
+  border: 2px solid #E3E8EC;
+  color: #8A9AA5;
+  transition: all 0.15s;
+}
+.lc-routine-item.done .lc-routine-check {
+  background: #2A7A5C;
+  border-color: #2A7A5C;
+  color: #fff;
+}
+
+@media (max-width: 640px) {
+  .lc-routines-category {
+    padding: 16px;
+  }
+}

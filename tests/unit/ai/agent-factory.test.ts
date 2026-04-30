@@ -90,26 +90,28 @@ describe('createStreamingAgent', () => {
     );
   });
 
-  it('passes onFinish through to streamText when provided', async () => {
+  it('invokes the caller onFinish from inside the streamText onFinish wrapper', async () => {
     mockLoadAgentDef.mockResolvedValue(makeDef());
     mockStreamText.mockReturnValue({});
     const onFinish = vi.fn();
 
     await createStreamingAgent('janet').stream(messages, { onFinish });
 
-    expect(mockStreamText).toHaveBeenCalledWith(
-      expect.objectContaining({ onFinish })
-    );
+    const call = mockStreamText.mock.calls[0][0] as { onFinish?: (e: unknown) => Promise<void> };
+    expect(typeof call.onFinish).toBe('function');
+    // The wrapper should fire the caller's onFinish with the event payload.
+    await call.onFinish?.({ text: 'hi', usage: { inputTokens: 1, outputTokens: 1, inputTokenDetails: {} } });
+    expect(onFinish).toHaveBeenCalledTimes(1);
   });
 
-  it('omits onFinish from streamText when not provided', async () => {
+  it('always installs an onFinish wrapper so telemetry can capture usage even when caller omits one', async () => {
     mockLoadAgentDef.mockResolvedValue(makeDef());
     mockStreamText.mockReturnValue({});
 
     await createStreamingAgent('janet').stream(messages);
 
     const call = mockStreamText.mock.calls[0][0] as Record<string, unknown>;
-    expect(call.onFinish).toBeUndefined();
+    expect(typeof call.onFinish).toBe('function');
   });
 
   it('passes maxOutputTokens and temperature from def', async () => {

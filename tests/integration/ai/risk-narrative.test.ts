@@ -168,8 +168,12 @@ describe("runRiskNarrativePipeline", () => {
         longevity_score: fakeOutput.longevity_score,
         confidence_level: fakeOutput.confidence_level,
         narrative: fakeOutput.narrative,
+        top_risk_drivers: fakeOutput.top_risk_drivers,
+        top_protective_levers: fakeOutput.top_protective_levers,
+        recommended_screenings: fakeOutput.recommended_screenings,
+        data_gaps: fakeOutput.data_gaps,
       }),
-      { onConflict: "user_uuid" },
+      { onConflict: "user_uuid, assessment_date" },
     );
   });
 

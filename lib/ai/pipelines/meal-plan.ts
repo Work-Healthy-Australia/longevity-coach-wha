@@ -337,15 +337,22 @@ async function _run(userId: string, weekStart?: string): Promise<void> {
       : '') +
     `\n\nMeals marked ⭐ are optimised for your bloodwork. Ask me about any specific meal, swap, or ingredient.`;
 
+  // Await the insert so Vercel's `after()` runtime cannot tear the function
+  // down before the row is committed to Postgres (and thus before logical
+  // replication can fan it out via Realtime).
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (admin as any).schema('agents').from('agent_conversations').insert({
-    user_uuid: userId,
-    agent: 'janet',
-    role: 'assistant',
-    content: pushMessage,
-  }).then(({ error: msgErr }: { error: unknown }) => {
-    if (msgErr) console.warn('[meal-plan pipeline] Failed to write push message:', msgErr);
-  });
+  const { error: msgErr } = await (admin as any)
+    .schema('agents')
+    .from('agent_conversations')
+    .insert({
+      user_uuid: userId,
+      agent: 'janet',
+      role: 'assistant',
+      content: pushMessage,
+    });
+  if (msgErr) {
+    console.error('[meal-plan pipeline] Failed to write push message:', msgErr);
+  }
 }
 
 export async function runMealPlanPipeline(userId: string, weekStart?: string): Promise<void> {

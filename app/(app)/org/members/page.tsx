@@ -3,6 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { loose } from "@/lib/supabase/loose-table";
 import { MembersClient } from "./MembersClient";
+import { OrgNav } from "../_components/org-nav";
+import "../org.css";
 import "./members.css";
 
 export const dynamic = "force-dynamic";
@@ -114,6 +116,8 @@ export default async function OrgMembersPage() {
   type MemberProduct = { id: string; org_id: string; user_uuid: string; inclusion_id: string; is_enabled: boolean };
 
   return (
+    <>
+    <OrgNav orgName={org.name} />
     <MembersClient
       orgName={org.name}
       members={members}
@@ -125,5 +129,6 @@ export default async function OrgMembersPage() {
       memberNames={memberNames}
       userEmails={userEmails}
     />
+    </>
   );
 }
