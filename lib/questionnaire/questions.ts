@@ -237,12 +237,11 @@ export const onboardingQuestionnaire: QuestionnaireDef = {
         {
           id: "exercise_type",
           label: "Exercise type",
-          type: "select",
+          type: "multiselect",
           options: [
             "None",
-            "Cardio only",
-            "Weights only",
-            "Mixed cardio + weights",
+            "Cardio",
+            "Weights",
             "Sport/activity based",
           ],
         },
