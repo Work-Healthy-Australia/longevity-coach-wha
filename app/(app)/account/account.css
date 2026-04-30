@@ -98,6 +98,26 @@
   margin-top: 4px;
 }
 
+.lc-security-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lc-security-section-heading {
+  font-family: var(--font-lc-serif), Georgia, serif;
+  font-size: 15px;
+  font-weight: 500;
+  margin: 0;
+  color: var(--lc-ink);
+}
+
+.lc-security-divider {
+  height: 1px;
+  background: var(--lc-line);
+  margin: 4px 0;
+}
+
 .lc-account-id {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
