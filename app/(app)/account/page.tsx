@@ -2,6 +2,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { loose } from "@/lib/supabase/loose-table";
 import { createClient } from "@/lib/supabase/server";
 import { policyVersion } from "@/lib/consent/policies";
+import { signOut } from "@/app/(auth)/actions";
 import { CareTeamSection, type AssignedClinician } from "./_components/care-team-section";
 import { DeleteAccountButton } from "./_components/delete-account-button";
 import { IdentityCard } from "./_components/identity-card";
@@ -190,6 +191,18 @@ export default async function AccountPage({
             className={pausedAt ? "lc-account-button" : "lc-account-button-secondary"}
           >
             {pausedAt ? "Unfreeze account" : "Pause account"}
+          </button>
+        </form>
+      </section>
+
+      <section className="lc-account-card">
+        <h2>Sign out</h2>
+        <p className="lc-account-info">
+          Sign out of this device. You&apos;ll need your email and password to come back.
+        </p>
+        <form action={signOut}>
+          <button type="submit" className="lc-account-button-secondary">
+            Sign out
           </button>
         </form>
       </section>

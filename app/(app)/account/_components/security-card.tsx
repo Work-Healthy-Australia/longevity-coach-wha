@@ -2,8 +2,6 @@
 
 import { useActionState } from "react";
 
-import { signOut } from "@/app/(auth)/actions";
-
 import {
   changeEmail,
   changePassword,
@@ -111,20 +109,6 @@ export function SecurityCard({ currentEmail }: { currentEmail: string }) {
         </form>
       </div>
 
-      <div className="lc-security-divider" />
-
-      <div className="lc-security-section">
-        <h3 className="lc-security-section-heading">Sign out</h3>
-        <p className="lc-account-info">
-          Sign out of this device. You&apos;ll need your email and password to
-          come back.
-        </p>
-        <form action={signOut}>
-          <button type="submit" className="lc-account-button-secondary">
-            Sign out
-          </button>
-        </form>
-      </div>
     </section>
   );
 }
