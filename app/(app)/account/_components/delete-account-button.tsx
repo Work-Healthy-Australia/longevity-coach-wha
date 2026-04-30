@@ -18,7 +18,7 @@ export function DeleteAccountButton() {
 
   if (!confirming) {
     return (
-      <button className="btn-danger" onClick={() => setConfirming(true)}>
+      <button className="lc-account-button-danger" onClick={() => setConfirming(true)}>
         Delete my account
       </button>
     );
@@ -74,14 +74,14 @@ export function DeleteAccountButton() {
       <div className="lc-delete-confirm-actions">
         <button
           type="submit"
-          className="btn-danger"
+          className="lc-account-button-danger"
           disabled={pending || typed !== 'DELETE'}
         >
           {pending ? 'Deleting…' : 'Yes, delete my account'}
         </button>
         <button
           type="button"
-          className="btn-secondary"
+          className="lc-account-button-secondary"
           disabled={pending}
           onClick={() => {
             setConfirming(false);
