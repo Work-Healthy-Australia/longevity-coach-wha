@@ -1,7 +1,15 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, type ReactNode } from "react";
 import { createBrowserClient } from "@supabase/ssr";
+import {
+  Dna,
+  Droplet,
+  FileText,
+  Microscope,
+  Stethoscope,
+  Zap,
+} from "lucide-react";
 import { recordUpload, deleteUpload } from "./actions";
 import type { Database } from "@/lib/supabase/database.types";
 import "./uploads.css";
@@ -29,13 +37,13 @@ const CATEGORY_LABELS: Record<string, string> = {
   other: "Other",
 };
 
-const CATEGORY_ICONS: Record<string, string> = {
-  blood_work: "🩸",
-  imaging: "🫁",
-  genetic: "🧬",
-  microbiome: "🦠",
-  metabolic: "⚡",
-  other: "📄",
+const CATEGORY_ICONS: Record<string, ReactNode> = {
+  blood_work: <Droplet size={20} />,
+  imaging: <Stethoscope size={20} />,
+  genetic: <Dna size={20} />,
+  microbiome: <Microscope size={20} />,
+  metabolic: <Zap size={20} />,
+  other: <FileText size={20} />,
 };
 
 function formatBytes(n: number) {
@@ -262,7 +270,7 @@ export function UploadClient({ initialUploads }: Props) {
           {uploads.map((u) => (
             <div className="file-card" key={u.id}>
               <div className="file-icon">
-                {u.janet_category ? (CATEGORY_ICONS[u.janet_category] ?? "📄") : "📄"}
+                {u.janet_category ? (CATEGORY_ICONS[u.janet_category] ?? <FileText size={20} />) : <FileText size={20} />}
               </div>
               <div className="file-body">
                 <p className="file-name">{u.original_filename}</p>
