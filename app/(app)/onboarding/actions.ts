@@ -143,7 +143,7 @@ export async function submitAssessment(
     };
     const { error: upsertError } = await admin
       .from("risk_scores")
-      .upsert(row, { onConflict: "user_uuid" });
+      .upsert(row, { onConflict: "user_uuid, assessment_date" });
     if (upsertError) {
       console.error("[risk-engine] risk_scores upsert failed:", upsertError);
     }
