@@ -5,9 +5,11 @@ import { useActionState } from "react";
 import {
   changeEmail,
   changePassword,
+} from "../security-actions";
+import {
   type EmailState,
   type PasswordState,
-} from "../security-actions";
+} from "../security-schema";
 
 const initialPassword: PasswordState = {};
 const initialEmail: EmailState = {};

@@ -29,9 +29,8 @@ vi.mock("next/headers", () => ({
 import {
   changeEmail,
   changePassword,
-  emailSchema,
-  passwordSchema,
 } from "@/app/(app)/account/security-actions";
+import { emailSchema, passwordSchema } from "@/app/(app)/account/security-schema";
 
 beforeEach(() => {
   vi.clearAllMocks();

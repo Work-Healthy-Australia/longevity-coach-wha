@@ -2,7 +2,8 @@
 
 import { useActionState, useState } from "react";
 
-import { updateIdentity, type IdentityState } from "../identity-actions";
+import { type IdentityState } from "../identity-schema";
+import { updateIdentity } from "../identity-actions";
 
 type Initial = {
   full_name: string;
