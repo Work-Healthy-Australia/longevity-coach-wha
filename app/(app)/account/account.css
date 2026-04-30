@@ -1,11 +1,21 @@
 .lc-account {
   --lc-primary: #2F6F8F;
   --lc-primary-700: #245672;
+  --lc-primary-50: #EEF3F6;
   --lc-sage: #6B8E83;
   --lc-line: #E3E8EC;
+  --lc-line-soft: #EDF1F4;
   --lc-ink: #2B2B2B;
   --lc-ink-soft: #4B4B4B;
+  --lc-grey: #8A9AA5;
   --lc-surface: #FFFFFF;
+  --lc-canvas: #FAFAF7;
+  --lc-success: #2A7A5C;
+  --lc-success-50: #E6F4EE;
+  --lc-warning: #B5722F;
+  --lc-warning-50: #FAEFE0;
+  --lc-danger: #B5452F;
+  --lc-danger-50: #FBEAE5;
 
   color: var(--lc-ink);
   display: flex;
@@ -14,16 +24,17 @@
 }
 
 .lc-account h1 {
+  font-family: var(--font-lc-serif), Georgia, serif;
   font-size: 28px;
-  font-weight: 600;
+  font-weight: 400;
   margin: 0;
-  color: var(--lc-primary-700);
+  color: var(--lc-ink);
 }
 
 .lc-account-card {
   background: var(--lc-surface);
   border: 1px solid var(--lc-line);
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 24px;
   display: flex;
   flex-direction: column;
@@ -31,10 +42,11 @@
 }
 
 .lc-account-card h2 {
-  font-size: 16px;
-  font-weight: 600;
+  font-family: var(--font-lc-serif), Georgia, serif;
+  font-size: 18px;
+  font-weight: 500;
   margin: 0;
-  color: var(--lc-primary-700);
+  color: var(--lc-ink);
 }
 
 .lc-account-id {
@@ -123,7 +135,7 @@
 }
 
 .lc-paused-banner {
-  background: #fff8e1;
+  background: var(--lc-warning-50);
   border: 1px solid #f9c74f;
   border-radius: 8px;
   padding: 14px 18px;
@@ -131,7 +143,7 @@
   color: var(--lc-ink);
 }
 
-.btn-link {
+.lc-account-btn-link {
   background: none;
   border: none;
   padding: 0;
@@ -143,9 +155,9 @@
 }
 
 .lc-account-error {
-  background: #ffefef;
-  border: 1px solid #f4a4a4;
-  color: #a02020;
+  background: var(--lc-danger-50);
+  border: 1px solid var(--lc-danger);
+  color: var(--lc-danger);
   border-radius: 6px;
   padding: 8px 12px;
   font-size: 13px;
@@ -153,9 +165,9 @@
 }
 
 .lc-account-success {
-  background: #eaf7ee;
+  background: var(--lc-success-50);
   border: 1px solid #9bd1ad;
-  color: #1d6e3a;
+  color: var(--lc-success);
   border-radius: 6px;
   padding: 8px 12px;
   font-size: 13px;
@@ -180,7 +192,7 @@
   border-bottom: 0;
 }
 
-.lc-care-team-list .muted {
+.lc-care-team-list .lc-account-muted {
   color: var(--lc-ink-soft);
   font-size: 13px;
 }
@@ -213,8 +225,8 @@
   flex-direction: column;
   gap: 12px;
   padding: 16px 18px;
-  background: #fdf6f6;
-  border: 1px solid #f4a4a4;
+  background: var(--lc-danger-50);
+  border: 1px solid var(--lc-danger);
   border-radius: 8px;
 }
 
@@ -222,7 +234,7 @@
   margin: 0;
   font-size: 15px;
   font-weight: 600;
-  color: #a02020;
+  color: var(--lc-danger);
 }
 
 .lc-delete-confirm-section-label {
@@ -271,9 +283,9 @@
 }
 
 .lc-delete-confirm-label input:focus {
-  outline: 2px solid #f4a4a4;
+  outline: 2px solid var(--lc-danger);
   outline-offset: 1px;
-  border-color: #f4a4a4;
+  border-color: var(--lc-danger);
 }
 
 .lc-delete-confirm-label input:disabled {
@@ -290,9 +302,9 @@
 .lc-delete-error {
   margin: 0;
   padding: 8px 12px;
-  background: #ffefef;
-  color: #a02020;
-  border: 1px solid #f4a4a4;
+  background: var(--lc-danger-50);
+  color: var(--lc-danger);
+  border: 1px solid var(--lc-danger);
   border-radius: 6px;
   font-size: 13px;
 }

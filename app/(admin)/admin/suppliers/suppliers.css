@@ -4,6 +4,23 @@
    ============================================================ */
 
 .suppliers-page {
+  --adm-primary: #2F6F8F;
+  --adm-primary-dark: #1A3A4A;
+  --adm-ink: #1A3A4A;
+  --adm-ink-soft: #6B7C85;
+  --adm-ink-muted: #9AABBA;
+  --adm-line: #D4E0E8;
+  --adm-line-soft: #E8EFF4;
+  --adm-surface: #FFFFFF;
+  --adm-bg: #F0F4F7;
+  --adm-accent: #F28C38;
+  --adm-success-bg: #D1FAE5;
+  --adm-success-text: #065F46;
+  --adm-warning-bg: #FEF3C7;
+  --adm-warning-text: #92400E;
+  --adm-danger-bg: #FEE2E2;
+  --adm-danger-text: #991B1B;
+
   padding: 28px 32px;
 }
 
@@ -17,13 +34,13 @@
 .suppliers-header-text h1 {
   font-size: 22px;
   font-weight: 700;
-  color: #1A3A4A;
+  color: var(--adm-ink);
   margin: 0 0 2px;
 }
 
 .suppliers-header-text p {
   font-size: 13px;
-  color: #6B7C85;
+  color: var(--adm-ink-soft);
   margin: 0;
 }
 
@@ -32,7 +49,7 @@
   font-size: 13px;
   font-weight: 600;
   padding: 8px 16px;
-  background: #2F6F8F;
+  background: var(--adm-primary);
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -41,13 +58,13 @@
 }
 
 .btn-add-supplier:hover {
-  background: #1A3A4A;
+  background: var(--adm-ink);
 }
 
 /* ---- Supplier card ---- */
 .supplier-card {
   background: #fff;
-  border: 1px solid #D4E0E8;
+  border: 1px solid var(--adm-line);
   border-radius: 10px;
   overflow: hidden;
   margin-bottom: 16px;
@@ -68,12 +85,12 @@
 }
 
 .supplier-header-row.expanded {
-  border-bottom: 1px solid #D4E0E8;
+  border-bottom: 1px solid var(--adm-line);
 }
 
 .supplier-chevron {
   font-size: 12px;
-  color: #9AABBA;
+  color: var(--adm-ink-muted);
   transition: transform 0.2s;
   flex-shrink: 0;
   line-height: 1;
@@ -91,18 +108,18 @@
 .supplier-name {
   font-weight: 700;
   font-size: 15px;
-  color: #1A3A4A;
+  color: var(--adm-ink);
 }
 
 .supplier-subtitle {
   font-size: 12px;
-  color: #6B7C85;
+  color: var(--adm-ink-soft);
   margin-top: 2px;
 }
 
 .supplier-product-count {
   font-size: 13px;
-  color: #9AABBA;
+  color: var(--adm-ink-muted);
   white-space: nowrap;
 }
 
@@ -112,8 +129,8 @@
   font-weight: 700;
   padding: 3px 8px;
   border-radius: 5px;
-  background: #D1FAE5;
-  color: #065F46;
+  background: var(--adm-success-bg);
+  color: var(--adm-success-text);
   text-transform: uppercase;
   letter-spacing: 0.4px;
   white-space: nowrap;
@@ -124,18 +141,18 @@
   font-weight: 700;
   padding: 3px 8px;
   border-radius: 5px;
-  background: #FEE2E2;
-  color: #991B1B;
+  background: var(--adm-danger-bg);
+  color: var(--adm-danger-text);
   text-transform: uppercase;
   letter-spacing: 0.4px;
   white-space: nowrap;
 }
 
-.pill-contract-active   { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; background: #D1FAE5; color: #065F46; }
-.pill-contract-pending  { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; background: #FEF3C7; color: #92400E; }
-.pill-contract-expired  { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; background: #FEE2E2; color: #991B1B; }
-.pill-contract-terminated { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; background: #F0F4F7; color: #6B7C85; }
-.pill-contract-none     { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; background: #F0F4F7; color: #9AABBA; }
+.pill-contract-active   { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; background: var(--adm-success-bg); color: #065F46; }
+.pill-contract-pending  { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; background: #FEF3C7; color: var(--adm-warning-text); }
+.pill-contract-expired  { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; background: var(--adm-danger-bg); color: #991B1B; }
+.pill-contract-terminated { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; background: #F0F4F7; color: var(--adm-ink-soft); }
+.pill-contract-none     { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; background: #F0F4F7; color: var(--adm-ink-muted); }
 
 .supplier-type-pill {
   font-size: 10px;
@@ -143,7 +160,7 @@
   padding: 2px 7px;
   border-radius: 4px;
   background: #E8F3F8;
-  color: #2F6F8F;
+  color: var(--adm-primary);
 }
 
 /* ---- Expanded body ---- */
@@ -159,12 +176,12 @@
 .detail-grid-2col {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  border-bottom: 1px solid #D4E0E8;
+  border-bottom: 1px solid var(--adm-line);
 }
 
 .contact-col {
   padding: 20px 24px;
-  border-right: 1px solid #D4E0E8;
+  border-right: 1px solid var(--adm-line);
 }
 
 .billing-col {
@@ -176,7 +193,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: #6B7C85;
+  color: var(--adm-ink-soft);
   margin: 0 0 14px;
 }
 
@@ -190,18 +207,18 @@
 }
 
 .detail-label {
-  color: #9AABBA;
+  color: var(--adm-ink-muted);
   font-size: 13px;
 }
 
 .detail-val {
-  color: #1A3A4A;
+  color: var(--adm-ink);
   font-size: 13px;
   word-break: break-word;
 }
 
 .detail-val a {
-  color: #2F6F8F;
+  color: var(--adm-primary);
   text-decoration: none;
 }
 
@@ -231,12 +248,12 @@
 .product-section-title {
   font-size: 13px;
   font-weight: 700;
-  color: #1A3A4A;
+  color: var(--adm-ink);
 }
 
 .product-section-title span {
   font-weight: 400;
-  color: #9AABBA;
+  color: var(--adm-ink-muted);
 }
 
 /* Products table */
@@ -252,9 +269,9 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: #6B7C85;
+  color: var(--adm-ink-soft);
   padding: 7px 10px;
-  border-bottom: 2px solid #D4E0E8;
+  border-bottom: 2px solid var(--adm-line);
 }
 
 .products-table th.right {
@@ -286,27 +303,27 @@
 .product-code-cell {
   font-family: monospace;
   font-size: 12px;
-  color: #6B7C85;
+  color: var(--adm-ink-soft);
 }
 
 .product-name-cell {
   font-weight: 500;
-  color: #1A3A4A;
+  color: var(--adm-ink);
 }
 
 .sub-icon-onetime {
   font-size: 15px;
-  color: #1A3A4A;
+  color: var(--adm-ink);
 }
 
 .sub-icon-recurring {
   font-size: 15px;
-  color: #2F6F8F;
+  color: var(--adm-primary);
 }
 
 .products-legend {
   font-size: 12px;
-  color: #9AABBA;
+  color: var(--adm-ink-muted);
   margin: 10px 0 0;
 }
 
@@ -317,14 +334,14 @@
   padding: 2px 7px;
   border-radius: 4px;
   background: #E8F3F8;
-  color: #2F6F8F;
+  color: var(--adm-primary);
 }
 
 /* ---- Inline edit/add forms ---- */
 .supplier-edit-panel,
 .product-inline-form {
   background: #F8FAFB;
-  border-top: 1px solid #D4E0E8;
+  border-top: 1px solid var(--adm-line);
   padding: 20px 24px;
 }
 
@@ -352,7 +369,7 @@
 .form-label {
   font-size: 12px;
   font-weight: 600;
-  color: #6B7C85;
+  color: var(--adm-ink-soft);
   text-transform: uppercase;
   letter-spacing: 0.4px;
 }
@@ -361,10 +378,10 @@
 .form-select,
 .form-textarea {
   padding: 8px 10px;
-  border: 1px solid #D4E0E8;
+  border: 1px solid var(--adm-line);
   border-radius: 6px;
   font-size: 13px;
-  color: #1A3A4A;
+  color: var(--adm-ink);
   background: #fff;
   font-family: inherit;
 }
@@ -373,7 +390,7 @@
 .form-select:focus,
 .form-textarea:focus {
   outline: none;
-  border-color: #2F6F8F;
+  border-color: var(--adm-primary);
 }
 
 .form-textarea {
@@ -405,60 +422,60 @@
   font-size: 13px;
   font-weight: 600;
   padding: 8px 18px;
-  background: #2F6F8F;
+  background: var(--adm-primary);
   color: #fff;
   border: none;
   border-radius: 6px;
   cursor: pointer;
 }
 
-.btn-save:hover { background: #1A3A4A; }
-.btn-save:disabled { background: #9AABBA; cursor: not-allowed; }
+.btn-save:hover { background: var(--adm-ink); }
+.btn-save:disabled { background: var(--adm-ink-muted); cursor: not-allowed; }
 
 .btn-cancel {
   font-size: 13px;
   font-weight: 600;
   padding: 8px 18px;
   background: transparent;
-  color: #6B7C85;
-  border: 1px solid #D4E0E8;
+  color: var(--adm-ink-soft);
+  border: 1px solid var(--adm-line);
   border-radius: 6px;
   cursor: pointer;
 }
 
-.btn-cancel:hover { background: #F0F4F7; }
+.btn-cancel:hover { background: var(--adm-bg); }
 
 .btn-edit-sm {
   font-size: 12px;
   font-weight: 600;
   padding: 4px 12px;
   background: transparent;
-  color: #2F6F8F;
-  border: 1px solid #D4E0E8;
+  color: var(--adm-primary);
+  border: 1px solid var(--adm-line);
   border-radius: 5px;
   cursor: pointer;
   white-space: nowrap;
 }
 
-.btn-edit-sm:hover { background: #F0F4F7; }
+.btn-edit-sm:hover { background: var(--adm-bg); }
 
 .btn-add-product {
   font-size: 12px;
   font-weight: 600;
   padding: 5px 12px;
-  background: #2F6F8F;
+  background: var(--adm-primary);
   color: #fff;
   border: none;
   border-radius: 5px;
   cursor: pointer;
 }
 
-.btn-add-product:hover { background: #1A3A4A; }
+.btn-add-product:hover { background: var(--adm-ink); }
 
 /* ---- Error banner ---- */
 .suppliers-error {
-  background: #FEE2E2;
-  color: #991B1B;
+  background: var(--adm-danger-bg);
+  color: var(--adm-danger-text);
   padding: 10px 14px;
   border-radius: 6px;
   margin-bottom: 14px;
@@ -468,7 +485,7 @@
 /* ---- Add supplier form card ---- */
 .add-supplier-card {
   background: #fff;
-  border: 1px solid #2F6F8F;
+  border: 1px solid var(--adm-primary);
   border-radius: 10px;
   overflow: hidden;
   margin-bottom: 16px;
@@ -476,10 +493,10 @@
 
 .add-supplier-card-header {
   padding: 16px 24px;
-  border-bottom: 1px solid #D4E0E8;
+  border-bottom: 1px solid var(--adm-line);
   font-size: 14px;
   font-weight: 700;
-  color: #1A3A4A;
+  color: var(--adm-ink);
 }
 
 .add-supplier-card-body {

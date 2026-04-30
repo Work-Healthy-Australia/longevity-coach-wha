@@ -8,7 +8,10 @@ import { createPipelineAgent } from '@/lib/ai/agent-factory';
 const MealSchema = z.object({
   name: z.string(),
   meal_type: z.enum(['breakfast', 'lunch', 'dinner', 'snack']),
-  day_of_week: z.number().int().min(1).max(7),
+  // Anthropic structured-output rejects `integer` schemas with implicit
+  // min/max bounds added by Zod's `.int()`. Accept any number, coerce to int
+  // at write time below.
+  day_of_week: z.number(),
   macros: z.object({
     calories: z.number(),
     protein_g: z.number(),
@@ -225,7 +228,7 @@ async function _run(userId: string, weekStart?: string): Promise<void> {
 
   // 2. Upsert meal_plans row
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: planRow } = await (admin as any).from('meal_plans').upsert(
+  const { data: planRow, error: planError } = await (admin as any).from('meal_plans').upsert(
     {
       patient_uuid: userId,
       created_by_role: 'ai',
@@ -240,7 +243,10 @@ async function _run(userId: string, weekStart?: string): Promise<void> {
 
   const mealPlanId = planRow?.id;
   if (!mealPlanId) {
-    console.error(`[meal-plan pipeline] Failed to upsert meal_plans for user ${userId}`);
+    console.error(
+      `[meal-plan pipeline] Failed to upsert meal_plans for user ${userId}:`,
+      planError ?? 'no row returned',
+    );
     return;
   }
 
@@ -256,7 +262,7 @@ async function _run(userId: string, weekStart?: string): Promise<void> {
       patient_uuid: userId,
       name: meal.name,
       meal_type: meal.meal_type,
-      day_of_week: meal.day_of_week,
+      day_of_week: Math.max(0, Math.min(6, Math.round(meal.day_of_week))),
       macros: meal.macros as unknown as import('@/lib/supabase/database.types').Json,
       ingredients: meal.ingredients as unknown as import('@/lib/supabase/database.types').Json,
       instructions: meal.instructions,
@@ -285,6 +291,61 @@ async function _run(userId: string, weekStart?: string): Promise<void> {
   if (shoppingError) {
     console.error(`[meal-plan pipeline] Failed to upsert shopping_lists for user ${userId}:`, shoppingError);
   }
+
+  // Non-blocking: write a complete plan summary to conversation history so the
+  // chat client can pick it up after detecting the new meal plan and render it
+  // as a Janet message in the thread.
+  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const mealOrder: Record<string, number> = { breakfast: 0, lunch: 1, dinner: 2, snack: 3 };
+  const byDay = new Map<number, typeof output.meals>();
+  for (const m of output.meals) {
+    const d = Math.max(0, Math.min(6, Math.round(m.day_of_week)));
+    const list = byDay.get(d) ?? [];
+    list.push(m);
+    byDay.set(d, list);
+  }
+  const dayLines: string[] = [];
+  for (const d of [...byDay.keys()].sort((a, b) => a - b)) {
+    dayLines.push(`\n**${days[d]}**`);
+    const meals = (byDay.get(d) ?? []).slice().sort(
+      (a, b) => (mealOrder[a.meal_type] ?? 99) - (mealOrder[b.meal_type] ?? 99),
+    );
+    for (const m of meals) {
+      const kcal = m.macros?.calories ? ` — ${Math.round(m.macros.calories)} kcal` : '';
+      const star = m.is_bloodwork_optimised ? ' ⭐' : '';
+      dayLines.push(`- _${m.meal_type}_: ${m.name}${kcal}${star}`);
+    }
+  }
+
+  const shoppingByCat = new Map<string, string[]>();
+  for (const item of output.shopping_list) {
+    const cat = item.category || 'other';
+    const list = shoppingByCat.get(cat) ?? [];
+    list.push(`${item.item} (${item.quantity}${item.unit ?? ''})`.trim());
+    shoppingByCat.set(cat, list);
+  }
+  const shoppingLines: string[] = [];
+  for (const [cat, items] of shoppingByCat) {
+    shoppingLines.push(`- **${cat}**: ${items.join(', ')}`);
+  }
+
+  const pushMessage =
+    `Your 7-day meal plan is ready — **${output.meals.length} meals** built around a ${output.calorie_target} kcal/day target.\n` +
+    dayLines.join('\n') +
+    (shoppingLines.length > 0
+      ? `\n\n**Shopping list (${output.shopping_list.length} items)**\n${shoppingLines.join('\n')}`
+      : '') +
+    `\n\nMeals marked ⭐ are optimised for your bloodwork. Ask me about any specific meal, swap, or ingredient.`;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (admin as any).schema('agents').from('agent_conversations').insert({
+    user_uuid: userId,
+    agent: 'janet',
+    role: 'assistant',
+    content: pushMessage,
+  }).then(({ error: msgErr }: { error: unknown }) => {
+    if (msgErr) console.warn('[meal-plan pipeline] Failed to write push message:', msgErr);
+  });
 }
 
 export async function runMealPlanPipeline(userId: string, weekStart?: string): Promise<void> {

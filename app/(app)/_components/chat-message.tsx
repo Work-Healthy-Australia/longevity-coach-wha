@@ -7,19 +7,71 @@ import remarkBreaks from 'remark-breaks';
 
 export const REMARK_PLUGINS = [remarkGfm, remarkBreaks];
 
+const isExternalHref = (href?: string) =>
+  !!href && /^(https?:)?\/\//.test(href);
+
 export const MD_COMPONENTS: React.ComponentProps<typeof ReactMarkdown>['components'] = {
-  a:          ({ href, children }) => <a href={href} target="_blank" rel="noopener noreferrer" className="md-a">{children}</a>,
-  code:       ({ children }) => <code className="md-code">{children}</code>,
+  a: ({ href, children }) => {
+    const external = isExternalHref(href);
+    return (
+      <a
+        href={href}
+        className="md-a"
+        {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+      >
+        {children}
+      </a>
+    );
+  },
+  code: ({ className, children, ...rest }) => {
+    const isBlock = /language-/.test(className ?? '');
+    return (
+      <code className={`${isBlock ? 'md-code-block' : 'md-code'} ${className ?? ''}`.trim()} {...rest}>
+        {children}
+      </code>
+    );
+  },
   pre:        ({ children }) => <pre className="md-pre">{children}</pre>,
   p:          ({ children }) => <p className="md-p">{children}</p>,
-  ul:         ({ children }) => <ul className="md-ul">{children}</ul>,
+  ul:         ({ children, className }) => (
+    <ul className={`md-ul ${className?.includes('contains-task-list') ? 'md-tasklist' : ''}`.trim()}>
+      {children}
+    </ul>
+  ),
   ol:         ({ children }) => <ol className="md-ol">{children}</ol>,
-  li:         ({ children }) => <li className="md-li">{children}</li>,
+  li:         ({ children, className }) => (
+    <li className={`md-li ${className?.includes('task-list-item') ? 'md-task' : ''}`.trim()}>
+      {children}
+    </li>
+  ),
   blockquote: ({ children }) => <blockquote className="md-blockquote">{children}</blockquote>,
+  strong:     ({ children }) => <strong className="md-strong">{children}</strong>,
+  em:         ({ children }) => <em className="md-em">{children}</em>,
+  del:        ({ children }) => <del className="md-del">{children}</del>,
+  hr:         () => <hr className="md-hr" />,
+  table:      ({ children }) => (
+    <div className="md-table-wrap">
+      <table className="md-table">{children}</table>
+    </div>
+  ),
+  thead:      ({ children }) => <thead className="md-thead">{children}</thead>,
+  tbody:      ({ children }) => <tbody className="md-tbody">{children}</tbody>,
+  tr:         ({ children }) => <tr className="md-tr">{children}</tr>,
+  th:         ({ children, style }) => <th className="md-th" style={style}>{children}</th>,
+  td:         ({ children, style }) => <td className="md-td" style={style}>{children}</td>,
+  input:      (props) =>
+    props.type === 'checkbox' ? (
+      <input {...props} disabled className="md-checkbox" />
+    ) : (
+      <input {...props} />
+    ),
   // Flatten headings — too large for chat bubbles
   h1: ({ children }) => <p className="md-heading">{children}</p>,
   h2: ({ children }) => <p className="md-heading">{children}</p>,
   h3: ({ children }) => <p className="md-heading">{children}</p>,
+  h4: ({ children }) => <p className="md-heading">{children}</p>,
+  h5: ({ children }) => <p className="md-heading">{children}</p>,
+  h6: ({ children }) => <p className="md-heading">{children}</p>,
 };
 
 /**
@@ -32,6 +84,9 @@ export const MD_COMPONENTS: React.ComponentProps<typeof ReactMarkdown>['componen
  * the final output is properly formatted. Keeping these two phases separate
  * avoids partial-parse artefacts from feeding incomplete markdown to the parser.
  */
+// Drip rate: one word every N ms, regardless of LLM chunk delivery cadence.
+const WORD_INTERVAL_MS = 45;
+
 export function AssistantBubble({
   text,
   isStreaming,
@@ -39,37 +94,61 @@ export function AssistantBubble({
   text: string;
   isStreaming: boolean;
 }) {
-  const [chunks, setChunks] = useState<string[]>([]);
-  const prevRef = useRef('');
+  // words already rendered on screen
+  const [displayed, setDisplayed] = useState<string[]>([]);
+  // pending word queue — filled as LLM delivers chunks
+  const queueRef = useRef<string[]>([]);
+  const consumedRef = useRef('');
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // Feed new text from LLM into the word queue
   useEffect(() => {
-    if (!isStreaming) {
-      setChunks([]);
-      prevRef.current = '';
-      return;
-    }
-    const next = text.slice(prevRef.current.length);
-    if (next) {
-      prevRef.current = text;
-      setChunks((c) => [...c, next]);
-    }
+    if (!isStreaming) return;
+    const next = text.slice(consumedRef.current.length);
+    if (!next) return;
+    consumedRef.current = text;
+    // Split on whitespace boundaries, keeping the delimiter with the preceding token
+    const words = next.match(/\S+\s*/g) ?? [next];
+    queueRef.current.push(...words);
   }, [text, isStreaming]);
 
-  if (!isStreaming) {
-    return (
-      <div className="md-body">
-        <ReactMarkdown components={MD_COMPONENTS} remarkPlugins={REMARK_PLUGINS}>
-          {text}
-        </ReactMarkdown>
-      </div>
-    );
-  }
+  // Start/stop the drip timer with streaming state
+  useEffect(() => {
+    if (isStreaming) {
+      intervalRef.current = setInterval(() => {
+        const word = queueRef.current.shift();
+        if (word !== undefined) {
+          setDisplayed((d) => [...d, word]);
+        }
+      }, WORD_INTERVAL_MS);
+    } else {
+      // Streaming ended — clear interval, flush any queued words immediately
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+      const remaining = queueRef.current.splice(0);
+      if (remaining.length) {
+        setDisplayed((d) => [...d, ...remaining]);
+      }
+      // Reset for next message
+      setTimeout(() => {
+        setDisplayed([]);
+        consumedRef.current = '';
+      }, 0);
+    }
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [isStreaming]);
+
+  const content = isStreaming ? displayed.join('') : text;
 
   return (
-    <span>
-      {chunks.map((chunk, i) => (
-        <span key={i} className="chat-chunk">{chunk}</span>
-      ))}
-    </span>
+    <div className="md-body">
+      <ReactMarkdown components={MD_COMPONENTS} remarkPlugins={REMARK_PLUGINS}>
+        {content}
+      </ReactMarkdown>
+    </div>
   );
 }

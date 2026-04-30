@@ -117,6 +117,7 @@ export function TiersClient({ plans, janetServices, tierInclusions, featureKeys 
   const [showJanetPanel, setShowJanetPanel] = useState(false);
   const [showFlagsPanel, setShowFlagsPanel] = useState(false);
   const [showAddTierModal, setShowAddTierModal] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [newTierName, setNewTierName] = useState("");
   const [newTierSlug, setNewTierSlug] = useState("");
   const [newTierPrice, setNewTierPrice] = useState("");
@@ -303,18 +304,18 @@ export function TiersClient({ plans, janetServices, tierInclusions, featureKeys 
     });
   }, []);
 
-  const handleDeleteTier = useCallback((planId: string) => {
-    startTransition(async () => {
-      try {
-        setError(null);
-        await apiDelete(`/api/admin/tiers/${planId}`);
-        setLocalPlans((prev) => prev.filter((p) => p.id !== planId));
-        setLocalInclusions((prev) => prev.filter((i) => i.plan_id !== planId));
-        setExpandedTier(null);
-      } catch (e) {
-        setError(e instanceof Error ? e.message : "Delete failed");
-      }
-    });
+  const handleDeleteTier = useCallback(async (planId: string) => {
+    setDeletingId(planId);
+    setError(null);
+    try {
+      await apiDelete(`/api/admin/tiers/${planId}`);
+      setLocalPlans((prev) => prev.filter((p) => p.id !== planId));
+      setLocalInclusions((prev) => prev.filter((i) => i.plan_id !== planId));
+      setExpandedTier(null);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Delete failed");
+      setDeletingId(null);
+    }
   }, []);
 
   const handleAddTier = useCallback(() => {
@@ -370,8 +371,12 @@ export function TiersClient({ plans, janetServices, tierInclusions, featureKeys 
           const inclCount = getInclusions(plan.id).length;
           const annualDisplay = calcAnnualPrice(plan.base_price_cents, plan.annual_discount_pct);
           const isEditing = expandedTier === plan.tier;
+          const isDeleting = deletingId === plan.id;
           return (
-            <div key={plan.id} className={`tier-card${isEditing ? " editing" : ""}`}>
+            <div
+              key={plan.id}
+              className={`tier-card${isEditing ? " editing" : ""}${isDeleting ? " deleting" : ""}`}
+            >
               <div className="tier-card-name">{plan.name}</div>
               <div className="tier-card-price" style={{ color: tierColor(plan.tier) }}>
                 {centsToDisplay(plan.base_price_cents)}
@@ -387,21 +392,22 @@ export function TiersClient({ plans, janetServices, tierInclusions, featureKeys 
                 <div style={{ display: "flex", gap: 6 }}>
                   <button
                     className={isEditing ? "btn-primary btn-xs" : "btn-outline btn-xs"}
+                    disabled={isDeleting}
                     onClick={() => handleToggleExpand(plan.tier)}
                   >
                     {isEditing ? "Editing ▾" : "Edit"}
                   </button>
                   <button
-                    className="btn-danger-xs"
+                    className={`btn-danger-xs${isDeleting ? " deleting" : ""}`}
                     title="Delete tier"
-                    disabled={isPending}
+                    disabled={isDeleting || !!deletingId}
                     onClick={() => {
                       if (confirm(`Delete "${plan.name}" tier? This removes all its service inclusions too.`)) {
                         handleDeleteTier(plan.id);
                       }
                     }}
                   >
-                    ✕
+                    {isDeleting ? "…" : "✕"}
                   </button>
                 </div>
               </div>

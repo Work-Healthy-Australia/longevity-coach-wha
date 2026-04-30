@@ -161,4 +161,31 @@ export async function runSupplementProtocolPipeline(userId: string): Promise<voi
   });
 
   if (error) throw new Error(`[supplement-advisor pipeline] Failed to insert supplement_plans for user ${userId}: ${JSON.stringify(error)}`);
+
+  // Non-blocking: write a pre-formatted Janet summary to conversation history
+  // so the client can pick it up after detecting the new supplement plan.
+  const criticalAndHigh = output.supplements.filter(
+    (s) => s.priority === 'critical' || s.priority === 'high',
+  );
+  const topItems = criticalAndHigh.slice(0, 3);
+  const bulletLines = topItems.length > 0
+    ? topItems.map((s) => `• **${s.name}** (${s.dosage}) — ${s.rationale}`).join('\n')
+    : output.supplements.slice(0, 3).map((s) => `• **${s.name}** (${s.dosage}) — ${s.rationale}`).join('\n');
+
+  const pushMessage =
+    `Your supplement protocol has just been generated — ${output.supplements.length} supplements tailored to your risk profile.` +
+    (topItems.length > 0
+      ? `\n\nYour top priorities:\n${bulletLines}`
+      : `\n\nHere are your first three supplements:\n${bulletLines}`) +
+    `\n\nOpen your report to see timing, dosage, and rationale for all supplements. Ask me anything about why a specific supplement was chosen for you.`;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (admin as any).schema('agents').from('agent_conversations').insert({
+    user_uuid: userId,
+    agent: 'janet',
+    role: 'assistant',
+    content: pushMessage,
+  }).then(({ error: msgErr }: { error: unknown }) => {
+    if (msgErr) console.warn('[supplement-advisor pipeline] Failed to write push message:', msgErr);
+  });
 }

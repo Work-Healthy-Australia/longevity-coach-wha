@@ -5,6 +5,7 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { compressConversation } from '@/lib/ai/compression';
 
 export async function streamPtCoachTurn(userId: string, messages: UIMessage[]) {
+  const t0 = Date.now();
   const ctx = await loadPatientContext(userId, { includeConversation: true, agent: 'pt_coach_live' });
 
   const ptSuffix = buildPtContextSuffix(ctx);
@@ -18,20 +19,26 @@ export async function streamPtCoachTurn(userId: string, messages: UIMessage[]) {
       const userText = lastUserMsg?.parts?.find((p) => p.type === 'text')?.text ?? '';
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const agentsDb = (admin as any).schema('agents');
-      await Promise.allSettled([
-        agentsDb.from('agent_conversations').insert({
-          user_uuid: userId,
-          agent: 'pt_coach_live',
-          role: 'user',
-          content: userText,
-        }),
-        agentsDb.from('agent_conversations').insert({
-          user_uuid: userId,
-          agent: 'pt_coach_live',
-          role: 'assistant',
-          content: text,
-        }),
-      ]);
+
+      // Sequential inserts with explicit timestamps so the user message
+      // sorts strictly before the assistant response on read.
+      const userCreatedAt = new Date(t0).toISOString();
+      const assistantCreatedAt = new Date(Math.max(Date.now(), t0 + 1)).toISOString();
+
+      await agentsDb.from('agent_conversations').insert({
+        user_uuid: userId,
+        agent: 'pt_coach_live',
+        role: 'user',
+        content: userText,
+        created_at: userCreatedAt,
+      });
+      await agentsDb.from('agent_conversations').insert({
+        user_uuid: userId,
+        agent: 'pt_coach_live',
+        role: 'assistant',
+        content: text,
+        created_at: assistantCreatedAt,
+      });
       compressConversation(userId, 'pt_coach_live').catch(() => {});
     },
   });

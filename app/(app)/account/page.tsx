@@ -124,7 +124,7 @@ export default async function AccountPage({
         <div className="lc-paused-banner">
           <strong>Account paused.</strong> Some features are suspended.{" "}
           <form action={unpauseAccount} style={{ display: "inline" }}>
-            <button type="submit" className="btn-link">
+            <button type="submit" className="lc-account-btn-link">
               Unfreeze now
             </button>
           </form>

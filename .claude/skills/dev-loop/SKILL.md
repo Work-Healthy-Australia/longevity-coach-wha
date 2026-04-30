@@ -21,7 +21,7 @@ ASSESS
                             Each subagent: PLAN → EXECUTE → TEST → HANDOFF
                           COLLECT HANDOFFS
                           QA REPORT (wave-scoped)
-                          pnpm build → if PASS → push branch → merge PR
+                          pnpm build → if PASS → push branch (save to GitHub) → merge PR (ship + deploy)
                     └── DOCUMENT CHANGE (after all waves)
 ```
 
@@ -63,10 +63,10 @@ Steps:
 
 Write the plan to:
 ```
-docs/engineering/changes/<change-name>/PLAN.md
+docs/engineering/changes/<YYYY-MM-DD>/<slug>/PLAN.md
 ```
 
-Name the change folder using kebab-case with the date prefix: `YYYY-MM-DD-<description>` (e.g. `2026-04-28-risk-engine-port`).
+Top-level folder is the date in `YYYY-MM-DD`; nested subfolder is a kebab-case slug describing the change (e.g. `docs/engineering/changes/2026-04-28/risk-engine-port/PLAN.md`). The date folder groups everything that landed that day; each slug subfolder owns the artefacts for one change.
 
 ### Wave decomposition rules
 
@@ -209,7 +209,7 @@ Dispatch a QA subagent with:
 - All handoff summaries from Phase 6 for this wave
 - Instruction to run `pnpm build` and `pnpm test` and report results
 
-The QA subagent writes `docs/engineering/changes/<change-name>/QA_REPORT_wave<N>.md`:
+The QA subagent writes `docs/engineering/changes/<YYYY-MM-DD>/<slug>/QA_REPORT_wave<N>.md`:
 
 ```markdown
 # QA Report: <change name> — Wave N
@@ -243,9 +243,9 @@ If verdict is **APPROVED**:
 2. Start the local dev server: `pnpm dev`.
 3. **Pause and ask the user to verify the wave's changes in their browser.** State clearly what to look at — the routes, flows, or UI elements that this wave touched. Do not proceed until the user explicitly confirms ("looks good", "approved", "ship it", or equivalent).
 4. If the user reports an issue: stop the dev server, fix the issue, re-run `pnpm build`, re-run QA, then restart this verification step.
-5. Once the user confirms: stop the dev server, push the branch: `git push origin <branch>`.
-6. Create a PR scoped to this wave's changes — title must name the wave (e.g. "Wave 1: risk score schema and seed data").
-7. Merge the PR.
+5. Once the user confirms: stop the dev server, upload changes to GitHub — `git push origin <branch>` *(saves your work to GitHub)*.
+6. Open a pull request for this wave — `gh pr create --title "Wave N: <name>" --body "..."` *(asks GitHub to prepare your changes for release)*.
+7. **Immediately merge the PR** — `gh pr merge --merge --delete-branch` *(ships your changes to main and triggers a Vercel deployment)*. Confirm with `gh pr view` showing status "MERGED".
 8. Confirm the merge succeeded, then start Wave N+1.
 
 **Never batch multiple waves into a single PR.** Each wave is its own PR, reviewed and merged independently.
@@ -258,7 +258,7 @@ If verdict is **APPROVED**:
 
 Write the following three files into the change folder:
 
-### `docs/engineering/changes/<change-name>/CHANGELOG.md`
+### `docs/engineering/changes/<YYYY-MM-DD>/<slug>/CHANGELOG.md`
 
 ```markdown
 # Changelog: <change name>
@@ -281,7 +281,7 @@ Any tasks that were cut, changed in scope, or implemented differently than plann
 Anything deliberately left out with a note on when it should be addressed.
 ```
 
-### `docs/engineering/changes/<change-name>/EXECUTIVE_SUMMARY.md`
+### `docs/engineering/changes/<YYYY-MM-DD>/<slug>/EXECUTIVE_SUMMARY.md`
 
 ```markdown
 # Executive Summary: <change name>
@@ -310,7 +310,7 @@ For each user story that is now fully implemented, update the relevant phase doc
 ## Change folder final structure
 
 ```
-docs/engineering/changes/<change-name>/
+docs/engineering/changes/<YYYY-MM-DD>/<slug>/
   PLAN.md              Written in Phase 3, revised through Phase 4
   CHANGELOG.md         Written in Phase 8
   QA_REPORT.md         Written in Phase 7
@@ -326,6 +326,7 @@ docs/engineering/changes/<change-name>/
 - Never store PII outside `profiles`
 - Never proceed to the next wave if the current wave's QA verdict is BLOCKED
 - Never batch multiple waves into a single PR — each wave is its own PR and merge
+- Never leave a PR open — create it and immediately merge it with `gh pr merge --merge --delete-branch`
 - Never push or merge a wave without first starting `pnpm dev` and getting explicit user confirmation that the changes look correct in the browser
 - Never hold a passing wave back waiting for the next wave to be ready
 - Each wave must leave the app fully functional — no broken states between waves

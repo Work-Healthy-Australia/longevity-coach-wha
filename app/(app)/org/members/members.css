@@ -1,6 +1,21 @@
 /* Health Manager Members Portal — scoped styles */
 
 .hm-page {
+  --lc-primary: #2F6F8F;
+  --lc-primary-700: #245672;
+  --lc-primary-50: #EEF3F6;
+  --lc-ink: #2B2B2B;
+  --lc-ink-soft: #4B4B4B;
+  --lc-grey: #8A9AA5;
+  --lc-line: #E3E8EC;
+  --lc-line-soft: #EDF1F4;
+  --lc-surface: #FFFFFF;
+  --lc-canvas: #FAFAF7;
+  --lc-success: #2A7A5C;
+  --lc-success-50: #E6F4EE;
+  --lc-danger: #B5452F;
+  --lc-danger-50: #FBEAE5;
+
   max-width: 900px;
   margin: 0 auto;
   padding: 24px;
@@ -13,27 +28,27 @@
 .hm-title {
   font-size: 22px;
   font-weight: 700;
-  color: #1A3A4A;
+  color: var(--lc-ink);
   margin: 0 0 4px;
 }
 
 .hm-subtitle {
   font-size: 14px;
-  color: #6B7C85;
+  color: var(--lc-grey);
   margin: 0;
 }
 
 .hm-card {
-  background: white;
-  border-radius: 10px;
-  border: 1px solid #E8EDF2;
+  background: var(--lc-surface);
+  border-radius: 14px;
+  border: 1px solid var(--lc-line);
   padding: 24px;
 }
 
 .hm-card-title {
   font-size: 14px;
   font-weight: 700;
-  color: #1A3A4A;
+  color: var(--lc-ink);
   margin: 0 0 16px;
 }
 
@@ -49,15 +64,15 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #6B7C85;
+  color: var(--lc-grey);
   padding: 8px 12px;
-  border-bottom: 2px solid #E8EDF2;
+  border-bottom: 2px solid var(--lc-line);
   text-align: left;
 }
 
 .hm-table td {
   padding: 12px;
-  border-bottom: 1px solid #F0F4F7;
+  border-bottom: 1px solid var(--lc-line-soft);
   vertical-align: middle;
 }
 
@@ -67,12 +82,12 @@
 
 .hm-member-name {
   font-weight: 600;
-  color: #1A3A4A;
+  color: var(--lc-ink);
 }
 
 .hm-member-email {
   font-size: 12px;
-  color: #6B7C85;
+  color: var(--lc-grey);
   margin-top: 2px;
 }
 
@@ -106,12 +121,12 @@
 
 .hm-product-label {
   font-size: 12px;
-  color: #4B6470;
+  color: var(--lc-ink-soft);
 }
 
 .hm-no-products {
   font-size: 12px;
-  color: #9AABBA;
+  color: var(--lc-grey);
   font-style: italic;
 }
 
@@ -145,13 +160,13 @@
   width: 14px;
   left: 3px;
   bottom: 3px;
-  background: white;
+  background: var(--lc-surface);
   border-radius: 50%;
   transition: transform 0.2s;
 }
 
 .hm-toggle input:checked + .hm-toggle-slider {
-  background: #2F6F8F;
+  background: var(--lc-primary);
 }
 
 .hm-toggle input:checked + .hm-toggle-slider::before {
@@ -167,15 +182,15 @@
 .hm-empty {
   text-align: center;
   padding: 48px 0;
-  color: #9AABBA;
+  color: var(--lc-grey);
   font-size: 14px;
 }
 
 /* Error */
 .hm-error {
-  background: #FEE2E2;
-  color: #991B1B;
-  border: 1px solid #FECACA;
+  background: var(--lc-danger-50);
+  color: var(--lc-danger);
+  border: 1px solid var(--lc-line);
   border-radius: 8px;
   padding: 12px 16px;
   font-size: 13px;

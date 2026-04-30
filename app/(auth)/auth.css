@@ -8,8 +8,15 @@
   --lc-line: #E3E8EC;
   --lc-bg: #F4F7F9;
   --lc-surface: #FFFFFF;
-  --lc-error: #C0392B;
+  --lc-danger: #B5452F;
   --lc-success: #2A7A5C;
+  --lc-success-50: #E6F4EE;
+  --lc-danger-50: #FBEAE5;
+  --lc-canvas: #FAFAF7;
+  --lc-sage: #6B8E83;
+  --lc-sage-50: #F0F4F2;
+  --lc-warning: #B5722F;
+  --lc-warning-50: #FAEFE0;
 
   min-height: 100dvh;
   background: linear-gradient(180deg, #FFFFFF 0%, var(--lc-bg) 100%);
@@ -33,7 +40,7 @@
   max-width: 400px;
   background: var(--lc-surface);
   border: 1px solid var(--lc-line);
-  border-radius: 16px;
+  border-radius: 14px;
   padding: 32px;
   box-shadow: 0 4px 20px rgba(43, 43, 43, 0.04);
 }
@@ -92,8 +99,8 @@
 .lc-auth button[type="submit"]:disabled { opacity: 0.6; cursor: not-allowed; }
 
 .lc-auth .auth-error {
-  background: #FDECEA;
-  color: var(--lc-error);
+  background: var(--lc-danger-50);
+  color: var(--lc-danger);
   border: 1px solid #F5C6C0;
   padding: 10px 12px;
   border-radius: 8px;
@@ -101,7 +108,7 @@
 }
 
 .lc-auth .auth-success {
-  background: #E6F4EE;
+  background: var(--lc-success-50);
   color: var(--lc-success);
   border: 1px solid #B8DBC9;
   padding: 10px 12px;
