@@ -77,7 +77,8 @@ export function JanetChat({ initialMessages = [], userId }: { initialMessages?: 
   // are also persisted there but already render via useChat).
   useEffect(() => {
     const supabase = createClient();
-    const subscribedAt = new Date().toISOString();
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+    let cancelled = false;
 
     function handlePipelineRow(row: { id?: string; content: string; agent: string; role: string; created_at?: string }) {
       if (row.role !== 'assistant' || row.agent !== 'janet') return;
@@ -100,46 +101,66 @@ export function JanetChat({ initialMessages = [], userId }: { initialMessages?: 
       if (kind === 'mealplan') router.refresh();
     }
 
-    const channel = supabase
-      .channel(`janet-conv-${userId}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'agents',
-          table: 'agent_conversations',
-          filter: `user_uuid=eq.${userId}`,
-        },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (payload: any) => handlePipelineRow(payload.new),
-      )
-      .subscribe(async (status) => {
-        // Race-condition safety net: on successful subscribe, do a one-shot
-        // catch-up fetch for any pipeline-completion message inserted between
-        // the user's tool call and the WebSocket joining.
-        if (status !== 'SUBSCRIBED') return;
-        try {
+    // Ensure the realtime websocket carries the user's JWT before subscribing.
+    // Without this, the channel can attach as `anon` on a cold load (auth state
+    // hydration races the useEffect), and the RLS policy
+    // `agent_conv_patient_select` (auth.uid() = user_uuid) silently drops every
+    // postgres_changes payload — symptom: SUBSCRIBED status, zero events.
+    (async () => {
+      await supabase.auth.getSession();
+      if (cancelled) return;
+
+      channel = supabase
+        .channel(`janet-conv-${userId}`)
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'agents',
+            table: 'agent_conversations',
+            filter: `user_uuid=eq.${userId}`,
+          },
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const { data } = await (supabase as any)
-            .schema('agents')
-            .from('agent_conversations')
-            .select('id, content, agent, role, created_at')
-            .eq('user_uuid', userId)
-            .eq('agent', 'janet')
-            .eq('role', 'assistant')
-            .or(
-              PIPELINE_COMPLETION_PREFIXES.map((p) => `content.ilike.${p}%`).join(','),
-            )
-            .gte('created_at', subscribedAt)
-            .order('created_at', { ascending: true });
-          for (const row of data ?? []) handlePipelineRow(row);
-        } catch {
-          // catch-up is best-effort
-        }
-      });
+          (payload: any) => {
+            console.log('[janet-chat realtime] payload', payload);
+            handlePipelineRow(payload.new);
+          },
+        )
+        .subscribe(async (status, err) => {
+          console.log('[janet-chat realtime] subscribe status', status, err ?? '');
+          // Race-condition safety net: on successful subscribe, do a one-shot
+          // catch-up fetch for any pipeline-completion message inserted between
+          // the user's tool call and the WebSocket joining. We deliberately
+          // ignore `subscribedAt` here so a remount AFTER the pipeline has
+          // already committed (e.g. user navigated away and back) still
+          // resolves — `consumedRowIdsRef` keys on row.id to dedupe.
+          if (status !== 'SUBSCRIBED') return;
+          try {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const { data } = await (supabase as any)
+              .schema('agents')
+              .from('agent_conversations')
+              .select('id, content, agent, role, created_at')
+              .eq('user_uuid', userId)
+              .eq('agent', 'janet')
+              .eq('role', 'assistant')
+              .or(
+                PIPELINE_COMPLETION_PREFIXES.map((p) => `content.ilike.${p}%`).join(','),
+              )
+              .order('created_at', { ascending: false })
+              .limit(PIPELINE_COMPLETION_PREFIXES.length);
+            // Re-sort ascending so messages render in chronological order.
+            const rows = (data ?? []).slice().reverse();
+            for (const row of rows) handlePipelineRow(row);
+          } catch {
+            // catch-up is best-effort
+          }
+        });
+    })();
 
     return () => {
-      supabase.removeChannel(channel);
+      cancelled = true;
+      if (channel) supabase.removeChannel(channel);
     };
   }, [userId, router, setMessages]);
 
