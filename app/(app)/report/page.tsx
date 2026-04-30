@@ -217,11 +217,6 @@ export default async function ReportPage() {
                 Updated {formatDate(supplement.created_at)}
               </span>
             )}
-            {supplements.length > 0 && (
-              <a href="/api/report/pdf" className="btn-download" download="longevity-report.pdf">
-                Download PDF
-              </a>
-            )}
           </div>
         </div>
 
@@ -266,7 +261,6 @@ export default async function ReportPage() {
           </div>
         )}
       </section>
-
       {/* Janet */}
       <section className="card chat-section">
         <h2>Ask Janet</h2>
