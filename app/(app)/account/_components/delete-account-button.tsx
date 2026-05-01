@@ -18,9 +18,14 @@ export function DeleteAccountButton() {
 
   if (!confirming) {
     return (
-      <button className="lc-account-button-danger" onClick={() => setConfirming(true)}>
-        Delete my account
-      </button>
+      <div>
+        <button
+          className="btn btn-danger"
+          onClick={() => setConfirming(true)}
+        >
+          Delete my account
+        </button>
+      </div>
     );
   }
 
@@ -28,17 +33,15 @@ export function DeleteAccountButton() {
     <form action={formAction} className="lc-delete-confirm">
       <h4>This cannot be undone.</h4>
 
-      <p className="lc-delete-confirm-section-label">Removed permanently:</p>
+      <p className="lc-delete-confirm-section-label">Removed permanently</p>
       <ul>
-        <li>
-          Your identifiers (name, date of birth, phone, address)
-        </li>
+        <li>Your identifiers (name, date of birth, phone, address)</li>
         <li>Uploads, conversations, journal entries, daily logs</li>
         <li>Lab results, supplement protocol, risk scores</li>
       </ul>
 
       <p className="lc-delete-confirm-section-label">
-        Retained anonymised for AHPRA compliance:
+        Retained anonymised for AHPRA compliance
       </p>
       <ul>
         <li>Consent history</li>
@@ -57,7 +60,7 @@ export function DeleteAccountButton() {
       ) : null}
 
       <label className="lc-delete-confirm-label">
-        Type <strong>DELETE</strong> to confirm
+        Type DELETE to confirm
         <input
           type="text"
           name="confirmation"
@@ -74,14 +77,14 @@ export function DeleteAccountButton() {
       <div className="lc-delete-confirm-actions">
         <button
           type="submit"
-          className="lc-account-button-danger"
+          className="btn btn-danger"
           disabled={pending || typed !== 'DELETE'}
         >
           {pending ? 'Deleting…' : 'Yes, delete my account'}
         </button>
         <button
           type="button"
-          className="lc-account-button-secondary"
+          className="btn btn-ghost"
           disabled={pending}
           onClick={() => {
             setConfirming(false);

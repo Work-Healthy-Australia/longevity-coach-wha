@@ -1,50 +1,104 @@
-.lc-account {
-  --lc-primary: #2F6F8F;
-  --lc-primary-700: #245672;
-  --lc-primary-50: #EEF3F6;
-  --lc-sage: #6B8E83;
-  --lc-line: #E3E8EC;
-  --lc-line-soft: #EDF1F4;
-  --lc-ink: #2B2B2B;
-  --lc-ink-soft: #4B4B4B;
-  --lc-grey: #8A9AA5;
-  --lc-surface: #FFFFFF;
-  --lc-canvas: #FAFAF7;
-  --lc-success: #2A7A5C;
-  --lc-success-50: #E6F4EE;
-  --lc-warning: #B5722F;
-  --lc-warning-50: #FAEFE0;
-  --lc-danger: #B5452F;
-  --lc-danger-50: #FBEAE5;
+/* /account — anchored on the marketing design system in home.css.
+ * Tokens come from globals.css (:root); this file only adds shape + layout. */
 
+.lc-account {
+  font-family: var(--lc-sans);
   color: var(--lc-ink);
+  max-width: 840px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* ============ PAGE HEADER ============ */
+.lc-account-header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--lc-line);
+}
+
+.lc-account-eyebrow {
+  font-family: var(--lc-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--lc-primary);
+}
+
+.lc-account-eyebrow.grey {
+  color: var(--lc-grey);
+}
+
+.lc-account-header h1 {
+  font-family: var(--lc-serif);
+  font-weight: 300;
+  font-size: 40px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: var(--lc-ink);
+}
+
+.lc-account-header h1 em {
+  font-style: italic;
+  color: var(--lc-primary);
+  font-weight: 300;
+}
+
+.lc-account-lede {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--lc-ink-soft);
+  max-width: 580px;
+}
+
+/* ============ GROUPS ============ */
+.lc-account-group {
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
 
-.lc-account h1 {
-  font-family: var(--font-lc-serif), Georgia, serif;
-  font-size: 28px;
-  font-weight: 400;
-  margin: 0;
-  color: var(--lc-ink);
+.lc-account-group-label {
+  font-family: var(--lc-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--lc-grey);
+  padding-top: 8px;
+  border-top: 1px solid var(--lc-line-soft);
 }
 
+/* ============ CARD ============ */
 .lc-account-card {
   background: var(--lc-surface);
   border: 1px solid var(--lc-line);
-  border-radius: 14px;
-  padding: 24px;
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 2px 6px rgba(24, 40, 52, 0.04);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
+}
+
+.lc-account-card-eyebrow {
+  font-family: var(--lc-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--lc-primary);
 }
 
 .lc-account-card h2 {
-  font-family: var(--font-lc-serif), Georgia, serif;
-  font-size: 18px;
-  font-weight: 500;
+  font-family: var(--lc-serif);
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
   margin: 0;
   color: var(--lc-ink);
 }
@@ -53,113 +107,35 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
-.lc-account-form {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  margin-top: 4px;
-}
-
-.lc-account-field {
+.lc-account-card-headline {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  font-size: 13px;
-  color: var(--lc-ink-soft);
-}
-
-.lc-account-field input {
-  padding: 9px 12px;
-  border: 1px solid var(--lc-line);
-  border-radius: 6px;
-  font: inherit;
-  font-size: 14px;
-  color: var(--lc-ink);
-  background: var(--lc-surface);
-}
-
-.lc-account-field input:focus {
-  outline: 2px solid var(--lc-primary);
-  outline-offset: 1px;
-  border-color: var(--lc-primary);
-}
-
-.lc-account-field input:disabled {
-  background: #f4f4f4;
-  cursor: not-allowed;
-}
-
-.lc-account-form-actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 4px;
-}
-
-.lc-security-section {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.lc-security-section-heading {
-  font-family: var(--font-lc-serif), Georgia, serif;
-  font-size: 15px;
-  font-weight: 500;
-  margin: 0;
-  color: var(--lc-ink);
-}
-
-.lc-security-divider {
-  height: 1px;
-  background: var(--lc-line);
-  margin: 4px 0;
-}
-
-.lc-account-id {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
-  margin: 0;
-}
-
-.lc-account-id > div {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.lc-account-id dt {
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--lc-sage);
-}
-
-.lc-account-id dd {
-  font-size: 15px;
-  margin: 0;
-  color: var(--lc-ink);
 }
 
 .lc-account-info {
   margin: 0;
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: 14.5px;
+  line-height: 1.55;
   color: var(--lc-ink-soft);
 }
 
 .lc-account-info a {
   color: var(--lc-primary);
   text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .lc-account-meta {
   margin: 0;
-  font-size: 13px;
-  color: var(--lc-sage);
+  font-family: var(--lc-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  color: var(--lc-grey);
 }
 
 .lc-account-meta a {
@@ -167,118 +143,257 @@
   text-decoration: underline;
 }
 
-.lc-account-button {
-  align-self: flex-start;
-  display: inline-block;
-  padding: 10px 18px;
-  background: var(--lc-primary);
-  color: #fff;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  text-decoration: none;
-  transition: background 0.15s ease;
+/* ============ IDENTITY (LETTERHEAD) ============ */
+.lc-account-letterhead {
+  font-family: var(--lc-serif);
+  font-weight: 300;
+  font-size: 32px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--lc-ink);
+  margin: 0;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--lc-line);
 }
 
-.lc-account-button:hover {
-  background: var(--lc-primary-700);
+.lc-account-letterhead.placeholder {
+  color: var(--lc-grey);
+  font-style: italic;
 }
 
-.lc-account-button-secondary {
-  align-self: flex-start;
-  display: inline-block;
-  padding: 10px 18px;
-  background: transparent;
-  color: var(--lc-primary);
-  border: 1px solid var(--lc-primary);
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
+.lc-account-id {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 22px 32px;
+  margin: 0;
 }
 
-.lc-account-button-secondary:hover {
-  background: var(--lc-primary);
-  color: #fff;
+.lc-account-id > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
 }
 
-.lc-account-button-danger {
-  align-self: flex-start;
-  display: inline-block;
-  padding: 10px 18px;
-  background: var(--lc-danger);
-  color: #fff;
-  border: 1px solid var(--lc-danger);
+.lc-account-id dt {
+  font-family: var(--lc-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--lc-grey);
+}
+
+.lc-account-id dd {
+  font-size: 15px;
+  line-height: 1.4;
+  margin: 0;
+  color: var(--lc-ink);
+  word-break: break-word;
+}
+
+.lc-account-id dd.muted {
+  color: var(--lc-grey);
+}
+
+/* ============ FORMS ============ */
+.lc-account-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.lc-account-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 600px) {
+  .lc-account-form-row { grid-template-columns: 1fr; }
+}
+
+.lc-account-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lc-account-field > span {
+  font-family: var(--lc-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--lc-grey);
+}
+
+.lc-account-field input {
+  padding: 11px 14px;
+  border: 1px solid var(--lc-line);
   border-radius: 8px;
   font: inherit;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.15s ease;
+  font-size: 15px;
+  color: var(--lc-ink);
+  background: var(--lc-surface);
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-.lc-account-button-danger:hover:not(:disabled) {
-  background: #993923;
+.lc-account-field input::placeholder {
+  color: var(--lc-grey);
 }
 
-.lc-account-button-danger:disabled {
-  opacity: 0.6;
+.lc-account-field input:focus {
+  outline: none;
+  border-color: var(--lc-primary);
+  box-shadow: 0 0 0 3px rgba(47, 111, 143, 0.15);
+}
+
+.lc-account-field input:disabled {
+  background: var(--lc-line-soft);
   cursor: not-allowed;
 }
 
-.lc-paused-banner {
-  background: var(--lc-warning-50);
-  border: 1px solid #f9c74f;
-  border-radius: 8px;
-  padding: 14px 18px;
+.lc-account-form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+/* ============ BUTTONS (mirrors home.css .btn) ============ */
+.lc-account .btn {
+  font-family: var(--lc-sans);
+  font-weight: 500;
   font-size: 14px;
+  padding: 11px 20px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.lc-account .btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.lc-account .btn-primary {
+  background: var(--lc-primary);
+  color: #fff;
+}
+
+.lc-account .btn-primary:hover:not(:disabled) {
+  background: var(--lc-primary-700);
+}
+
+.lc-account .btn-secondary {
+  background: var(--lc-surface);
+  color: var(--lc-primary);
+  border-color: var(--lc-primary);
+}
+
+.lc-account .btn-secondary:hover:not(:disabled) {
+  background: var(--lc-primary-50);
+}
+
+.lc-account .btn-ghost {
+  background: transparent;
+  color: var(--lc-ink-soft);
+}
+
+.lc-account .btn-ghost:hover:not(:disabled) {
+  background: var(--lc-line-soft);
   color: var(--lc-ink);
 }
 
-.lc-account-btn-link {
-  background: none;
-  border: none;
-  padding: 0;
-  color: var(--lc-primary);
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  text-decoration: underline;
+.lc-account .btn-danger {
+  background: var(--lc-danger);
+  color: #fff;
 }
 
+.lc-account .btn-danger:hover:not(:disabled) {
+  background: #993923;
+}
+
+.lc-account .btn-sm {
+  padding: 8px 14px;
+  font-size: 13px;
+}
+
+/* ============ NOTICES ============ */
 .lc-account-error {
   background: var(--lc-danger-50);
   border: 1px solid var(--lc-danger);
   color: var(--lc-danger);
-  border-radius: 6px;
-  padding: 8px 12px;
-  font-size: 13px;
-  margin-bottom: 12px;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13.5px;
 }
 
 .lc-account-success {
   background: var(--lc-success-50);
-  border: 1px solid #9bd1ad;
+  border: 1px solid var(--lc-success);
   color: var(--lc-success);
-  border-radius: 6px;
-  padding: 8px 12px;
-  font-size: 13px;
-  margin-bottom: 12px;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13.5px;
 }
 
+.lc-account-paused-banner {
+  background: #FDF1E4;
+  border: 1px solid #FBE3CC;
+  border-radius: 12px;
+  padding: 16px 20px;
+  font-size: 14px;
+  color: var(--lc-ink);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.lc-account-paused-banner strong {
+  font-family: var(--lc-serif);
+  font-weight: 500;
+  font-size: 16px;
+}
+
+/* ============ SECURITY CARD ============ */
+.lc-security-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lc-security-divider {
+  height: 1px;
+  background: var(--lc-line);
+  margin: 6px 0;
+}
+
+/* ============ CARE TEAM ============ */
 .lc-care-team-list {
   list-style: none;
-  margin: 0 0 16px;
+  margin: 0 0 4px;
   padding: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .lc-care-team-list li {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--lc-line);
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--lc-line-soft);
+  flex-wrap: wrap;
 }
 
 .lc-care-team-list li:last-child {
@@ -292,27 +407,69 @@
 
 .lc-care-team-form {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   align-items: flex-end;
-  margin-top: 8px;
+  flex-wrap: wrap;
+  margin-top: 4px;
 }
 
-.lc-care-team-form label {
-  flex: 1;
+.lc-care-team-form .lc-account-field {
+  flex: 1 1 220px;
+}
+
+/* ============ NOTIFICATION PREFS ============ */
+.lc-account-prefs {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.lc-account-pref-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.lc-account-pref-row input[type="checkbox"] {
+  margin-top: 4px;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--lc-primary);
+  cursor: pointer;
+}
+
+.lc-account-pref-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lc-account-pref-label {
+  font-size: 14.5px;
+  font-weight: 500;
+  color: var(--lc-ink);
+}
+
+.lc-account-pref-desc {
   font-size: 13px;
   color: var(--lc-ink-soft);
+  line-height: 1.5;
 }
 
-.lc-care-team-form input {
-  padding: 8px 10px;
-  border: 1px solid var(--lc-line);
-  border-radius: 6px;
-  font: inherit;
+/* ============ DANGER CARD (DELETE) ============ */
+.lc-account-card.lc-account-danger {
+  border-color: var(--lc-danger-50);
+  background: linear-gradient(180deg, var(--lc-surface) 0%, var(--lc-danger-50) 200%);
 }
 
+.lc-account-card.lc-account-danger h2 {
+  color: var(--lc-danger);
+}
+
+/* ============ DELETE CONFIRM (pre-existing flow) ============ */
 .lc-delete-confirm {
   display: flex;
   flex-direction: column;
@@ -320,29 +477,32 @@
   padding: 16px 18px;
   background: var(--lc-danger-50);
   border: 1px solid var(--lc-danger);
-  border-radius: 8px;
+  border-radius: 10px;
 }
 
 .lc-delete-confirm h4 {
   margin: 0;
-  font-size: 15px;
-  font-weight: 600;
+  font-family: var(--lc-serif);
+  font-size: 17px;
+  font-weight: 500;
   color: var(--lc-danger);
 }
 
 .lc-delete-confirm-section-label {
   margin: 4px 0 0;
-  font-size: 13px;
-  font-weight: 600;
+  font-family: var(--lc-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: var(--lc-ink);
 }
 
 .lc-delete-confirm ul {
   margin: 0;
   padding-left: 18px;
-  font-size: 13px;
+  font-size: 13.5px;
   color: var(--lc-ink-soft);
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
 .lc-delete-confirm ul li + li {
@@ -360,17 +520,20 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  font-size: 13px;
+  font-family: var(--lc-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: var(--lc-ink-soft);
   margin-top: 4px;
 }
 
 .lc-delete-confirm-label input {
-  padding: 9px 12px;
+  padding: 11px 14px;
   border: 1px solid var(--lc-line);
-  border-radius: 6px;
-  font: inherit;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  border-radius: 8px;
+  font-family: var(--lc-mono);
+  font-size: 14px;
   letter-spacing: 0.05em;
   background: var(--lc-surface);
 }
@@ -381,15 +544,11 @@
   border-color: var(--lc-danger);
 }
 
-.lc-delete-confirm-label input:disabled {
-  background: #f4f4f4;
-  cursor: not-allowed;
-}
-
 .lc-delete-confirm-actions {
   display: flex;
   gap: 12px;
   margin-top: 4px;
+  flex-wrap: wrap;
 }
 
 .lc-delete-error {

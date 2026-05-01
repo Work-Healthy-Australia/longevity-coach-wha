@@ -1,8 +1,8 @@
+import { signOut } from "@/app/(auth)/actions";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { loose } from "@/lib/supabase/loose-table";
 import { createClient } from "@/lib/supabase/server";
 import { policyVersion } from "@/lib/consent/policies";
-import { signOut } from "@/app/(auth)/actions";
 import { CareTeamSection, type AssignedClinician } from "./_components/care-team-section";
 import { DeleteAccountButton } from "./_components/delete-account-button";
 import { IdentityCard } from "./_components/identity-card";
@@ -24,7 +24,7 @@ export default async function AccountPage({
   } = await supabase.auth.getUser();
 
   // Proxy guard already redirects unauthenticated users away from /account.
-  const email = user?.email ?? "—";
+  const email = user?.email ?? "";
 
   const { data: profile } = await supabase
     .from("profiles")
@@ -34,7 +34,7 @@ export default async function AccountPage({
 
   const identityInitial = {
     full_name: (profile?.full_name as string | null) ?? "",
-    email: email === "—" ? "" : email,
+    email,
     date_of_birth: (profile?.date_of_birth as string | null) ?? "",
     phone: (profile?.phone as string | null) ?? "",
     address_postal: (profile?.address_postal as string | null) ?? "",
@@ -113,108 +113,156 @@ export default async function AccountPage({
 
   return (
     <div className="lc-account">
-      <h1>Account</h1>
+      <header className="lc-account-header">
+        <span className="lc-account-eyebrow">Account · Member</span>
+        <h1>Your <em>account</em></h1>
+        <p className="lc-account-lede">
+          Update your details, security, and preferences. Everything we hold
+          about you lives here.
+        </p>
+      </header>
 
       {showPausedBanner && (
-        <div className="lc-paused-banner">
-          <strong>Account paused.</strong> Some features are suspended.{" "}
-          <form action={unpauseAccount} style={{ display: "inline" }}>
-            <button type="submit" className="lc-account-btn-link">
+        <div className="lc-account-paused-banner">
+          <div>
+            <strong>Account paused.</strong>{" "}
+            Some features are suspended while your account is frozen.
+          </div>
+          <form action={unpauseAccount}>
+            <button type="submit" className="btn btn-primary btn-sm">
               Unfreeze now
             </button>
           </form>
         </div>
       )}
 
-      <IdentityCard initial={identityInitial} />
+      <div className="lc-account-group">
+        <IdentityCard initial={identityInitial} />
+        <SecurityCard currentEmail={identityInitial.email} />
+      </div>
 
-      <SecurityCard currentEmail={identityInitial.email} />
+      <div className="lc-account-group">
+        <span className="lc-account-group-label">Privacy &amp; data</span>
 
-      <section className="lc-account-card">
-        <h2>How we use your data</h2>
-        <p className="lc-account-info">
-          Your data powers your personalised risk scores, supplement protocol,
-          and clinician reviews — and nothing more. We never train AI models on
-          your data, never sell it, and never share it with employers.{" "}
-          <a href="/legal/data-handling">Read the full data-handling statement →</a>
-        </p>
-        {dataNoTrainingAcceptedAt ? (
-          <p className="lc-account-meta">
-            You agreed to this policy on{" "}
-            {new Date(dataNoTrainingAcceptedAt).toLocaleDateString("en-AU", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-            .
+        <section className="lc-account-card">
+          <div className="lc-account-card-headline">
+            <span className="lc-account-card-eyebrow">Data handling</span>
+            <h2>How we use your data</h2>
+          </div>
+          <p className="lc-account-info">
+            Your data powers your personalised risk scores, supplement protocol,
+            and clinician reviews — and nothing more. We never train AI models
+            on your data, never sell it, and never share it with employers.{" "}
+            <a href="/legal/data-handling">Read the full data-handling statement →</a>
           </p>
-        ) : (
-          <p className="lc-account-meta">
-            Not yet confirmed.{" "}
-            <a href="/legal/data-handling">Review the data-handling statement →</a>
+          {dataNoTrainingAcceptedAt ? (
+            <p className="lc-account-meta">
+              You agreed on{" "}
+              {new Date(dataNoTrainingAcceptedAt).toLocaleDateString("en-AU", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+              .
+            </p>
+          ) : (
+            <p className="lc-account-meta">
+              Not yet confirmed.{" "}
+              <a href="/legal/data-handling">Review the statement →</a>
+            </p>
+          )}
+        </section>
+
+        <CareTeamSection clinicians={clinicians} />
+
+        <section className="lc-account-card">
+          <div className="lc-account-card-headline">
+            <span className="lc-account-card-eyebrow">Export</span>
+            <h2>Download my data</h2>
+          </div>
+          <p className="lc-account-info">
+            Includes everything we hold: profile, assessments, risk scores,
+            supplement plans, lab results, daily logs, consent history, and
+            your latest PDF report. ZIP format.
           </p>
-        )}
-      </section>
+          <div>
+            <a className="btn btn-primary" href="/api/export" download>
+              Download my data
+            </a>
+          </div>
+        </section>
 
-      <CareTeamSection clinicians={clinicians} />
+        <section className="lc-account-card">
+          <div className="lc-account-card-headline">
+            <span className="lc-account-card-eyebrow">Communications</span>
+            <h2>Notifications</h2>
+          </div>
+          <p className="lc-account-info">
+            Choose which reminders we email you. Changes save automatically.
+          </p>
+          <NotificationPrefs initial={notificationPrefs} />
+        </section>
+      </div>
 
-      <section className="lc-account-card">
-        <h2>Download my data</h2>
-        <p className="lc-account-info">
-          Includes everything we hold: profile, assessments, risk scores,
-          supplement plans, lab results, daily logs, consent history, and your
-          latest PDF report. ZIP format.
-        </p>
-        <a className="lc-account-button" href="/api/export" download>
-          Download my data
-        </a>
-      </section>
+      <div className="lc-account-group">
+        <span className="lc-account-group-label">Account controls</span>
 
-      <section className="lc-account-card">
-        <h2>Notifications</h2>
-        <p className="lc-account-info">
-          Choose which reminders we email you. Changes save automatically.
-        </p>
-        <NotificationPrefs initial={notificationPrefs} />
-      </section>
+        <section className="lc-account-card">
+          <div className="lc-account-card-headline">
+            <span className="lc-account-card-eyebrow">
+              {pausedAt ? "Frozen" : "Pause"}
+            </span>
+            <h2>{pausedAt ? "Account paused" : "Pause your account"}</h2>
+          </div>
+          <p className="lc-account-info">
+            {pausedAt
+              ? "Your account is paused. Dashboard, report, and check-in are suspended until you unfreeze."
+              : "Temporarily suspend access to your dashboard and health data. You can come back any time."}
+          </p>
+          <div>
+            <form action={pausedAt ? unpauseAccount : pauseAccount}>
+              <button
+                type="submit"
+                className={pausedAt ? "btn btn-primary" : "btn btn-secondary"}
+              >
+                {pausedAt ? "Unfreeze account" : "Pause account"}
+              </button>
+            </form>
+          </div>
+        </section>
 
-      <section className="lc-account-card">
-        <h2>Pause account</h2>
-        <p className="lc-account-info">
-          {pausedAt
-            ? "Your account is paused. Dashboard, report, and check-in are suspended."
-            : "Temporarily suspend access to your dashboard and health data."}
-        </p>
-        <form action={pausedAt ? unpauseAccount : pauseAccount}>
-          <button
-            type="submit"
-            className={pausedAt ? "lc-account-button" : "lc-account-button-secondary"}
-          >
-            {pausedAt ? "Unfreeze account" : "Pause account"}
-          </button>
-        </form>
-      </section>
+        <section className="lc-account-card">
+          <div className="lc-account-card-headline">
+            <span className="lc-account-card-eyebrow">Session</span>
+            <h2>Sign out</h2>
+          </div>
+          <p className="lc-account-info">
+            Sign out of this device. You&apos;ll need your email and password
+            to come back.
+          </p>
+          <div>
+            <form action={signOut}>
+              <button type="submit" className="btn btn-ghost">
+                Sign out
+              </button>
+            </form>
+          </div>
+        </section>
 
-      <section className="lc-account-card">
-        <h2>Sign out</h2>
-        <p className="lc-account-info">
-          Sign out of this device. You&apos;ll need your email and password to come back.
-        </p>
-        <form action={signOut}>
-          <button type="submit" className="lc-account-button-secondary">
-            Sign out
-          </button>
-        </form>
-      </section>
-
-      <section className="lc-account-card lc-account-danger">
-        <h2>Delete account</h2>
-        <p>
-          Permanently erases your PII and removes access to your account.
-          Health data is anonymised, not deleted, for clinical integrity.
-        </p>
-        <DeleteAccountButton />
-      </section>
+        <section className="lc-account-card lc-account-danger">
+          <div className="lc-account-card-headline">
+            <span className="lc-account-card-eyebrow" style={{ color: "var(--lc-danger)" }}>
+              Permanent
+            </span>
+            <h2>Delete account</h2>
+          </div>
+          <p className="lc-account-info">
+            Permanently erases your PII and removes access to your account.
+            Health data is anonymised, not deleted, for clinical integrity.
+          </p>
+          <DeleteAccountButton />
+        </section>
+      </div>
     </div>
   );
 }

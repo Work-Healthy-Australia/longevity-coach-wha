@@ -21,11 +21,15 @@ export function CareTeamSection({ clinicians }: { clinicians: AssignedClinician[
 
   return (
     <section className="lc-account-card">
-      <h2>Care team access</h2>
+      <div className="lc-account-card-headline">
+        <span className="lc-account-card-eyebrow">Clinicians</span>
+        <h2>Care team access</h2>
+      </div>
       <p className="lc-account-info">
-        Nominate a registered clinician by email. They can then read your check-ins,
-        risk scores, and lab results so they can advise you. You can revoke access
-        at any time. Each nomination and revocation is logged for AHPRA audit.
+        Nominate a registered clinician by email. They can then read your
+        check-ins, risk scores, and lab results so they can advise you. You can
+        revoke access at any time. Each nomination and revocation is logged for
+        AHPRA audit.
       </p>
 
       {error && <div className="lc-account-error">{error}</div>}
@@ -46,7 +50,11 @@ export function CareTeamSection({ clinicians }: { clinicians: AssignedClinician[
               </div>
               <form action={revAction}>
                 <input type="hidden" name="assignmentId" value={c.assignment_id} />
-                <button type="submit" className="lc-account-button-secondary" disabled={revPending}>
+                <button
+                  type="submit"
+                  className="btn btn-ghost btn-sm"
+                  disabled={revPending}
+                >
                   {revPending ? "Revoking…" : "Revoke"}
                 </button>
               </form>
@@ -56,11 +64,16 @@ export function CareTeamSection({ clinicians }: { clinicians: AssignedClinician[
       )}
 
       <form action={nomAction} className="lc-care-team-form">
-        <label>
-          Clinician email
-          <input type="email" name="email" required placeholder="clinician@example.com" />
+        <label className="lc-account-field">
+          <span>Clinician email</span>
+          <input
+            type="email"
+            name="email"
+            required
+            placeholder="clinician@example.com"
+          />
         </label>
-        <button type="submit" className="lc-account-button" disabled={nomPending}>
+        <button type="submit" className="btn btn-primary" disabled={nomPending}>
           {nomPending ? "Adding…" : "Grant access"}
         </button>
       </form>
