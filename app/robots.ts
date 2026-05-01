@@ -43,6 +43,7 @@ export default function robots(): MetadataRoute.Robots {
           "/reset-password",
           "/verify-email",
           "/email-confirmed",
+          "/project-status.html",
         ],
       },
     ],
