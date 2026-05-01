@@ -415,79 +415,115 @@
 <!-- Embedded markdown sources -->
 <script type="text/markdown" id="md-README"># Longevity Coach — Documentation Index
 
-**Project:** Longevity Coach (janet.care)
-**Stack:** Next.js 16 · TypeScript · Supabase · Stripe · Resend · Anthropic Claude API
-**Product owner:** James Murray
-**Last updated:** 2026-04-28
+**Project:** Longevity Coach (janet.care)  
+**Stack:** Next.js 16 · TypeScript · Supabase · Stripe · Resend · Anthropic Claude API  
+**Product owner:** James Murray  
+**Last updated:** 2026-04-27
 
 ---
 
-## Strategy (the Dan Shipper step-back docs)
+## Product
+
+High-level product vision, twelve thematic epics, status dashboard, and the legacy phased roadmap. Start with `product.md`.
 
 | Document | Contents |
 |---|---|
-| [Product](#product) | Step-back vision. Audiences, four ranked values, moat, business model, what's true today. |
-| [Epics](#epics) | Fourteen thematic epics. Each with thesis, bundle, mechanism, success criterion. |
-| [Epic Status](#epic-status) | At-a-glance dashboard. Pipeline glyphs, % estimate, open/closed bug counts per epic. |
-
----
-
-## Product (legacy phased view)
-
-| Document | Contents |
-|---|---|
-| [Phase Timeline](#timeline) | Six-phase roadmap with goals and status per phase |
-| Phase 1 — Foundation | Marketing, account creation, questionnaire, payment, dashboard ✅ |
-| Phase 2 — Intelligence | Biological age, risk scoring, supplement protocol, PDF report 🔄 |
-| Phase 3 — Engagement | Daily check-in, habits, AI coaches, meal planning |
-| Phase 4 — Clinical Depth | Lab uploads, biomarker tracking, wearables, risk simulator |
-| Phase 5 — Care Network | Clinician portal, care team sharing, community |
-| Phase 6 — Scale | Corporate wellness, admin CRM, supplement marketplace |
+| [Product](./product/product.md) | **Step-back vision (Dan Shipper frame).** Audiences, four ranked values, moat, business model. |
+| [Epics](./product/epics.md) | **Fourteen thematic epics.** Each with thesis, bundle, mechanism, success criterion. |
+| [Epic Status](./product/epic-status.md) | **At-a-glance dashboard.** Pipeline glyphs, % estimate, open/closed bug counts per epic. |
+| [Product Overview](./product/00-product-overview.md) | Original executive brief — vision, audiences, value proposition, business model |
+| [Product Timeline](./product/01-product-timeline.md) | Six-phase roadmap with goals and status per phase |
+| [Phase 1 — Foundation](./product/phase-01-foundation.md) | Marketing, account creation, questionnaire, payment, dashboard ✅ |
+| [Phase 2 — Intelligence](./product/phase-02-intelligence.md) | Biological age, risk scoring, supplement protocol, PDF report 🔄 |
+| [Phase 3 — Engagement](./product/phase-03-engagement.md) | Daily check-in, habits, AI coaches, meal planning |
+| [Phase 4 — Clinical Depth](./product/phase-04-clinical-depth.md) | Lab uploads, biomarker tracking, wearables, risk simulator |
+| [Phase 5 — Care Network](./product/phase-05-care-network.md) | Clinician portal, care team sharing, community |
+| [Phase 6 — Scale](./product/phase-06-scale.md) | Corporate wellness, admin CRM, supplement marketplace |
 
 ---
 
 ## Architecture
 
+System design and technical architecture documents.
+
 | Document | Contents |
 |---|---|
-| [AI Vision](#ai-vision) | High-level agentic system vision and patient workflow |
-| Agent System (`agent-system.md`) | AI agent and pipeline worker design, build order, component specs |
-| Database Schema (`database-schema.md`) | Full schema map, table purposes, migration history |
+| [Database Schema](./architecture/database-schema.md) | Full schema map, table purposes, migration history, design principles |
+| [Agent System](./architecture/agent-system.md) | AI agent and pipeline worker design, build order, component specs |
+| [AI Vision](./architecture/ai-vision.md) | High-level agentic system vision and patient workflow |
+| [Risk Engine Assessment](./architecture/risk-engine-assessment.md) | Full extraction of the Base44 deterministic scoring engine — input schema, all 5 domain algorithms, bio-age formula, output schema, and port notes for `lib/risk/engine.ts` |
+
+---
+
+## Features
+
+Proposals and specifications for individual features being built or planned.
+
+| Document | Contents |
+|---|---|
+| [Pricing — Voice Brief](./features/pricing/voice-brief.md) | Original product owner brief (raw) |
+| [Pricing — Feature Proposal](./features/pricing/feature-proposal.md) | Four-subsystem breakdown: plans, add-ons, employer toggles, supplier catalog |
+| [Pricing — System Design](./features/pricing/system-design.md) | Technical system design for the pricing feature |
+| [Pricing — Database Design](./features/pricing/database-design.md) | Schema design for plans, billing, and supplier tables |
 
 ---
 
 ## Engineering
 
+Sprint handoffs, gap analyses, session notes, and change records.
+
 | Document | Contents |
 |---|---|
-| [Current State](#state) | Snapshot of project state at 2026-04-28 |
-| Gap Analysis (2026-04-27) | Base44 vs new build comparison, missing features, database gaps |
-| Gap Closure Plan (2026-04-27) | Ordered plan to close identified gaps |
-| Agent System Handoff (2026-04-28) | What was built in the agent-system session |
+| [2026-04-24 Handoff](./engineering/sprints/2026-04-24-handoff.md) | Dave → Trac handoff: what was built, what is blocked, recommended next steps |
+| [Vietnam Sprint Plan](./engineering/sprints/vietnam-sprint-plan.md) | Sprint contract — 7 MVP workflows |
+| [Gap Analysis (2026-04-27)](./engineering/2026-04-27-gap-analysis.md) | Base44 vs new build comparison, missing features, database gaps |
+| [Gap Closure Plan (2026-04-27)](./engineering/2026-04-27-gap-closure-plan.md) | Ordered plan to close identified gaps |
+| [Morning Scope (2026-04-27)](./engineering/2026-04-27-morning-scope.md) | Session scope and decisions from 2026-04-27 morning |
+
+### Changes
+
+Each change delivered via the `dev-loop` skill produces a dated subfolder here containing PLAN, CHANGELOG, QA_REPORT, and EXECUTIVE_SUMMARY.
+
+| Folder | Contents |
+|---|---|
+| _(none yet — first change will appear here)_ | |
 
 ---
 
-## Quality
+## QA
+
+Quality assurance plan, regression reports, and test findings.
 
 | Document | Contents |
 |---|---|
-| [QA Plan](#qa-plan) | Forever QA plan (Dan Shipper × `webapp-testing` skill). Tier 1–8 testing pyramid, AI evals, manual practices. |
-| [QA Report (2026-04-27)](#qa-report) | Full regression report: 91 tests, 1 bug fixed, 1 external limitation |
+| [QA Plan](./qa/qa-plan.md) | **Forever QA plan (Dan Shipper × webapp-testing skill).** Tier 1–8 testing pyramid, AI evals (Atlas/Sage/Janet/document analyser), manual best practices, quality gates, sequencing. |
+| [QA Report (2026-04-27)](./qa/2026-04-27-qa-report.md) | Full regression report: 91 tests, 1 bug fixed, 1 external limitation |
 
 ---
 
 ## Brand
 
+Brand assets for use in the product and documents.
+
 | Asset | Description |
 |---|---|
-| `longevity-coach-logo.png` | Primary logo (stacked) |
-| `longevity-coach-horizontal-logo.png` | Horizontal logo (600×125, ~54KB) — used in nav and auth |
-| `WHA-LOGO_COLOURED_PNG.png` | WHA coloured logo |</script>
+| [longevity-coach-logo.png](./brand/longevity-coach-logo.png) | Primary logo (stacked) |
+| [longevity-coach-horizontal-logo.png](./brand/longevity-coach-horizontal-logo.png) | Horizontal logo (600×125, ~54KB) — used in nav and auth |
+| [WHA-LOGO_COLOURED_PNG.png](./brand/WHA-LOGO_COLOURED_PNG.png) | WHA coloured logo |
+
+---
+
+## Archive
+
+| Document | Note |
+|---|---|
+| [Product Vision v1](./engineering/product-vision-v1-archive.md) | Original combined roadmap — superseded by `docs/product/` |
+</script>
 
 <script type="text/markdown" id="md-timeline"># Longevity Coach — Product Timeline
 
-**Document type:** Phased delivery roadmap
-**Audience:** Product owners, investors, clinical advisors
+**Document type:** Phased delivery roadmap  
+**Audience:** Product owners, investors, clinical advisors  
 **Last updated:** 2026-04-27
 
 ---
@@ -519,6 +555,8 @@
 - Signed-in dashboard showing assessment status and subscription state
 - Automated welcome email on account verification
 
+**Epics:** [Phase 1 detail →](./phase-01-foundation.md)
+
 ---
 
 ## Phase 2 — Intelligence: Risk Scoring, Biological Age & Personalised Report
@@ -533,6 +571,8 @@
 - Personalised 30-day supplement protocol matched to the member's risk profile
 - Branded, downloadable PDF health report
 - In-app report screen accessible at any time
+
+**Epics:** [Phase 2 detail →](./phase-02-intelligence.md)
 
 ---
 
@@ -549,6 +589,8 @@
 - Weekly meal planning with auto-generated shopping lists and meal logging
 - Health journal and personalised insights feed
 
+**Epics:** [Phase 3 detail →](./phase-03-engagement.md)
+
 ---
 
 ## Phase 4 — Clinical Depth: Biomarker Uploads & Advanced Tracking
@@ -562,6 +604,8 @@
 - Longitudinal biomarker charts with trend analysis and out-of-range alerts
 - Wearable device connections (Oura, Apple Watch, Garmin) and manual metric entry
 - Interactive risk simulator showing the projected impact of lifestyle changes on biological age
+
+**Epics:** [Phase 4 detail →](./phase-04-clinical-depth.md)
 
 ---
 
@@ -577,6 +621,8 @@
 - In-platform appointment booking with care team members
 - Community challenges, leaderboard, achievement badges, and member feed
 
+**Epics:** [Phase 5 detail →](./phase-05-care-network.md)
+
 ---
 
 ## Phase 6 — Scale: Corporate Wellness & Marketplace
@@ -589,6 +635,8 @@
 - Corporate account management with employee invitations, team challenges, and aggregate reporting
 - Admin CRM for the Longevity Coach team to manage members and monitor the business
 - In-platform supplement marketplace with auto-replenishment
+
+**Epics:** [Phase 6 detail →](./phase-06-scale.md)
 
 ---
 
@@ -605,11 +653,12 @@ The platform is considered complete when a member can:
 7. Share their data with a clinician and book appointments within the platform
 8. Participate in community challenges and earn recognition for their progress
 9. Purchase recommended supplements directly through the platform
-10. Access the platform through their employer as part of a corporate wellness programme</script>
+10. Access the platform through their employer as part of a corporate wellness programme
+</script>
 
 <script type="text/markdown" id="md-state"># Current State Assessment — 2026-04-28
 
-## Phase 1 (Foundation) — 95% complete
+## Phase 1 (Foundation) — 90% complete
 
 ### Done
 
@@ -619,72 +668,66 @@ The platform is considered complete when a member can:
 | Marketing / public pages | ✅ Done | `/`, `/science`, `/team`, `/stories`, `/sample-report`, legal |
 | Onboarding questionnaire (6 steps) | ✅ Done | Schema-driven, save-and-resume, PII split at write time |
 | Stripe checkout + webhook | ✅ Done | Subscription lifecycle handled; RLS-correct upserts |
-| File uploads portal | ✅ Done | Supabase Storage bucket, 50 MB limit, MIME whitelist; SHA-256 dedup in progress |
+| File uploads portal | ✅ Done | Supabase Storage bucket, 50 MB limit, MIME whitelist |
 | Janet document analyser | ✅ Done | `lib/uploads/janet.ts` — Claude Opus 4.7 + adaptive thinking |
 | Janet wired to upload action | ✅ Done | `uploads/actions.ts` calls `analyzeUpload()` synchronously |
 | Dashboard (basic) | ✅ Done | Assessment state, risk score placeholders, uploads count, subscription |
 | Welcome email on signup | ✅ Done | Resend; idempotent; silently no-ops without `RESEND_API_KEY` |
-| RLS on every table | ✅ Done | All 37 migrations enforce RLS |
+| RLS on every table | ✅ Done | All 13 migrations enforce RLS |
 | Consent records | ✅ Done | Append-only `consent_records` table; written on assessment submit |
-| Admin access control | ✅ Done | `is_admin` gate in proxy; `/admin/admins` invite/revoke page; admin nav link |
 
 ### Gaps remaining in Phase 1
 
 | Gap | Impact | Notes |
 |---|---|---|
-| Drip email sequences | Low | Infrastructure shipped (cron + drip_email_log); Day 1/3/7 content not written |
+| `/report` page does not exist | High | Users have no place to see their results |
+| `/account` page does not exist | Medium | No self-service profile/subscription management |
+| Logged-in nav has no links | Medium | Only logo + sign-out; no Dashboard/Report/Uploads links |
+| Admin CRM is a stub | Medium | James cannot see users or analytics |
+| Drip email sequences | Low | Welcome only; no Day 1/3/7 re-engagement |
 
 ---
 
-## Phase 2 (Intelligence) — ~85% complete
+## Phase 2 (Intelligence) — 0% complete
 
-The full intelligence pipeline is live. Risk engine is deterministic, Janet has tool-use sub-agents, conversation memory is compressed across sessions.
+The entire agent/pipeline layer is unbuilt. `lib/ai/` contains only `.gitkeep`.
 
-### Shipped in Phase 2
+### What the user story needs next
 
 The patient has now:
 1. Signed up ✅
 2. Completed onboarding questionnaire ✅
 3. Uploaded blood test files ✅ (Janet analysed them)
-4. Received a biological age and five-domain risk narrative ✅ (risk_analyzer pipeline — `lib/ai/pipelines/risk-narrative.ts`)
-5. Received a personalised 30-day supplement protocol ✅ (supplement_advisor pipeline — `lib/ai/pipelines/supplement-protocol.ts`)
-6. Can view results and chat with Janet on `/report` ✅ (streaming, 20-turn window, PatientContext in <50ms)
-7. Risk scores are deterministic ✅ (ported engine in `lib/risk/` — five domains, bio-age, modifiable-factor ranking)
-8. Janet has real-time risk_analyzer + supplement_advisor sub-agents via `tool_use` ✅
-9. Janet remembers past sessions via conversation-summary compression ✅
 
-### Remaining Phase 2 gaps
-
-| Gap | Impact | Notes |
-|---|---|---|
-| Branded PDF | P3 | PDF endpoint scaffold exists; renders unstyled skeleton (BUG-005) |
-| health_researcher pipeline | — | Fully implemented + weekly cron running; pgvector extension still needs dashboard enable for full semantic precision |
+The platform has not yet:
+- Generated a biological age or domain risk scores
+- Written a human-readable risk narrative
+- Created a supplement protocol
+- Given the patient anywhere to see these results
+- Enabled the patient to talk to Janet
 
 ---
 
 ## Database state
 
-37 migrations applied. Key schema facts:
+13 migrations applied. Key schema facts:
 
 | Table | Schema | State |
 |---|---|---|
 | `profiles` | public | ✅ Has: full_name, date_of_birth, phone, role |
 | `health_profiles` | public | ✅ Has: responses JSONB, completed_at |
-| `risk_scores` | public | ✅ Complete — domain scores, bio-age, narrative, engine_output, data_gaps (migration 0014) |
-| `patient_uploads` | public | ✅ Complete with janet_* columns; file_hash dedup column (migration 0031) |
-| `supplement_plans` | public | ✅ Complete — items JSONB, status, valid_from/to, per-item rationale + tier |
+| `risk_scores` | public | ✅ Has: domain scores, bio-age, narrative-adjacent columns (top_risk_drivers, recommended_screenings, confidence_level). Missing: `narrative` text, `engine_output` jsonb, `data_gaps` text[] |
+| `patient_uploads` | public | ✅ Complete with janet_* columns |
+| `supplement_plans` | public | ✅ Has: items JSONB, status, valid_from/to |
 | `coach_suggestions` | public | ✅ Complete |
 | `care_notes` | public | ✅ Complete |
 | `periodic_reviews` | public | ✅ Complete |
 | `patient_assignments` | public | ✅ Complete |
-| `agent_conversations` | agents | ✅ Shipped — 20-turn window (migration 0014) |
-| `conversation_summaries` | agents | ✅ Shipped — session compression (migration 0030) |
-| `agent_definitions` | agents | ✅ Shipped — Janet, risk_analyzer, supplement_advisor, health_researcher rows (migrations 0019, 0028, 0036) |
-| `health_updates` | public | ✅ Shipped — digest display table (migration 0015) |
-| `health_knowledge` | agents | ◐ Migrations written (0037) — pending pgvector extension enable in Supabase |
-| `admin_invites` | public | ✅ Shipped — pending invite table (migration 0033) |
-| `support_tickets` | — | ❌ Missing — needed for support agent |
+| `agent_conversations` | — | ❌ Missing — needed for Janet chat |
+| `support_tickets` | — | ❌ Missing — needed for Alex |
 | `appointments` | — | ❌ Missing — needed for Janet booking |
+| `health_updates` | — | ❌ Missing — needed for Nova digest display |
+| `health_knowledge` | — | ❌ Missing — needed for Janet RAG |
 
 ---
 
@@ -693,16 +736,21 @@ The patient has now:
 | Path | State |
 |---|---|
 | `lib/uploads/janet.ts` | ✅ Complete — document analyser |
-| `lib/uploads/hash.ts` | ✅ Complete — SHA-256 dedup utility |
 | `lib/questionnaire/` | ✅ Complete |
 | `lib/profiles/` | ✅ Complete — PII split, name helpers |
 | `lib/supabase/` | ✅ Complete — all four clients |
 | `lib/email/` | ✅ Complete — welcome email |
 | `lib/consent/` | ✅ Complete |
 | `lib/stripe/` | ✅ Stripe client exists |
-| `lib/ai/` | ✅ Built — Janet + support agents; risk_analyzer + supplement_advisor pipelines + tool_use wrappers; PatientContext, RAG, compression, agent-factory, providers, trigger, types; health_researcher stub |
-| `lib/risk/` | ✅ Complete — deterministic five-domain risk engine + biological age estimator ported from Base44 |
-| `lib/pdf/` | ◐ Skeleton — `report-doc.tsx` scaffold exists; unstyled (BUG-005) |
+| `lib/ai/` | ❌ Empty — PatientContext, pipelines, Janet all missing |
+| `lib/risk/` | ❌ Empty — deterministic risk engine not built |
+| `lib/pdf/` | ❌ Empty — PDF generation not built |
+
+---
+
+## Risk engine note
+
+The deterministic risk engine (`lib/risk/`) has not been built. The agent-system.md data flow shows it should run synchronously inside `submitAssessment()` before the redirect. For Phase 2, the Risk Narrative Pipeline will operate directly from questionnaire responses and upload findings, computing initial risk scores via LLM. When the deterministic engine is built, it will slot in before the LLM pipeline and supply structured `engine_output` for the narrative to annotate.
 
 ---
 
@@ -712,16 +760,17 @@ The patient has now:
 2. Supabase key naming: `SUPABASE_SECRET_KEY` (not `SUPABASE_SERVICE_ROLE_KEY`).
 3. `proxy.ts` is the route guard — no ad-hoc auth in pages.
 4. `useActionState` from `react` (not `react-dom`) — React 19 rename.
-5. Pipeline writes use the admin (service-role) client. Never the user client.</script>
+5. Pipeline writes use the admin (service-role) client. Never the user client.
+</script>
 
 <script type="text/markdown" id="md-product"># Longevity Coach — Product
 
 Last updated **2026-04-28**. Drafted in the Dan Shipper school: AI-native, treats the product as a relationship not a SaaS, obsessed with the moment of truth.
 
 **Companion docs:**
-- epics.md — the twelve bodies of work.
-- epic-status.md — what's shipped, what's broken, what's next.
-- qa/qa-plan.md — how we know what we shipped is right.
+- [epics.md](./epics.md) — the twelve bodies of work.
+- [epic-status.md](./epic-status.md) — what's shipped, what's broken, what's next.
+- [../qa/qa-plan.md](../qa/qa-plan.md) — how we know what we shipped is right.
 
 ---
 
@@ -778,7 +827,7 @@ A 30-day supplement protocol with rationale per item, and a daily target you don
 
 ### 3.3 A coach who remembers
 
-Janet reads the patient's full context before every conversation. The patient never has to re-explain. The coaching gets sharper the longer they stay. risk_analyzer (risk narrative) and supplement_advisor (supplement protocol) are sub-agents Janet calls when a specialist answer is needed in real time.
+Janet reads the patient's full context before every conversation. The patient never has to re-explain. The coaching gets sharper the longer they stay. Atlas (risk narrative) and Sage (supplement protocol) are sub-agents Janet calls when a specialist answer is needed in real time.
 
 ### 3.4 A trust layer your doctor accepts
 
@@ -802,8 +851,8 @@ Most consumer health platforms show you a dashboard and walk away. We close the 
 
 Anyone can build a questionnaire. Anyone can hire a doctor to write supplement rules. The defensible thing is:
 
-- The narrative **risk_analyzer** writes for each domain, indistinguishable from a thoughtful GP letter.
-- The protocol **supplement_advisor** assembles, indistinguishable from what an integrative medicine clinic would prescribe at $600 a visit.
+- The narrative **Atlas** writes for each domain, indistinguishable from a thoughtful GP letter.
+- The protocol **Sage** assembles, indistinguishable from what an integrative medicine clinic would prescribe at $600 a visit.
 - **Janet's** ability to pick up a conversation three weeks later as if she had been waiting all along.
 
 The eval suite (qa-plan.md §2) is the system that lets us hold that bar — and notice the day a model upgrade quietly breaks it. Without evals, "AI quality" is theatre.
@@ -812,9 +861,9 @@ The eval suite (qa-plan.md §2) is the system that lets us hold that bar — and
 
 ## 6. The architecture in one sentence
 
-A patient identity and questionnaire layer (Supabase, RLS-enforced, PII-isolated) feeds two pipelines (risk_analyzer and supplement_advisor) that run async on assessment submit and on every upload, writing structured narratives and protocols back to the patient's row, which Janet reads in parallel via `PatientContext.load()` before every conversation.
+A patient identity and questionnaire layer (Supabase, RLS-enforced, PII-isolated) feeds two pipelines (Atlas and Sage) that run async on assessment submit and on every upload, writing structured narratives and protocols back to the patient's row, which Janet reads in parallel via `PatientContext.load()` before every conversation.
 
-Specifics in `docs/architecture/agent-system.md`. The data rules live in `.claude/rules/data-management.md`. The AI rules live in `.claude/rules/ai-agents.md`.
+Specifics in [`docs/architecture/agent-system.md`](../architecture/agent-system.md). The data rules live in [`.claude/rules/data-management.md`](../../.claude/rules/data-management.md). The AI rules live in [`.claude/rules/ai-agents.md`](../../.claude/rules/ai-agents.md).
 
 ---
 
@@ -851,14 +900,14 @@ We are mid-Phase-2.
 - Six-step health questionnaire with save-and-resume.
 - Stripe subscription checkout + webhook.
 - Patient uploads portal + Janet document analyser (Claude Opus 4.7).
-- risk_analyzer + supplement_advisor pipelines (risk narrative + supplement protocol).
+- Atlas + Sage pipelines (risk narrative + supplement protocol).
 - Janet streaming chat agent (Claude Sonnet 4.6).
 - `/report` page combining narrative, scores, protocol, and Janet chat.
 - Drip-email cron, basic admin pages, consent records.
 - 13 RLS-enforced migrations, full TypeScript schema types regenerated.
 
 **Not shipped:**
-- Deterministic risk engine port from Base44 (risk_analyzer currently derives all scores via LLM at `confidence_level = 'moderate'`).
+- Deterministic risk engine port from Base44 (Atlas currently derives all scores via LLM at `confidence_level = 'moderate'`).
 - Branded PDF export (skeleton only).
 - Patient `/account` self-service page.
 - pgvector / RAG (migration written, extension not enabled).
@@ -867,7 +916,7 @@ We are mid-Phase-2.
 - Wearable connections, biomarker tracking, risk simulator.
 - Corporate accounts, supplement marketplace.
 
-Detail in epic-status.md.
+Detail in [epic-status.md](./epic-status.md).
 
 ---
 
@@ -877,16 +926,17 @@ Detail in epic-status.md.
 
 That's the bar. Everything in product, engineering, AI, and QA serves that one sentence.
 
-Everything else is theatre.</script>
+Everything else is theatre.
+</script>
 
 <script type="text/markdown" id="md-epics"># Longevity Coach — Epics
 
-Last updated **2026-04-28**. Drafted in the Dan Shipper school: bundled by thesis, not by phase number.
+Last updated **2026-04-30**. Drafted in the Dan Shipper school: bundled by thesis, not by phase number.
 
 **Companion docs:**
-- product.md — who we serve, the four values, what makes us different.
-- epic-status.md — at-a-glance status of each epic.
-- qa/qa-plan.md — how we test what we ship.
+- [product.md](./product.md) — who we serve, the four values, what makes us different.
+- [epic-status.md](./epic-status.md) — at-a-glance status of each epic.
+- [../qa/qa-plan.md](../qa/qa-plan.md) — how we test what we ship.
 
 ---
 
@@ -940,11 +990,11 @@ An epic earns shipping when **the success criterion is true** — not when every
 **Bundle:**
 - Deterministic risk engine ported from Base44 (`lib/risk/`) — five scoring functions plus bio-age estimator.
 - Risk engine runs synchronously inside `submitAssessment()` and writes `risk_scores.engine_output`.
-- risk_analyzer pipeline (risk narrative LLM) reads `engine_output` and writes a per-domain narrative + top drivers + recommended screenings + data gaps.
+- Atlas pipeline (risk narrative LLM) reads `engine_output` and writes a per-domain narrative + top drivers + recommended screenings + data gaps.
 - Confidence label on every score (`high` when biomarkers present, `moderate` when questionnaire-only).
 - Risk scores recomputed on every new upload.
 
-**Mechanism:** Two-step pipeline: deterministic arithmetic for the score, LLM for the explanation. risk_analyzer is a pipeline worker (async, idempotent upsert keyed on `user_uuid`). Triggered by the `health_profiles.completed_at` write and by `patient_uploads.janet_status = 'complete'` events.
+**Mechanism:** Two-step pipeline: deterministic arithmetic for the score, LLM for the explanation. Atlas is a pipeline worker (async, idempotent upsert keyed on `user_uuid`). Triggered by the `health_profiles.completed_at` write and by `patient_uploads.janet_status = 'complete'` events.
 
 **Success criterion:** A member who completes the questionnaire receives a bio-age and risk picture within 60 seconds of submission. The narrative names which questionnaire answers and which uploaded biomarkers drove each score. A panel of three GPs reviewing 10 sample reports rate them ≥ 4/5 on "would I send this to a patient."
 
@@ -955,14 +1005,14 @@ An epic earns shipping when **the success criterion is true** — not when every
 **Thesis:** Every member walks away with a 30-day supplement plan they can buy at the chemist tonight.
 
 **Bundle:**
-- supplement_advisor pipeline (supplement protocol LLM) reads risk + uploads + questionnaire and writes `supplement_plans.items`.
+- Sage pipeline (supplement protocol LLM) reads risk + uploads + questionnaire and writes `supplement_plans.items`.
 - Per-item rationale linked to the specific risk driver it addresses.
 - Tier label per item (`critical` / `high` / `recommended` / `performance`).
 - Auto-replanning when risk scores change.
 - Janet (Supplement Advisor mode) can answer questions about any item.
 - Hand-curated supplement catalog (~40 evidence-backed items) for deterministic Phase 1 generation; LLM-enhanced generation in Phase 2.
 
-**Mechanism:** supplement_advisor is a pipeline worker. Triggered by risk_analyzer completion. Writes to `supplement_plans` (one active row per patient, status check constraint). Janet reads `supplement_plans.items` via `PatientContext`.
+**Mechanism:** Sage is a pipeline worker. Triggered by Atlas completion. Writes to `supplement_plans` (one active row per patient, status check constraint). Janet reads `supplement_plans.items` via `PatientContext`.
 
 **Success criterion:** Every protocol contains at least three tier-`critical` items with rationale text under 200 characters that names the patient's specific driver. A panel of three integrative-medicine doctors reviewing 10 sample protocols rate them ≥ 4/5 on "would I prescribe this."
 
@@ -993,10 +1043,10 @@ An epic earns shipping when **the success criterion is true** — not when every
 - Janet streaming chat agent (Claude Sonnet 4.6).
 - `PatientContext.load()` runs all DB reads in parallel via `Promise.all` (target < 50ms).
 - 20-turn conversation window per patient with older turns summarised to one sentence per session.
-- Sub-agent tool calls: risk_analyzer (risk narrative), supplement_advisor (supplement protocol), PT Coach (live exercise).
-- Hybrid RAG over `health_knowledge` (pgvector HNSW + BM25 + RRF fusion) — populated by health_researcher.
+- Sub-agent tool calls: Atlas (risk narrative), Sage (supplement protocol), PT Coach (live exercise).
+- Hybrid RAG over `health_knowledge` (pgvector HNSW + BM25 + RRF fusion) — populated by Nova.
 - Stale-data nudges (e.g. "your risk scores are 30 days old — let me refresh that").
-- Persona-aware support agent for platform questions.
+- Persona-aware support agent (Alex) for platform questions.
 
 **Mechanism:** Janet runs at `app/api/chat/route.ts`, streams via Anthropic SDK. PatientContext lives at `lib/ai/patient-context.ts`. Sub-agents are real-time `tool_use` (the user waits ~3s when a specialist is needed). Janet → sub-agent only one layer deep — never sub-agent → sub-agent.
 
@@ -1054,7 +1104,7 @@ An epic earns shipping when **the success criterion is true** — not when every
 - Periodic review record (`periodic_reviews` table — schema exists).
 - Community feed and challenges (deferred sub-epic).
 
-**Mechanism:** Clinician role gated via `profiles.role = 'clinician'` and `patient_assignments` rows. Clinician-side reads use the user client (RLS enforces patient consent), pipeline-side writes use the admin client. Janet-Clinician runs on a 1st-of-month cron per assignment.
+**Mechanism:** Clinician role gated via `profiles.role = 'clinician'` and `patient_assignments` rows. Clinician-side reads use the user client (RLS enforces patient consent), pipeline-side writes use the admin client. Janet-Clinician runs on a 1st-of-month cron per assignment. Two-sided booking: clinicians publish weekly recurring slots in `clinician_availability`; patients self-insert `pending` appointments via `requestBooking`; clinicians accept/decline from `BookingRequests`. Patient cancellations are gated by a 24-hour cutoff and audited via an append-only `appointments_cancellation_log` written by a `SECURITY DEFINER` DB trigger.
 
 **Success criterion:** A clinician opening a patient for the first time can summarise the patient's risk picture in under 3 minutes. Patient consent for care-team access is captured via the consent-record flow (AHPRA audit).
 
@@ -1065,7 +1115,7 @@ An epic earns shipping when **the success criterion is true** — not when every
 **Thesis:** Janet always knows the latest research, and her answers are grounded in cited evidence.
 
 **Bundle:**
-- health_researcher research digest pipeline (weekly cron, ~200s runtime).
+- Nova research digest pipeline (weekly cron, ~200s runtime).
 - Six-category parallel literature scan (PubMed, Nature, Cell, medRxiv, Cochrane, plus one rotating).
 - LLM synthesis per category, embedded into `health_knowledge` (pgvector HNSW + GIN hybrid index).
 - Embedding model: `perplexity/pplx-embed-v1-4b` via OpenRouter (2560 dims, 32K context, INT8, MRL).
@@ -1073,9 +1123,9 @@ An epic earns shipping when **the success criterion is true** — not when every
 - Hybrid RAG search function `hybrid_search_health()` called by Janet at session start (~30ms overhead).
 - Citations surfaced in Janet's responses ("a 2026 Cell paper on rapamycin in mice…").
 
-**Mechanism:** health_researcher runs at `app/api/cron/health-researcher/route.ts`. Migration `0016_knowledge_base_pgvector.sql` is written but blocked on enabling the `vector` extension in Supabase. health_researcher is independent of every other component — it only writes; nothing reads from it synchronously.
+**Mechanism:** Nova runs at `app/api/cron/nova/route.ts` (to be built). Migration `0016_knowledge_base_pgvector.sql` is written but blocked on enabling the `vector` extension in Supabase. Nova is independent of every other component — it only writes; nothing reads from it synchronously.
 
-**Success criterion:** Janet's responses cite a research source in > 30% of substantive answers. Citation accuracy (does the cited paper actually say what Janet claims) > 95% on a quarterly audit. health_researcher runtime stays under 250s.
+**Success criterion:** Janet's responses cite a research source in > 30% of substantive answers. Citation accuracy (does the cited paper actually say what Janet claims) > 95% on a quarterly audit. Nova runtime stays under 250s.
 
 ---
 
@@ -1210,13 +1260,14 @@ The legacy `phase-XX-` documents map to epics like this:
 | Phase 5 — Care Network | Epic 9 (Care Team), continuing Epic 13 (PT, gym, meals partners) |
 | Phase 6 — Scale | Epic 12 (Distribution), late Epic 11 (Trust Layer audit cadence), full Epic 13 (Business Model: provider catalog + Stripe Connect), late Epic 14 (DR drills, pen-test cadence, production-readiness enforcement) |
 
-Phases describe **when**. Epics describe **why**. The two views are complementary; neither replaces the other.</script>
+Phases describe **when**. Epics describe **why**. The two views are complementary; neither replaces the other.
+</script>
 
 <script type="text/markdown" id="md-epic-status"># Longevity Coach — Epic Status Dashboard
 
-Last updated **2026-04-28**.
+Last updated **2026-04-30** (Booking calendar W1-4 + alert-notification cron + cost monitoring + Sentry install + employer dashboard + journal enhancements + insights category filter + deceased-flag schema all landed since the last sync). **Late 2026-04-30 hotfix:** PR [#78](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/78) shipped a P0 fix for the silently-failing risk-narrative pipeline (Atlas was throwing schema validation errors against Anthropic's structured-output endpoint for 2 days; every recent `risk_scores` row had `narrative=null`); 11 production migrations that had drifted between repo and Supabase (`agent_usage`, `notification_prefs`, `clinician_availability`, `appointments_cancellation_log`, etc.) were caught up; both affected users (`c32699e1-…`, `865cbc5c-…`) backfilled; and clinical review packs delivered for the GP and integrative-medicine panels.
 
-Companion to epics.md (strategy, stable) and product.md (vision). This file is the **at-a-glance status** of each epic: how far through the build pipeline, what's still outstanding, what's broken right now.
+Companion to [epics.md](./epics.md) (strategy, stable) and [product.md](./product.md) (vision). This file is the **at-a-glance status** of each epic: how far through the build pipeline, what's still outstanding, what's broken right now.
 
 ## Pipeline stages
 
@@ -1224,7 +1275,7 @@ Every epic moves through five stages. Each stage is a discrete "is it true?" gat
 
 | Stage | Means |
 |---|---|
-| **Planned** | Spec exists in epics.md with bundled features, mechanism, success criterion. |
+| **Planned** | Spec exists in [epics.md](./epics.md) with bundled features, mechanism, success criterion. |
 | **Feature Complete** | Every bundled feature is shipped to production. |
 | **Unit Tested** | Direct unit tests cover the core logic of the bundled features. |
 | **Regression Tested** | Bundled features exercised end-to-end via an automated regression pass before each release. |
@@ -1237,21 +1288,21 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 | # | Epic | Pipeline | Estimate | Open bugs | Closed bugs |
 |---|---|---|---:|---:|---:|
 | 1 | The Front Door | `●●●●●` | 100% | 0 | 3 |
-| 2 | The Intake | `●●●◐○` | 97% | 0 | 0 |
-| 3 | The Number | `●●◐○○` | 70% | 0 | 1 |
-| 4 | The Protocol | `●●◐○○` | 60% | 0 | 0 |
-| 5 | The Report | `●●○○○` | 65% | 0 | 1 |
-| 6 | The Coach | `●●◐○○` | 90% | 0 | 1 |
-| 7 | The Daily Return | `●●◐○○` | 70% | 0 | 0 |
-| 8 | The Living Record | `●●◐○○` | 65% | 0 | 0 |
-| 9 | The Care Team | `●○○○○` | 5% | 0 | 0 |
-| 10 | The Knowledge Engine | `●◐◐○○` | 60% | 0 | 1 |
-| 11 | The Trust Layer | `●●◐○○` | 65% | 0 | 1 |
-| 12 | The Distribution | `●◐○○○` | 20% | 0 | 0 |
-| 13 | The Business Model | `●○○○○` | 0% | 0 | 0 |
-| 14 | The Platform Foundation | `●◐○○○` | 45% | 0 | 0 |
+| 2 | The Intake | `●●●●○` | 100% | 0 | 0 |
+| 3 | The Number | `●●●○○` | 92% | 0 | 2 |
+| 4 | The Protocol | `●●●○○` | 87% | 0 | 0 |
+| 5 | The Report | `●●●○○` | 92% | 0 | 1 |
+| 6 | The Coach | `●●●●○` | 100% | 0 | 1 |
+| 7 | The Daily Return | `●●●●○` | 100% | 0 | 0 |
+| 8 | The Living Record | `●●●○○` | 90% | 0 | 0 |
+| 9 | The Care Team | `●●●◐○` | 85% | 0 | 0 |
+| 10 | The Knowledge Engine | `●●◐○○` | 75% | 0 | 1 |
+| 11 | The Trust Layer | `●●●○○` | 97% | 0 | 1 |
+| 12 | The Distribution | `●●◐○○` | 75% | 0 | 0 |
+| 13 | The Business Model | `●●◐○○` | 50% | 0 | 0 |
+| 14 | The Platform Foundation | `●●◐○○` | 78% | 0 | 0 |
 
-**Bug totals:** 0 open, 8 closed. (Bug log: forthcoming `qa/QA-bugs.md`.)
+**Bug totals:** 0 open, 9 closed. (Bug log: forthcoming `qa/QA-bugs.md`.)
 
 ---
 
@@ -1286,8 +1337,8 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 2: The Intake
 
-`●●●◐○` Planned · Feature Complete · Unit Tested · ◐ Regression Tested · ○ User Reviewed
-**Estimate: 95%** — questionnaire + uploads + Janet document analyser + SHA-256 deduplication all live. Only external-dependency items remain.
+`●●●●○` Planned · Feature Complete · Unit Tested · Regression Tested · ○ User Reviewed
+**Estimate: 100%** — questionnaire + uploads + Janet document analyser + SHA-256 deduplication + Janet → `lab_results` structured writer + per-relative family-history card model all live. **E2E Playwright test shipped 2026-04-29.**
 
 **Shipped:**
 - Six-step questionnaire (basics, medical, family, lifestyle, goals, consent) with save-and-resume.
@@ -1295,14 +1346,15 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - AHPRA-compliant consent record on submit (append-only `consent_records`).
 - Patient uploads portal (50 MB cap, MIME whitelist, Supabase Storage).
 - Janet document analyser (Claude Opus 4.7 + adaptive thinking) at `lib/uploads/janet.ts`.
-- **Upload deduplication** — SHA-256 content hash (`lib/uploads/hash.ts`), `file_hash` column + unique index on `(user_uuid, file_hash)` (migration `0031`), client-side pre-check before any storage write.
+- **Upload deduplication** — SHA-256 content hash (`lib/uploads/hash.ts`), `file_hash` column + unique index on `(user_uuid, file_hash)` (migration `0031_patient_uploads_file_hash.sql`), client-side pre-check before any storage write.
+- **Janet → `lab_results` structured writer** (2026-04-28) — Janet's `analyzeUpload` now emits a typed `findings.biomarkers[]` array on `blood_work` documents; `persistLabResults` writes one typed row per biomarker into `biomarkers.lab_results` with server-side-derived status (low/optimal/high/critical via the pure `deriveStatus` rule). Migration `0032_lab_results_idempotency.sql` adds a unique partial index `(user_uuid, biomarker, test_date) where test_date is not null` for re-upload safety. 21 unit tests across `derive-status`, `extract-lab-results`, and `janet-prompt`.
 - 14 questionnaire schema unit tests passing.
 - 7 onboarding-action integration tests passing (Vitest with mocked Supabase).
 - Unit tests for `hashFile` and `checkDuplicate`.
+- **Per-relative family-history card model** (2026-04-29) — replaced the per-condition multiselects + separate "Deaths in the family" step with a single unified per-relative step. Each card collects relationship + alive/dead + age + cause-of-death + smoking + alcohol + per-condition age-of-onset list. Six-step questionnaire (was seven). Hydration shim migrates legacy data on every form load; old JSONB keys orphan and get stripped on next save by `stripUnknownKeys`. New `aggregateConditionFromMembers()` derives the engine's `FamilyHistory` shape (`first_degree`, `second_degree`, `age_onset`, `multiple`). **Latent bug fix:** `metabolic.ts:132`'s `multiple` flag now actually fires when ≥ 2 first-degree relatives have diabetes (was silently always false). 41 new tests (14 family-aggregation + 18 migrate-family + 6 family-members-field + 3 integration). Engine itself untouched.
+- **E2E Playwright test** (2026-04-29) — `tests/e2e/onboarding.spec.ts`: 3 tests covering page load, full 6-step walkthrough with submit + redirect, and save-and-resume draft persistence. Requires `TEST_EMAIL`/`TEST_PASSWORD` env vars.
 
-**Outstanding:**
-- Family-history sub-fields (age of onset, cancer types) — blocked on James.
-- E2E Playwright test of the full onboarding flow with a seeded test user fixture.
+**Outstanding:** none — user review pending.
 
 **Open bugs:** none.
 **Closed bugs:** 0.
@@ -1311,35 +1363,37 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 3: The Number
 
-`●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 70%** — risk_analyzer pipeline ships risk narratives end-to-end. Deterministic risk engine ported from Base44 and unit tested; BUG-003 closed. GP-panel review still outstanding.
+`●●●○○` Planned · Feature Complete · Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 92%** — risk_analyzer pipeline ships risk narratives end-to-end. Deterministic risk engine ported from Base44 and unit tested; **engine output now injected into Atlas prompt as baseline anchors** (2026-04-29) — Atlas must explain deviations >10 points. **GP review pack delivered 2026-04-30** at [`docs/qa/2026-04-30-narrative-review-pack.md`](../qa/2026-04-30-narrative-review-pack.md) — 10 representative samples grounded in the deterministic engine baseline; review response pending. BUG-003 closed. **BUG-009 closed (2026-04-30):** risk-narrative pipeline silent failure root-caused to AI SDK's structured-output endpoint rejecting `min`/`max` on numbers and `propertyNames` on records — schema fix in PR [#78](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/78), affected users backfilled.
 
 **Shipped:**
+- **risk-narrative schema hardening** (2026-04-30, PR #78) — Atlas was silently failing every assessment for ~48h because Anthropic's structured-output endpoint rejected `minimum`/`maximum` on number types and `propertyNames` on records; all 3 retry tiers threw and the pipeline caught it as non-fatal so members never saw a narrative. Fix extracts the Zod schema into [`lib/ai/pipelines/risk-narrative-schema.ts`](../../lib/ai/pipelines/risk-narrative-schema.ts), drops the unsupported constraints in favour of `.describe()` guidance, accepts permissive shapes (`z.array(z.unknown())`) and coerces post-parse, adds `clampAtlasOutput()` that clamps numbers / truncates narrative / stringifies object items, and bumps `risk_analyzer.max_tokens` 2048→4096 so structured JSON doesn't truncate. Both affected users backfilled directly via `runRiskNarrativePipeline()`. The `0059_risk_scores_history` constraint preserved the original null rows as audit trail.
 - risk_analyzer pipeline at `lib/ai/pipelines/risk-narrative.ts`.
 - Pipeline endpoint at `app/api/pipelines/risk-narrative/route.ts` (secured with `x-pipeline-secret`).
-- Pipeline triggered by `submitAssessment()`, by every successful upload, and by every daily check-in.
+- Pipeline triggered by `submitAssessment()`, by every successful upload, and now by every daily check-in.
 - `risk_scores` table extended with `narrative`, `engine_output`, `data_gaps` columns (migration `0014_agent_tables.sql`).
-- Idempotent upsert keyed on `(user_uuid, computed_at_date)`.
-- **Deterministic risk engine ported** from Base44 to `lib/risk/` (migration `0034`) — five scoring domains (CV, metabolic, brain, cancer, MSK), biological age estimator, confidence levels based on data completeness, modifiable-risk-factor ranking, 6-month projected improvement.
-- Unit tests: `tests/unit/risk/scorer.test.ts`, `tests/unit/risk/_gp-panel-pack.test.ts`, `tests/unit/risk/assemble.test.ts`.
-- **Check-in → risk_analyzer trigger** (2026-04-28) — daily check-in submission fires background risk_analyzer refresh; completes the pipeline loop.
+- Idempotent upsert keyed on `(user_uuid, assessment_date)`.
+- **Deterministic risk engine ported** from Base44 to `lib/risk/` (migration `0034_risk_scores_unique_and_array_fixes.sql`) — five scoring domains (CV, metabolic, brain, cancer, MSK), biological age estimator, confidence levels based on data completeness, modifiable-risk-factor ranking, 6-month projected improvement.
+- Unit tests: `tests/unit/risk/scorer.test.ts`, `tests/unit/risk/_gp-panel-pack.test.ts`, `tests/unit/risk/assemble.test.ts` (snapshot coverage).
+- **Check-in → risk_analyzer trigger** (2026-04-28) — daily check-in submission fires a background risk_analyzer pipeline refresh, completing the data loop: questionnaire → check-in → risk_analyzer → dashboard.
+- **Engine-grounded narratives** (2026-04-29) — `runRiskNarrativePipeline` now calls `assemblePatientFromDB()` + `scoreRisk()` and injects the deterministic engine output (domain scores, biological age, top modifiable risks, confidence, data completeness) into Atlas's prompt as an `## Engine baseline scores` section. Atlas is instructed to use these as anchors and explain any deviation >10 points. Non-fatal: if engine scoring fails, Atlas proceeds without baseline (logs a warning). Risk score history enabled via migration `0059_risk_scores_history.sql` — unique constraint changed from `(user_uuid)` to `(user_uuid, assessment_date)` so each assessment date preserves a separate row.
 
 **Outstanding:**
-- risk_analyzer narrative tone tuning now that `engine_output` is available.
 - GP-panel review of 10 sample narratives.
-- Per-domain regression tests in CI.
+- Per-domain regression tests in CI (currently unit only).
 
 **Open bugs:** none.
 
 **Closed bugs:**
-- **BUG-003** (P1, CLOSED 2026-04-28): risk_analyzer was writing `confidence_level = 'moderate'` for every patient because the deterministic engine was not ported. Deterministic engine now live in `lib/risk/`.
+- **BUG-009** (P0, CLOSED 2026-04-30): risk_analyzer pipeline silently failing for ~48h — every recent `risk_scores` row had `narrative=null`. Root cause: AI SDK's structured-output endpoint rejects `minimum`/`maximum` on number types and `propertyNames` on `z.record(...)`. Fixed in PR [#78](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/78); 2 affected users backfilled; the silent-failure mode that hid this for 2 days flagged for follow-up under Epic 14 (cost-monitoring telemetry was also offline because its migration had drifted).
+- **BUG-003** (P1, CLOSED 2026-04-28): risk_analyzer was writing `confidence_level = 'moderate'` for every patient because the deterministic engine was not ported. Deterministic engine now live in `lib/risk/`; scores are evidence-grounded.
 
 ---
 
 ### Epic 4: The Protocol
 
-`●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 60%** — supplement_advisor pipeline ships a 30-day protocol; supplement_advisor eval suite shipped 2026-04-28 with 4 rubrics. No deterministic catalog yet.
+`●●●○○` Planned · Feature Complete · Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 87%** — supplement_advisor pipeline ships a 30-day protocol after every risk_analyzer run; supplement_advisor eval suite shipped 2026-04-28 with 4 rubrics. Deterministic supplement catalog (42 evidence-backed items) seeded and live; `recommendFromRisk()` resolver fully wired. **Integrative-medicine review pack delivered 2026-04-30** at [`docs/qa/2026-04-30-protocol-review-pack.md`](../qa/2026-04-30-protocol-review-pack.md) — 10 representative samples (same fixtures as the Atlas pack so reviewers can cross-reference); review response pending.
 
 **Shipped:**
 - supplement_advisor pipeline at `lib/ai/pipelines/supplement-protocol.ts`.
@@ -1348,12 +1402,12 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - `supplement_plans` table with `items JSONB`, `status` check constraint, `valid_from`/`valid_to`.
 - Per-item rationale tied to the patient's specific risk drivers.
 - Tier label per item (`critical` / `high` / `recommended` / `performance`).
-- **supplement_advisor eval suite** (`tests/evals/supplement-advisor.eval.ts`, 2026-04-28) — 4 rubrics: protocol completeness, safe language, personalisation, citation of specific supplements.
+- **supplement_advisor eval suite** (`tests/evals/sage.eval.ts`, 2026-04-28) — 4 rubrics: protocol completeness, safe language, personalisation to patient's risk drivers, citation of specific supplements.
+- **Hand-curated supplement catalog** — 42 evidence-backed items seeded to `supplement_catalog` via `supabase/seeds/supplement_catalog.sql`. Covers all 6 domains (7 CV, 7 metabolic, 6 neuro, 5 onco, 4 MSK, 11 general). Each item has predicate-based `triggers_when` keyed to canonical engine factor names, medication `contraindicates`, evidence tags (A/B/C), and AUD cost. Deterministic resolver `recommendFromRisk()` at `lib/supplements/catalog.ts` fully operational.
 
 **Outstanding:**
-- Hand-curated supplement catalog (~40 evidence-backed items) for deterministic generation.
 - Janet (Supplement Advisor mode) tool surface for "tell me more about this item."
-- Integrative-medicine doctor panel review of 10 sample protocols.
+- Integrative-medicine doctor panel review pack DELIVERED 2026-04-30; awaiting reviewer response.
 - Supplement-marketplace integration so a tap on an item adds it to a basket (Epic 12).
 
 **Open bugs:** none.
@@ -1363,54 +1417,57 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 5: The Report
 
-`●◐○○○` Planned · ◐ Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 35%** — `/report` page shipped with all in-app surfaces; the branded PDF route exists but renders an unstyled skeleton.
+`●●●○○` Planned · Feature Complete · Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 92%** — `/report` page + branded PDF + regenerate-on-demand button + **progress diff section** all shipped. PDF includes logo, cover page, big-number summary, domain-coloured swatches, supplement table with tier colours and overflow handling, footer disclaimer.
 
 **Shipped:**
 - `/report` page (`app/(app)/report/page.tsx`) showing risk narrative, domain scores, supplement protocol, Janet chat panel.
 - `app/(app)/report/report.css` styling.
 - `app/(app)/report/_components/janet-chat.tsx` streaming chat client component.
-- PDF endpoint scaffold at `app/api/report/pdf/route.tsx`.
-- `lib/pdf/report-doc.tsx` skeleton.
+- PDF endpoint at `app/api/report/pdf/route.tsx`.
+- **Branded PDF** at `lib/pdf/report-doc.tsx` (442 lines) — logo header, cover page, big-number summary, domain colour swatches, supplement table with tier colours (max 12 visible + overflow count), AHPRA-compliant footer disclaimer.
+- **Regenerate report button** (2026-04-29) — `RegenerateButton` client component + `regenerateReport` server action. Triggers `runRiskNarrativePipeline()` then `runSupplementProtocolPipeline()` sequentially (risk first, supplement reads risk scores). `useActionState` with disabled/"Generating…" pending state. Appears in both existing-scores hero and pending-state view. `revalidatePath('/report')` refreshes on completion.
+- **Last-updated timestamp** (2026-04-29) — prominent in bio-age hero, derived from latest of `risk_scores.assessment_date` and `supplement_plans.created_at`.
+- **Progress diff section** (2026-04-29) — report page fetches `risk_scores ORDER BY assessment_date DESC LIMIT 2`; `generateProgressNarrative()` at `lib/insights/progress-narrative.ts` computes trend (improving/stable/declining/insufficient), headline, and per-domain bullets showing point changes. Rendered as a "Your progress" card with trend icon (↗/→/↘) and bullet list. First-assessment fallback message. Enabled by migration `0059_risk_scores_history.sql` which changed `risk_scores` unique constraint from `(user_uuid)` to `(user_uuid, assessment_date)`, allowing multiple historical rows.
 
 **Outstanding:**
-- Branded PDF: logo header, domain colour swatches, narrative typography, supplement table, footer disclaimer.
-- Last-updated timestamp prominent on `/report`.
-- Regenerate-on-demand button.
-- "What changed since last report" diff when run twice.
 - Visual regression coverage (Chromatic) on `/report` and the PDF.
+- Unit-test coverage on the PDF render path.
 
 **Open bugs:** none.
 
 **Closed bugs:**
-- **BUG-005** (CLOSED 2026-04-29): Branded PDF was returning an unstyled skeleton. Resolved as part of the P0 Vietnam MVP wave (commit `f1fe816`, 2026-04-28); bug entry was simply not closed at the time. PDF now includes logo, cover page, big-number summary, domain colour swatches, supplement table with tier colours, footer disclaimer.
+- **BUG-005** (CLOSED 2026-04-29): Branded PDF route at `/api/report/pdf` was returning an unstyled skeleton. Resolved as part of the P0 Vietnam MVP wave (commit `f1fe816`, 2026-04-28) — the bug entry was simply not closed at the time. PDF now includes logo, cover page, big-number summary, domain colour swatches, supplement table with tier colours, footer disclaimer. Verified by inspection 2026-04-29.
 
 ---
 
 ### Epic 6: The Coach
 
-`●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 90%** — Janet streaming chat, cross-session history, stale-data nudge, RAG, risk_analyzer + supplement_advisor `tool_use` sub-agents, conversation-summary compression, and eval suites all shipped. Remaining work is end-to-end regression suite and user review.
+`●●●●○` Planned · Feature Complete · Unit Tested · Regression Tested · ○ User Reviewed
+**Estimate: 100%** — Janet streaming chat, cross-session history, stale-data nudge, health_researcher digests, support agent route, RAG, all five `tool_use` sub-agents (risk_analyzer, supplement_advisor, PT Coach, meal plan, supplement protocol), conversation-summary compression, eval suites, E2E tests, **latency benchmarks**, and **clinical prompt review document** all shipped.
 
 **Shipped:**
 - Janet agent at `lib/ai/agents/janet.ts` (Claude Sonnet 4.6, streaming).
 - `PatientContext.load()` at `lib/ai/patient-context.ts` with parallel `Promise.all` reads.
 - Janet API route at `app/api/chat/route.ts` (Supabase session auth).
-- 20-turn conversation window, persisted to `agent_conversations` (migration `0014`).
+- 20-turn conversation window, persisted to `agent_conversations` (table created in migration `0014`).
 - Janet chat panel embedded in `/report`.
-- Cross-session conversation history, stale-data nudge, health_researcher digest context, support agent route.
-- RAG layer active — `hybrid_search_health()` runs on each Janet turn (pgvector enabled).
-- **Conversation-summary compression** (2026-04-28) — `lib/ai/compression.ts`; turns older than 20 summarised per session; persisted in `conversation_summaries` (migration `0030`).
-- **risk_analyzer `tool_use` sub-agent** (2026-04-28) — `lib/ai/tools/risk-analyzer-tool.ts`; Janet invokes risk_analyzer mid-conversation for risk questions. Unit tests in `tests/unit/ai/tools/risk-analyzer-tool.test.ts`.
-- **supplement_advisor `tool_use` sub-agent** (2026-04-28) — `lib/ai/tools/supplement-advisor-tool.ts`; Janet invokes supplement_advisor for supplement questions. Unit tests in `tests/unit/ai/tools/supplement-advisor-tool.test.ts`.
-- **Janet eval suite** (2026-04-28) — `tests/evals/janet.eval.ts`; 5 rubrics: context grounding, supplement grounding, no hallucination, coaching tone, conversation memory.
-- Eval runner and judge at `tests/evals/runner.ts` and `tests/evals/judge.ts`.
+- Cross-session conversation history — Janet loads last 20 turns from `agent_conversations` on each call.
+- Stale-data nudge — `summariseContext` warns Janet when risk scores are >30 days old.
+- health_researcher research digests surfaced in `summariseContext` — Janet sees latest evidence from `health_updates`.
+- Support agent API route at `app/api/chat/alex/route.ts` (same auth pattern as Janet).
+- RAG layer active — `hybrid_search_health()` runs on each Janet turn (pgvector now enabled).
+- **Conversation-summary compression** (2026-04-28) — `lib/ai/compression.ts` summarises turns older than 20 per session; summaries persisted in `conversation_summaries` table (migration `0030_conversation_summaries.sql`); Janet loads the summary on session start.
+- **risk_analyzer as real-time `tool_use` sub-agent** (2026-04-28) — `lib/ai/tools/atlas-tool.ts`; Janet invokes risk_analyzer mid-conversation when a patient asks about their risk profile. Unit tests in `tests/unit/ai/tools/atlas-tool.test.ts`.
+- **supplement_advisor as real-time `tool_use` sub-agent** (2026-04-28) — `lib/ai/tools/sage-tool.ts`; Janet invokes supplement_advisor mid-conversation for supplement questions. Unit tests in `tests/unit/ai/tools/sage-tool.test.ts`.
+- **Janet eval suite** (2026-04-28) — `tests/evals/janet.eval.ts`; 5 rubrics: context grounding, supplement grounding, no hallucination, coaching tone, conversation memory. Judge at `tests/evals/judge.ts`.
+- Eval runner at `tests/evals/runner.ts`; patient-context and supplement-plan fixtures.
+- **Janet conversation E2E test** (`tests/e2e/janet-conversation.spec.ts`) — signs in, navigates to /report, sends 3 questions (health, supplement, exercise), asserts non-empty streaming responses. Uses `TEST_EMAIL`/`TEST_PASSWORD` env vars.
+- **PT Coach `tool_use` integration** — `consult_pt_coach` tool wired into Janet at `lib/ai/tools/pt-coach-tool.ts`. Delegates to `pt_coach_live` pipeline agent with patient's active PT plan, MSK risk drivers, and exercise list. Output schema: advice (50–600 chars), exercises_referenced (max 5), optional safety_note. Safety note auto-triggers when MSK risk > 60.
+- **Latency benchmark suite** (2026-04-29) — `tests/e2e/janet-latency.spec.ts`: 5 scenarios (simple greeting, risk deep-dive, supplement deep-dive, exercise advice, multi-domain synthesis). Measures wall-clock send→response time per scenario, logs P50/P95/max. Hard ceiling: 30s per turn. Detects tool invocation patterns from response content.
+- **Clinical prompt review document** (2026-04-29) — `docs/qa/clinical-prompt-review.md`: extracts all 7 agent system prompts (Janet, Atlas, Sage, PT Coach, Janet-Clinician, Nova, Alex) with per-prompt review checklists and 6 cross-cutting clinical concerns. Sign-off table for GP, clinical pharmacist, and physiotherapist.
 
-**Outstanding:**
-- End-to-end Playwright regression test of the full Janet conversation loop.
-- Latency benchmarking under load (three-LLM-call turns when both risk_analyzer and supplement_advisor are invoked).
-- PT Coach `tool_use` integration (Phase 3).
-- Clinical review of sub-agent prompts.
+**Outstanding:** none — user review pending.
 
 **Open bugs:**
 - **BUG-004** (P2): Closed — pgvector enabled, migrations applied, RAG layer active.
@@ -1421,28 +1478,31 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 7: The Daily Return
 
-`●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 70%** — daily check-in UI, streak math, Mon-Sun dot strip, steps + water capture, and risk_analyzer trigger all shipped; remaining work is personalised goals, reminders, weekly digest, and journal.
+`●●●●○` Planned · Feature Complete · Unit Tested · Regression Tested · ○ User Reviewed
+**Estimate: 100%** — daily check-in UI, streak math, Mon-Sun dot strip with rest-day support, steps + water capture, risk_analyzer trigger, personalised daily goals, **check-in email reminders**, **weekly insights digest**, and **health journal** all shipped. User review pending.
 
 **Shipped:**
 - Drip-email cron at `app/api/cron/drip-emails/route.ts`.
 - `lib/email/drip.ts` template wrapper.
 - `drip_email_log` table (migration `0018_drip_tracking.sql`).
 - `daily_logs` table in `biomarkers` schema (`0010_biomarkers_daily_logs.sql`).
-- `/check-in` daily form at `app/(app)/check-in/` — mood, energy, sleep, exercise, steps, water, notes; upserts one row per UTC day.
-- Streak math at `computeStreak()` — UTC-safe; 10 unit tests in `tests/unit/dashboard/streak.test.ts`.
-- Mon-Sun streak dot strip — `streakDots()` pure helper; 6 unit tests.
-- Steps + water validation — `parseCheckInForm()` validates ranges; 6 unit tests.
-- New dashboard surface: streak hero, today-strip, single-action picker, three big numbers, quick links.
-- Migration `0020_expose_schemas_to_postgrest.sql` + Supabase Cloud API config.
-- **Check-in → risk_analyzer trigger** (2026-04-28) — check-in submit fires risk_analyzer pipeline in background; completes the data loop.
+- `/check-in` daily form at `app/(app)/check-in/` — mood, energy, sleep, exercise, **steps, water**, notes; upserts one row per UTC day (2026-04-28).
+- Streak math at `computeStreak()` in `app/(app)/dashboard/page.tsx` — UTC-consistent with the writer; locked in by 10 deterministic unit tests in `tests/unit/dashboard/streak.test.ts`.
+- **Mon-Sun streak dot strip** in dashboard hero — `streakDots()` pure helper, 7 dots oldest→newest, today distinct, 6 unit tests in `tests/unit/dashboard/streak-dots.test.ts` (2026-04-28).
+- **Steps + water capture in check-in** — `parseCheckInForm()` validates ranges (0–60000 steps, 0–20 glasses), 6 unit tests in `tests/unit/check-in/validation.test.ts`; dashboard Steps/Water tiles now populate from real data (2026-04-28).
+- New dashboard surface: streak hero, today-strip (sleep/energy/steps/water with progress bars), single-action picker, three big numbers (bio age, top risk, supplement adherence), what's-new row, quick links, coming-soon shelf.
+- Migration `0020_expose_schemas_to_postgrest.sql` + Supabase Cloud API config to expose `biomarkers` and `billing` schemas.
+- **Check-in → risk_analyzer trigger** (2026-04-28) — `app/(app)/check-in/actions.ts` fires the risk_analyzer pipeline in the background on each check-in submit. Completes the data loop: questionnaire → daily check-in → risk_analyzer risk refresh → dashboard.
+- **Rest-day streak dots** (2026-04-29, #47) — `streakDots()` delegates to `calculateStreak()` which has rest-day tolerance; days in a 1–2 day rest gap render at 25% opacity, distinct from logged and missed. 4 new test cases.
+- **Journal quick-link** (2026-04-29, #47) — `/journal` tile added to the dashboard quick-links grid.
+- **Janet latency logging** (2026-04-29, #47) — `agent-factory` `onFinish` now emits `tools_invoked` alongside `patient_context_ms` / `total_ms`.
+- **Personalised daily goals** (2026-04-29) — `deriveGoals()` enriched with risk-profile-aware logic: steps (6k–10k based on MSK/CV risk), sleep (7.5–8.5h based on neuro/metabolic risk), water (weight-derived + metabolic bonus), meditation (10–15 min based on questionnaire stress level + neuro risk). New `extractGoalInputs()` helper reads weight and stress from questionnaire JSONB responses. Dashboard now calls `deriveGoals()` instead of hardcoding targets; check-in and insights pages wired identically. 28 unit tests (was 10) covering all risk thresholds, `extractGoalInputs`, and edge cases.
+- **Check-in email reminders** (2026-04-30) — daily cron at `app/api/cron/check-in-reminder/route.ts` (09:00 UTC via `vercel.json`). Checks `notification_prefs.check_in_reminders` opt-in (default true), enforces 20h minimum gap between sends, skips paused accounts. Email template at `lib/email/check-in-reminder.ts`. Migration `0064_notification_prefs.sql` adds the `notification_prefs` table with per-channel opt-in columns and last-sent timestamps.
+- **Weekly insights digest** (2026-04-30) — Monday 08:00 UTC cron at `app/api/cron/weekly-digest/route.ts`. Aggregates last 7 days of daily logs per member (avg sleep, mood, energy, steps), counts open alerts, sends a branded email with stats table + dashboard CTA. Respects `notification_prefs.weekly_digest` opt-in (default true), 6-day minimum gap, skips paused and < 7-day-old accounts. Email template at `lib/email/weekly-digest.ts`. 14 unit tests at `tests/unit/email/weekly-digest.test.ts`.
+- **Health journal** (2026-04-30) — `/journal` page with compose form (Zod-validated, 5000-char max) and reverse-chronological entry list. Server action at `app/(app)/journal/actions.ts`. Styled via `journal.css`. Table `public.journal_entries` (migration `0044_journal.sql`) with RLS owner policy and user+date index. Dashboard quick-link tile.
+- **Journal enhancements** ([#66](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/66), 2026-04-29) — title, mood enum, tag array, full-text search, pin-to-top, inline edit. Migration `0066_journal_enhancements.sql` adds the columns + GIN index. Weekly digest tests bundled.
 
-**Outstanding:**
-- Personalised daily goals tied to risk profile (currently static defaults).
-- Rest-day mechanic for travel and grief.
-- Push / SMS / email reminder for the daily check-in.
-- Weekly insights digest from check-in patterns.
-- Health journal for free-form notes.
+**Outstanding:** none — user review pending.
 
 **Open bugs:** none.
 **Closed bugs:** 0.
@@ -1451,24 +1511,29 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 8: The Living Record
 
-`●●◐○○` Planned · Feature Complete (member labs surface) · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 25%** — `/labs` index and `/labs/[biomarker]` detail shipped 2026-04-28 with Recharts time-series. Schema and upload parsing also complete.
+`●●●○○` Planned · Feature Complete (member labs surface) · Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 90%** — five member-visible surfaces shipped: `/labs` (Lab Results UI), `/trends` (Daily-log trends), the alerts surface (`member_alerts` + dashboard chip + repeat-test cron + upload-flow lab-alert hook), the **Janet → `lab_results` structured writer**, and **`/simulator`** (real-time risk simulator with LDL/HbA1c/hsCRP/**Systolic BP**/Weight sliders running the deterministic risk engine in-browser via `useDeferredValue`, side-by-side baseline-vs-simulated display, empty-state CTA). Lab-alert path is now live — fires the moment any Janet-extracted biomarker is `low`/`high`/`critical`. SBP slider added 2026-04-29 with AHA-aligned numeric scoring bands. **Simulator added to top nav** (2026-04-29).
 
 **Shipped:**
 - `biomarkers` schema with `lab_results`, `wearable_summaries`, `daily_logs` tables (migrations `0009`, `0010`).
 - Patient uploads parsed by Janet feed into `biomarkers.lab_results`.
-- `/labs` index page — biomarkers grouped by category, each card showing latest value + status badge + reference range + trend.
-- `/labs/[biomarker]` detail page — Recharts time-series with reference-range band, header card, full history table.
-- Pure helpers at `lib/labs/` — 23 unit tests.
-- Dashboard lab-results tile showing biomarker count + latest test date.
+- **`/labs` index page** (2026-04-28) — biomarkers grouped by category, each card showing latest value + status badge + reference range + trend; empty-state CTA for zero-row members.
+- **`/labs/[biomarker]` detail page** (2026-04-28) — Recharts time-series with reference-range band, header card, full history table; `notFound()` on zero-row biomarker; Next 16 async params.
+- **Pure helpers** at `lib/labs/` (`groupByBiomarker`, `formatRange`, `statusTone`, `categoryLabel`, `toChartData`) sourced off generated DB types — schema drift forces a compile error. 23 unit tests.
+- **Dashboard tile** replaced "Coming soon · Lab Results" with live `<QuickTile>` showing biomarker count + latest test date.
+- **Top-nav entries** (2026-04-29) — `/labs` and `/simulator` added to the app layout nav bar, visible to all signed-in members.
+- **`/trends` page** (2026-04-28) — 30-day sparklines for Sleep, Energy, Mood, Steps, Water from `biomarkers.daily_logs`. Empty-state CTA pointing to `/check-in`. `lib/trends/` pure helpers (`buildTrendSeries`, `summariseTrend`, `ML_PER_GLASS`) sourced off generated DB types. 10 unit tests. Dashboard quick-link tile.
+- **Member alerts surface** (2026-04-28) — `public.member_alerts` table (migration 0031, append-mostly, RLS owner-select + owner-update, service-role-only insert, unique partial index for idempotent re-runs). `lib/alerts/` pure evaluators (`evaluateLabAlerts`, `evaluateRepeatTests` with whole-token matching against a `SCREENING_KEYWORDS` map, `chipPayload`). Daily cron `/api/cron/repeat-tests` (Bearer-secret gated). Upload-flow lab-alert hook (defensive — no-op until Janet → `lab_results` writer lands). Dashboard hero chip with three severity tones (info/attention/urgent), `View →` link, dismiss server action. 20 unit tests.
+- **Alert-email dispatcher** (2026-04-30) — `app/api/cron/alert-notification/route.ts` runs every 4 hours; emails any open `member_alerts` row that hasn't been emailed yet, then stamps `member_alerts.email_sent_at` for idempotency. Respects `notification_prefs.alert_emails` opt-in (default true) and `profiles.paused_at`. Email template at `lib/email/alert-notification.ts` with unsubscribe deep-link to `/account`.
 
 **Outstanding:**
-- Daily-log charting (sleep/energy/mood/steps 30-day trends) — Recharts now available.
-- Risk simulator ("if I lower my LDL to X, my CV risk drops to Y").
-- Out-of-range alerts + repeat-test reminders.
+- Snooze / dismiss-suppression mechanism on alerts.
+- Auto-resolve when next reading is back in range.
+- `/alerts` index / triage page (route stub exists at `app/(app)/alerts/`).
+- SMS / push delivery of alerts (email shipped 2026-04-30).
 - Wearable OAuth integrations (Oura, Apple Watch, Garmin).
 - Manual metric entry UI.
-- Top-nav entry for `/labs`.
+- Source-upload back-link from each lab row to its `patient_uploads` document.
 
 **Open bugs:** none.
 **Closed bugs:** 0.
@@ -1477,48 +1542,75 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 9: The Care Team
 
-`●○○○○` Planned · ○ Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 5%** — schema shipped (clinical and program tables), no UI, no clinician role assignment flow.
+`●●●◐○` Planned · Feature Complete · Unit Tested · ◐ Regression Tested · ○ User Reviewed
+**Estimate: 85%** — Plan B Wave-2-9 (2026-04-29) shipped the clinician portal end-to-end; the two-sided booking calendar (Waves 1-4, 2026-04-30) closed the patient-side loop with availability publishing, request/accept flow, and patient cancellation guarded by a 24h cutoff. What's left is real clinician pilot use plus the deferred items below.
 
 **Shipped:**
 - `clinical` schema (migrations `0011_clinical_schema.sql`).
 - `programs` schema (`0012_programs_schema.sql`).
 - `care_notes`, `periodic_reviews`, `patient_assignments`, `coach_suggestions` tables.
+- **Janet-Clinician Brief pipeline** (monthly cron via `vercel.json`) — `lib/ai/pipelines/clinician-brief.ts`; populates `periodic_reviews.janet_brief` with structured patient summary before the clinician opens the review.
+- **Role expansion** (migration `0048`) — `profiles.role` extended with `clinician`, `coach`, `health_manager`. `proxy.ts` gates `/clinician` and `/coach` paths; non-admins must hold the matching role.
+- **Schema for the portal** (migration `0048` + `0050`) — `clinician_profiles`, `clinician_invites`, columns added to existing `appointments` (`video_link`, `patient_notes`, `clinician_notes`).
+- **Periodic review workspace columns** (migration `0049`) — `program_30_day`, `program_sent_at`, `clinician_conversation_id` + clinician-can-update RLS via `patient_assignments`.
+- **`janet_clinician` agent definition** (migration `0051`) — sonnet-4-6, clinician-colleague persona, instructed to call the submit tool.
+- **Patient consent surface** at `/account` — "Care team access" form nominating a clinician by email; writes append-only `consent_records` row (new `care_team_access` policy) paired with the `patient_assignments` row.
+- **Admin clinician invite** at `/admin/clinicians` — existing user → role updated in place + clinician_profiles row + branded Resend notification email; new user → single-use 14-day token in `clinician_invites` + Supabase invite email via custom SMTP.
+- **`/clinician` review workspace** — two-pane layout, queue grouped by status (awaiting / in_review / program_ready / sent_to_patient), urgent flag for `needs_attention` or stress ≥ 8; right pane: Patient card (Janet brief + structured fields), live Janet chat, 30-Day Program tab with Save draft + Approve & send.
+- **`/clinician/schedule`** — upcoming/past toggle, expandable appointment rows, status transitions, post-session notes.
+- **`/clinician/profile`** — full self-service editor (specialties, languages, bio, contact, working hours, lunch break, session duration, timezone, active flag).
+- **`janet_clinician` real-time agent** — `lib/ai/agents/janet-clinician.ts` + `lib/ai/tools/submit-program-tool.ts`; the submit tool writes `program_30_day` and flips `review_status` to `program_ready` (per C6 — replaces text sentinel). `POST /api/clinician/chat` gates on admin OR (clinician AND assigned via `patient_assignments`).
+- **Patient program-delivery email** — `lib/email/program-delivery.ts`; clicking Approve & send sends a branded Resend message with the program body to the patient's auth email; non-fatal if Resend fails (status transition still holds, program visible in-app).
+- **Pipeline JSON parse stability** (2026-04-29, #49) — clinician-brief and PT-plan pipelines now retry up to 3 times with progressive fallback (strict → conservative → text-parse). Silent failures eliminated; all recovery attempts logged.
+- **Two-sided booking calendar Waves 1-3** ([#57](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/57), 2026-04-30) — migration `0055_clinician_booking_calendar.sql` adds `clinician_availability` (per-clinician recurring weekly slots, day_of_week 0-6, RLS clinician-rw + assigned-patient-r), and extends `appointments` with `video_link`, `patient_notes`, `clinician_notes`, `requested_at`, `accepted_at` plus a `'pending'` status. Clinician schedule page gains `AvailabilityGrid` (30-min increments 06:00–20:00) and `BookingRequests` (Accept/Decline cards). Patient `/care-team` page lists active assignments, clinician profile, 28-day available-slot calendar with overlap-checking, and inline booking panel (`SlotCalendar` + `requestBooking` server action). Dashboard Care Team tile linked.
+- **Patient-side cancellation Wave 4** (2026-04-30) — migration `0067_appointment_cancellation.sql` extends `appointments.status` with `cancelled_by_patient` / `cancelled_by_clinician`, adds an append-only `appointments_cancellation_log` audit table written by a `SECURITY DEFINER` trigger on status transition, and a tightly-scoped `appointments_patient_update_cancel` RLS policy. `cancelBooking(appointmentId)` server action enforces ownership + 24h cutoff + status guard; UI shows a Cancel button (≥ 24h) or a static "contact your clinician" deflect (< 24h). 14 integration tests cover all rejection paths.
 
 **Outstanding:**
-- Clinician portal pages.
-- Care-team invitation + per-patient permission management.
-- Janet-Clinician brief pipeline (monthly cron).
-- In-platform appointment booking (calendar + Stripe).
-- Clinical notes UI (private to care team).
-- Periodic-review record UI.
+- Real clinician pilot use (User Reviewed gate) — schema, UI, AI loop, and booking calendar are live but no actual clinician has run a monthly review + booked-session loop end-to-end yet.
+- Clinical notes UI (`care_notes` writes from the workspace — currently `appointments.notes` is the only writable surface).
+- Janet chat persistence (each tab open starts fresh; `clinician_conversation_id` column is in place but not yet populated).
 - Community feed and challenges (deferred sub-epic).
 
 **Open bugs:** none.
 **Closed bugs:** 0.
 
+**Recently shipped (Plan B Wave-2-9, 2026-04-29):**
+- [#34](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/34) — clinician portal C1–C6 decisions resolved
+- [#35](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/35) — foundation: role expansion + schema + proxy gates
+- [#36](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/36) — patient consent + admin clinician invite
+- [#37](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/37) — review workspace + schedule + profile
+- [#41](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/41) — clinician invite email via Supabase custom SMTP
+- [#45](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/45) — fix invite form feedback visibility + apply migrations 0038–0051 to production
+- [#42](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/42) — janet_clinician real-time agent + submit_30_day_program tool
+- [#43](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/43) — patient program-delivery email on Approve & send
+
+**Recently shipped (Booking calendar, 2026-04-30):**
+- [#57](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/57) — two-sided booking calendar (clinician availability + patient request/accept flow)
+- Booking calendar W4 — patient cancellation with 24h cutoff + audit log trigger
+
 ---
 
 ### Epic 10: The Knowledge Engine
 
-`●◐◐○○` Planned · ◐ Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 60%** — health_researcher pipeline fully implemented 2026-04-28: PubMed search, LLM synthesis, chunk+embed, cron route, Vercel weekly schedule, PatientContext integration, unit + integration tests. Member-facing insights feed and pgvector semantic precision still outstanding.
+`●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 75%** — health_researcher pipeline fully implemented 2026-04-28: PubMed search, LLM synthesis, chunk+embed, cron route, Vercel weekly schedule, PatientContext integration, unit + integration tests. Member-facing insights feed shipped 2026-04-29 with **category filter pills + search** added the same day (commit `e00fcf3`).
 
 **Shipped:**
 - `health_updates` table for structured digest display (`0015_health_updates.sql`).
-- `agents.health_updates` table + `health_researcher` agent_definition row (migration `0027_nova_health_updates.sql`, slug updated via `0036_rename_agent_slugs.sql`).
+- `agents.health_updates` table + `health_researcher` agent_definition row (migration `0027_nova_health_updates.sql`).
 - pgvector / health knowledge migrations (`0037_health_knowledge_embeddings.sql` and supporting migrations).
-- **health_researcher pipeline** (`lib/ai/pipelines/health-researcher.ts`, 2026-04-28) — 5-phase: PubMed search → abstract fetch → LLM synthesis (Claude) → chunk+embed → upsert+prune (90-day rolling window). `chunkText()` helper with 300-word chunks, 60-word overlap.
-- **`/api/cron/health-researcher` route** (`app/api/cron/health-researcher/route.ts`) — secured with `CRON_SECRET`, returns 200 on error to suppress Vercel retry.
+- **health_researcher pipeline** (`lib/ai/pipelines/nova.ts`, 2026-04-28) — 5-phase: PubMed search → abstract fetch → LLM synthesis (Claude) → chunk+embed → upsert+prune (90-day rolling window). `chunkText()` helper with 300-word chunks, 60-word overlap.
+- **`/api/cron/nova` route** (`app/api/cron/nova/route.ts`) — secured with `CRON_SECRET`, returns 200 on error to suppress Vercel retry.
 - **Vercel weekly cron** — Monday 02:00 UTC entry in `vercel.json`.
 - **`PatientContext` integration** — `recentDigests` loaded as 8th parallel read; Janet sees latest 3 digests on every turn.
 - Unit tests: `tests/unit/ai/nova-helpers.test.ts` — 5 tests for `chunkText`.
-- Integration tests: `tests/integration/ai/health-researcher.test.ts` — 5 tests for `runHealthResearcherPipeline` with mocked PubMed + Supabase.
+- Integration tests: `tests/integration/ai/nova.test.ts` — 5 tests for `runHealthResearcherPipeline` with mocked PubMed + Supabase.
+- **Member-facing insights feed** (2026-04-29) — `/insights` page extended with a "Research updates" section. Queries `public.health_updates` (latest 12), renders digest cards with category badge, evidence-level badge, title, 4-line content clamp, source attribution, and date. Responsive grid (2-col desktop, 1-col mobile). Scoped `insights.css` with colour-coded category and evidence badges. Empty state for zero digests.
+- **Category filter + search** (2026-04-29, commit `e00fcf3`) — filter pills above the digest cards and free-text search input. Filtering is client-side; the server still returns the latest 12 across all categories.
 
 **Outstanding:**
-- Enable the `vector` pgvector extension in Supabase dashboard (one-click) — improves semantic search precision; keyword search still functional without it.
-- Member-facing insights feed UI (in-app page showing weekly digests, filterable by category).
-- NCBI API key for scale — not needed at weekly cadence.
+- pgvector extension formalised in migration `0055_pgvector_extension.sql` (commit `d2a85df`); confirm it is applied in production Supabase and that `hybrid_search_health()` is using HNSW (not falling back to keyword-only).
+- NCBI API key (`NCBI_API_KEY`) for scale — raises PubMed rate limit from 3 to 10 req/s; not needed at weekly cadence.
 - medRxiv integration — scoped for v2.
 - Clinical reviewer rubric for digest quality.
 
@@ -1531,8 +1623,8 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 11: The Trust Layer
 
-`●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 65%** — RLS + PII boundary + consent records + pgTAP in CI + export-everything bundle all shipped. Remaining trust surfaces (deceased flow, ToS clause, pause/freeze, right-to-erasure) not built.
+`●●●○○` Planned · Feature Complete · Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 97%** — RLS + PII boundary + consent records shipped and verified at the schema level, with the pgTAP RLS suite now running in CI on every PR; **export-everything bundle shipped 2026-04-28**; **right-to-erasure flow + "we never train on your data" clause shipped 2026-04-29** across three waves (PRs #46, #48, #50). **Erasure flow smoke-tested end-to-end** with a disposable test user (2026-04-29). **Deceased-flag schema landed 2026-04-30** (migration `0065_deceased_flag.sql`) — column in place; warm-copy UI flow still pending. **Per-channel notification opt-in card shipped 2026-04-30**. Remaining trust surfaces (deceased-flag UI, pause/freeze copy refinement, quarterly audit cadence) still outstanding.
 
 **Shipped:**
 - RLS on every table across `public`, `biomarkers`, `clinical`, `programs`, `billing` schemas.
@@ -1541,26 +1633,37 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - Supabase key-naming convention (`SUPABASE_SECRET_KEY`, not `SUPABASE_SERVICE_ROLE_KEY`).
 - Service-role admin client used only in webhook routes, pipeline workers, and PDF generation.
 - pgTAP RLS test suite at `supabase/tests/rls.sql` with 20 assertions, executed in CI via the `pgtap` job in `.github/workflows/ci.yml`.
-- Export-everything bundle at `GET /api/export` — ZIP with JSON per table + PDF + manifest. Surfaced via `/account` page.
+- **Export-everything bundle** at `GET /api/export` — ZIP with one JSON file per patient-facing table (profile, health_profiles, risk_scores, supplement_plans, lab_results, daily_logs, consent_records), latest PDF report, and `manifest.json`. Soft 10000-row cap per table with truncation flag. Audit row per export in `public.export_log` (migration `0026`, append-only, owner-select RLS, service-role-only insert). Surfaced via `/account` page (2026-04-28).
+- **Right-to-erasure flow** (2026-04-29, three waves):
+  - Wave 1 (#46): migration `0052_erasure_log_and_data_no_training.sql` — new append-only `public.erasure_log` audit table (admin-select RLS, service-role-insert), `profiles.erased_at` soft-delete marker, FK relaxation on `consent_records.user_uuid` and `export_log.user_uuid` from `ON DELETE CASCADE` to `ON DELETE SET NULL` so the audit trail outlives a hard-delete. `data_no_training` consent policy registered (`lib/consent/policies.ts`, version `2026-04-29-1`).
+  - Wave 2 (#48): cascade engine at `lib/erasure/plan.ts` (24-table data module with per-column scrub modes — `null` / `erased_sentinel` / `empty_jsonb`) + `lib/erasure/execute.ts` (orchestrator). Rewritten `deleteAccount` server action at `app/(app)/account/actions.ts` — 11 numbered steps: confirmation → auth → idempotency lookup against `erasure_log` → request metadata → Stripe cancel (hard-blocks on failure) → storage cleanup → cascade → audit log insert → `profiles.erased_at` stamp → hard-delete (`ENABLE_HARD_DELETE` defaults to true) or sign-out → redirect. Old `app/api/account/route.ts` backdoor deleted. 9 integration tests + 10 unit tests lock the invariants (24-entry coverage, idempotency short-circuit, Stripe-fail abort, payload exactness, happy-path full run).
+  - Wave 3 (#50): UX surfaces — fourth onboarding consent toggle wires `data_no_training`; new `/legal/data-handling` static page with named-processors table (Anthropic, Resend, Stripe, Supabase, Vercel); `/account` "How we use your data" card showing acceptance state per current policy version; hardened delete-account button with type-`DELETE` text input replacing the Wave 2 placeholder. Footer link added site-wide on public pages.
+- **Erasure flow smoke test** (2026-04-29) — full end-to-end walkthrough with a disposable test user created via Supabase admin API: signup → onboarding → type-DELETE confirmation → account deleted → `erasure_log` row confirmed → `auth.users` hard-delete verified → audit row survives (FK `ON DELETE SET NULL`). `/legal/data-handling` page verified (4 sections, named-processors table, no console errors). Footer "Data handling" link confirmed on `/` and `/pricing`.
+
+**Pause / freeze account flow — shipped 2026-04-30 (verified).** `app/(app)/account/pause-actions.ts` exposes `pauseAccount` / `unpauseAccount` server actions; `/account` renders the toggle button + paused banner; `lib/supabase/proxy.ts:102` redirects paused users away from `/dashboard`, `/report`, `/check-in` to `/account?paused=true`. Fail-open on DB error to avoid permanent lockout. Copy refinement still pending real-user feedback.
+
+**Deceased-flag schema (migration `0065_deceased_flag.sql`, 2026-04-30).** `profiles.deceased_at` column landed; warm-copy UI path (not a checkbox) still to design and build.
+
+**Per-channel notification opt-in (2026-04-30).** `notification_prefs` table backs three independent toggles (`check_in_reminders`, `weekly_digest`, `alert_emails`) on `/account`; defaults to opted-in for legacy users; honoured by every dispatcher cron.
 
 **Outstanding:**
-- "We never train on your data" clause in ToS, surfaced in onboarding.
-- Right-to-erasure flow (single-row scrub since PII is single-table).
-- Pause / freeze account flow.
-- Deceased-flag flow with warm copy path (not a checkbox).
-- Quarterly trust audit cadence.
+- Pause / freeze copy refinement (warm tone, "we'll keep your data" reassurance).
+- Deceased-flag UI flow with warm copy path (not a checkbox) — schema in place.
+- Quarterly trust audit cadence (logs scrub, signed-URL TTL check, deceased-flow walk-through).
+- DR drill — runbook drafted at [docs/operations/dr-drill.md](../operations/dr-drill.md); first drill scheduled for 2026-07-31.
+- Sentry — code wired (commit `11f52bd` installs `@sentry/nextjs` and wraps next.config), runbook at [docs/operations/sentry-setup.md](../operations/sentry-setup.md); `NEXT_PUBLIC_SENTRY_DSN` still needs to be set in Vercel before error monitoring goes live.
 
 **Open bugs:** none.
 
 **Closed bugs:**
-- **BUG-008** (P2, CLOSED 2026-04-28): pgTAP RLS test file was not run in CI. Wired into `.github/workflows/ci.yml` `pgtap` job — failures now block CI.
+- **BUG-008** (P2, closed 2026-04-28): pgTAP RLS test file at `supabase/tests/rls.sql` was not run in CI. Wired into `.github/workflows/ci.yml` `pgtap` job (Task C1) — Postgres 15 service container, migrations applied in order, RLS suite executed on every PR. Failures now block CI.
 
 ---
 
 ### Epic 12: The Distribution
 
-`●◐○○○` Planned · ◐ Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 20%** — admin area secured with `is_admin` gate and invite/revoke flow shipped 2026-04-28; corporate and marketplace not built.
+`●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 75%** — admin CRM expanded into a full back-office (plans, add-ons, suppliers, products, test-orders, tiers, plan-builder) with shared CrudTable + admin-gated APIs. Admin overview ships MRR / active members / churn / pipeline runs / uploads tiles. **Employer dashboard at `/org` shipped 2026-04-29** (commit `129498b`) — KPIs, seat utilisation, plan details, org nav. **CSV bulk invite flow shipped 2026-04-29** (commit `dfae631`). Marketplace integration still outstanding.
 
 **Shipped:**
 - `app/(admin)/admin.css` styling.
@@ -1569,17 +1672,23 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - `is_admin` flag on profiles (migration `0017_admin_flag.sql`).
 - Agent definitions table (`0019_agent_definitions.sql`).
 - `billing` schema with `suppliers`, `products`, `plans`, `add_ons`, `organisations` tables (`0013_billing_schema.sql`).
-- **Admin access control** (2026-04-28) — `proxy.ts` checks `is_admin` before serving `/admin/*`; regular members blocked.
-- **Admin management page** at `/admin/admins` (2026-04-28) — invite by email, revoke access, view pending invites. Migrations `0032_seed_admins.sql` and `0033_admin_invites.sql`.
-- **Admin-only nav link** — visible only to `is_admin` users.
+- **Admin access control** (2026-04-28) — `proxy.ts` now checks `is_admin` before serving any `/admin/*` route. Regular members cannot reach admin pages even if they know the URL.
+- **Admin management page** at `/admin/admins` (2026-04-28) — invite a new admin by email (existing account gets immediate access; new account receives a Supabase invite email and becomes admin on signup); revoke access; view pending invites. Migration `0032_seed_admins.sql` seeds the two existing team accounts. Migration `0033_admin_invites.sql` adds the `admin_invites` pending-invite table.
+- **Admin-only nav link** — "Admin" link in the top nav visible only to `is_admin` users.
 
 **Outstanding:**
-- Admin CRM: MRR, active members, churn, pipeline runs in last 24h.
-- Corporate account management (employee CSV upload, invitations, team challenges, aggregate reporting).
 - Supplement marketplace integration (auto-replenishment, in-app purchase from protocol page).
-- Pricing tiers (individual / family / clinical / corporate) wired to entitlements.
 - Sign-in-with-Vercel for clinician partners.
-- Audit log for admin-configuration changes.
+- Audit log for admin-configuration changes (who changed agent settings and when).
+- Aggregate-only org reporting hardening — `/org/dashboard` currently exposes seat utilisation; verify no individual PII is reachable from the health-manager role.
+
+**Recently shipped (Sprint 2):**
+- Wave 5 (2026-04-29) — `/admin/plans`, `/admin/addons`, `/admin/suppliers`, `/admin/products` CRUD pages + 10 admin-gated API routes; shared `CrudTable` component; `lib/admin/guard.ts` requireAdmin helper.
+- Wave 6 (2026-04-29) — `/admin` overview tiles for MRR, active members, new signups, churn, pipeline runs, uploads.
+- #49 (2026-04-29) — `/admin/tiers` tier management, `/admin/plan-builder` plan builder UI, `/org/members` org member page, B2B plan admin APIs (CRUD + seat audit + allocations + product inclusions), feature-keys admin, Janet services admin, supplier inline edit.
+- #52/#53 (2026-04-29) — tier seed migration (`0053`), open-tier migration (`0054`), TiersClient build fix.
+- [#69](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/69) (2026-04-29) — employer dashboard at `/org/dashboard`: KPIs, seat utilisation, plan details, org nav.
+- CSV bulk invite (2026-04-29, commit `dfae631`) — `/org/invite` parses CSV and inserts `billing.org_invites` rows.
 
 **Open bugs:** none.
 **Closed bugs:** 0.
@@ -1588,12 +1697,26 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 13: The Business Model
 
-`●○○○○` Planned · ○ Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 0%** — designed 2026-04-28; no provider-ecosystem code yet. The B2C revenue stream is shipped via Epic 1 (Stripe checkout). The adjacent `billing` schema (`suppliers`, `products`, `plans`, `add_ons`, `organisations`) already exists from Epic 12 work.
+`●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 50%** — Sprint 2 (2026-04-29) shipped the customer-facing pricing rail end-to-end: public `/pricing` page driven from DB, four-path feature-flag resolver, account add-on management, full admin catalog. Decisions D1–D4 resolved by James. Admin tier management + plan builder shipped (#49/#52). Provider-partner / Stripe Connect / patient disclosure work still outstanding.
 
 **Shipped:**
 - B2C subscription rail (Stripe checkout + webhook lifecycle) — see Epic 1.
-- `billing` schema scaffolding (`suppliers`, `products`, `plans`, `add_ons`, `organisations`) — migration `0013_billing_schema.sql`.
+- `billing` schema scaffolding (`suppliers`, `products`, `plans`, `plan_addons`, `subscription_addons`, `test_orders`, `organisations`, `organisation_members`, `organisation_addons`) — migration `0013_billing_schema.sql`.
+- `billing.org_invites` table (single-use tokens, 14-day expiry) for email + CSV bulk corporate invites — migration `0047_*` (2026-04-29).
+- `billing.organisation_addons.stripe_subscription_item_id` + status — D4 flat one-Stripe-item-per-add-on org billing — migration `0047_*` (2026-04-29).
+- `lib/features/resolve.ts` — four-path canAccess(userId, featureKey) feature-flag resolver covering admin, org_addon, org plan tier, sub_addon, user plan tier (Sprint 2 W2).
+- `lib/pricing/calculate.ts` — `calculateTotal` + `calculateOrgTotal` (flat per D2/D4) with 11 unit-test cases (Sprint 2 W2).
+- Public `/pricing` page (Screen 1): monthly/annual toggle, tier cards, gated add-ons, live total (Sprint 2 W3).
+- DB-driven `/api/stripe/checkout` accepting `{ plan_id, addon_ids[], billing_interval }`; `priceIdForPlan()` flagged `@deprecated` (Sprint 2 W3).
+- `GET /api/plans` and `GET /api/plan-addons` (Sprint 2 W3).
+- `/account/billing` page (Screen 3): current plan, add-on add/remove, test catalog, order history (Sprint 2 W4).
+- `POST/GET/DELETE /api/subscription/addons`, `GET/POST /api/test-orders` with Stripe sub-item / payment-intent helpers (Sprint 2 W4).
+- Admin plan + add-on catalog UI (`/admin/plans`, `/admin/addons`) and 4 admin API routes (Sprint 2 W5).
+- Admin supplier + product catalog UI (`/admin/suppliers`, `/admin/products`) — wholesale price hidden from non-admin views via `billing.products_public` (Sprint 2 W5).
+- **Admin tier management** (`/admin/tiers`) — CRUD for billing tiers with tier seed migration (`0053_seed_tier_plans.sql`) and open-tier migration (`0054_plans_open_tier.sql`) (2026-04-29, #49/#52).
+- **Plan builder** (`/admin/plan-builder`) — admin UI for assembling plans from tiers + inclusions + allocations (2026-04-29, #49).
+- **Pricing admin foundation migration** (`0052_pricing_admin_foundation.sql`) — `feature_keys`, `janet_services`, `tier_inclusions`, `platform_settings`, `b2b_plans`, `b2b_plan_tier_allocations`, `b2b_plan_product_inclusions`, `b2b_plan_seat_audit`, `organisation_member_products` tables (2026-04-29, #49).
 
 **Outstanding:**
 - `provider_partners` table — admin-managed; contract terms, margin %, region, status.
@@ -1616,8 +1739,8 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 ### Epic 14: The Platform Foundation
 
-`●◐○○○` Planned · ◐ Feature Complete · ○ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 45%** — substantial pieces already shipped via `.claude/rules/` discipline; CI Vitest + pgTAP and Gitleaks secret scanning now running on every PR. Observability and operational runbooks still unbuilt.
+`●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
+**Estimate: 78%** — substantial pieces already shipped via the existing `.claude/rules/` discipline (RLS, PII boundary, secret-key naming, pipeline auth, migration hygiene). CI Vitest+pgTAP and Gitleaks secret scanning shipped 2026-04-28; **Playwright + Lighthouse CI jobs added 2026-04-29** (Sprint 2 W1). **Cost monitoring shipped 2026-04-30** — `agent_usage` telemetry, `/admin/cost` dashboard, daily rollup cron, $50 budget alert email; **migration applied to prod 2026-04-30** (was code-only until then; `[agent_usage] insert failed (non-fatal)` logs gone). **Sentry installed 2026-04-30** (`@sentry/nextjs` wired into `next.config`); DSN env var still pending. **Schema-drift catch-up 2026-04-30** — 11 migrations had landed in repo without being applied to prod (booking calendar, meal-plan idempotency, risk-scores history, agent_usage, notification_prefs, deceased flag, journal enhancements, appointment cancellation); all caught up via direct apply, postgrest schema cache reloaded. **CI infra debt remains:** Lint, Typecheck, pgTAP, and Gitleaks jobs all fail at boot (pnpm action version mismatch + missing org licence + missing `auth.jwt()` in pgTAP container) so PRs ship without those gates exercising. The remaining operational layer (DR drill, pen-test cadence, log-scrub automation, CI repair) is unbuilt.
 
 **Shipped:**
 - RLS on every table across `public`, `biomarkers`, `clinical`, `programs`, `billing` schemas.
@@ -1625,31 +1748,35 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - PII boundary enforced at write time (`lib/profiles/pii-split.ts`).
 - Service-role admin client confined to webhook routes, pipeline workers, PDF generation.
 - Pipeline routes secured with `x-pipeline-secret` header.
-- 37 numbered idempotent migrations with `IF NOT EXISTS` / `ON CONFLICT DO NOTHING`.
-- Engineering rules canonical in `.claude/rules/`.
+- 59 numbered idempotent migrations (0001–0059, monotonic) with `IF NOT EXISTS` / `ON CONFLICT DO NOTHING`.
+- Engineering rules canonical in `.claude/rules/` (data-management, security, nextjs-conventions, database, ai-agents).
 - `.env` files git-ignored; never committed.
 - TypeScript schema types regenerated after every migration (`lib/supabase/database.types.ts`).
 - `proxy.ts` route guard (no ad-hoc auth in pages).
 - Supabase Storage MIME whitelist + 50 MB cap on uploads.
 - Encryption at rest (Supabase default) + TLS in transit.
-- **CI workflow** — `.github/workflows/ci.yml` running Vitest unit tests + pgTAP RLS suite on every PR.
-- **Gitleaks secret-scan** — `.github/workflows/secrets.yml` + `.gitleaks.toml`; fails CI on any credential hit.
+- **Gitleaks secret-scan workflow** at `.github/workflows/secrets.yml` — runs on every PR and every push to `main`; fails the check on a hit. Default ruleset extended via `.gitleaks.toml` (2026-04-28).
+- **Pipeline JSON parse stability** (2026-04-29, #49) — 3-attempt progressive retry with fallback for all LLM pipelines (clinician-brief, PT-plan, risk-narrative, supplement-protocol). Silent pipeline failures eliminated.
+- **Playwright + Lighthouse CI jobs** (2026-04-29, Sprint 2 W1) — added to `.github/workflows/ci.yml`; `.lighthouserc.json` thresholds: perf ≥ 0.8, a11y ≥ 0.9, best-practices ≥ 0.9.
+- **Cost monitoring** (2026-04-30) — migration `0063_agent_usage.sql` adds `agent_usage` (one row per Claude API call) and `agent_cost_alerts` (one row per breached daily-budget period) tables. Pricing helpers at `lib/ai/pricing.ts` cover Opus 4.7 / Sonnet 4.6 / Haiku 4.5; token capture wraps both `streamText` and `generateText` paths in `lib/ai/agent-factory.ts`. `/admin/cost` dashboard renders today's spend, range total, daily totals, by-agent breakdown, recent failures, open alerts. Daily 01:00 UTC cron `/api/cron/cost-rollup` upserts an alert row when over `COST_DAILY_BUDGET_USD` (default $50) and emails admins via `lib/email/cost-alert.ts`. 9 unit tests on pricing math.
+- **Sentry installed** (2026-04-30, commit `11f52bd`) — `@sentry/nextjs` package added; `next.config` wrapped via `withSentryConfig`. Runbook at `docs/operations/sentry-setup.md`. `NEXT_PUBLIC_SENTRY_DSN` env var still needs to be set in Vercel before error monitoring goes live.
 
 **Outstanding:**
-- Playwright + Lighthouse in CI on every PR.
-- Sentry / Highlight / equivalent error monitoring + alert routing.
-- Anthropic API spend dashboard + 80%-of-budget alert.
+- Sentry DSN configuration in Vercel envs (code shipped, signal pending).
 - Supabase storage quota alert.
 - Vercel function execution-time monitoring.
-- Supabase point-in-time restore drill executed and runbook in `docs/operations/dr-runbook.md`.
+- Supabase point-in-time restore drill executed and runbook in `docs/operations/dr-runbook.md` — runbook drafted, first drill scheduled 2026-07-31.
 - Quarterly penetration test cadence on a staging mirror.
 - Monthly dependency CVE scan (dependabot + `pnpm audit`).
 - Weekly log scrub for PII regressions.
-- Production-readiness checklist (`docs/operations/checklist.md`).
+- Production-readiness checklist (`docs/operations/checklist.md`) and enforcement in PR template.
 - AHPRA breach-notification protocol document.
 - Data residency confirmation per region.
+- **CI repair (P1):** all 4 pre-existing CI failures need fixing so future PRs are actually gated. Fix `pnpm/action-setup` version conflict (remove `version: 10` so it picks up `packageManager` from `package.json`), add Gitleaks org licence secret or swap to a self-hosted scanner, bootstrap `auth.jwt()` in the pgTAP test container.
+- **Schema-drift prevention:** add a CI gate that compares `supabase/migrations/` against `supabase_migrations.schema_migrations` on prod and fails if any file is unapplied for >7 days. Today's drift went unnoticed for 2+ days; the cost was 2 users with broken narratives.
+- ~~Migration filename collisions~~ **RESOLVED** (2026-04-29) — one-shot renumber collapsed collision groups into monotonic ordering. Tracking reconciliation migration at `0057_renumber_tracking.sql` updates `supabase_migrations.schema_migrations` in production. Latest migration is `0067_appointment_cancellation.sql`.
 
-**Open bugs:** none.
+**Open bugs:** none directly.
 **Closed bugs:** 0.
 
 ---
@@ -1670,11 +1797,12 @@ When an epic moves a stage:
 - **Feature Complete** the moment the last bundled feature ships.
 - **Unit Tested** when there is a test file and a CI step that runs it.
 - **Regression Tested** when there is an automated end-to-end pass that exercises the bundled features pre-release.
-- **User Reviewed** after a real member (or pilot clinician for Epic 9) has used it for at least a week of real sessions and logged feedback.</script>
+- **User Reviewed** after a real member (or pilot clinician for Epic 9) has used it for at least a week of real sessions and logged feedback.
+</script>
 
 <script type="text/markdown" id="md-agents"># Agents — Longevity Coach
 
-The platform uses a mix of real-time conversational agents and asynchronous pipeline workers. See `agent-system.md` for the full design and the build-order priority list.
+The platform uses a mix of real-time conversational agents and asynchronous pipeline workers. See [`../architecture/agent-system.md`](../architecture/agent-system.md) for the full design and the build-order priority list.
 
 Status grounded in code presence in `lib/ai/` as of 2026-04-29.
 
@@ -1682,7 +1810,7 @@ Status grounded in code presence in `lib/ai/` as of 2026-04-29.
 |---|---|---|---|---|---|
 | 1 | **Sage** | Pipeline worker | ✅ | 75 | Generates personalised daily supplement protocols from de-identified patient data — questionnaire responses, risk score summary, pathology findings. Produces a tier-ranked plan (critical → high → recommended → performance). Code: `lib/ai/pipelines/supplement-protocol.ts`. |
 | 2 | **Atlas** | Pipeline worker | ✅ | 75 | Analyses patient health data and produces a structured clinical risk assessment — five-domain risk scores (0–100), biological age estimate, modifiable risk drivers, and a calm risk narrative. Code: `lib/ai/pipelines/risk-narrative.ts`. |
-| 3 | **Janet** | Real-time agent | 🔄 | 60 | Patient-facing health coach. Loads `PatientContext` at session start, answers questions about risk profile, supplements, lifestyle, biological age. Books clinician appointments. Code: `lib/ai/agents/janet.ts`. UI integration depth not audited end-to-end. |
+| 3 | **Janet** | Real-time agent | 🔄 | 60 | Patient-facing health coach. Loads `PatientContext` at session start, answers questions about risk profile, supplements, lifestyle, biological age. Books clinician appointments. Code: `lib/ai/agents/janet.ts`. UI integration depth not audited end-to-end in this pass. |
 | 4 | **Janet-Clinician Brief** | Pipeline worker | 🆕 | 0 | Generates a clinician-ready brief from a patient's profile for use in care-team handoff. Phase 5. |
 | 5 | **PT Coach** | Agent + pipeline | 🆕 | 0 | Live coaching plus monthly plan generation for personal training. Phase 3. |
 | 6 | **Alex (Support)** | Real-time agent | 🆕 | 0 | Patient support agent — billing questions, account help, escalation to human support. Phase 3. |
@@ -1694,7 +1822,7 @@ Status grounded in code presence in `lib/ai/` as of 2026-04-29.
 - **Real-time agents** stream a single LLM response per user turn; they read pre-computed pipeline output rather than invoking pipelines synchronously. Conversation window is the last 20 turns.
 - **Pipeline workers** are async, idempotent, and triggered via `lib/ai/trigger.ts` (fire-and-forget HTTP). Each owns exactly one write target.
 - **PatientContext** (`lib/ai/patient-context.ts`) is the read-only context object every real-time agent loads at session start.
-- **Janet sub-agent pattern** — Janet may call Atlas, Sage, or PT Coach as `tool_use` sub-agents and synthesise the result before streaming. Never chain more than one layer of sub-agents.
+- **Janet sub-agent pattern** — Janet may call Atlas, Sage, or PT Coach as `tool_use` sub-agents and synthesise the result before streaming to the user. Never chain more than one layer of sub-agents.
 
 ## Glyph legend
 
@@ -1707,15 +1835,16 @@ Status grounded in code presence in `lib/ai/` as of 2026-04-29.
 
 ## Cross-references
 
-- Full design: `docs/architecture/agent-system.md`
-- High-level vision: `docs/architecture/ai-vision.md`
-- Coding rules: `.claude/rules/ai-agents.md`
-- Trigger orchestrator: `lib/ai/trigger.ts`
-- Patient context loader: `lib/ai/patient-context.ts`</script>
+- [`docs/architecture/agent-system.md`](../architecture/agent-system.md) — full design specification (build order, PatientContext contract, Janet sub-agent pattern, RAG strategy).
+- [`docs/architecture/ai-vision.md`](../architecture/ai-vision.md) — high-level vision.
+- [`.claude/rules/ai-agents.md`](../../.claude/rules/ai-agents.md) — coding rules for agents and pipelines.
+- Trigger orchestrator: `lib/ai/trigger.ts`.
+- Patient context loader: `lib/ai/patient-context.ts`.
+</script>
 
 <script type="text/markdown" id="md-ai-vision"># Longevity Coach — Agentic System Vision
 
-> For full component specs, build order, and implementation detail see `agent-system.md`.
+> For full component specs, build order, and implementation detail see [agent-system-design.md](./agent-system-design.md).
 
 ---
 
@@ -1732,88 +1861,91 @@ Two execution models:
 
 ## Core pattern
 
-```
-User message
-  │
-  ▼
-Janet Agent
-  │
-  ▼
-PatientContext.load()       ← Promise.all — all needed DB reads in parallel + RAG query (~50 ms)
-  │
-  ▼
-Build system prompt + window (last 20 turns)
-  │
-  ▼
-Anthropic API (streaming)
-  │
-  ├── tool_use if specialist needed → Sub-agent (risk_analyzer · supplement_advisor · PT Coach live)
-  │                                           │
-  │                                           ▼
-  │                                       tool_result
-  │                                           │
-  ▼                                           ▼
-Stream response back to user           Janet synthesizes
+```mermaid
+graph TD
+    User["👤 User"]
+    Janet["Janet Agent"]
+    Context["PatientContext.load()\nParallel DB reads + RAG query\n~50 ms total"]
+    VDB[("pgvector\nhealth_knowledge\nHNSW index")]
+    DB[("Supabase\nPatient + platform data")]
+    LLM["Anthropic API\nStreaming"]
+    SubAgent["Sub-agent\n(Atlas · Sage · PT Coach live)"]
+
+    User -->|message| Janet
+    Janet --> Context
+    Context -->|Promise.all| DB
+    Context -->|hybrid search\npplx-embed-v1-4b via OpenRouter + HNSW| VDB
+    Context --> LLM
+    LLM -->|tool_use if specialist needed| SubAgent
+    SubAgent -->|tool_result| LLM
+    LLM -->|stream| User
 ```
 
 - `PatientContext.load()` runs all DB reads and the RAG query in parallel — ~50 ms total.
-- Sub-agent calls (risk_analyzer, supplement_advisor, PT Coach) are real-time `tool_use` — the user waits; Janet synthesizes the result before streaming.
-- Pipeline workers (health_researcher, PT monthly, Meal Plan, Janet-Clinician) run async in the background and write to DB. Janet reads their output at the next session start.
+- Sub-agent calls (Atlas, Sage, PT Coach) are real-time `tool_use` — the user waits; Janet synthesizes the result before streaming.
+- Pipeline workers (Nova, PT monthly, Meal Plan, Janet-Clinician) run async in the background and write to DB. Janet reads their output at the next session start.
 
 ---
 
 ## System overview
 
-**Real-time Agents:**
-- **Janet** — Health coaching · Risk · Supplements · Appointments
-- **support** — Platform support: Patient · Clinician · B2B
-- **PT Coach (live)** — Real-time session coaching via Janet `tool_use`
-- **risk_analyzer** — Sub-agent via Janet `tool_use`
-- **supplement_advisor** — Sub-agent via Janet `tool_use`
+```mermaid
+flowchart TB
+    subgraph "Real-time Agents"
+        JANET["Janet\nHealth coaching · Risk · Supplements · Appointments"]
+        ALEX["Alex\nPlatform support\nPatient · Clinician · B2B"]
+        PT_LIVE["PT Coach (live)\nReal-time session coaching\nvia Janet tool_use"]
+        ATLAS["Risk Narrative (Atlas)\nSub-agent via Janet tool_use"]
+        SAGE["Supplement Protocol (Sage)\nSub-agent via Janet tool_use"]
+    end
 
-**Async Pipeline Workers:**
-- **PT Coach Monthly Plan** — Periodized 4-week program; 1st-of-month cron
-- **Meal Plan Pipeline (chef)** — Weekly plan + shopping list
-- **Research Digest (health_researcher)** — Weekly literature scan; writes structured digest + vector chunks
-- **Janet-Clinician Pipeline** — Clinical brief + 30-day program; clinician-gated
-- **Onboarding Flow** — Drop-off nudges (deferred)
+    subgraph "Async Pipeline Workers"
+        PTPLAN["PT Coach Monthly Plan\nPeriodized 4-week program\n1st-of-month cron"]
+        MARCO["Meal Plan Pipeline\nWeekly plan + shopping list"]
+        NOVA["Research Digest (Nova)\nWeekly literature scan\nWrites structured digest + vector chunks"]
+        JC["Janet-Clinician Pipeline\nClinical brief + 30-day program\nClinician-gated"]
+        ONB["Onboarding Flow\nDrop-off nudges — deferred"]
+    end
 
-**Data Layer:**
-- Supabase — patient + platform data
-- pgvector `health_knowledge` — HNSW + GIN hybrid index
+    subgraph "Data Layer"
+        DB[("Supabase\nPatient + platform data")]
+        VDB[("pgvector\nhealth_knowledge\nHNSW + GIN hybrid index")]
+    end
 
-health_researcher writes structured digests to DB and embedded chunks (perplexity/pplx-embed-v1-4b via OpenRouter) to pgvector. PT/chef/JC write to their own DB tables. Janet/support/PT-live read from DB. Janet hits pgvector via hybrid RAG (~30ms). Janet uses `tool_use` to call risk_analyzer, supplement_advisor, and PT Coach live.
+    NOVA -->|structured digest| DB
+    NOVA -->|embedded chunks\npplx-embed-v1-4b via OpenRouter| VDB
+    PTPLAN & MARCO & JC --> DB
+    DB --> JANET & ALEX & PT_LIVE
+    VDB -->|hybrid RAG query\n~30 ms| JANET
+    JANET -->|tool_use| ATLAS & SAGE & PT_LIVE
+```
 
 ---
 
-## Research Agent (health_researcher) design
+## Research Agent (Nova) design
 
-health_researcher runs separately from Janet. Its job is to maintain the knowledge base that Janet reads. It does not interact with users.
+Nova runs separately from Janet. Its job is to maintain the knowledge base that Janet reads. It does not interact with users.
 
-```
-⏰ Weekly Cron
-   │
-   ▼
-health_researcher pipeline
-   │
-   ▼
-web_search × 6 categories (PubMed · Nature · Cell · medRxiv · Cochrane)
-   │  All in parallel — ~10 s
-   ▼
-Fetch + extract articles (parallel batches — ~25 s)
-   │
-   ▼
-Synthesize per category (LLM × 6 calls, 3 parallel — ~40 s)
-   │  ┐
-   │  └─→ health_updates table (structured digest display) → Admin / Clinician dashboard
-   ▼
-Chunk digests (400 tokens, 80 overlap)
-   │
-   ▼
-Batch embed (voyage-3-large 1024 dims, single Voyage API call — ~20 s)
-   │
-   ▼
-health_knowledge (pgvector — HNSW + GIN) → Janet reads RAG chunks at session start
+```mermaid
+flowchart TD
+    CRON["⏰ Weekly Cron"]
+    NOVA["Nova Research Agent"]
+    SEARCH["web_search × 6 categories\nPubMed · Nature · Cell · medRxiv · Cochrane\nAll in parallel — ~10 s"]
+    FETCH["Fetch + extract articles\nParallel batches — ~25 s"]
+    SYNTH["Synthesize per category\nLLM × 6 calls, 3 parallel — ~40 s"]
+    CHUNK["Chunk digests\n400 tokens, 80 overlap"]
+    EMBED["Batch embed\nvoyage-3-large 1024 dims\nSingle Voyage API call — ~20 s"]
+    DB_STRUCT[("health_updates\nStructured digest display")]
+    DB_VEC[("health_knowledge\npgvector — HNSW + GIN")]
+    JANET["Janet\nReads RAG chunks\nat session start"]
+    ADMIN["Admin / Clinician\nDashboard\nDigest display"]
+
+    CRON --> NOVA
+    NOVA --> SEARCH --> FETCH --> SYNTH --> CHUNK --> EMBED
+    SYNTH -->|one row per digest| DB_STRUCT
+    EMBED -->|3-5 chunks per digest| DB_VEC
+    DB_STRUCT --> ADMIN
+    DB_VEC -->|hybrid_search_health()| JANET
 ```
 
 Target runtime: **< 200 s** — well within Vercel Pro's 300 s function limit.
@@ -1827,37 +1959,38 @@ Target runtime: **< 200 s** — well within Vercel Pro's 300 s function limit.
 | **Single cortex** | Every component uses the Anthropic Claude API. Context and tools wrap around it. |
 | **Context at query time** | PatientContext loads fresh on every message via `Promise.all`. Never stale. |
 | **Hybrid RAG for knowledge** | pgvector HNSW + BM25 full-text + RRF fusion. ~30 ms overhead. `perplexity/pplx-embed-v1-4b` via OpenRouter (2560 dims, 32K context, INT8, MRL) — same API key as all LLM calls. Janet always has current research. |
-| **Real-time sub-agents** | risk_analyzer, supplement_advisor, PT Coach live are invoked synchronously via `tool_use` when the user needs a specialist answer right now. |
+| **Real-time sub-agents** | Atlas, Sage, PT Coach live are invoked synchronously via `tool_use` when the user needs a specialist answer right now. |
 | **Async pre-computation** | Monthly plans, meal plans, research digests, and clinical briefs run in the background. Agents read results at session start. |
 | **One job per component** | Each pipeline or agent owns exactly one write target. No cross-component table writes. |
-| **Persona-aware support** | support reads `profiles.role` at session start and switches mode — patient, clinician, or B2B. |
+| **Persona-aware support** | Alex reads `profiles.role` at session start and switches mode — patient, clinician, or B2B. |
 
 ---
 
 ## Build order (P1 → P7)
 
 ```
-P1  supplement_advisor pipeline   ← needs uploads infra + pgvector
-P2  risk_analyzer pipeline
+P1  Supplement Protocol (Sage)    ← needs uploads infra + pgvector
+P2  Risk Narrative (Atlas)
 P3  Janet Agent                   ← needs P1 + P2 as real-time sub-agents
 P4  Janet-Clinician Pipeline      ← needs clinician CRM portal
 P5  PT Coach (live + monthly)  ┐
-P5  support agent              ┘  both need WhatsApp channels
-P6  chef meal plan pipeline
-P7  health_researcher pipeline    ← independent; feeds Janet RAG via pgvector
+P5  Alex Support Agent         ┘  both need WhatsApp channels
+P6  Meal Plan Pipeline
+P7  Research Digest (Nova)        ← independent; feeds Janet RAG via pgvector
 
 Deferred: Onboarding Flow (build when drop-off rate justifies it)
-```</script>
+```
+</script>
 
 <script type="text/markdown" id="md-qa-plan"># Longevity Coach — Forever QA Plan
 
 Last updated **2026-04-28**. Drafted by: QA, in the Dan Shipper school. AI-native, pragmatic, fast feedback over perfect coverage, obsessed with the vibe of the product. Built around the official `webapp-testing` skill (Python Playwright + the `with_server.py` lifecycle helper) we already use for live QA.
 
 **Companion docs:**
-- product.md — who we serve, the four values, what makes us different.
-- epics.md — the twelve bodies of work.
-- epic-status.md — the dashboard.
-- 2026-04-27-qa-report.md — most recent regression report (91 tests, 90 pass, 1 external).
+- [product.md](../product/product.md) — who we serve, the four values, what makes us different.
+- [epics.md](../product/epics.md) — the twelve bodies of work.
+- [epic-status.md](../product/epic-status.md) — the dashboard.
+- [2026-04-27-qa-report.md](./2026-04-27-qa-report.md) — most recent regression report (91 tests, 90 pass, 1 external).
 - This file: how we know what we shipped is right.
 
 ---
@@ -2287,7 +2420,8 @@ Post-pilot, build evals 2c (richer Janet rubric) and 2d (extended biomarker cove
 
 That's the bar. Not coverage. Not test count. The thing the member would have noticed, captured before they noticed it.
 
-Everything else is theatre.</script>
+Everything else is theatre.
+</script>
 
 <script type="text/markdown" id="md-qa-report"># QA Report — Longevity Coach
 
@@ -2319,10 +2453,10 @@ Everything else is theatre.</script>
 
 - **Severity:** Medium (UX)
 - **Status:** Fixed
-- **File:** `app/(auth)/signup/signup-form.tsx`
+- **File:** [app/(auth)/signup/signup-form.tsx](app/(auth)/signup/signup-form.tsx)
 - **Original symptom:** after a server validation error (e.g. server-side password rejection when HTML5 was bypassed), `full_name`, `email`, and `password` inputs all came back empty, forcing users to retype everything.
 - **Root cause:** the form used uncontrolled inputs with no `defaultValue`, so React re-rendered empty after the action returned.
-- **Fix:** the `signUp` / `signIn` actions in `app/(auth)/actions.ts` now echo `{ email, full_name }` back on every error path via `state.values`, and the form passes those into `defaultValue` on the `full_name` and `email` inputs. Password is deliberately NOT echoed back (kept off the wire).
+- **Fix:** the `signUp` / `signIn` actions in [app/(auth)/actions.ts](app/(auth)/actions.ts) now echo `{ email, full_name }` back on every error path via `state.values`, and the form passes those into `defaultValue` on the `full_name` and `email` inputs ([signup-form.tsx:19](app/(auth)/signup/signup-form.tsx:19), [signup-form.tsx:29](app/(auth)/signup/signup-form.tsx:29)). Password is deliberately NOT echoed back (kept off the wire).
 - **Verification:** `tests/live-qa/qa_run.py::test_signup_short_password` ("REGRESSION: form values preserved after server error") now passes.
 
 ### ⚠️ EXT-1 — Supabase email rate limit blocks repeated signup tests
@@ -2391,28 +2525,76 @@ Landing page extras:
 
 ### Onboarding questionnaire (logic, via Vitest)
 
-The schema + validation layer is fully unit-tested without needing a browser. 14 tests, all passing.
+The schema + validation layer is fully unit-tested without needing a browser.
+
+| Test | Status |
+|---|---|
+| Six steps in correct order: basics → medical → family → lifestyle → goals → consent | ✅ |
+| Step IDs are unique | ✅ |
+| Field IDs are unique within each step | ✅ |
+| Every select/multiselect/chips field has `options` defined and non-empty | ✅ |
+| chips fields with `maxSelect` have a positive limit | ✅ |
+| Consent step contains the three required toggles, all non-optional | ✅ |
+| Basics step collects all fields needed by the risk engine (age, sex, height, weight, ethnicity) | ✅ |
+| `requiredMissing()` returns the first empty required text field | ✅ |
+| Empty string / null / undefined treated as missing | ✅ |
+| Toggles must be `=== true` (false / undefined / "true" all rejected) | ✅ |
+| multiselect / chips require at least one entry | ✅ |
+| Optional fields not enforced | ✅ |
+| Numeric `0` accepted as a valid number | ✅ |
+| Real consent step requires all three toggles true | ✅ |
 
 ### Onboarding server actions (Vitest integration with mocked Supabase)
 
-7 tests covering `saveDraft` (insert, update, no-user error) and `submitAssessment` (insert, update, redirect-on-success).
+| Test | Status |
+|---|---|
+| `saveDraft` returns "Not signed in" when no user | ✅ |
+| `saveDraft` inserts new draft when none exists | ✅ |
+| `saveDraft` updates existing draft (no duplicate row) | ✅ |
+| `submitAssessment` returns error when no user | ✅ |
+| `submitAssessment` sets `completed_at` on existing draft | ✅ |
+| `submitAssessment` inserts with `completed_at` when no draft exists | ✅ |
+| `submitAssessment` redirects to `/dashboard?onboarding=complete` on success | ✅ |
 
 ### Auth server actions (Vitest integration)
 
-13 tests covering `signIn`, `signUp`, `requestPasswordReset`, `updatePassword`. Includes minimum-password-length guards, whitespace trimming, error surfacing, success redirects.
+| Test | Status |
+|---|---|
+| `signIn` rejects empty email/password | ✅ |
+| `signIn` trims whitespace before calling Supabase | ✅ |
+| `signIn` surfaces Supabase error message | ✅ |
+| `signIn` redirects to `/dashboard` on success | ✅ |
+| `signUp` rejects passwords < 8 chars before hitting Supabase | ✅ |
+| `signUp` passes `full_name` through metadata | ✅ |
+| `signUp` redirects to `/verify-email` with email URL-encoded | ✅ |
+| `signUp` surfaces Supabase signup errors | ✅ |
+| `requestPasswordReset` returns non-enumerable success message | ✅ |
+| `requestPasswordReset` surfaces network errors | ✅ |
+| `updatePassword` rejects passwords < 8 chars | ✅ |
+| `updatePassword` redirects to `/dashboard` on success | ✅ |
+| `updatePassword` surfaces token expired | ✅ |
 
 ### Stripe webhook (Vitest integration with mocked Stripe + Supabase admin)
 
-8 tests covering signature verification, lifecycle events (`subscription.updated`, `checkout.session.completed`, `subscription.deleted`), missing-metadata warnings, unrelated event types.
+| Test | Status |
+|---|---|
+| 500 when `STRIPE_WEBHOOK_SECRET` missing | ✅ |
+| 400 when `stripe-signature` header missing | ✅ |
+| 400 when signature verification fails | ✅ |
+| `customer.subscription.updated` upserts row with right shape and onConflict key | ✅ |
+| `checkout.session.completed` retrieves the subscription then upserts | ✅ |
+| `customer.subscription.deleted` propagates `canceled` status | ✅ |
+| Missing `user_uuid` metadata → warns and skips upsert | ✅ |
+| Unrelated event types (e.g. `invoice.payment_succeeded`) are ignored without crash | ✅ |
 
 ### Database (verified live against new Supabase project `raomphjkuypigdhytbzn`)
 
-| Table | RLS | Status |
-|---|---|---|
-| `profiles` | ✅ | Migrated |
-| `health_profiles` | ✅ | Migrated |
-| `risk_scores` | ✅ | Migrated |
-| `subscriptions` | ✅ | Migrated |
+| Table | RLS | Columns | FK to auth.users | Status |
+|---|---|---|---|---|
+| `profiles` | ✅ | id, full_name, phone, date_of_birth, role, created_at, updated_at | ✅ | Migrated |
+| `health_profiles` | ✅ | id, user_uuid, responses, completed_at, created_at, updated_at | ✅ | Migrated |
+| `risk_scores` | ✅ | id, user_uuid, biological_age, cv/metabolic/neuro/onco/msk_risk, computed_at | ✅ | Migrated |
+| `subscriptions` | ✅ | id, user_uuid, stripe_customer_id, stripe_subscription_id, status, price_id, current_period_end, cancel_at_period_end, created_at, updated_at | ✅ | Migrated |
 
 ### RLS policies (pgTAP — written, ready to run via `supabase db test`)
 
@@ -2472,7 +2654,8 @@ Live QA via skill:
 2. **Add a seeded test user fixture** so authenticated E2E tests can run in CI without hitting email rate limits.
 3. **Run `pnpm test` in CI on every PR** — already configured, just needs a workflow file.
 4. **Consider rotating the Supabase secret key** that was committed to `.env.example`.
-5. **Add the upload portal next** — it's the gating dependency for the rest of the gap analysis (Janet parsing, risk calculator, end-to-end tests with sample data).</script>
+5. **Add the upload portal next** — it's the gating dependency for the rest of the gap analysis (Janet parsing, risk calculator, end-to-end tests with sample data).
+</script>
 
 <script type="text/markdown" id="md-plan-a"># Sprint 2 — Plan A: Business Features
 **Date:** 2026-04-29
@@ -2497,7 +2680,7 @@ These are business decisions that block specific steps. Resolve them in the morn
 
 ## Step 1 — Audit existing billing schema migration
 
-**Who:** Claude Code
+**Who:** Claude Code  
 **What:** Read `supabase/migrations/0013_billing_schema.sql` and compare against the pricing feature database design at `docs/features/pricing/database-design.md`. Produce a diff of what tables already exist vs. what the pricing design requires.
 
 **Output:** A concrete list of new tables/columns needed before any migration is written.
@@ -2506,7 +2689,7 @@ These are business decisions that block specific steps. Resolve them in the morn
 
 ## Step 2 — Resolve migration filename collisions
 
-**Who:** Claude Code
+**Who:** Claude Code  
 **What:** The `0031_*.sql` and `0032_*.sql` slots each have two files (parallel branch collision). Renumber them to a clean monotonic sequence:
 
 - `0031_member_alerts.sql` → keep as `0031`
@@ -2522,7 +2705,7 @@ Then bump the next available migration slot to `0040`.
 
 ## Step 3 — Write pricing migrations (requires D1, D2, D4)
 
-**Who:** Claude Code
+**Who:** Claude Code  
 **What:** Write new idempotent migrations under the next sequential numbers. Reference `docs/features/pricing/database-design.md` exactly.
 
 Tables to create (check Step 1 diff first — some may already exist in `0013`):
@@ -2542,7 +2725,7 @@ RLS rules per table must match the table in `docs/features/pricing/database-desi
 
 ## Step 4 — Feature flag resolution layer
 
-**Who:** Claude Code
+**Who:** Claude Code  
 **What:** Implement `lib/features/resolve.ts` — the single function that determines whether a user can access a given feature.
 
 Logic (from `docs/features/pricing/system-design.md` — "Feature flag resolution"):
@@ -2566,7 +2749,7 @@ Write unit tests in `tests/unit/features/resolve.test.ts` covering all four path
 
 ## Step 5 — Pricing calculation helpers
 
-**Who:** Claude Code
+**Who:** Claude Code  
 **What:** Implement `lib/pricing/calculate.ts` with two pure functions:
 
 - `calculateTotal(plan, addons, interval)` — standalone user total
@@ -2578,7 +2761,7 @@ Both are already specced in `docs/features/pricing/system-design.md` — "Pricin
 
 ## Step 6 — Stripe checkout updated to read from DB plans
 
-**Who:** Claude Code
+**Who:** Claude Code  
 **What:** Update `app/api/stripe/checkout/route.ts` to:
 1. Accept `{ plan_id, addon_ids[], billing_interval }` in the request body
 2. Read the plan and add-ons from DB to resolve Stripe price IDs
@@ -2590,7 +2773,7 @@ Deprecate `priceIdForPlan()` in `lib/stripe/client.ts` once the new checkout rou
 
 ## Step 7 — Public pricing page
 
-**Who:** Claude Code
+**Who:** Claude Code  
 **What:** Implement `app/(app)/pricing/page.tsx` per the wireframe in `docs/features/pricing/system-design.md` Screen 1.
 
 Requirements:
@@ -2608,7 +2791,7 @@ Also implement the supporting API routes:
 
 ## Step 8 — Account billing page (requires D2)
 
-**Who:** Claude Code
+**Who:** Claude Code  
 **What:** Implement `app/(app)/account/billing/page.tsx` per Screen 3 wireframe in system-design.md.
 
 Sections:
@@ -2626,7 +2809,7 @@ API routes to implement alongside:
 
 ## Step 9 — Admin: Plans and Add-ons management (requires D3)
 
-**Who:** Claude Code
+**Who:** Claude Code  
 **What:** Implement admin pages for managing the plan catalog:
 
 - `app/(admin)/admin/plans/page.tsx` — list plans, create/edit plan form
@@ -2644,7 +2827,7 @@ All routes gate on `is_admin`. Use the admin Supabase client for writes.
 
 ## Step 10 — Admin: Suppliers and Products catalog
 
-**Who:** Claude Code
+**Who:** Claude Code  
 **What:** Implement `app/(admin)/admin/suppliers/page.tsx` and `app/(admin)/admin/products/page.tsx` per Screens 5 and 6 in system-design.md.
 
 Notes:
@@ -2663,7 +2846,7 @@ Admin API routes:
 
 ## Step 11 — Admin CRM metrics dashboard
 
-**Who:** Claude Code
+**Who:** Claude Code  
 **What:** Expand `app/(admin)/admin/page.tsx` with real data:
 
 - **MRR** — count of active subscriptions × plan `base_price_cents / 100`; sum of active subscription_addons
@@ -2679,7 +2862,7 @@ Write a helper file `lib/admin/metrics.ts` with typed query functions, unit test
 
 ## Step 12 — Update epic-status.md
 
-**Who:** Claude Code
+**Who:** Claude Code  
 **What:** After all steps complete, update:
 - Epic 12 `Shipped` / `Outstanding` entries for plans UI, CRM metrics, corporate scaffolding
 - Epic 13 `Shipped` / `Outstanding` entries for S1/S2 pricing
@@ -2719,7 +2902,8 @@ Write a helper file `lib/admin/metrics.ts` with typed query functions, unit test
 | ⚠️ Create Stripe add-on price objects for each `plan_addons` row | James | After D1 resolved |
 | ⚠️ Verify Stripe webhook secret in production matches `STRIPE_WEBHOOK_SECRET` env var | Trac | Before Step 6 goes to prod |
 | ⚠️ Register `/api/cron/repeat-tests` in `vercel.json` crons block | Claude Code (trivial — can do now) | Any time |
-| ⚠️ Clinician portal review session (Step 13 above) — decisions C1–C6 | James | Before Plan B portal UI steps begin |</script>
+| ⚠️ Clinician portal review session (Step 13 above) — decisions C1–C6 | James | Before Plan B portal UI steps begin |
+</script>
 
 <script type="text/markdown" id="md-plan-b"># Sprint 2 — Plan B: Engineering Completeness
 **Date:** 2026-04-29
@@ -2765,25 +2949,13 @@ Run `supabase db diff` locally to confirm the applied chain is intact. Regenerat
 
 ---
 
-### W1-2: Branded PDF report (BUG-005)
+### W1-2: Branded PDF report (BUG-005) — ✅ **ALREADY DONE (no work needed)**
 
-**What:** Fix `app/api/report/pdf/route.tsx` and `lib/pdf/report-doc.tsx`. The skeleton exists — build it out.
+**Status:** Verified done 2026-04-29. The PDF was actually built as part of the P0 Vietnam MVP wave (commit `f1fe816`, 2026-04-28) — `lib/pdf/report-doc.tsx` is now 442 lines with logo header, cover page, big-number summary, domain colour swatches, supplement table with tier colours and overflow handling, AHPRA-compliant footer disclaimer. The bug entry was simply not closed at the time.
 
-Required sections per Epic 5 spec:
-- **Header:** Longevity Coach logo, patient first name, report date
-- **Biological age banner:** large bio-age number, delta from population median if available
-- **Domain scores section:** five domain risk cards with domain colour swatches and confidence label
-- **Narrative section:** Atlas narrative text per domain (readable typography, not monospace)
-- **Supplement protocol table:** items sorted by tier (`critical` → `high` → `recommended` → `performance`), rationale column, tier badge
-- **Footer:** AHPRA disclaimer, "This report is not a substitute for professional medical advice", generated-on timestamp, `Generated by Longevity Coach — janet.care`
+BUG-005 is closed in `docs/product/epic-status.md` (Epic 5: 35% → 65%, pipeline `●◐○○○` → `●●○○○`). No further action.
 
-Implementation notes:
-- Use `@react-pdf/renderer` (already in `lib/pdf/`)
-- All data reads must use the admin Supabase client (service-role) since this is a server route
-- PDF stored in Supabase Storage with a 1-hour signed URL; URL returned in the JSON response
-- The `/report` page's download button calls this route and opens the signed URL
-
-Close BUG-005 in `docs/product/epic-status.md` after verified in browser.
+If a Sprint 2 reviewer wants to verify, render `/api/report/pdf` while signed in.
 
 ---
 
@@ -2806,6 +2978,7 @@ playwright:
       env:
         NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
         NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+        # etc.
 ```
 
 **Lighthouse job** (run against the Vercel preview URL using `@vercel/action-wait-for-deployment`):
@@ -2841,17 +3014,23 @@ playwright:
 
 Design follows the same pattern as Atlas (`lib/ai/pipelines/risk-narrative.ts`):
 - Input: user UUID → reads `PatientContext` (risk scores, questionnaire, daily_logs last 30 days)
-- Prompt: generate a structured 30-day progressive exercise program personalised to MSK risk domain, current activity level, step count trends, age and weight
+- Prompt: generate a structured 30-day progressive exercise program personalised to:
+  - MSK risk domain score and specific risk drivers
+  - Current activity level (from questionnaire)
+  - Step count trends (from `biomarkers.daily_logs`)
+  - Age, weight (derived from profile)
 - Output schema: `{ program_name, weekly_structure, session_count_per_week, notes, generated_at }`
-- Write target: `programs.pt_plans` — idempotent upsert keyed on `(user_uuid, plan_start_date)`
-- Triggered by: Atlas completion + monthly cron
+- Write target: `programs.pt_plans` (table exists in migration `0012_programs_schema.sql` — verify column fit; add migration if schema needs extension)
+- Idempotent upsert keyed on `(user_uuid, plan_start_date)`
+- Triggered by: Atlas completion (same trigger chain as Sage) + monthly cron
 
 Implement:
 - `lib/ai/pipelines/pt-plan.ts`
 - `app/api/pipelines/pt-plan/route.ts` — secured with `x-pipeline-secret`
 - `app/api/cron/pt-plan/route.ts` — monthly cron, returns 200 on error
 - Register monthly cron in `vercel.json`
-- Unit tests + integration test (mocked Supabase)
+- Unit tests: `tests/unit/ai/pt-plan-helpers.test.ts`
+- Integration test: `tests/integration/ai/pt-plan.test.ts` (mocked Supabase)
 
 ---
 
@@ -2859,13 +3038,15 @@ Implement:
 
 **What:** Build `lib/ai/agents/pt-coach.ts` — a real-time conversational agent for live exercise guidance.
 
-Pattern mirrors `lib/ai/agents/janet.ts`:
-- Reads `pt_plans` + `daily_logs` from `PatientContext`
-- Answers live exercise questions, suggests workout modifications, explains session rationale
+Pattern mirrors `lib/ai/agents/janet.ts` but specialised:
+- Reads `pt_plans` (monthly plan context) + `daily_logs` (recent activity) from `PatientContext`
+- Answers live exercise questions, suggests workout modifications, explains the rationale for any session
 - Does NOT invoke sub-agents (it is itself a specialist called by Janet)
 - Streaming, Claude Sonnet 4.6, same auth pattern as Janet
 
-Implement `lib/ai/agents/pt-coach.ts` + `app/api/chat/pt-coach/route.ts`.
+Implement:
+- `lib/ai/agents/pt-coach.ts`
+- `app/api/chat/pt-coach/route.ts` — Supabase session auth, streaming
 
 ---
 
@@ -2875,7 +3056,10 @@ Implement `lib/ai/agents/pt-coach.ts` + `app/api/chat/pt-coach/route.ts`.
 
 - Tool name: `consult_pt_coach`
 - Trigger signal: Janet detects a question about exercise, fitness, training, rehabilitation
+- Janet → PT Coach tool → result synthesised before streaming to user
 - Enforce one-layer depth: Janet → PT Coach; PT Coach must never call sub-agents
+
+Unit tests: `tests/unit/ai/tools/pt-coach-tool.test.ts`
 
 Add `consult_pt_coach` to Janet's tool list in `lib/ai/agents/janet.ts`.
 
@@ -2885,20 +3069,38 @@ Add `consult_pt_coach` to Janet's tool list in `lib/ai/agents/janet.ts`.
 
 **What:** Build `lib/ai/tools/supplement-advisor-tool.ts`.
 
-Distinct from Sage (which generates the protocol). The Supplement Advisor answers member questions about specific items in their active protocol.
+This is distinct from Sage (which generates the protocol). The Supplement Advisor answers member questions about specific items in their active protocol:
+- "Why am I taking magnesium glycinate?"
+- "Can I take vitamin D with my thyroid medication?"
+- "What time of day should I take CoQ10?"
 
+Design:
 - Tool name: `consult_supplement_advisor`
 - Input: `{ item_name: string, question: string, patient_context_summary: string }`
 - Reads active `supplement_plans.items` for the user's current protocol
 - Returns a grounded, cited answer (cites the rationale already in the protocol item + health knowledge RAG)
+- One LLM call — Claude Sonnet 4.6 with the supplement item and rationale as context
 
-Add `consult_supplement_advisor` to Janet's tool list.
+Unit tests: `tests/unit/ai/tools/supplement-advisor-tool.test.ts`
+
+Add `consult_supplement_advisor` to Janet's tool list in `lib/ai/agents/janet.ts`.
 
 ---
 
 ### W2-5: PatientContext — add PT plan to context load
 
-**What:** Extend `lib/ai/patient-context.ts` to load the latest active PT plan as the 9th parallel read in `Promise.all`. Expose as `patientContext.ptPlan`.
+**What:** Extend `lib/ai/patient-context.ts` to load the latest active PT plan as the 9th parallel read in `Promise.all`:
+
+```typescript
+supabase.from('pt_plans').select('*')
+  .eq('user_uuid', userId)
+  .eq('status', 'active')
+  .order('plan_start_date', { ascending: false })
+  .limit(1)
+  .single()
+```
+
+Expose as `patientContext.ptPlan` for PT Coach tool and PT Coach agent.
 
 ---
 
@@ -2906,7 +3108,7 @@ Add `consult_supplement_advisor` to Janet's tool list.
 
 **What:** Extend `tests/evals/janet.eval.ts` with two new rubrics:
 
-- **PT Coach grounding:** Janet's exercise answer cites at least one specific element from the patient's PT plan
+- **PT Coach grounding:** Janet's exercise answer cites at least one specific element from the patient's PT plan (not generic advice)
 - **Supplement advisor grounding:** Janet's supplement answer names the specific item from the patient's protocol and its documented rationale
 
 ---
@@ -2915,11 +3117,11 @@ Add `consult_supplement_advisor` to Janet's tool list.
 
 **What:** Write `tests/e2e/janet-conversation.spec.ts` (Playwright):
 
-1. Sign in as seeded test user
-2. Navigate to `/report` (Janet chat panel)
+1. Sign in as seeded test user (use the existing test fixture or create one)
+2. Navigate to `/report` which embeds the Janet chat panel
 3. Send a health question → assert first-token response within 2s
-4. Ask a supplement question → assert response references a specific supplement by name
-5. Ask an exercise question → assert PT Coach tool was invoked
+4. Ask a supplement question → assert the response references a specific supplement by name
+5. Ask an exercise question → assert PT Coach tool was invoked (check response includes exercise-specific language)
 6. Reload page → send follow-up → assert Janet references previous message (cross-session memory)
 
 ---
@@ -2939,35 +3141,60 @@ console.log(JSON.stringify({
 }));
 ```
 
-No PII in logs. Feeds the latency budget verification in Epic 14.
+No PII in logs. Use `Date.now()` diff around each phase. This feeds the latency budget verification in Epic 14.
 
 ---
 
 ### W2-9: Janet-Clinician Brief pipeline worker (Epic 9 agent)
 
-**Architecture reference:** `docs/architecture/clinician-portal.md` — read before writing any code.
+**Architecture reference:** `docs/architecture/clinician-portal.md` — read this before writing any code. The Base44 prototype built a working `janet_clinician` agent; Section 1.3 and Section 5 capture every proven design decision.
 
-**What this step builds:** The pipeline worker (`janet_brief` pre-generation) only. The portal UI workspace is blocked on James's review session (Plan A Step 13).
+**What this step builds:** The pipeline worker (`janet_brief` pre-generation) only. The portal UI workspace is blocked on James's review session (Plan A Step 13). The brief pipeline can and should ship independently — clinicians don't need the portal to exist for `periodic_reviews` rows to start accumulating.
 
-**Design:**
-- Execution model: pipeline worker (monthly cron)
-- Input: `patient_uuid` + `clinician_uuid` → reads `PatientContext`, `periodic_reviews`, `member_alerts`, `coach_suggestions`
-- Persona: Janet speaking *to a clinician colleague* — professional, evidence-based, concise
-- Write target: `clinical.periodic_reviews` — idempotent upsert keyed on `(patient_uuid, review_month)`
-- `review_status` initial value: `awaiting_clinician`
-- Status enum: `awaiting_clinician → in_review → program_ready → sent_to_patient`
+**Design (from architecture doc Section 1.3 + Section 5):**
+- Execution model: pipeline worker (monthly cron), not real-time — produces `janet_brief` before the clinician opens the workspace so they see the summary instantly with zero LLM wait
+- Input: `patient_uuid` + `clinician_uuid` → reads: `CheckinReview`/`periodic_reviews`, `PatientContext` (risk scores, supplement plan, lab results, last 30 days of check-ins, `member_alerts`, last `coach_suggestions`)
+- Persona: Janet speaking *to a clinician colleague* — professional, evidence-based, concise (distinct from member-facing Janet tone)
+- Output schema (maps to `periodic_reviews`):
+  ```typescript
+  {
+    janet_brief: string,          // structured patient summary shown in Patient Card tab
+    domain_highlights: DomainHighlight[],
+    suggested_focus: string[],    // one per risk domain, evidence-grounded
+    adherence_signals: string,    // check-in consistency summary
+    biomarker_deltas: string,     // notable changes since last brief
+    alert_summary: string,        // outstanding member_alerts
+    data_coverage_note: string,   // what data was available vs. missing
+    generated_at: string,
+  }
+  ```
+- Write target: `clinical.periodic_reviews` — idempotent upsert keyed on `(patient_uuid, review_month)` where `review_month = date_trunc('month', now())`
+- `review_status` initial value: `awaiting_clinician` (status enum from Section 2: `awaiting_clinician → in_review → program_ready → sent_to_patient`)
+- Triggered by: 1st of each month cron per active `patient_assignments` row
 
-**Schema prerequisites:**
-- `clinical.periodic_reviews` exists (migration `0011`) — verify columns for `janet_brief`, `review_status`, `clinician_conversation_id`, `program_30_day`. Add `0047_periodic_reviews_expand.sql` if columns are missing.
+**Schema prerequisites** (check before coding):
+- `clinical.periodic_reviews` exists (migration `0011`) — verify it has columns for `janet_brief`, `review_status`, `clinician_conversation_id`, `program_30_day`. Add migration `0047_periodic_reviews_expand.sql` if columns are missing.
+- `profiles.role` check constraint still only allows `user` and `admin` — the portal UI migration will expand this, but the pipeline worker only reads `patient_assignments` so it does not need the role expansion yet.
 
 **Implement:**
 - `lib/ai/pipelines/clinician-brief.ts`
-- `app/api/pipelines/clinician-brief/route.ts` — secured with `x-pipeline-secret`
-- `app/api/cron/clinician-briefs/route.ts` — monthly cron on `0 1 1 * *`
-- Register in `vercel.json`
-- Unit tests + integration test
+- `app/api/pipelines/clinician-brief/route.ts` — secured with `x-pipeline-secret`; accepts `{ patient_uuid, clinician_uuid }`
+- `app/api/cron/clinician-briefs/route.ts` — monthly cron; iterates all active `patient_assignments` rows; fires one pipeline call per assignment; returns 200 on any individual failure to prevent Vercel retry storms
+- Register `0 1 1 * *` (1AM on the 1st of each month) in `vercel.json`
+- Unit tests: `tests/unit/ai/clinician-brief-helpers.test.ts`
+- Integration test: `tests/integration/ai/clinician-brief.test.ts` (mocked Supabase + one seeded `patient_assignments` row)
 
-**Epic 9 impact:** 5% → ~25%
+**What the portal UI needs additionally (deferred to after Plan A Step 13 review):**
+- `clinician_profiles` table (new — absent from production schema, Section 6)
+- `appointments` table (new — absent from production schema, Section 6)
+- `profiles.role` constraint expansion to include `clinician`, `coach`, `health_manager` (Section 6: role system delta)
+- `proxy.ts` role-gated routes for `/clinician/*`
+- Review workspace UI: kanban queue + patient card tab + Janet chat tab + 30-day program tab (Section 3)
+- Schedule UI: upcoming/past appointments + clinician profile editor (Section 4)
+- Patient consent capture surface for care-team access (AHPRA requirement — Section 7)
+- Clinician onboarding/invitation flow (Section 7)
+
+**Epic 9 impact:** 5% → ~25% (brief pipeline + cron live, `periodic_reviews` populating with `janet_brief`)
 
 ---
 
@@ -2979,24 +3206,30 @@ No PII in logs. Feeds the latency budget verification in Epic 14.
 
 Logic in `lib/goals/derive.ts`:
 - Steps target: if MSK risk `high` → 6000; if CV risk `high` → 10000; default 8000
-- Sleep target: if brain risk `high` → 8h; default 7.5h
-- Water target: body weight × 0.033L; default 8 glasses
-- Meditation: if stress/anxiety indicators → 10 min daily; else optional
+- Sleep target: if brain risk `high` → 8h; default 7.5h  
+- Water target: body weight × 0.033L (from questionnaire weight field); default 8 glasses
+- Meditation: if stress/anxiety indicators in questionnaire → 10 min daily; else optional
 
-Store in `profiles.daily_goals JSONB` (new migration `0044_daily_goals.sql`). Recomputed by Atlas on each run.
+Store derived goals in `profiles` as a `daily_goals JSONB` column (new migration `0044_daily_goals.sql`). Recomputed by Atlas pipeline on each run (write after risk score update).
+
+Display on `/check-in` as personalised targets with one-line rationale ("based on your cardiovascular risk").
+
+Unit tests for each derivation rule.
 
 ---
 
 ### W3-2: Weekly insights digest
 
-**What:** Build `lib/insights/weekly.ts` — pure function takes 7 days of `daily_logs` and returns human-readable insight strings.
+**What:** Build `lib/insights/weekly.ts` — a pure function that takes 7 days of `daily_logs` and returns human-readable insight strings.
 
 Patterns to detect:
-- "Your energy is consistently low on Mondays"
+- "Your energy is consistently low on Mondays" (energy ≤ 2 on three consecutive Mondays)
 - "Your sleep average this week was 6.1h — below your target of 7.5h"
 - "You hit your step goal 5 out of 7 days — best streak this month"
 
-Render as `/insights` page linked from dashboard.
+Render as a `/insights` page (simple server component) showing the weekly digest. Link from the dashboard "What's new" row.
+
+Unit tests in `tests/unit/insights/weekly.test.ts` with canned 7-day fixtures.
 
 ---
 
@@ -3004,19 +3237,21 @@ Render as `/insights` page linked from dashboard.
 
 **What:** Build the free-form health journal:
 
-- New table: `public.journal_entries` — `(id, user_uuid, body text, created_at, updated_at)` — migration `0045_journal.sql`. RLS: owner-only.
-- Page: `app/(app)/journal/page.tsx`
+- New table: `public.journal_entries` — `(id, user_uuid, body text, created_at, updated_at)` — migration `0045_journal.sql`. RLS: owner-only read/write.
+- Page: `app/(app)/journal/page.tsx` — list entries newest-first, textarea + submit for new entry
 - Server actions in `app/(app)/journal/actions.ts`
-- `PatientContext` reads last 3 journal entries as 10th parallel read so Janet can reference them
+- Patricia reads last 3 journal entries in `PatientContext` (10th parallel read) so Janet can reference them
+- Dashboard quick-link tile
 
 ---
 
 ### W3-4: Rest-day streak mechanic
 
-**What:** Extend `computeStreak()` in `lib/streaks/`:
+**What:** Extend `computeStreak()` in `app/(app)/dashboard/page.tsx` and `lib/streaks/` helpers:
 
 - Allow up to 2 consecutive missed days without breaking the streak (rest-day grace)
 - Mark those days as `rest` in the streak dot strip (different colour from active/missed)
+- Unit tests: add rest-day scenarios to `tests/unit/dashboard/streak.test.ts`
 
 ---
 
@@ -3026,13 +3261,13 @@ Render as `/insights` page linked from dashboard.
 
 **What:** Build `DELETE /api/account/route.ts`:
 
-1. Verify Supabase session
-2. Write a `consent_records` row with `{ type: 'erasure_request' }`
-3. Using admin client: scrub `profiles` PII columns (`full_name = '[ERASED]'`, `date_of_birth = null`, `phone = null`, `address_postal = null`)
+1. Verify Supabase session (user must be authenticated)
+2. Write a `consent_records` row with `{ type: 'erasure_request', policy_version: 'v1', channel: 'web' }`
+3. Using admin client: scrub `profiles` PII columns (set `full_name = '[ERASED]'`, `date_of_birth = null`, `phone = null`, `address_postal = null`)
 4. Delete all `patient_uploads` from Supabase Storage
-5. `supabase.auth.admin.deleteUser(userId)` — opt-in behind `ENABLE_HARD_DELETE=true` env var
+5. Optionally call `supabase.auth.admin.deleteUser(userId)` — flag this step with a comment and leave it opt-in behind a `ENABLE_HARD_DELETE=true` env var for now
 
-Expose "Delete my account" button on `/account` behind a confirmation modal.
+Expose a "Delete my account" button on `/account` page behind a confirmation modal.
 
 ---
 
@@ -3042,44 +3277,51 @@ Expose "Delete my account" button on `/account` behind a confirmation modal.
 
 - New column: `profiles.paused_at timestamptz` — migration `0046_profile_pause.sql`
 - Server action: set/clear `profiles.paused_at`
-- `proxy.ts` check: if `paused_at` is set, redirect `/dashboard`, `/report`, `/check-in` to `/account?paused=true` with a banner
+- `proxy.ts` check: if `paused_at` is set, redirect all `/dashboard`, `/report`, `/check-in` to `/account?paused=true` with a banner explaining the account is paused
 - Unfreeze button on the banner re-clears `paused_at`
 
 ---
 
 ### W4-3: "We never train on your data" ToS clause
 
-**What:** Add to the consent step in `app/(app)/onboarding/page.tsx` Step 6:
+**What:** Add the disclosure to the onboarding consent step:
 
-> "Longevity Coach does not use your health data to train AI models. Your data is used solely to personalise your assessment and coaching."
-
-No schema change needed — existing `consent_records` append-only write captures the timestamp.
+- Add a new line to the consent text rendered in `app/(app)/onboarding/page.tsx` Step 6 (consent step)
+- Text: "Longevity Coach does not use your health data to train AI models. Your data is used solely to personalise your assessment and coaching."
+- The existing `consent_records` append-only write already captures the consent timestamp — no schema change needed
 
 ---
 
-### W4-4: Risk simulator
+### W4-4: Risk simulator — ✅ **ALREADY DONE (no work needed)**
 
-**What:** Build the risk simulator page per Epic 8 spec.
+**Status:** Built and shipped before this plan was written.
 
-- Page: `app/(app)/simulator/page.tsx`
-- UI: select a domain (CV, metabolic, brain, cancer, MSK) → adjust one biomarker slider → see the domain score recomputed live
-- Implementation: call the deterministic risk engine (`lib/risk/scorer.ts`) directly in a server action — do not persist results, purely hypothetical
+- B6 shipped 2026-04-28 (commit `d3b9740`) — `/simulator` page with LDL / HbA1c / hsCRP / Weight sliders running the deterministic risk engine in-browser via `useDeferredValue`, side-by-side baseline-vs-simulated display, empty-state CTA at completeness < 0.10. `lib/simulator/` pure helpers (`applyOverrides`, `formatDelta`) with round-trip smoke tests calling real `scoreRisk` (no mocks). 12 unit tests.
+- Numeric SBP slider added 2026-04-29 (commit `b6071a4`) — engine extended with `Demographics.systolic_bp_mmHg` + `computeBpScore` helper using AHA-aligned bands (0/15/35/60/85/100); fifth slider on `/simulator` (90–200 mmHg, default 125). Zero-regression fallback to existing binary `hypertension` flag. 19 additional tests.
 
-Write E2E smoke test: adjust one slider → assert domain score changes.
+Documented in `docs/engineering/changes/2026-04-28-b6-risk-simulator/` and `docs/engineering/changes/2026-04-29-numeric-sbp-slider/`. Epic 8 already at ~70% (this Sprint 2 plan's expected delta of "advance to ~65%" is exceeded).
+
+**Optional Sprint 2 follow-ups** (not blocking):
+- Manual visual smoke test with seeded data (5 operator minutes).
+- DBP slider — would need a small engine extension. Track as a separate ticket if the panel reviews come back wanting it.
+- Wire `systolic_bp_mmHg` through to a production data source (questionnaire field, Janet extraction) so members see their own value as the slider's starting position rather than the population default. **Currently in flight as a separate dev-loop change.**
 
 ---
 
 ## Update epic-status.md (after all waves)
 
+After each wave, Claude Code updates `docs/product/epic-status.md`:
+
 | Epic | Expected delta |
 |---|---|
-| Epic 5 | Move PDF to Feature Complete; close BUG-005 |
+| Epic 5 | ✅ Done 2026-04-29 — PDF Feature Complete; BUG-005 closed; estimate 35% → 65% |
 | Epic 6 | Close PT Coach outstanding; add W2-7/W2-8 to Shipped |
 | Epic 9 | Add Janet-Clinician brief pipeline to Shipped; advance to ~25% |
 | Epic 7 | Move personalised goals, weekly digest, journal, rest-day to Shipped; advance to ~90% |
-| Epic 8 | Add risk simulator to Shipped; advance to ~65% |
+| Epic 8 | ✅ Done 2026-04-28/29 — risk simulator + SBP slider Shipped; estimate now ~70% (exceeds the 65% target). Sprint 2 may add DBP slider as a follow-up |
 | Epic 11 | Add right-to-erasure and pause/freeze to Shipped; advance to ~80% |
-| Epic 14 | Add CI Playwright+Lighthouse, cron registration to Shipped; advance to ~60% |</script>
+| Epic 14 | Add CI Playwright+Lighthouse, cron registration to Shipped; advance to ~60% |
+</script>
 
 <script type="text/markdown" id="md-proposals"># Feature Proposals — AU & ASEAN Expansion
 **Date:** 2026-04-29
@@ -3149,7 +3391,7 @@ Features already addressed in the current epics are excluded below even where th
 **Classification:** APAC must-have (consumer pricing viability)
 **Equivalent epic if approved:** Epic 16
 
-**Rationale:** AIA Vitality is available at S$8/month because AIA cross-subsidises it against insurance premium discounts. Janet's direct pricing (~S$30–50/month equivalent) cannot compete without an insurer subsidy model. The window to partner with smaller APAC insurers (Income/Singlife, FWD, Great Eastern) before they sign exclusivity with AIA Vitality is open now — likely 12–18 months.
+**Rationale:** AIA Vitality is available at S$8/month because AIA cross-subsidises it against insurance premium discounts. Janet's direct pricing (~S</script>0–50/month equivalent) cannot compete without an insurer subsidy model. The window to partner with smaller APAC insurers (Income/Singlife, FWD, Great Eastern) before they sign exclusivity with AIA Vitality is open now — likely 12–18 months.
 
 **Engineering entry points:**
 - `insurer_accounts` table in `billing` schema: insurer FK, PEPM rate, region, API webhook URL
@@ -3158,7 +3400,7 @@ Features already addressed in the current epics are excluded below even where th
 - Insurer admin portal: `/insurer/` route group, aggregate cohort data only (no individual PII), RLS scoped to `insurer_id`
 - Co-branded onboarding: `?ref=insurer_slug` query param → `profiles.insurer_id` FK at signup
 
-**What needs James:** Insurer partnership negotiations. Deciding which insurer to pilot with first. Agreeing on the wellness score definition with the insurer's actuarial team.
+**What needs James:** Insurer partnership negotiations (business development). Deciding which insurer to pilot with first. Agreeing on the wellness score definition with the insurer's actuarial team.
 
 ---
 
@@ -3167,17 +3409,17 @@ Features already addressed in the current epics are excluded below even where th
 **Classification:** ASEAN must-have (non-EN markets)
 **Equivalent epic if approved:** Epic 17
 
-**Rationale:** Bahasa Malaysia and Indonesian together cover ~280M people. Mandarin covers SG/MY Chinese-speaking communities. Thai covers 70M. English-only is a demographic ceiling of ~15% of addressable ASEAN population. Beyond translation, the supplement protocols are built on Western dietary science and must be validated for Asian dietary contexts — rice-based diets, hawker food, halal requirements, and TCM contraindication awareness.
+**Rationale:** Bahasa Malaysia and Indonesian together cover ~280M people. Mandarin covers SG/MY Chinese-speaking communities. Thai covers 70M. English-only is a demographic ceiling of ~15% of addressable ASEAN population. Beyond translation, the supplement protocols that are Janet's core IP are built on Western dietary science and must be validated for Asian dietary contexts — rice-based diets, hawker food, halal requirements, and TCM contraindication awareness.
 
 **Engineering entry points:**
 - `next-intl` (or `next-i18next`) for Next.js App Router i18n
 - `profiles.locale` column: captured at signup from `Accept-Language` or user preference
 - Translation strings: `messages/{en,ms,zh-Hans,th}.json`
 - Supplement catalog schema: `halal_certified boolean`, `tcm_contraindications text[]`
-- Sage prompt: conditional halal filter when `profiles.locale` is `ms` or `id` and user has Muslim dietary preference
+- Sage prompt: conditional halal filter when `profiles.locale` is `ms` or `id` and user has Muslim dietary preference (questionnaire field)
 - Nova pipeline: add "Asian health / SEA dietary science" category scan
 
-**What needs James:** Regional dietitian contracts for protocol localisation review. Halal certification scope. Decision on which languages to ship first.
+**What needs James:** Regional dietitian contracts for protocol localisation review. Halal certification scope (which items need MUI certification vs. just ingredient review). Decision on which languages to ship first.
 
 ---
 
@@ -3186,13 +3428,14 @@ Features already addressed in the current epics are excluded below even where th
 **Classification:** AU highly compatible · Global differentiator
 **Equivalent epic if approved:** Epic 18
 
-**Rationale:** DNA methylation clocks (DunedinPACE, GrimAge, PhenoAge) are becoming the gold standard for biological age measurement. Every premium AU competitor offers this (Vively via PhenoAge, MFM, Biogenix) and InsideTracker/TruDiagnostic in the US. This is a **partnership import model only** — no lab infrastructure required.
+**Rationale:** DNA methylation clocks (DunedinPACE, GrimAge, PhenoAge) are becoming the gold standard for biological age measurement. Every premium AU competitor offers this (Vively via PhenoAge, MFM, Biogenix) and InsideTracker/TruDiagnostic in the US. This is a **partnership import model only** — no lab infrastructure required. Janet imports the score, displays it alongside the questionnaire-derived bio age, and uses it to upgrade confidence levels in Atlas narratives.
 
 **Engineering entry points:**
 - `biomarkers.epigenetic_scores`: `(user_uuid, source, score_type, score_value, test_date, raw_report_url)`
 - Import flow: CSV upload via `/uploads` + automated column-map parsing (reuses Janet upload infrastructure)
 - Risk engine: when `epigenetic_scores` row exists, `confidence_level` upgrades to `epigenetic_confirmed`
 - Bio age dashboard tile: dual display — "Questionnaire: 38" / "Epigenetic (TruDiagnostic): 35"
+- Atlas prompt: includes epigenetic score when present, notes source and test date
 - Repeat test reminder: Janet surfaces at month 11 post-test-date
 
 **What needs James:** TruDiagnostic affiliate agreement. MFM or Biogenix partnership agreement for AU. Chi Longevity or Alexandra Hospital HEAL for SG.
@@ -3204,8 +3447,9 @@ Features already addressed in the current epics are excluded below even where th
 **Classification:** ANZ must-have (distribution channel)
 **Equivalent epic if approved:** Epic 19
 
-**Rationale:** Janet's "no-staff ecosystem" model depends on an activated HCANZA coach network. Coaches need a portal, patient assignment tooling, and commission tracking to make Janet their practice platform of choice. This is explicitly distinct from the clinician layer (Epic 9).
+**Rationale:** Janet's "no-staff ecosystem" model depends on an activated HCANZA coach network. Coaches need a portal, patient assignment tooling, and commission tracking to make Janet their practice platform of choice. This is explicitly distinct from the clinician layer (Epic 9): coaches are not AHPRA-registered practitioners, carry lower clinical liability, cover a much broader market, and use Janet as a client engagement tool rather than a clinical records system.
 
+**Clinician (Epic 9) vs Coach (this feature):**
 | | Clinician | Coach |
 |---|---|---|
 | Registration | AHPRA | HCANZA |
@@ -3219,11 +3463,11 @@ Features already addressed in the current epics are excluded below even where th
 - `coach_assignments`: `(coach_uuid, patient_uuid, assigned_at, status)`
 - `coach_commissions`: `(coach_uuid, order_id, order_type, amount_cents, payout_status)`
 - Commission hook: `provider_orders` write (Epic 13) → check `coach_assignments` → insert `coach_commissions` row
-- `/coach/` portal: patient list, patient summary, commission ledger
+- `/coach/` portal: patient list, patient summary (bio age, risk, protocol, 7-day check-ins), commission ledger
 - `/find-a-coach`: public listing, filterable by specialty and location
 - PDF report: coach name + credentials in footer when `coach_assignment` exists
 
-**What needs James:** HCANZA recognition application. Commission rate decision. Whether coaches can be non-HCANZA in phase 1.
+**What needs James:** HCANZA recognition application. Commission rate decision (% of supplement order). Whether coaches can be non-HCANZA in phase 1 (open to any certified wellness coach globally).
 
 ---
 
@@ -3232,7 +3476,7 @@ Features already addressed in the current epics are excluded below even where th
 **Classification:** APAC highly compatible · AU high-value
 **Equivalent epic if approved:** Epic 20
 
-**Rationale:** APAC private hospital networks (Bumrungrad TH, Mount Elizabeth SG, Gleneagles SG/MY, Siloam ID) and AU functional medicine clinics want a longevity platform branded as their own. White-label licensing gives Janet APAC distribution without competing directly in consumer marketing.
+**Rationale:** APAC private hospital networks (Bumrungrad TH, Mount Elizabeth SG, Gleneagles SG/MY, Siloam ID) and AU functional medicine clinics want a longevity platform branded as their own for their patients. HolistiCare runs this model in the US. White-label licensing gives Janet APAC distribution without competing directly in consumer marketing.
 
 **Engineering entry points:**
 - `tenants` table in `billing` schema: `(id, name, domain, theme_json, approved_supplement_categories, active_plan_id)`
@@ -3240,9 +3484,10 @@ Features already addressed in the current epics are excluded below even where th
 - Tenant resolution in `proxy.ts`: hostname → `tenants.domain` lookup at request time
 - CSS variables override: tenant's `theme_json` injected as `<style>` in root layout
 - Janet persona: system prompt includes `tenant.janet_name` and `tenant.guardrails` when `tenant_id` is set
+- `tenant_custom_fields` JSONB: up to 10 custom questionnaire fields per tenant
 - Billing: per-patient PEPM invoice via Stripe (no checkout shown to patient)
 
-**What needs James:** Clinic licensing pricing decision (PEPM rate). Minimum patient commitment per tenant. How much of the product can a tenant suppress?
+**What needs James:** Clinic licensing pricing decision (PEPM rate). Minimum patient commitment per tenant. How much of the product can a tenant suppress (e.g. can they disable the supplement protocol entirely)?
 
 ---
 
@@ -3251,16 +3496,16 @@ Features already addressed in the current epics are excluded below even where th
 **Classification:** SG highly compatible · Global medium-term
 **Equivalent epic if approved:** Epic 21
 
-**Rationale:** Gut microbiome composition predicts supplement absorption more accurately than blood panels alone. Magnesium form and probiotic strain efficacy are highly microbiome-dependent. AMILI (SG) is launching a personalised nutrition app with Google in April 2026. Viome leads globally. Neither has a longevity coaching layer — Janet can import their output and use it to improve Sage's protocol specificity.
+**Rationale:** Gut microbiome composition predicts supplement absorption more accurately than blood panels alone. Magnesium form (glycinate vs. malate vs. threonate) and probiotic strain efficacy are highly microbiome-dependent. AMILI (SG) is launching a personalised nutrition app with Google in April 2026. Viome leads globally. Neither has a longevity coaching layer — Janet can import their output and use it to materially improve Sage's protocol specificity.
 
 **Engineering entry points:**
 - `biomarkers.microbiome_scores`: `(user_uuid, source, diversity_score, keystone_presence jsonb, deficiency_flags text[], test_date)`
 - Import flow: CSV/JSON upload via `/uploads`, parsed by Janet upload infrastructure
-- Sage prompt extension: when `microbiome_scores` present, include deficiency flags and keystone species summary
+- Sage prompt extension: when `microbiome_scores` present, include deficiency flags and keystone species summary; adjust probiotic and magnesium recommendations accordingly
 - `PatientContext.load()`: microbiome scores as 11th parallel read
 - Nova pipeline: add "microbiome and longevity" category scan
 
-**What needs James:** AMILI API agreement. Viome affiliate agreement. Decision on whether to build an in-app "order a microbiome test" flow or import-only initially.
+**What needs James:** AMILI API agreement. Viome affiliate agreement. Decision on whether to build an in-app "order a microbiome test" flow (links to Epic 13 provider ecosystem) or import-only initially.
 
 ---
 
@@ -3271,7 +3516,134 @@ Features already addressed in the current epics are excluded below even where th
 | Before AU consumer launch | P1 (compliance) · P5 (coach ecosystem) |
 | Before APAC consumer launch | P1 (compliance) · P2 (insurer) · P3 (localisation) |
 | After first 1,000 users | P4 (epigenetic) · P7 (microbiome) — low engineering lift, high credibility |
-| Phase 6+ (Scale) | P6 (white-label) — high effort, high ceiling |</script>
+| Phase 6+ (Scale) | P6 (white-label) — high effort, high ceiling |
+</script>0–50/month equivalent) cannot compete without an insurer subsidy model. The window to partner with smaller APAC insurers (Income/Singlife, FWD, Great Eastern) before they sign exclusivity with AIA Vitality is open now — likely 12–18 months.
+
+**Engineering entry points:**
+- `insurer_accounts` table in `billing` schema: insurer FK, PEPM rate, region, API webhook URL
+- `wellness_score` computed view: derived from check-in streak, risk score delta over 90 days, alert resolution rate — pure read, no new data
+- Outbound webhook: weekly `wellness_score` push to insurer API (configurable per `insurer_accounts.webhook_url`)
+- Insurer admin portal: `/insurer/` route group, aggregate cohort data only (no individual PII), RLS scoped to `insurer_id`
+- Co-branded onboarding: `?ref=insurer_slug` query param → `profiles.insurer_id` FK at signup
+
+**What needs James:** Insurer partnership negotiations (business development). Deciding which insurer to pilot with first. Agreeing on the wellness score definition with the insurer's actuarial team.
+
+---
+
+## P3 — Localisation Engine
+
+**Classification:** ASEAN must-have (non-EN markets)
+**Equivalent epic if approved:** Epic 17
+
+**Rationale:** Bahasa Malaysia and Indonesian together cover ~280M people. Mandarin covers SG/MY Chinese-speaking communities. Thai covers 70M. English-only is a demographic ceiling of ~15% of addressable ASEAN population. Beyond translation, the supplement protocols that are Janet's core IP are built on Western dietary science and must be validated for Asian dietary contexts — rice-based diets, hawker food, halal requirements, and TCM contraindication awareness.
+
+**Engineering entry points:**
+- `next-intl` (or `next-i18next`) for Next.js App Router i18n
+- `profiles.locale` column: captured at signup from `Accept-Language` or user preference
+- Translation strings: `messages/{en,ms,zh-Hans,th}.json`
+- Supplement catalog schema: `halal_certified boolean`, `tcm_contraindications text[]`
+- Sage prompt: conditional halal filter when `profiles.locale` is `ms` or `id` and user has Muslim dietary preference (questionnaire field)
+- Nova pipeline: add "Asian health / SEA dietary science" category scan
+
+**What needs James:** Regional dietitian contracts for protocol localisation review. Halal certification scope (which items need MUI certification vs. just ingredient review). Decision on which languages to ship first.
+
+---
+
+## P4 — Epigenetic Layer
+
+**Classification:** AU highly compatible · Global differentiator
+**Equivalent epic if approved:** Epic 18
+
+**Rationale:** DNA methylation clocks (DunedinPACE, GrimAge, PhenoAge) are becoming the gold standard for biological age measurement. Every premium AU competitor offers this (Vively via PhenoAge, MFM, Biogenix) and InsideTracker/TruDiagnostic in the US. This is a **partnership import model only** — no lab infrastructure required. Janet imports the score, displays it alongside the questionnaire-derived bio age, and uses it to upgrade confidence levels in Atlas narratives.
+
+**Engineering entry points:**
+- `biomarkers.epigenetic_scores`: `(user_uuid, source, score_type, score_value, test_date, raw_report_url)`
+- Import flow: CSV upload via `/uploads` + automated column-map parsing (reuses Janet upload infrastructure)
+- Risk engine: when `epigenetic_scores` row exists, `confidence_level` upgrades to `epigenetic_confirmed`
+- Bio age dashboard tile: dual display — "Questionnaire: 38" / "Epigenetic (TruDiagnostic): 35"
+- Atlas prompt: includes epigenetic score when present, notes source and test date
+- Repeat test reminder: Janet surfaces at month 11 post-test-date
+
+**What needs James:** TruDiagnostic affiliate agreement. MFM or Biogenix partnership agreement for AU. Chi Longevity or Alexandra Hospital HEAL for SG.
+
+---
+
+## P5 — Coach Ecosystem
+
+**Classification:** ANZ must-have (distribution channel)
+**Equivalent epic if approved:** Epic 19
+
+**Rationale:** Janet's "no-staff ecosystem" model depends on an activated HCANZA coach network. Coaches need a portal, patient assignment tooling, and commission tracking to make Janet their practice platform of choice. This is explicitly distinct from the clinician layer (Epic 9): coaches are not AHPRA-registered practitioners, carry lower clinical liability, cover a much broader market, and use Janet as a client engagement tool rather than a clinical records system.
+
+**Clinician (Epic 9) vs Coach (this feature):**
+| | Clinician | Coach |
+|---|---|---|
+| Registration | AHPRA | HCANZA |
+| Liability | Clinical | Wellness |
+| Portal purpose | Care notes, clinical briefs, appointments | Habit coaching, supplement guidance |
+| Commission | N/A | % of supplement / test orders |
+| Volume | Low (specialist) | High (mass market) |
+
+**Engineering entry points:**
+- `coach_profiles`: credentials, bio, specialties, `is_public`, `hcanza_id`
+- `coach_assignments`: `(coach_uuid, patient_uuid, assigned_at, status)`
+- `coach_commissions`: `(coach_uuid, order_id, order_type, amount_cents, payout_status)`
+- Commission hook: `provider_orders` write (Epic 13) → check `coach_assignments` → insert `coach_commissions` row
+- `/coach/` portal: patient list, patient summary (bio age, risk, protocol, 7-day check-ins), commission ledger
+- `/find-a-coach`: public listing, filterable by specialty and location
+- PDF report: coach name + credentials in footer when `coach_assignment` exists
+
+**What needs James:** HCANZA recognition application. Commission rate decision (% of supplement order). Whether coaches can be non-HCANZA in phase 1 (open to any certified wellness coach globally).
+
+---
+
+## P6 — White-Label / Clinic Licensing
+
+**Classification:** APAC highly compatible · AU high-value
+**Equivalent epic if approved:** Epic 20
+
+**Rationale:** APAC private hospital networks (Bumrungrad TH, Mount Elizabeth SG, Gleneagles SG/MY, Siloam ID) and AU functional medicine clinics want a longevity platform branded as their own for their patients. HolistiCare runs this model in the US. White-label licensing gives Janet APAC distribution without competing directly in consumer marketing.
+
+**Engineering entry points:**
+- `tenants` table in `billing` schema: `(id, name, domain, theme_json, approved_supplement_categories, active_plan_id)`
+- `profiles.tenant_id` nullable FK: null = direct consumer; set = white-label patient
+- Tenant resolution in `proxy.ts`: hostname → `tenants.domain` lookup at request time
+- CSS variables override: tenant's `theme_json` injected as `<style>` in root layout
+- Janet persona: system prompt includes `tenant.janet_name` and `tenant.guardrails` when `tenant_id` is set
+- `tenant_custom_fields` JSONB: up to 10 custom questionnaire fields per tenant
+- Billing: per-patient PEPM invoice via Stripe (no checkout shown to patient)
+
+**What needs James:** Clinic licensing pricing decision (PEPM rate). Minimum patient commitment per tenant. How much of the product can a tenant suppress (e.g. can they disable the supplement protocol entirely)?
+
+---
+
+## P7 — Microbiome Pipeline
+
+**Classification:** SG highly compatible · Global medium-term
+**Equivalent epic if approved:** Epic 21
+
+**Rationale:** Gut microbiome composition predicts supplement absorption more accurately than blood panels alone. Magnesium form (glycinate vs. malate vs. threonate) and probiotic strain efficacy are highly microbiome-dependent. AMILI (SG) is launching a personalised nutrition app with Google in April 2026. Viome leads globally. Neither has a longevity coaching layer — Janet can import their output and use it to materially improve Sage's protocol specificity.
+
+**Engineering entry points:**
+- `biomarkers.microbiome_scores`: `(user_uuid, source, diversity_score, keystone_presence jsonb, deficiency_flags text[], test_date)`
+- Import flow: CSV/JSON upload via `/uploads`, parsed by Janet upload infrastructure
+- Sage prompt extension: when `microbiome_scores` present, include deficiency flags and keystone species summary; adjust probiotic and magnesium recommendations accordingly
+- `PatientContext.load()`: microbiome scores as 11th parallel read
+- Nova pipeline: add "microbiome and longevity" category scan
+
+**What needs James:** AMILI API agreement. Viome affiliate agreement. Decision on whether to build an in-app "order a microbiome test" flow (links to Epic 13 provider ecosystem) or import-only initially.
+
+---
+
+## Recommended phasing
+
+| Phase | Features to include |
+|---|---|
+| Before AU consumer launch | P1 (compliance) · P5 (coach ecosystem) |
+| Before APAC consumer launch | P1 (compliance) · P2 (insurer) · P3 (localisation) |
+| After first 1,000 users | P4 (epigenetic) · P7 (microbiome) — low engineering lift, high credibility |
+| Phase 6+ (Scale) | P6 (white-label) — high effort, high ceiling |
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
 <script>
