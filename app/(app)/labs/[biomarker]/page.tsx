@@ -42,11 +42,12 @@ export default async function BiomarkerDetailPage({
 
   return (
     <div className="lc-labs">
-      <div className="lc-labs-breadcrumb">
-        <Link href="/labs">Labs</Link> › {biomarker}
-      </div>
+      <p className="lc-labs-breadcrumb">
+        <Link href="/labs">Labs</Link> · {biomarker}
+      </p>
 
       <section className="lc-labs-detail-header">
+        <span className="lc-labs-detail-eyebrow">Biomarker · Detail</span>
         <h1 className="lc-labs-detail-name">{biomarker}</h1>
         <div className="lc-labs-detail-row">
           <div>
@@ -62,16 +63,12 @@ export default async function BiomarkerDetailPage({
             Range <strong>{range}</strong>
           </span>
           {latest.trend && (
-            <>
-              {" · "}
-              <span>
-                Trend <strong>{latest.trend}</strong>
-              </span>
-            </>
+            <span>
+              Trend <strong>{latest.trend}</strong>
+            </span>
           )}
-          {" · "}
           <span>
-            {rows.length} {rows.length === 1 ? "result" : "results"} on file
+            <strong>{rows.length}</strong> {rows.length === 1 ? "result" : "results"} on file
           </span>
         </div>
       </section>
@@ -89,7 +86,10 @@ export default async function BiomarkerDetailPage({
       </section>
 
       <section className="lc-labs-history">
-        <h2>History</h2>
+        <div className="lc-labs-section-headline">
+          <span className="lc-labs-eyebrow grey">Timeline</span>
+          <h2>History</h2>
+        </div>
         <table className="lc-labs-table">
           <thead>
             <tr>

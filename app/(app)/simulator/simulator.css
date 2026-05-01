@@ -1,272 +1,368 @@
-.lc-sim {
-  --lc-primary: #2F6F8F;
-  --lc-primary-700: #245672;
-  --lc-primary-50: #EEF3F6;
-  --lc-sage: #6B8E83;
-  --lc-sage-50: #F0F4F2;
-  --lc-line: #E3E8EC;
-  --lc-line-soft: #EDF1F4;
-  --lc-ink: #2B2B2B;
-  --lc-ink-soft: #4B4B4B;
-  --lc-grey: #8A9AA5;
-  --lc-canvas: #FAFAF7;
-  --lc-surface: #FFFFFF;
-  --lc-good: #065F46;
-  --lc-good-bg: #D1FAE5;
-  --lc-bad: #991B1B;
-  --lc-bad-bg: #FEE2E2;
+/* /simulator — anchored on the marketing design system in home.css.
+ * Tokens come from globals.css (:root); this file only adds shape + layout.
+ * Slider mechanics stay; chrome gets the soft-card, eyebrow + serif treatment. */
 
-  font-family: var(--font-lc-sans), system-ui, sans-serif;
+.lc-sim {
+  font-family: var(--lc-sans);
   color: var(--lc-ink);
   max-width: 960px;
   margin: 0 auto;
-  padding: 24px 20px 80px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 32px;
 }
 
-/* ----- Header ----- */
+/* ============ HEADER ============ */
+.lc-sim-header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--lc-line);
+}
+
+.lc-sim-eyebrow {
+  font-family: var(--lc-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--lc-primary);
+}
+
+.lc-sim-eyebrow.grey { color: var(--lc-grey); }
+
 .lc-sim-header h1 {
-  font-family: var(--font-lc-serif), Georgia, serif;
-  font-weight: 500;
-  font-size: 28px;
-  margin: 0 0 8px;
-  letter-spacing: -0.01em;
-}
-.lc-sim-subtitle {
+  font-family: var(--lc-serif);
+  font-weight: 300;
+  font-size: 40px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
   margin: 0;
-  font-size: 14px;
-  color: var(--lc-ink-soft);
-  line-height: 1.5;
+  color: var(--lc-ink);
 }
 
-/* ----- Empty state ----- */
+.lc-sim-header h1 em {
+  font-style: italic;
+  color: var(--lc-primary);
+  font-weight: 300;
+}
+
+.lc-sim-lede {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--lc-ink-soft);
+  max-width: 580px;
+}
+
+/* ============ EMPTY STATE ============ */
 .lc-sim-empty {
-  background: var(--lc-canvas);
+  background: var(--lc-surface);
   border: 1px dashed var(--lc-line);
-  border-radius: 14px;
-  padding: 48px 32px;
+  border-radius: 20px;
+  padding: 56px 40px;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
+  box-shadow: 0 2px 6px rgba(24, 40, 52, 0.04);
 }
+
 .lc-sim-empty h2 {
-  font-family: var(--font-lc-serif), Georgia, serif;
-  font-weight: 500;
-  font-size: 22px;
+  font-family: var(--lc-serif);
+  font-weight: 400;
+  font-size: 26px;
+  letter-spacing: -0.01em;
   margin: 0;
+  color: var(--lc-ink);
 }
+
 .lc-sim-empty p {
   margin: 0;
-  font-size: 14px;
+  font-size: 15px;
+  line-height: 1.55;
   color: var(--lc-ink-soft);
   max-width: 460px;
-  line-height: 1.5;
 }
+
 .lc-sim-empty-cta {
-  margin-top: 8px;
-  display: inline-block;
+  margin-top: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   background: var(--lc-primary);
   color: #fff;
-  font-weight: 600;
+  font-family: var(--lc-sans);
+  font-weight: 500;
   font-size: 14px;
-  padding: 10px 18px;
+  padding: 11px 20px;
   border-radius: 8px;
   text-decoration: none;
   transition: background 0.15s;
 }
+
 .lc-sim-empty-cta:hover { background: var(--lc-primary-700); }
 
-/* ----- Two column grid ----- */
+/* ============ TWO-COL LAYOUT ============ */
 .lc-sim-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px;
   align-items: start;
 }
+
 @media (max-width: 900px) {
   .lc-sim-grid { grid-template-columns: 1fr; }
 }
 
-/* ----- Sliders ----- */
+/* ============ SLIDER CARD ============ */
 .lc-sim-sliders {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 22px;
   background: var(--lc-surface);
   border: 1px solid var(--lc-line);
-  border-radius: 14px;
-  padding: 20px 22px;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 2px 6px rgba(24, 40, 52, 0.04);
 }
+
+.lc-sim-card-headline {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.lc-sim-card-eyebrow {
+  font-family: var(--lc-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--lc-primary);
+}
+
+.lc-sim-card-h2 {
+  font-family: var(--lc-serif);
+  font-weight: 400;
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  margin: 0;
+  color: var(--lc-ink);
+}
+
 .lc-sim-slider-row {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
+
 .lc-sim-slider-head {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  gap: 8px;
+  gap: 10px;
 }
+
 .lc-sim-slider-label {
-  font-weight: 600;
-  font-size: 14px;
-  color: var(--lc-ink);
-}
-.lc-sim-slider-value {
-  font-family: var(--font-lc-serif), Georgia, serif;
-  font-size: 18px;
+  font-family: var(--lc-mono);
   font-weight: 500;
-  color: var(--lc-ink);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--lc-grey);
 }
-.lc-sim-slider-number { font-size: 18px; }
+
+.lc-sim-slider-value {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.lc-sim-slider-number {
+  font-family: var(--lc-serif);
+  font-weight: 400;
+  font-size: 22px;
+  line-height: 1;
+  letter-spacing: -0.015em;
+  color: var(--lc-primary);
+  font-variant-numeric: tabular-nums;
+}
+
 .lc-sim-slider-unit {
-  font-family: var(--font-lc-sans), system-ui, sans-serif;
+  font-family: var(--lc-sans);
   font-size: 12px;
   color: var(--lc-grey);
-  margin-left: 4px;
   font-weight: 400;
 }
+
 .lc-sim-range {
   width: 100%;
-  accent-color: var(--lc-sage);
-  margin: 4px 0 0;
+  accent-color: var(--lc-primary);
+  margin: 6px 0 0;
 }
+
 .lc-sim-slider-caption {
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  font-size: 12px;
+  font-family: var(--lc-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
   color: var(--lc-grey);
   flex-wrap: wrap;
 }
+
 .lc-sim-pop-default {
   color: var(--lc-grey);
   font-style: italic;
 }
 
 .lc-sim-reset {
-  margin-top: 6px;
+  margin-top: 8px;
   align-self: flex-start;
-  background: transparent;
-  border: 1px solid var(--lc-sage);
-  color: var(--lc-sage);
-  font-family: inherit;
-  font-weight: 600;
+  background: var(--lc-surface);
+  border: 1px solid var(--lc-primary);
+  color: var(--lc-primary);
+  font-family: var(--lc-sans);
+  font-weight: 500;
   font-size: 13px;
-  padding: 8px 16px;
+  padding: 9px 16px;
   border-radius: 8px;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  transition: background 0.15s, color 0.15s;
 }
+
 .lc-sim-reset:hover:not(:disabled) {
-  background: var(--lc-sage-50);
+  background: var(--lc-primary-50);
 }
+
 .lc-sim-reset:disabled {
   border-color: var(--lc-line);
   color: var(--lc-grey);
   cursor: not-allowed;
 }
 
-/* ----- Score display ----- */
+/* ============ SCORE DISPLAY ============ */
 .lc-sim-scores {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
 }
+
+/* Composite hero — modeled on the home report card pattern */
 .lc-sim-composite {
+  position: relative;
   background: var(--lc-surface);
   border: 1px solid var(--lc-line);
-  border-radius: 14px;
-  padding: 20px 22px;
+  border-radius: 20px;
+  padding: 28px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
+  box-shadow:
+    0 30px 60px -30px rgba(24, 40, 52, 0.18),
+    0 2px 6px rgba(24, 40, 52, 0.04);
 }
+
 .lc-sim-composite-head {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 8px;
 }
+
 .lc-sim-composite-label {
-  font-size: 12px;
-  letter-spacing: 0.06em;
+  font-family: var(--lc-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--lc-grey);
-  font-weight: 600;
-}
-.lc-sim-composite-value {
-  font-family: var(--font-lc-serif), Georgia, serif;
-  font-size: 28px;
+  color: var(--lc-primary);
   font-weight: 500;
-  line-height: 1.1;
-  color: var(--lc-ink);
-  letter-spacing: -0.01em;
-}
-.lc-sim-composite-sub {
-  font-size: 13px;
-  color: var(--lc-ink-soft);
-  line-height: 1.4;
 }
 
+.lc-sim-composite-value {
+  font-family: var(--lc-serif);
+  font-weight: 300;
+  font-size: 44px;
+  line-height: 1;
+  letter-spacing: -0.025em;
+  color: var(--lc-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.lc-sim-composite-sub {
+  font-family: var(--lc-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  color: var(--lc-grey);
+  line-height: 1.45;
+}
+
+/* Domain rows — modeled on the home .report rows */
 .lc-sim-domains {
   background: var(--lc-surface);
   border: 1px solid var(--lc-line);
-  border-radius: 14px;
-  padding: 8px 12px;
+  border-radius: 20px;
+  padding: 16px 20px;
+  box-shadow: 0 2px 6px rgba(24, 40, 52, 0.04);
 }
+
 .lc-sim-domain-row {
   display: grid;
   grid-template-columns: 1fr auto auto;
   align-items: center;
-  gap: 12px;
-  padding: 12px 8px;
+  gap: 14px;
+  padding: 14px 6px;
   border-bottom: 1px solid var(--lc-line-soft);
 }
+
 .lc-sim-domain-row:last-child { border-bottom: none; }
+
 .lc-sim-domain-label {
-  font-weight: 600;
   font-size: 14px;
   color: var(--lc-ink);
 }
+
 .lc-sim-domain-delta {
-  font-family: var(--font-lc-mono), ui-monospace, monospace;
-  font-size: 13px;
+  font-family: var(--lc-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
   color: var(--lc-ink-soft);
 }
 
-/* ----- Arrow chips ----- */
+/* Arrow chips */
 .lc-sim-arrow {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   border-radius: 999px;
   font-size: 13px;
   font-weight: 700;
   line-height: 1;
 }
+
 .lc-sim-arrow-down {
-  background: var(--lc-good-bg);
-  color: var(--lc-good);
+  background: var(--lc-success-50);
+  color: var(--lc-success);
 }
+
 .lc-sim-arrow-up {
-  background: var(--lc-bad-bg);
-  color: var(--lc-bad);
+  background: var(--lc-danger-50);
+  color: var(--lc-danger);
 }
+
 .lc-sim-arrow-equal {
   background: var(--lc-line-soft);
   color: var(--lc-grey);
 }
 
 @media (max-width: 640px) {
-  .lc-sim { padding: 16px 14px 60px; gap: 18px; }
-  .lc-sim-sliders, .lc-sim-composite { padding: 16px; }
-  .lc-sim-composite-value { font-size: 24px; }
+  .lc-sim-sliders,
+  .lc-sim-composite { padding: 22px; }
+  .lc-sim-composite-value { font-size: 36px; }
+  .lc-sim-domains { padding: 14px 16px; }
 }

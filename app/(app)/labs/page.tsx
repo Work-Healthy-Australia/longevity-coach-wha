@@ -35,7 +35,12 @@ export default async function LabsPage() {
     return (
       <div className="lc-labs">
         <header className="lc-labs-header">
-          <h1>Lab results</h1>
+          <span className="lc-labs-eyebrow">Labs · Biomarkers</span>
+          <h1>Your <em>numbers</em></h1>
+          <p className="lc-labs-lede">
+            Upload a recent blood panel or DEXA scan and Janet will extract every
+            biomarker here, with reference ranges and trends.
+          </p>
         </header>
         <div className="lc-labs-empty">
           <h2>No lab data yet</h2>
@@ -67,19 +72,24 @@ export default async function LabsPage() {
   return (
     <div className="lc-labs">
       <header className="lc-labs-header">
-        <h1>Lab results</h1>
-        <div className="lc-labs-header-meta">
-          <span>
+        <span className="lc-labs-eyebrow">Labs · Biomarkers</span>
+        <h1>Your <em>numbers</em></h1>
+        <p className="lc-labs-lede">
+          Every biomarker Janet has extracted from your panels and scans, with
+          reference ranges and trend over time. Tap any card for the history.
+        </p>
+        <div className="lc-labs-stat-strip">
+          <span className="stat">
             <strong>{biomarkerCount}</strong>
-            {biomarkerCount === 1 ? "biomarker" : "biomarkers"}
+            {biomarkerCount === 1 ? "biomarker tracked" : "biomarkers tracked"}
           </span>
-          <span>
+          <span className="stat">
             <strong>{totalRowCount}</strong>
-            {totalRowCount === 1 ? "result" : "results"}
+            {totalRowCount === 1 ? "result on file" : "results on file"}
           </span>
           {latestTestDate && (
-            <span>
-              Latest test <strong>{formatDate(latestTestDate)}</strong>
+            <span className="stat">
+              Latest <strong>{formatDate(latestTestDate)}</strong>
             </span>
           )}
         </div>
@@ -87,7 +97,10 @@ export default async function LabsPage() {
 
       {Array.from(byCategory.entries()).map(([category, groupsInCat]) => (
         <section className="lc-labs-category" key={category ?? "uncategorised"}>
-          <h2>{categoryLabel(category)}</h2>
+          <div className="lc-labs-category-headline">
+            <span className="lc-labs-category-eyebrow">Category</span>
+            <h2>{categoryLabel(category)}</h2>
+          </div>
           <div className="lc-labs-grid">
             {groupsInCat.map((g) => (
               <BiomarkerCard key={g.biomarker} group={g} />
