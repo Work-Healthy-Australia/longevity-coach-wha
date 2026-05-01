@@ -118,6 +118,7 @@ export default async function ReportPage() {
 
   return (
     <div className="lc-report">
+      <div className="lc-report-main">
       <header className="lc-report-header">
         <span className="lc-report-eyebrow">Janet Cares · Your report</span>
         <h1>Your <em>report</em></h1>
@@ -260,17 +261,21 @@ export default async function ReportPage() {
         )}
       </section>
 
-      {/* Janet chat */}
-      <section className="card chat-section">
-        <div className="card-headline">
-          <span className="card-eyebrow">Janet · Ask</span>
-          <h2>Ask your coach</h2>
-        </div>
-        <p className="section-note">
-          Janet is your longevity coach. Ask about your results, supplements, lifestyle changes, or anything else.
-        </p>
-        <JanetChat initialMessages={priorTurns} userId={user.id} />
-      </section>
+      </div>
+
+      {/* Janet chat — sticky sidebar at desktop, stacks at mobile */}
+      <aside className="lc-report-aside">
+        <section className="card chat-section">
+          <div className="card-headline">
+            <span className="card-eyebrow">Janet · Ask</span>
+            <h2>Ask your coach</h2>
+          </div>
+          <p className="section-note">
+            Janet is your longevity coach. Ask about your results, supplements, lifestyle changes, or anything else.
+          </p>
+          <JanetChat initialMessages={priorTurns} userId={user.id} />
+        </section>
+      </aside>
     </div>
   );
 }
