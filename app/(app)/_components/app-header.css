@@ -12,6 +12,7 @@
   margin: 0 auto;
   padding: 14px 48px;
   display: flex;
+  flex-wrap: nowrap;
   align-items: center;
   gap: 32px;
 }
@@ -35,6 +36,7 @@
 
 .desktop-nav {
   display: flex;
+  flex-wrap: nowrap;
   align-items: center;
   gap: 2px;
 }
@@ -47,6 +49,7 @@
   text-decoration: none;
   padding: 8px 14px;
   border-radius: 6px;
+  white-space: nowrap;
   transition: color 0.15s ease, background 0.15s ease;
 }
 
@@ -72,7 +75,7 @@
 }
 
 
-@media (max-width: 768px) {
+@media (max-width: 959px) {
   .desktop-nav {
     display: none !important;
   }

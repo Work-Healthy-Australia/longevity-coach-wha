@@ -28,7 +28,7 @@
   transform: translateY(-7px) rotate(-45deg);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 959px) {
   .hamburger {
     display: flex;
   }
@@ -38,7 +38,7 @@
   }
 }
 
-@media (min-width: 769px) {
+@media (min-width: 960px) {
   .hamburger {
     display: none;
   }
