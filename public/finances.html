@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Janet Cares — Build &amp; Run Costs</title>
+<style>
+:root {
+  --lc-primary:        #2F6F8F;
+  --lc-primary-700:    #245672;
+  --lc-primary-100:    #DDE8EE;
+  --lc-primary-50:     #EEF3F6;
+  --lc-accent:         #F28C38;
+  --lc-accent-50:      #FDF1E4;
+  --lc-plum:           #6B5B8E;
+  --lc-plum-100:       #E3DEEC;
+  --lc-teal:           #4A9A95;
+  --lc-teal-100:       #D6E9E7;
+  --lc-ink:            #2B2B2B;
+  --lc-ink-soft:       #4B4B4B;
+  --lc-grey:           #8A9AA5;
+  --lc-grey-soft:      #B9C3CB;
+  --lc-line:           #E3E8EC;
+  --lc-line-soft:      #EDF1F4;
+  --lc-bg:             #F4F7F9;
+  --lc-surface:        #FFFFFF;
+  --lc-success:        #3F8A5C;
+  --lc-success-bg:     #E6F0E8;
+  --lc-warning:        #B5742F;
+  --lc-warning-bg:     #FBE8D2;
+  --lc-danger:         #B5452F;
+  --lc-danger-bg:      #F6DDD3;
+  --lc-serif: "Iowan Old Style", Georgia, "Times New Roman", serif;
+  --lc-sans:  ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  --lc-mono:  ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--lc-sans);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--lc-ink);
+  background: var(--lc-bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ============ NAV ============ */
+.ps-nav {
+  position: sticky; top: 0; z-index: 20;
+  background: rgba(244, 247, 249, 0.85);
+  backdrop-filter: saturate(1.2) blur(12px);
+  -webkit-backdrop-filter: saturate(1.2) blur(12px);
+  border-bottom: 1px solid var(--lc-line);
+}
+.ps-nav-inner {
+  max-width: 1280px; margin: 0 auto;
+  padding: 14px 48px;
+  display: flex; align-items: center; gap: 32px;
+}
+.ps-brand {
+  font-family: var(--lc-serif);
+  font-size: 22px;
+  color: var(--lc-primary);
+  letter-spacing: -0.01em;
+  margin-right: auto;
+}
+.ps-brand strong { font-weight: 600; }
+.ps-nav-links {
+  display: flex; gap: 28px;
+  font-size: 14px;
+  color: var(--lc-ink-soft);
+}
+.ps-nav-links a {
+  color: inherit; text-decoration: none;
+  padding: 4px 0;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s, color 0.15s;
+}
+.ps-nav-links a:hover {
+  color: var(--lc-primary);
+  border-bottom-color: var(--lc-primary);
+}
+
+/* ============ PAGE LAYOUT ============ */
+.ps-page {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 48px;
+}
+.ps-section { margin-bottom: 64px; }
+.ps-section h2 {
+  font-family: var(--lc-serif);
+  font-size: 32px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  margin: 0 0 8px;
+  color: var(--lc-ink);
+}
+.ps-section h3 {
+  font-family: var(--lc-serif);
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  margin: 32px 0 12px;
+  color: var(--lc-ink);
+}
+.ps-section .ps-section-meta {
+  font-size: 13px;
+  color: var(--lc-grey);
+  margin: 0 0 24px;
+}
+.ps-section p {
+  font-size: 14px;
+  color: var(--lc-ink-soft);
+  line-height: 1.6;
+  margin: 0 0 16px;
+}
+.ps-section a { color: var(--lc-primary); }
+
+/* ============ HERO ============ */
+.ps-hero {
+  background: var(--lc-surface);
+  border: 1px solid var(--lc-line);
+  border-radius: 16px;
+  padding: 40px;
+  margin-bottom: 48px;
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 40px;
+  align-items: center;
+}
+.ps-hero-headline {
+  font-family: var(--lc-serif);
+  font-size: 40px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin: 0 0 12px;
+  color: var(--lc-primary-700);
+}
+.ps-hero-sub {
+  font-size: 15px;
+  color: var(--lc-ink-soft);
+  margin: 0;
+  line-height: 1.6;
+}
+.ps-hero-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.ps-hero-stat {
+  background: var(--lc-bg);
+  border-radius: 12px;
+  padding: 16px 18px;
+}
+.ps-hero-stat .num {
+  font-family: var(--lc-serif);
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--lc-primary);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.ps-hero-stat .label {
+  font-size: 12px;
+  color: var(--lc-grey);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.ps-hero-stat.success .num { color: var(--lc-success); }
+.ps-hero-stat.accent .num { color: var(--lc-accent); }
+
+/* ============ SUMMARY TABLE ============ */
+.ps-summary {
+  width: 100%;
+  background: var(--lc-surface);
+  border: 1px solid var(--lc-line);
+  border-radius: 12px;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  font-size: 14px;
+}
+.ps-summary thead th {
+  text-align: left;
+  font-weight: 500;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--lc-grey);
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--lc-line);
+  background: var(--lc-line-soft);
+}
+.ps-summary tbody td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--lc-line-soft);
+  vertical-align: middle;
+}
+.ps-summary tbody tr:last-child td { border-bottom: none; }
+.ps-summary tbody tr:hover { background: var(--lc-primary-50); }
+.ps-summary tbody tr.total td {
+  font-weight: 600;
+  background: var(--lc-primary-50);
+  color: var(--lc-primary-700);
+}
+.ps-summary .col-detail { color: var(--lc-ink-soft); font-size: 13px; }
+.ps-summary .col-amount {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  width: 140px;
+}
+
+/* ============ COMPARE GRID (Alternatives) ============ */
+.ps-compare-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.ps-compare-card {
+  background: var(--lc-surface);
+  border: 1px solid var(--lc-line);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.ps-compare-card .card-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--lc-grey);
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+.ps-compare-card .card-num {
+  font-family: var(--lc-serif);
+  font-size: 36px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--lc-ink);
+  letter-spacing: -0.015em;
+  font-variant-numeric: tabular-nums;
+}
+.ps-compare-card .card-num .ccy {
+  font-size: 14px;
+  color: var(--lc-grey);
+  font-weight: 400;
+  margin-left: 4px;
+  letter-spacing: 0.04em;
+}
+.ps-compare-card .card-meta {
+  font-size: 13px;
+  color: var(--lc-ink-soft);
+  margin-top: 6px;
+}
+.ps-compare-card .card-outcome {
+  font-size: 13px;
+  color: var(--lc-ink-soft);
+  padding-top: 12px;
+  margin-top: auto;
+  border-top: 1px solid var(--lc-line-soft);
+  line-height: 1.5;
+}
+.ps-compare-card.warning { border-left: 3px solid var(--lc-warning); }
+.ps-compare-card.warning .card-num { color: var(--lc-warning); }
+.ps-compare-card.neutral { border-left: 3px solid var(--lc-grey-soft); }
+.ps-compare-card.neutral .card-num { color: var(--lc-grey); }
+.ps-compare-card.success { border-left: 3px solid var(--lc-success); }
+.ps-compare-card.success .card-num { color: var(--lc-success); }
+
+.ps-compare-note {
+  font-size: 13px;
+  color: var(--lc-ink-soft);
+  background: var(--lc-primary-50);
+  border: 1px solid var(--lc-primary-100);
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin: 0;
+  line-height: 1.55;
+}
+.ps-compare-note strong { color: var(--lc-primary-700); }
+
+/* ============ STAT GRID (Margin breakdown) ============ */
+.ps-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.ps-stat-card {
+  background: var(--lc-surface);
+  border: 1px solid var(--lc-line);
+  border-radius: 12px;
+  padding: 20px 22px;
+}
+.ps-stat-card .label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--lc-grey);
+  margin-bottom: 8px;
+}
+.ps-stat-card .num {
+  font-family: var(--lc-serif);
+  font-size: 32px;
+  font-weight: 500;
+  color: var(--lc-ink);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+.ps-stat-card.price .num { color: var(--lc-primary); }
+.ps-stat-card.cost .num { color: var(--lc-warning); }
+.ps-stat-card.margin .num { color: var(--lc-success); }
+.ps-stat-card .sub {
+  font-size: 12px;
+  color: var(--lc-grey);
+  margin-top: 6px;
+}
+
+/* ============ RETAINER CARD ============ */
+.ps-retainer {
+  background: var(--lc-surface);
+  border: 1px solid var(--lc-line);
+  border-radius: 14px;
+  padding: 32px;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 32px;
+  align-items: center;
+}
+.ps-retainer-headline {
+  font-family: var(--lc-serif);
+  font-size: 36px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  color: var(--lc-primary-700);
+  line-height: 1.1;
+  margin: 0 0 8px;
+}
+.ps-retainer-sub {
+  font-size: 14px;
+  color: var(--lc-ink-soft);
+  line-height: 1.6;
+  margin: 0;
+}
+.ps-retainer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.ps-retainer-cell {
+  background: var(--lc-bg);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.ps-retainer-cell .num {
+  font-family: var(--lc-serif);
+  font-size: 24px;
+  font-weight: 500;
+  color: var(--lc-primary);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 4px;
+}
+.ps-retainer-cell .label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--lc-grey);
+}
+
+/* ============ TBD CARD ============ */
+.ps-tbd {
+  background: var(--lc-surface);
+  border: 1px dashed var(--lc-grey-soft);
+  border-radius: 12px;
+  padding: 32px;
+  text-align: center;
+  color: var(--lc-grey);
+  font-size: 14px;
+}
+.ps-tbd strong {
+  display: block;
+  font-family: var(--lc-serif);
+  font-size: 22px;
+  color: var(--lc-ink-soft);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+/* ============ STATUS PILLS ============ */
+.ps-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--lc-line-soft);
+  color: var(--lc-ink-soft);
+  white-space: nowrap;
+}
+.ps-pill.complete { background: var(--lc-success-bg); color: var(--lc-success); }
+.ps-pill.proposed { background: var(--lc-primary-100); color: var(--lc-primary-700); }
+.ps-pill.tbd { background: var(--lc-line-soft); color: var(--lc-grey); }
+
+/* ============ FOOTER ============ */
+.ps-footer {
+  text-align: center;
+  font-size: 12px;
+  color: var(--lc-grey);
+  padding: 32px 0;
+  border-top: 1px solid var(--lc-line-soft);
+  margin-top: 48px;
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 960px) {
+  .ps-hero { grid-template-columns: 1fr; }
+  .ps-stat-grid { grid-template-columns: 1fr; }
+  .ps-compare-grid { grid-template-columns: 1fr; }
+  .ps-retainer { grid-template-columns: 1fr; }
+  .ps-page { padding: 24px; }
+  .ps-nav-inner { padding: 14px 24px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="ps-nav">
+  <div class="ps-nav-inner">
+    <div class="ps-brand"><strong>Janet Cares</strong> · Finances</div>
+    <div class="ps-nav-links">
+      <a href="#alternatives">Alternatives</a>
+      <a href="#session-1">Session 1</a>
+      <a href="#ongoing">Ongoing</a>
+      <a href="#session-2">Session 2</a>
+      <a href="/project-status.html">↗ Project Status</a>
+    </div>
+  </div>
+</nav>
+
+<main class="ps-page">
+
+  <header class="ps-hero">
+    <div>
+      <h1 class="ps-hero-headline">$6,000. Five days. V1.0.</h1>
+      <p class="ps-hero-sub">
+        Janet Cares went from blank repo to a live clinical-grade health platform — <a href="https://janet.care">janet.care</a> — in a five-day on-site sprint in Vietnam. James flew over to work alongside the engineer. It replaced a <strong>$300,000 AUD</strong> agency quote and a stalled three-month DIY build. This page captures the cost stack and the ongoing retainer model — a working template for the next project.
+      </p>
+    </div>
+    <div class="ps-hero-stats">
+      <div class="ps-hero-stat"><div class="num">$6,000</div><div class="label">Session 1 price</div></div>
+      <div class="ps-hero-stat accent"><div class="num">5 days</div><div class="label">Build window</div></div>
+      <div class="ps-hero-stat"><div class="num">$4,570</div><div class="label">Direct costs</div></div>
+      <div class="ps-hero-stat success"><div class="num">24%</div><div class="label">Margin</div></div>
+    </div>
+  </header>
+
+  <!-- ============ ALTERNATIVES ============ -->
+  <section class="ps-section" id="alternatives">
+    <h2>What this replaced</h2>
+    <p class="ps-section-meta">James already had two paths to V1.0. Neither produced a launched product.</p>
+
+    <div class="ps-compare-grid">
+      <article class="ps-compare-card warning">
+        <div class="card-label">Australian agency quote</div>
+        <div class="card-num">$300,000 <span class="ccy">AUD</span></div>
+        <div class="card-meta">Timeline undisclosed</div>
+        <div class="card-outcome">Declined — out of budget for V1.0.</div>
+      </article>
+
+      <article class="ps-compare-card neutral">
+        <div class="card-label">DIY · Base44 starter</div>
+        <div class="card-num">$0</div>
+        <div class="card-meta">3 months · solo</div>
+        <div class="card-outcome">Stuck — unlaunchable product.</div>
+      </article>
+
+      <article class="ps-compare-card success">
+        <div class="card-label">This model</div>
+        <div class="card-num">$6,000 <span class="ccy">USD</span></div>
+        <div class="card-meta">5 days · on-site</div>
+        <div class="card-outcome">Live at <a href="https://janet.care">janet.care</a>.</div>
+      </article>
+    </div>
+
+    <p class="ps-compare-note">
+      At rough FX ($1 USD ≈ $1.50 AUD), Session 1 lands around <strong>$9,000 AUD</strong> — about <strong>3% of the agency quote</strong>, with a launched product at the end of week one instead of month four.
+    </p>
+  </section>
+
+  <!-- ============ SESSION 1 ============ -->
+  <section class="ps-section" id="session-1">
+    <h2>Session 1 — The five-day V1.0 <span class="ps-pill complete">Delivered</span></h2>
+    <p class="ps-section-meta">On-site sprint · finished 2026-05-01 · janet.care live with 14 epics tracked.</p>
+
+    <p>
+      James flew to Vietnam to work on-site with one engineer for five days. Output: signed-in member area, onboarding flow, Janet Cares rebrand, branded auth emails, AHPRA-compliant trust layer, Stripe checkout, fourteen epics tracked end-to-end. Full delivery detail in <a href="/project-status.html">Project Status</a>.
+    </p>
+
+    <h3>Cost breakdown</h3>
+    <table class="ps-summary">
+      <thead>
+        <tr>
+          <th>Line item</th>
+          <th class="col-detail">Detail</th>
+          <th class="col-amount">USD</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Engineer</td>
+          <td class="col-detail">Vietnam-based, on-site, 5 days</td>
+          <td class="col-amount">$1,250</td>
+        </tr>
+        <tr>
+          <td>Visa</td>
+          <td class="col-detail">James — rush Vietnam visa + immigration</td>
+          <td class="col-amount">$220</td>
+        </tr>
+        <tr>
+          <td>Apartment</td>
+          <td class="col-detail">James — 5 nights, Vietnam</td>
+          <td class="col-amount">$500</td>
+        </tr>
+        <tr>
+          <td>Car + driver</td>
+          <td class="col-detail">James — 5 days, Vietnam</td>
+          <td class="col-amount">$600</td>
+        </tr>
+        <tr>
+          <td>Product Manager</td>
+          <td class="col-detail">Dave — 2 days · planning + coordination</td>
+          <td class="col-amount">$2,000</td>
+        </tr>
+        <tr class="total">
+          <td>Total direct costs</td>
+          <td class="col-detail"></td>
+          <td class="col-amount">$4,570</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Price → Cost → Margin</h3>
+    <div class="ps-stat-grid">
+      <div class="ps-stat-card price">
+        <div class="label">Project price</div>
+        <div class="num">$6,000</div>
+        <div class="sub">Charged for V1.0 delivery</div>
+      </div>
+      <div class="ps-stat-card cost">
+        <div class="label">Direct costs</div>
+        <div class="num">$4,570</div>
+        <div class="sub">Engineer + travel + PM time</div>
+      </div>
+      <div class="ps-stat-card margin">
+        <div class="label">Margin</div>
+        <div class="num">$1,430</div>
+        <div class="sub">24% gross · before overhead</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ONGOING ============ -->
+  <section class="ps-section" id="ongoing">
+    <h2>Ongoing — Engineering retainer <span class="ps-pill proposed">Proposed</span></h2>
+    <p class="ps-section-meta">For projects that need iteration after V1.0 ships. James wants to carry on — this is the model.</p>
+
+    <div class="ps-retainer">
+      <div>
+        <h3 class="ps-retainer-headline">$1,600 / month</h3>
+        <p class="ps-retainer-sub">
+          One engineer, 40 hours per month, $40/hour effective rate. Predictable monthly burn. Continues post-V1.0 build for any project on the same template.
+        </p>
+      </div>
+      <div class="ps-retainer-grid">
+        <div class="ps-retainer-cell">
+          <div class="num">$1,600</div>
+          <div class="label">Per month</div>
+        </div>
+        <div class="ps-retainer-cell">
+          <div class="num">40 hrs</div>
+          <div class="label">Engineering / mo</div>
+        </div>
+        <div class="ps-retainer-cell">
+          <div class="num">$40</div>
+          <div class="label">Hourly rate</div>
+        </div>
+        <div class="ps-retainer-cell">
+          <div class="num">$19,200</div>
+          <div class="label">Annual run rate</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SESSION 2 ============ -->
+  <section class="ps-section" id="session-2">
+    <h2>Session 2 — Next build <span class="ps-pill tbd">TBD</span></h2>
+    <p class="ps-section-meta">Scope and budget pending. Updated once defined.</p>
+
+    <div class="ps-tbd">
+      <strong>Scope pending</strong>
+      Cost stack will be published here once the next session is planned.
+    </div>
+  </section>
+
+  <footer class="ps-footer">
+    Janet Cares · Finances · Generated 2026-05-01. All figures USD.
+  </footer>
+
+</main>
+
+</body>
+</html>
