@@ -1,5 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { CheckInForm, type LogEntry } from "./_components/check-in-form";
+import { RecentStrip } from "./_components/recent-strip";
+import { Scoreboard } from "./_components/scoreboard";
 import { deriveGoals, extractGoalInputs } from "@/lib/goals/derive";
 import "./check-in.css";
 
@@ -57,57 +59,27 @@ export default async function CheckInPage() {
   const today = new Date().toISOString().slice(0, 10);
   const todayEntry = logs.find((l) => l.log_date === today) ?? null;
 
+  const todayScoreboard = {
+    steps: todayEntry?.steps ?? null,
+    sleepHours: todayEntry?.sleep_hours ?? null,
+    waterGlasses: todayEntry?.water_ml ? Math.round(todayEntry.water_ml / 250) : null,
+  };
+
   return (
     <div className="lc-checkin">
-      <h1>Daily check-in</h1>
-      <p className="lede">
-        A quick log each day helps Janet track your progress.
-      </p>
+      <header className="lc-checkin-header">
+        <span className="lc-checkin-eyebrow">Daily · Log</span>
+        <h1>How was <em>today</em>?</h1>
+        <p className="lc-checkin-lede">
+          A quick log helps Janet track your trends. Two minutes is enough.
+        </p>
+      </header>
 
-      <div className="checkin-goals">
-        <h2>Today&apos;s targets</h2>
-        <ul>
-          <li>Steps: <strong>{goals.steps.toLocaleString()}</strong></li>
-          <li>Sleep: <strong>{goals.sleepHours}h</strong></li>
-          <li>Water: <strong>{goals.waterGlasses} glasses</strong></li>
-          {goals.meditationMin && <li>Meditation: <strong>{goals.meditationMin} min</strong></li>}
-        </ul>
-      </div>
+      <Scoreboard goals={goals} today={todayScoreboard} />
 
       <CheckInForm todayEntry={todayEntry} />
 
-      {logs.length > 0 && (
-        <div className="checkin-recent">
-          <h2>Recent logs</h2>
-          <div className="checkin-recent-list">
-            {logs.map((log) => (
-              <div className="checkin-recent-row" key={log.log_date}>
-                <div className="checkin-recent-date">
-                  {new Date(log.log_date).toLocaleDateString("en-AU", {
-                    weekday: "short",
-                    month: "short",
-                    day: "numeric",
-                  })}
-                </div>
-                <div className="checkin-recent-detail">
-                  Mood {log.mood ?? "—"}/10 · Energy {log.energy_level ?? "—"}/10 ·{" "}
-                  {log.sleep_hours ?? "—"}h sleep
-                  {log.workout_duration_min
-                    ? ` · ${log.workout_duration_min}min exercise`
-                    : ""}
-                  {log.steps ? ` · ${log.steps} steps` : ""}
-                  {log.water_ml
-                    ? ` · ${Math.round(log.water_ml / 250)} glasses water`
-                    : ""}
-                  {log.notes && (
-                    <div className="checkin-recent-notes">{log.notes}</div>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      <RecentStrip logs={logs} />
     </div>
   );
 }
