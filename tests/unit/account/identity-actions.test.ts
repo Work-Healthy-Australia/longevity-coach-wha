@@ -15,7 +15,8 @@ vi.mock("next/cache", () => ({
   revalidatePath: vi.fn(),
 }));
 
-import { identitySchema, updateIdentity } from "@/app/(app)/account/identity-actions";
+import { identitySchema } from "@/app/(app)/account/identity-schema";
+import { updateIdentity } from "@/app/(app)/account/identity-actions";
 
 beforeEach(() => {
   vi.clearAllMocks();
