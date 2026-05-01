@@ -4,9 +4,23 @@ import type { Metadata } from "next";
 import "./sample-report.css";
 
 export const metadata: Metadata = {
-  title: "Sample report · Janet Cares",
+  title: "Sample report",
   description:
-    "A worked example of a Janet Cares report: biological age, five domain risk scores, top modifiable drivers, and a personalised supplement protocol.",
+    "A worked example of a Janet Cares report: biological age, five-domain risk scores, top modifiable drivers, and a personalised supplement protocol.",
+  alternates: { canonical: "/sample-report" },
+  openGraph: {
+    type: "article",
+    url: "/sample-report",
+    title: "Sample report — Janet Cares",
+    description:
+      "A worked example: biological age, five-domain risk scores, modifiable drivers, and a personalised supplement protocol.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Sample report — Janet Cares",
+    description:
+      "A worked example of a personalised Janet Cares longevity report.",
+  },
 };
 
 const SAMPLE = {
