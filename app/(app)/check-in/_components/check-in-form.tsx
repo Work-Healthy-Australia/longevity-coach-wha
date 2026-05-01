@@ -1,6 +1,7 @@
 "use client";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { saveCheckIn, type CheckInState } from "../actions";
+import { ScaleInput } from "./scale-input";
 
 export type LogEntry = {
   log_date: string;
@@ -21,136 +22,215 @@ export function CheckInForm({ todayEntry }: { todayEntry: LogEntry | null }) {
     saveCheckIn,
     {},
   );
+  const [showAdvanced, setShowAdvanced] = useState(
+    Boolean(
+      todayEntry?.hrv ||
+        todayEntry?.resting_heart_rate ||
+        todayEntry?.deep_sleep_pct,
+    ),
+  );
 
   return (
-    <form action={action} className="checkin-form">
-      {state.success && (
-        <div className="checkin-banner checkin-banner-success">
-          Saved. Keep it up.
+    <form action={action} className="lc-checkin-form">
+      {/* TODAY · How you feel */}
+      <section className="lc-checkin-section">
+        <div className="lc-checkin-section-headline">
+          <span className="lc-checkin-section-eyebrow">Today</span>
+          <h2>How are you feeling?</h2>
         </div>
-      )}
-      {state.error && (
-        <div className="checkin-banner checkin-banner-error">{state.error}</div>
-      )}
 
-      <label className="checkin-field">
-        <span>Mood (1 = rough · 10 = great)</span>
-        <select name="mood" defaultValue={todayEntry?.mood ?? 5}>
-          {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
-            <option key={n} value={n}>{n}</option>
-          ))}
-        </select>
-      </label>
+        <div className="lc-checkin-field">
+          <span className="lc-checkin-field-label">Mood</span>
+          <ScaleInput
+            name="mood"
+            defaultValue={todayEntry?.mood ?? 5}
+            lowLabel="Rough"
+            highLabel="Great"
+          />
+        </div>
 
-      <label className="checkin-field">
-        <span>Energy (1 = exhausted · 10 = energised)</span>
-        <select name="energy" defaultValue={todayEntry?.energy_level ?? 5}>
-          {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
-            <option key={n} value={n}>{n}</option>
-          ))}
-        </select>
-      </label>
+        <div className="lc-checkin-field">
+          <span className="lc-checkin-field-label">Energy</span>
+          <ScaleInput
+            name="energy"
+            defaultValue={todayEntry?.energy_level ?? 5}
+            lowLabel="Exhausted"
+            highLabel="Energised"
+          />
+        </div>
 
-      <label className="checkin-field">
-        <span>Sleep last night (hours)</span>
-        <input
-          type="number"
-          name="sleep_hours"
-          defaultValue={todayEntry?.sleep_hours ?? 7}
-          min={0}
-          max={24}
-          step={0.5}
-        />
-      </label>
+        <label className="lc-checkin-field">
+          <span className="lc-checkin-field-label">Notes</span>
+          <textarea
+            name="notes"
+            defaultValue={todayEntry?.notes ?? ""}
+            rows={3}
+            placeholder="Anything worth noting today…"
+          />
+        </label>
+      </section>
 
-      <label className="checkin-field">
-        <span>Exercise today (minutes)</span>
-        <input
-          type="number"
-          name="exercise_minutes"
-          defaultValue={todayEntry?.workout_duration_min ?? 0}
-          min={0}
-          max={600}
-          step={5}
-        />
-      </label>
+      {/* RECOVERY · Sleep */}
+      <section className="lc-checkin-section">
+        <div className="lc-checkin-section-headline">
+          <span className="lc-checkin-section-eyebrow">Recovery</span>
+          <h2>Sleep</h2>
+        </div>
 
-      <label className="checkin-field">
-        <span>Steps today</span>
-        <input
-          type="number"
-          name="steps"
-          defaultValue={todayEntry?.steps ?? 0}
-          min={0}
-          max={60000}
-          step={100}
-        />
-      </label>
+        <label className="lc-checkin-field">
+          <span className="lc-checkin-field-label">Hours last night</span>
+          <input
+            type="number"
+            name="sleep_hours"
+            defaultValue={todayEntry?.sleep_hours ?? 7}
+            min={0}
+            max={24}
+            step={0.5}
+          />
+        </label>
+      </section>
 
-      <label className="checkin-field">
-        <span>Water (glasses, ~250ml each)</span>
-        <input
-          type="number"
-          name="water_glasses"
-          defaultValue={Math.round((todayEntry?.water_ml ?? 0) / 250)}
-          min={0}
-          max={20}
-          step={1}
-        />
-      </label>
+      {/* MOVEMENT · Activity */}
+      <section className="lc-checkin-section">
+        <div className="lc-checkin-section-headline">
+          <span className="lc-checkin-section-eyebrow">Movement</span>
+          <h2>Activity</h2>
+        </div>
 
-      <label className="checkin-field">
-        <span>Resting HRV (ms, optional)</span>
-        <input
-          type="number"
-          name="hrv"
-          defaultValue={todayEntry?.hrv ?? ""}
-          min={5}
-          max={200}
-          step={1}
-          placeholder="e.g. 45 (from your wearable)"
-        />
-      </label>
+        <div className="lc-checkin-field-row">
+          <label className="lc-checkin-field">
+            <span className="lc-checkin-field-label">Steps</span>
+            <input
+              type="number"
+              name="steps"
+              defaultValue={todayEntry?.steps ?? 0}
+              min={0}
+              max={60000}
+              step={100}
+            />
+          </label>
 
-      <label className="checkin-field">
-        <span>Resting heart rate (bpm, optional)</span>
-        <input
-          type="number"
-          name="resting_heart_rate"
-          defaultValue={todayEntry?.resting_heart_rate ?? ""}
-          min={30}
-          max={150}
-          step={1}
-          placeholder="e.g. 58"
-        />
-      </label>
+          <label className="lc-checkin-field">
+            <span className="lc-checkin-field-label">Exercise (min)</span>
+            <input
+              type="number"
+              name="exercise_minutes"
+              defaultValue={todayEntry?.workout_duration_min ?? 0}
+              min={0}
+              max={600}
+              step={5}
+            />
+          </label>
+        </div>
+      </section>
 
-      <label className="checkin-field">
-        <span>Deep sleep last night (% of total sleep, optional)</span>
-        <input
-          type="number"
-          name="deep_sleep_pct"
-          defaultValue={todayEntry?.deep_sleep_pct ?? ""}
-          min={0}
-          max={60}
-          step={1}
-          placeholder="e.g. 18"
-        />
-      </label>
+      {/* HYDRATION · Water */}
+      <section className="lc-checkin-section">
+        <div className="lc-checkin-section-headline">
+          <span className="lc-checkin-section-eyebrow">Hydration</span>
+          <h2>Water</h2>
+        </div>
 
-      <label className="checkin-field">
-        <span>Notes (optional)</span>
-        <textarea
-          name="notes"
-          defaultValue={todayEntry?.notes ?? ""}
-          rows={3}
-          placeholder="Anything worth noting today…"
-        />
-      </label>
+        <label className="lc-checkin-field">
+          <span className="lc-checkin-field-label">Glasses (~250ml each)</span>
+          <input
+            type="number"
+            name="water_glasses"
+            defaultValue={Math.round((todayEntry?.water_ml ?? 0) / 250)}
+            min={0}
+            max={20}
+            step={1}
+          />
+        </label>
+      </section>
 
-      <button type="submit" disabled={isPending} className="checkin-submit">
-        {isPending ? "Saving…" : todayEntry ? "Update today's log" : "Save today's log"}
-      </button>
+      {/* SIGNALS · Heart (collapsed by default) */}
+      <section className="lc-checkin-section">
+        <div className="lc-checkin-section-headline">
+          <span className="lc-checkin-section-eyebrow">Signals</span>
+          <h2>Wearable metrics</h2>
+        </div>
+
+        {!showAdvanced ? (
+          <button
+            type="button"
+            className="lc-checkin-advanced-toggle"
+            onClick={() => setShowAdvanced(true)}
+          >
+            + Show advanced metrics (HRV, resting HR, deep sleep)
+          </button>
+        ) : (
+          <div className="lc-checkin-advanced-content">
+            <div className="lc-checkin-field-row">
+              <label className="lc-checkin-field">
+                <span className="lc-checkin-field-label">HRV (ms)</span>
+                <input
+                  type="number"
+                  name="hrv"
+                  defaultValue={todayEntry?.hrv ?? ""}
+                  min={5}
+                  max={200}
+                  step={1}
+                  placeholder="e.g. 45"
+                />
+              </label>
+
+              <label className="lc-checkin-field">
+                <span className="lc-checkin-field-label">Resting HR (bpm)</span>
+                <input
+                  type="number"
+                  name="resting_heart_rate"
+                  defaultValue={todayEntry?.resting_heart_rate ?? ""}
+                  min={30}
+                  max={150}
+                  step={1}
+                  placeholder="e.g. 58"
+                />
+              </label>
+            </div>
+
+            <label className="lc-checkin-field">
+              <span className="lc-checkin-field-label">Deep sleep (%)</span>
+              <input
+                type="number"
+                name="deep_sleep_pct"
+                defaultValue={todayEntry?.deep_sleep_pct ?? ""}
+                min={0}
+                max={60}
+                step={1}
+                placeholder="e.g. 18"
+              />
+            </label>
+          </div>
+        )}
+      </section>
+
+      {/* SUBMIT + CONFIRMATION (at the bottom — where the eyes are) */}
+      <div className="lc-checkin-submit-row">
+        {state.success && (
+          <div className="lc-checkin-banner lc-checkin-banner-success">
+            Saved. Your scoreboard above is up to date.
+          </div>
+        )}
+        {state.error && (
+          <div className="lc-checkin-banner lc-checkin-banner-error">
+            {state.error}
+          </div>
+        )}
+        <div className="lc-checkin-submit-row-actions">
+          <button
+            type="submit"
+            disabled={isPending}
+            className="btn btn-primary btn-lg"
+          >
+            {isPending
+              ? "Saving…"
+              : todayEntry
+                ? "Update today's log"
+                : "Save today's log"}
+          </button>
+        </div>
+      </div>
     </form>
   );
 }
