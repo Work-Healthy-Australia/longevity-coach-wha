@@ -561,13 +561,13 @@ body {
     <div>
       <h1 class="ps-hero-headline">Where the build is, today.</h1>
       <p class="ps-hero-sub">
-        Last updated <strong>2026-05-01</strong>. Full design-system unification across the signed-in app shell, Janet Cares rebrand, <code>/account</code> refresh, branded Supabase Auth emails + deliverability fix, AHPRA breach-notification protocol all landed since the 2026-04-30 sync. Two open production bugs (one P1, one P2) and one CI regression to resolve before the next planning round.
+        Last updated <strong>2026-05-01</strong>. Full design-system unification across the signed-in app shell, Janet Cares rebrand, <code>/account</code> refresh, branded Supabase Auth emails + deliverability fix, AHPRA breach-notification protocol all landed since the 2026-04-30 sync. Fresh QA pass on 2026-05-01 surfaced <strong>16 open bugs</strong> (7 P1, 6 P2, 3 P3) plus 12 tech-debt items. CI gate is still off. Full lists in <a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/blob/main/docs/qa/QA-bugs.md">QA-bugs.md</a> and <a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/blob/main/docs/qa/TECH-DEBT.md">TECH-DEBT.md</a>.
       </p>
     </div>
     <div class="ps-hero-stats">
       <div class="ps-hero-stat"><div class="num">14</div><div class="label">Epics</div></div>
       <div class="ps-hero-stat"><div class="num">88%</div><div class="label">Avg estimate</div></div>
-      <div class="ps-hero-stat alert"><div class="num">2</div><div class="label">Open bugs</div></div>
+      <div class="ps-hero-stat alert"><div class="num">16</div><div class="label">Open bugs</div></div>
       <div class="ps-hero-stat danger"><div class="num">1</div><div class="label">Regression</div></div>
     </div>
   </header>
@@ -582,9 +582,17 @@ body {
   <div class="ps-alert">
     <div class="icon">⚠</div>
     <div>
-      <strong>Open bugs.</strong>
-      <a href="#epic-3">BUG-010</a> (P1) — every new onboarding silently fails to write a <code>risk_scores</code> row; fix in open PR <a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/88">#88</a>.
-      <a href="#epic-1">BUG-011</a> (P2) — <code>/account</code> form errors hidden behind global "Something went wrong"; fix in open PR <a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/93">#93</a>.
+      <strong>Open P1 bugs (7).</strong>
+      <a href="#epic-3">BUG-010</a> onboarding silently fails to write <code>risk_scores</code> (fix in <a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/88">#88</a>).
+      <a href="#epic-1">BUG-012</a> UK clinical credentials shown on AHPRA-regulated AU product (homepage hero, OG image).
+      <a href="#epic-12">BUG-013</a> <code>/pricing</code> nav layout completely broken — `.lc-home`-scoped nav styles don't apply.
+      <a href="#epic-12">BUG-014</a> <code>/pricing</code> renders "$0.00/mo" with no plan cards and an enabled checkout button.
+      <a href="#epic-1">BUG-015</a> footer copyright still says "LONGEVITY COACH LTD" — pre-rebrand stale.
+      <a href="#epic-1">BUG-018</a> <code>signIn()</code> discards <code>?redirect=</code> after successful login.
+      <a href="#epic-11">BUG-019</a> Stripe checkout falls back to <code>http://localhost:3000</code> when env var missing.
+      <br><strong>P2 (6):</strong> BUG-011 <code>/account</code> form errors hidden behind global-error (fix in <a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/93">#93</a>) · BUG-016 dead footer links · BUG-017 duplicated brand in <code>&lt;title&gt;</code> across most routes · BUG-020 stale "longevity-coach-export" ZIP filename · BUG-024 inconsistent post-login redirect preservation · BUG-025 <code>janet-chat</code> realtime payload leaked to browser console.
+      <br><strong>P3 (3):</strong> BUG-021 missing <code>&lt;h1&gt;</code> on /team and /stories · BUG-022 placeholder portrait on /team · BUG-023 London sample-report persona on AU product.
+      <br>Full triage notes in <a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/blob/main/docs/qa/QA-bugs.md">QA-bugs.md</a>; tech-debt in <a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/blob/main/docs/qa/TECH-DEBT.md">TECH-DEBT.md</a>.
     </div>
   </div>
 
@@ -605,19 +613,19 @@ body {
         </tr>
       </thead>
       <tbody>
-        <tr><td class="col-num">01</td><td><a class="epic-link" href="#epic-1">The Front Door</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span></span></td><td class="col-est">100%</td><td class="col-deps">—</td><td class="col-bugs">1</td><td class="col-bugs">3</td></tr>
+        <tr><td class="col-num">01</td><td><a class="epic-link" href="#epic-1">The Front Door</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span></span></td><td class="col-est">100%</td><td class="col-deps">—</td><td class="col-bugs">11</td><td class="col-bugs">3</td></tr>
         <tr><td class="col-num">02</td><td><a class="epic-link" href="#epic-2">The Intake</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage"></span></span></td><td class="col-est">100%</td><td class="col-deps">1</td><td class="col-bugs">0</td><td class="col-bugs">0</td></tr>
         <tr><td class="col-num">03</td><td><a class="epic-link" href="#epic-3">The Number</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage"></span><span class="ps-stage"></span></span></td><td class="col-est">90%</td><td class="col-deps">2</td><td class="col-bugs">1</td><td class="col-bugs">2</td></tr>
         <tr><td class="col-num">04</td><td><a class="epic-link" href="#epic-4">The Protocol</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage"></span><span class="ps-stage"></span></span></td><td class="col-est">87%</td><td class="col-deps">3</td><td class="col-bugs">0</td><td class="col-bugs">0</td></tr>
         <tr><td class="col-num">05</td><td><a class="epic-link" href="#epic-5">The Report</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage"></span><span class="ps-stage"></span></span></td><td class="col-est">92%</td><td class="col-deps">3, 4</td><td class="col-bugs">0</td><td class="col-bugs">1</td></tr>
-        <tr><td class="col-num">06</td><td><a class="epic-link" href="#epic-6">The Coach</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage"></span></span></td><td class="col-est">100%</td><td class="col-deps">3, 4, 10</td><td class="col-bugs">0</td><td class="col-bugs">1</td></tr>
+        <tr><td class="col-num">06</td><td><a class="epic-link" href="#epic-6">The Coach</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage"></span></span></td><td class="col-est">100%</td><td class="col-deps">3, 4, 10</td><td class="col-bugs">1</td><td class="col-bugs">1</td></tr>
         <tr><td class="col-num">07</td><td><a class="epic-link" href="#epic-7">The Daily Return</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage"></span></span></td><td class="col-est">100%</td><td class="col-deps">1, 2</td><td class="col-bugs">0</td><td class="col-bugs">0</td></tr>
         <tr><td class="col-num">08</td><td><a class="epic-link" href="#epic-8">The Living Record</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage"></span><span class="ps-stage"></span></span></td><td class="col-est">90%</td><td class="col-deps">2, 3</td><td class="col-bugs">0</td><td class="col-bugs">0</td></tr>
         <tr><td class="col-num">09</td><td><a class="epic-link" href="#epic-9">The Care Team</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage partial"></span><span class="ps-stage"></span></span></td><td class="col-est">85%</td><td class="col-deps">1, 5, 11</td><td class="col-bugs">0</td><td class="col-bugs">0</td></tr>
         <tr><td class="col-num">10</td><td><a class="epic-link" href="#epic-10">The Knowledge Engine</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage partial"></span><span class="ps-stage"></span><span class="ps-stage"></span></span></td><td class="col-est">75%</td><td class="col-deps">—</td><td class="col-bugs">0</td><td class="col-bugs">1</td></tr>
-        <tr><td class="col-num">11</td><td><a class="epic-link" href="#epic-11">The Trust Layer</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage"></span><span class="ps-stage"></span></span></td><td class="col-est">97%</td><td class="col-deps">1</td><td class="col-bugs">0</td><td class="col-bugs">1</td></tr>
-        <tr><td class="col-num">12</td><td><a class="epic-link" href="#epic-12">The Distribution</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage partial"></span><span class="ps-stage"></span><span class="ps-stage"></span></span></td><td class="col-est">75%</td><td class="col-deps">1</td><td class="col-bugs">0</td><td class="col-bugs">0</td></tr>
-        <tr><td class="col-num">13</td><td><a class="epic-link" href="#epic-13">The Business Model</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage partial"></span><span class="ps-stage"></span><span class="ps-stage"></span></span></td><td class="col-est">50%</td><td class="col-deps">1, 4, 9</td><td class="col-bugs">0</td><td class="col-bugs">0</td></tr>
+        <tr><td class="col-num">11</td><td><a class="epic-link" href="#epic-11">The Trust Layer</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage"></span><span class="ps-stage"></span></span></td><td class="col-est">97%</td><td class="col-deps">1</td><td class="col-bugs">1</td><td class="col-bugs">1</td></tr>
+        <tr><td class="col-num">12</td><td><a class="epic-link" href="#epic-12">The Distribution</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage partial"></span><span class="ps-stage"></span><span class="ps-stage"></span></span></td><td class="col-est">75%</td><td class="col-deps">1</td><td class="col-bugs">2</td><td class="col-bugs">0</td></tr>
+        <tr><td class="col-num">13</td><td><a class="epic-link" href="#epic-13">The Business Model</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage partial"></span><span class="ps-stage"></span><span class="ps-stage"></span></span></td><td class="col-est">50%</td><td class="col-deps">1, 4, 9</td><td class="col-bugs">1</td><td class="col-bugs">0</td></tr>
         <tr><td class="col-num">14</td><td><a class="epic-link" href="#epic-14">The Platform Foundation</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage partial"></span><span class="ps-stage"></span><span class="ps-stage"></span></span></td><td class="col-est">70%</td><td class="col-deps">—</td><td class="col-bugs">0</td><td class="col-bugs">0</td></tr>
       </tbody>
     </table>
@@ -650,11 +658,41 @@ body {
         </div>
         <div class="ps-epic-bar"><div class="ps-epic-bar-fill complete" style="width:100%"></div></div>
         <div class="ps-epic-bugs">
-          <span class="bug-id">BUG-011</span><strong>P2 OPEN.</strong> <code>/account</code> Identity + Security forms hide uncaught throws behind <code>global-error.tsx</code> "Something went wrong" — only known-error paths return typed errors. Fix in open PR <a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/93">#93</a>.
+          <span class="bug-id">BUG-011</span><strong>P2 IN-PROGRESS.</strong> <code>/account</code> Identity + Security forms hide uncaught throws behind <code>global-error.tsx</code> "Something went wrong". Fix in open PR <a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/93">#93</a>.
+        </div>
+        <div class="ps-epic-bugs">
+          <span class="bug-id">BUG-012</span><strong>P1 OPEN.</strong> UK clinical credentials shown on AHPRA-regulated AU product. Hero + science pages cite GMC, Royal College of GPs, Imperial Longevity Lab, UK Biobank. OG image broadcasts "GMC-registered clinicians" on every shared janet.care link. Regulator + trust mismatch.
+        </div>
+        <div class="ps-epic-bugs">
+          <span class="bug-id">BUG-015</span><strong>P1 OPEN.</strong> Footer copyright still says "LONGEVITY COACH LTD" — pre-rebrand stale. Legal entity per <code>/legal/collection-notice</code> is "Work Healthy Australia Pty Ltd".
+        </div>
+        <div class="ps-epic-bugs">
+          <span class="bug-id">BUG-016</span><strong>P2 OPEN.</strong> Footer has dead <code>href="#"</code> links (Privacy, Terms, Clinical governance, Contact). Privacy &amp; Terms are mandatory under Privacy Act 1988 — these can't ship as <code>#</code>.
+        </div>
+        <div class="ps-epic-bugs">
+          <span class="bug-id">BUG-017</span><strong>P2 OPEN.</strong> Duplicated brand in <code>&lt;title&gt;</code> across most routes: "Sign in · Janet Cares · Janet Cares". Root layout already applies the brand template; pages re-add it. Affects /login, /signup, /forgot-password, /verify-email, /reset-password, /journal, /labs, /insights, plus most public pages.
+        </div>
+        <div class="ps-epic-bugs">
+          <span class="bug-id">BUG-018</span><strong>P1 OPEN.</strong> <code>signIn()</code> hard-codes <code>redirect("/dashboard")</code> and discards the <code>?redirect=</code> query param the proxy attached. Users land on dashboard not the page they tried to open.
+        </div>
+        <div class="ps-epic-bugs">
+          <span class="bug-id">BUG-020</span><strong>P2 OPEN.</strong> User-data export ZIP is named <code>longevity-coach-export-YYYY-MM-DD.zip</code> — stale pre-rebrand filename. Should be <code>janet-cares-export-…</code>.
+        </div>
+        <div class="ps-epic-bugs">
+          <span class="bug-id">BUG-021</span><strong>P3 OPEN.</strong> <code>/team</code> and <code>/stories</code> have no <code>&lt;h1&gt;</code> — only <code>&lt;h2&gt;</code>. Screen readers and SEO crawlers expect a single h1.
+        </div>
+        <div class="ps-epic-bugs">
+          <span class="bug-id">BUG-022</span><strong>P3 OPEN.</strong> <code>/team</code> portrait card is a placeholder striped panel ("PORTRAIT · DR. A. MENDES"), no real photo.
+        </div>
+        <div class="ps-epic-bugs">
+          <span class="bug-id">BUG-023</span><strong>P3 OPEN.</strong> <code>/sample-report</code> persona is "NINA OKAFOR · ARCHITECT, LONDON, 38". London on an AU-targeted product. Use a Sydney/Melbourne/Brisbane persona.
+        </div>
+        <div class="ps-epic-bugs">
+          <span class="bug-id">BUG-024</span><strong>P2 OPEN.</strong> <code>/insights</code>, <code>/journal</code>, <code>/care-team</code>, <code>/alerts</code>, <code>/routines</code> are missing from <code>PROTECTED_PREFIXES</code>; they use page-level <code>redirect("/login")</code> with no <code>?redirect=</code> param. Post-login users always land on /dashboard, not where they tried to go.
         </div>
         <div class="ps-epic-meta">
           <div class="item"><span class="item-label">Depends on</span><span class="item-value">—</span></div>
-          <div class="item"><span class="item-label">Open bugs</span><span class="item-value alert">1</span></div>
+          <div class="item"><span class="item-label">Open bugs</span><span class="item-value danger">11</span></div>
           <div class="item"><span class="item-label">Closed bugs</span><span class="item-value">3</span></div>
           <div class="item"><span class="item-label">Outstanding</span><span class="item-value">0</span></div>
         </div>
@@ -780,9 +818,12 @@ body {
           <span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage"></span>
         </div>
         <div class="ps-epic-bar"><div class="ps-epic-bar-fill" style="width:100%"></div></div>
+        <div class="ps-epic-bugs">
+          <span class="bug-id">BUG-025</span><strong>P2 OPEN.</strong> <code>janet-chat</code> realtime client logs full payload to browser console (<code>app/(app)/report/_components/janet-chat.tsx:135</code>). Payload includes message rows from <code>agent_conversations</code> — PII / conversation content leaks to DevTools and any console-reading extension. Strip in production builds or remove.
+        </div>
         <div class="ps-epic-meta">
           <div class="item"><span class="item-label">Depends on</span><span class="item-value">Epic 3, 4, 10</span></div>
-          <div class="item"><span class="item-label">Open bugs</span><span class="item-value">0</span></div>
+          <div class="item"><span class="item-label">Open bugs</span><span class="item-value alert">1</span></div>
           <div class="item"><span class="item-label">Closed bugs</span><span class="item-value">1</span></div>
           <div class="item"><span class="item-label">Outstanding</span><span class="item-value">0</span></div>
         </div>
@@ -905,9 +946,12 @@ body {
           <span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage"></span><span class="ps-stage"></span>
         </div>
         <div class="ps-epic-bar"><div class="ps-epic-bar-fill" style="width:97%"></div></div>
+        <div class="ps-epic-bugs">
+          <span class="bug-id">BUG-019</span><strong>P1 OPEN.</strong> Stripe checkout falls back to <code>http://localhost:3000</code> when <code>NEXT_PUBLIC_SITE_URL</code> is missing in the environment (<code>app/api/stripe/checkout/route.ts:35</code>). Should hard-fail in production rather than silently route success/cancel to localhost.
+        </div>
         <div class="ps-epic-meta">
           <div class="item"><span class="item-label">Depends on</span><span class="item-value">Epic 1</span></div>
-          <div class="item"><span class="item-label">Open bugs</span><span class="item-value">0</span></div>
+          <div class="item"><span class="item-label">Open bugs</span><span class="item-value danger">1</span></div>
           <div class="item"><span class="item-label">Closed bugs</span><span class="item-value">1</span></div>
           <div class="item"><span class="item-label">Outstanding</span><span class="item-value">5</span></div>
         </div>
@@ -930,9 +974,15 @@ body {
           <span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage partial"></span><span class="ps-stage"></span><span class="ps-stage"></span>
         </div>
         <div class="ps-epic-bar"><div class="ps-epic-bar-fill" style="width:75%"></div></div>
+        <div class="ps-epic-bugs">
+          <span class="bug-id">BUG-013</span><strong>P1 OPEN.</strong> <code>/pricing</code> nav layout completely broken. <code>PublicNav</code> uses <code>.nav</code> classes scoped to <code>.lc-home</code> in home.css; pricing wraps in <code>.lc-pricing</code> so styles don't apply. Logo renders at full 880×203, nav links collapse to plain text "ScienceTeamSign inBegin".
+        </div>
+        <div class="ps-epic-bugs">
+          <span class="bug-id">BUG-014</span><strong>P1 OPEN.</strong> <code>/pricing</code> shows "$0.00/mo" with no plan cards but the "Continue to checkout" button is enabled. <code>billing.plans</code> returns empty in this env → no cards rendered → only the totals row. Either seed prod-like data or hide the totals row when no plans loaded.
+        </div>
         <div class="ps-epic-meta">
           <div class="item"><span class="item-label">Depends on</span><span class="item-value">Epic 1</span></div>
-          <div class="item"><span class="item-label">Open bugs</span><span class="item-value">0</span></div>
+          <div class="item"><span class="item-label">Open bugs</span><span class="item-value danger">2</span></div>
           <div class="item"><span class="item-label">Closed bugs</span><span class="item-value">0</span></div>
           <div class="item"><span class="item-label">Outstanding</span><span class="item-value">4</span></div>
         </div>
@@ -955,9 +1005,12 @@ body {
           <span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage partial"></span><span class="ps-stage"></span><span class="ps-stage"></span>
         </div>
         <div class="ps-epic-bar"><div class="ps-epic-bar-fill" style="width:50%"></div></div>
+        <div class="ps-epic-bugs">
+          <span class="bug-id">BUG-014</span><strong>P1 OPEN (shared with Epic 12).</strong> Empty <code>billing.plans</code> means <code>/pricing</code> renders no cards but still shows "Estimated total: $0.00/mo" with checkout enabled — the billing layer is the root cause. Seed plans for this env, or treat empty-billing as a hard error.
+        </div>
         <div class="ps-epic-meta">
           <div class="item"><span class="item-label">Depends on</span><span class="item-value">Epic 1, 4, 9</span></div>
-          <div class="item"><span class="item-label">Open bugs</span><span class="item-value">0</span></div>
+          <div class="item"><span class="item-label">Open bugs</span><span class="item-value danger">1</span></div>
           <div class="item"><span class="item-label">Closed bugs</span><span class="item-value">0</span></div>
           <div class="item"><span class="item-label">Outstanding</span><span class="item-value">10</span></div>
         </div>
