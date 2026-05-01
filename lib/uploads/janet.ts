@@ -93,6 +93,8 @@ When category is "blood_work", also extract one biomarkers array entry per measu
 
 When category is not "blood_work", omit the biomarkers array entirely.
 
+IMPORTANT: Always respond with exactly ONE JSON object at the top level. Never return an array. If the document contains multiple test dates (e.g. a pathology report showing current results alongside previous panels in a trend table), represent every result as a separate entry in the single \`biomarkers\` array, each carrying its own \`test_date\`. Do not split the response into multiple top-level objects.
+
 Do not include any text outside the JSON object. Do not wrap in markdown code blocks.`;
 
 // ─── JSON extraction helpers ──────────────────────────────────────────────
@@ -125,14 +127,65 @@ function extractTextFromMessage(message: Anthropic.Message): string {
     .join("");
 }
 
+/**
+ * Heal an Anthropic response that came back as a top-level array (one entry per
+ * test date) into a single JanetResult-shaped object. Single-object responses
+ * pass through untouched.
+ */
+export function healJanetJson(json: unknown): unknown {
+  if (!Array.isArray(json)) return json;
+
+  if (json.length === 0) {
+    throw new Error("janet: response was an empty array — no usable data");
+  }
+
+  if (json.length === 1) return json[0];
+
+  type EntryShape = {
+    category?: unknown;
+    summary?: unknown;
+    findings?: { date_of_test?: unknown; biomarkers?: unknown } & Record<string, unknown>;
+  };
+
+  const entries = json as EntryShape[];
+
+  // findings.date_of_test is an ISO YYYY-MM-DD string per the schema, so
+  // localeCompare gives correct chronological order; missing dates sink to bottom.
+  const sorted = [...entries].sort((a, b) => {
+    const da = typeof a?.findings?.date_of_test === "string" ? a.findings!.date_of_test as string : "";
+    const db = typeof b?.findings?.date_of_test === "string" ? b.findings!.date_of_test as string : "";
+    if (!da && !db) return 0;
+    if (!da) return 1;
+    if (!db) return -1;
+    return db.localeCompare(da);
+  });
+
+  const canonical = sorted[0];
+
+  const allBiomarkers = entries.flatMap((entry) => {
+    const bm = entry?.findings?.biomarkers;
+    return Array.isArray(bm) ? bm : [];
+  });
+
+  return {
+    category: canonical?.category,
+    summary: canonical?.summary,
+    findings: {
+      ...(canonical?.findings ?? {}),
+      biomarkers: allBiomarkers,
+    },
+  };
+}
+
 /** Parse raw model text into a validated JanetResult. Throws if no JSON is extractable. */
-function parseJanetResult(rawText: string): JanetResult {
+export function parseJanetResult(rawText: string): JanetResult {
   const json = extractJson(rawText);
   if (json === null) {
     throw new Error(`janet: no JSON extractable from response (preview: ${rawText.slice(0, 200)})`);
   }
+  const healed = healJanetJson(json);
   // safeParse is used so .catch() fallbacks apply field-by-field rather than hard-throwing
-  const parsed = JanetResultSchema.safeParse(json);
+  const parsed = JanetResultSchema.safeParse(healed);
   if (!parsed.success) {
     // Should never reach here given .catch() on every field, but surface it if it does
     throw new Error(`janet: Zod parse failed: ${parsed.error.message.slice(0, 300)}`);
