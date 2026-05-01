@@ -5,6 +5,8 @@
 .lc-dash {
   font-family: var(--lc-sans);
   color: var(--lc-ink);
+  max-width: 1080px;
+  margin: 0 auto;
   padding: 24px 0 80px;
   display: flex;
   flex-direction: column;
