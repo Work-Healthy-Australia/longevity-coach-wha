@@ -4,9 +4,23 @@ import { CONSENT_POLICIES } from "@/lib/consent/policies";
 import "../legal.css";
 
 export const metadata: Metadata = {
-  title: "Personal information collection notice · Janet Cares",
+  title: "Personal information collection notice",
   description:
     "How Janet Cares collects, uses, stores and discloses your personal and health information, in line with the Australian Privacy Principles (APPs).",
+  alternates: { canonical: "/legal/collection-notice" },
+  openGraph: {
+    type: "article",
+    url: "/legal/collection-notice",
+    title: "Personal information collection notice — Janet Cares",
+    description:
+      "How Janet Cares collects, uses, stores and discloses your personal and health information under the Australian Privacy Principles.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Collection notice — Janet Cares",
+    description:
+      "How Janet Cares handles your personal information under the Australian Privacy Principles.",
+  },
 };
 
 export default function CollectionNoticePage() {

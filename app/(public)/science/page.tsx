@@ -5,9 +5,23 @@ import { Science, HowItWorks, WhatYouGet, FinalCTA } from "../_components/sectio
 import "../home.css";
 
 export const metadata: Metadata = {
-  title: "Science · Janet Cares",
+  title: "Science",
   description:
-    "How Janet Cares calculates your biological age and risk scores - the models, the methodology, and the limits we&apos;re honest about.",
+    "How Janet Cares calculates your biological age and risk scores — the clinical models, the methodology, and the limits we're honest about.",
+  alternates: { canonical: "/science" },
+  openGraph: {
+    type: "article",
+    url: "/science",
+    title: "Science — Janet Cares",
+    description:
+      "The clinical models behind your biological age and five-domain risk scores, and the limits we're honest about.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Science — Janet Cares",
+    description:
+      "The clinical models behind your biological age and five-domain risk scores.",
+  },
 };
 
 export default function SciencePage() {

@@ -12,9 +12,23 @@ import {
 import "./home.css";
 
 export const metadata: Metadata = {
-  title: "Janet Cares - Live longer, on purpose.",
+  title: "Live longer, on purpose.",
   description:
-    "Seven minutes of honest questions. A clinically-grounded biological age, risk scores across five domains, and a supplement protocol made for you.",
+    "Seven minutes of honest questions. A clinically grounded biological age, risk scores across five domains, and a supplement protocol made for you — not for everyone.",
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    url: "/",
+    title: "Janet Cares — Live longer, on purpose.",
+    description:
+      "A clinically grounded biological age, risk scores across five domains, and a supplement protocol made for you — not for everyone.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Janet Cares — Live longer, on purpose.",
+    description:
+      "A clinically grounded biological age, risk scores across five domains, and a supplement protocol made for you — not for everyone.",
+  },
 };
 
 export default function Home() {

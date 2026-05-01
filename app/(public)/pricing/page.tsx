@@ -8,9 +8,23 @@ import { PricingClient, type PricingPlan, type PricingAddon } from "./PricingCli
 import "./pricing.css";
 
 export const metadata: Metadata = {
-  title: "Pricing — Janet Cares",
+  title: "Pricing",
   description:
-    "Choose your plan. Toggle add-ons. Transparent monthly or annual pricing.",
+    "Choose your plan. Toggle add-ons. Transparent monthly or annual pricing — cancel anytime.",
+  alternates: { canonical: "/pricing" },
+  openGraph: {
+    type: "website",
+    url: "/pricing",
+    title: "Pricing — Janet Cares",
+    description:
+      "Transparent monthly or annual pricing for personalised longevity coaching. Add-ons à la carte. Cancel anytime.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Pricing — Janet Cares",
+    description:
+      "Transparent monthly or annual pricing for personalised longevity coaching. Cancel anytime.",
+  },
 };
 
 export const dynamic = "force-dynamic";
