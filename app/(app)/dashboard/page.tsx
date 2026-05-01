@@ -241,8 +241,10 @@ export default async function DashboardPage() {
       <header className="lc-hero">
         <div className="lc-hero-row">
           <div>
-            <p className="lc-hero-eyebrow">{greeting}</p>
-            <h1>Welcome{firstName ? `, ${firstName}` : ""}.</h1>
+            <p className="lc-hero-eyebrow">{greeting} · Today</p>
+            <h1>
+              Welcome{firstName ? <>, <em>{firstName}</em></> : ""}.
+            </h1>
           </div>
           <div className="lc-hero-metrics">
             {wellness && (

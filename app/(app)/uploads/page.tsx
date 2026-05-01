@@ -30,10 +30,14 @@ export default async function UploadsPage() {
   if (!assessment) {
     return (
       <div className="lc-uploads">
-        <h1>Documents</h1>
-        <p className="lede">
-          Upload previous pathology, imaging, and test results for Janet to analyse.
-        </p>
+        <header className="lc-uploads-header">
+          <span className="lc-uploads-eyebrow">Documents · Uploads</span>
+          <h1>Your <em>records</em></h1>
+          <p className="lc-uploads-lede">
+            Upload previous pathology, imaging, and test results — Janet reads each file
+            and folds it into your risk profile.
+          </p>
+        </header>
         <div className="gate-card">
           <h2>Complete your health assessment first</h2>
           <p>
@@ -50,11 +54,14 @@ export default async function UploadsPage() {
 
   return (
     <div className="lc-uploads">
-      <h1>Documents</h1>
-      <p className="lede">
-        Upload previous pathology, imaging, or any test results. Janet reads each file and
-        categorises it automatically — this data improves your risk scores.
-      </p>
+      <header className="lc-uploads-header">
+        <span className="lc-uploads-eyebrow">Documents · Uploads</span>
+        <h1>Your <em>records</em></h1>
+        <p className="lc-uploads-lede">
+          Upload previous pathology, imaging, or any test results. Janet reads each
+          file and categorises it automatically — this data improves your risk scores.
+        </p>
+      </header>
       <UploadClient initialUploads={uploads ?? []} />
     </div>
   );

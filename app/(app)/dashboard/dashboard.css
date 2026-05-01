@@ -1,145 +1,164 @@
-.lc-dash {
-  --lc-primary: #2F6F8F;
-  --lc-primary-700: #245672;
-  --lc-primary-50: #EEF3F6;
-  --lc-sage: #6B8E83;
-  --lc-sage-50: #F0F4F2;
-  --lc-line: #E3E8EC;
-  --lc-line-soft: #EDF1F4;
-  --lc-ink: #2B2B2B;
-  --lc-ink-soft: #4B4B4B;
-  --lc-grey: #8A9AA5;
-  --lc-canvas: #FAFAF7;
-  --lc-surface: #FFFFFF;
-  --lc-success: #2A7A5C;
-  --lc-warning: #B5722F;
-  --lc-danger: #B5452F;
+/* /dashboard — anchored on the marketing design system in home.css.
+ * Tokens come from globals.css (:root). The hero replicates the home
+ * "report card" pattern — soft white surface with subtle shadow. */
 
-  font-family: var(--font-lc-sans), system-ui, sans-serif;
+.lc-dash {
+  font-family: var(--lc-sans);
   color: var(--lc-ink);
   padding: 24px 0 80px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 32px;
 }
 
-/* ----- Hero ----- */
+/* ----- Hero (soft publication card) ----- */
 .lc-hero {
-  background: linear-gradient(135deg, #2F6F8F 0%, #245672 100%);
-  color: #fff;
+  position: relative;
+  background: var(--lc-surface);
+  border: 1px solid var(--lc-line);
   border-radius: 20px;
-  padding: 28px 32px;
+  padding: 32px;
+  color: var(--lc-ink);
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 18px;
+  box-shadow:
+    0 30px 60px -30px rgba(24, 40, 52, 0.18),
+    0 2px 6px rgba(24, 40, 52, 0.04);
 }
 .lc-hero-row {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: 24px;
+  flex-wrap: wrap;
 }
 .lc-hero-eyebrow {
-  font-size: 13px;
-  margin: 0 0 4px;
-  color: rgba(255, 255, 255, 0.75);
-  letter-spacing: 0.02em;
+  font-family: var(--lc-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--lc-primary);
+  margin: 0 0 8px;
 }
 .lc-hero h1 {
-  font-family: var(--font-lc-serif), Georgia, serif;
-  font-weight: 400;
-  font-size: 30px;
+  font-family: var(--lc-serif);
+  font-weight: 300;
+  font-size: 36px;
+  line-height: 1.05;
   margin: 0;
-  letter-spacing: -0.01em;
-  color: #fff;
+  letter-spacing: -0.02em;
+  color: var(--lc-ink);
+}
+.lc-hero h1 em {
+  font-style: italic;
+  color: var(--lc-primary);
+  font-weight: 300;
 }
 .lc-hero-metrics {
   display: flex;
-  gap: 12px;
+  gap: 14px;
   align-items: stretch;
 }
 .lc-hero-wellness {
   text-align: center;
-  background: rgba(255, 255, 255, 0.95);
-  padding: 12px 18px;
-  border-radius: 12px;
-  min-width: 90px;
+  background: var(--lc-primary-50);
+  padding: 14px 20px;
+  border-radius: 14px;
+  min-width: 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 .lc-hero-wellness-value {
-  font-family: var(--font-lc-serif), Georgia, serif;
+  font-family: var(--lc-serif);
+  font-weight: 300;
   font-size: 32px;
-  font-weight: 600;
   line-height: 1;
+  letter-spacing: -0.025em;
+  color: var(--lc-primary);
   font-variant-numeric: tabular-nums;
 }
 .lc-hero-wellness-label {
-  font-size: 11px;
-  letter-spacing: 0.04em;
+  font-family: var(--lc-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #4B4B4B;
-  margin-top: 4px;
+  color: var(--lc-grey);
 }
 .lc-hero-streak {
   text-align: center;
-  background: rgba(255, 255, 255, 0.12);
-  padding: 12px 18px;
-  border-radius: 12px;
-  min-width: 90px;
+  background: var(--lc-line-soft);
+  padding: 14px 20px;
+  border-radius: 14px;
+  min-width: 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 .lc-hero-streak-value {
-  font-family: var(--font-lc-serif), Georgia, serif;
+  font-family: var(--lc-serif);
+  font-weight: 300;
   font-size: 32px;
-  font-weight: 500;
   line-height: 1;
+  letter-spacing: -0.025em;
+  color: var(--lc-ink);
   font-variant-numeric: tabular-nums;
 }
 .lc-hero-streak-label {
-  font-size: 11px;
-  letter-spacing: 0.06em;
+  font-family: var(--lc-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.75);
-  margin-top: 4px;
+  color: var(--lc-grey);
 }
 .lc-hero-summary {
   margin: 0;
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.85);
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--lc-ink-soft);
+  padding-top: 4px;
+  border-top: 1px solid var(--lc-line);
+  padding-top: 16px;
 }
 .lc-streak-dots {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   align-items: flex-start;
+  padding: 8px 0 4px;
 }
 .lc-streak-dot {
   width: 14px;
   height: 14px;
   border-radius: 50%;
   background-color: transparent;
-  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  border: 1.5px solid var(--lc-line);
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
 }
 .lc-streak-dot.filled {
-  background-color: rgba(255, 255, 255, 0.85);
-  border-color: rgba(255, 255, 255, 0.85);
+  background-color: var(--lc-primary);
+  border-color: var(--lc-primary);
 }
 .lc-streak-dot.rest {
-  background-color: rgba(255, 255, 255, 0.25);
-  border-color: rgba(255, 255, 255, 0.25);
+  background-color: var(--lc-line);
+  border-color: var(--lc-line);
 }
 .lc-streak-dot.today {
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.18);
+  box-shadow: 0 0 0 3px var(--lc-primary-50);
 }
 .lc-streak-day {
   position: absolute;
   top: 18px;
   left: 50%;
   transform: translateX(-50%);
+  font-family: var(--lc-mono);
   font-size: 9px;
-  color: rgba(255, 255, 255, 0.6);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--lc-grey);
 }
 
 /* ----- Alert chip ----- */

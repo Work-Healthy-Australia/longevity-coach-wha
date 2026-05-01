@@ -1,301 +1,452 @@
-.lc-labs {
-  --lc-primary: #2F6F8F;
-  --lc-primary-700: #245672;
-  --lc-primary-50: #EEF3F6;
-  --lc-sage: #6B8E83;
-  --lc-sage-50: #F0F4F2;
-  --lc-line: #E3E8EC;
-  --lc-line-soft: #EDF1F4;
-  --lc-ink: #2B2B2B;
-  --lc-ink-soft: #4B4B4B;
-  --lc-grey: #8A9AA5;
-  --lc-canvas: #FAFAF7;
-  --lc-surface: #FFFFFF;
+/* /labs and /labs/[biomarker] — anchored on the marketing design system in
+ * home.css. Tokens come from globals.css (:root); this file only adds shape +
+ * layout. Status / trend chips keep their semantic colors. */
 
-  font-family: var(--font-lc-sans), system-ui, sans-serif;
+.lc-labs {
+  font-family: var(--lc-sans);
   color: var(--lc-ink);
   max-width: 1080px;
   margin: 0 auto;
-  padding: 24px 20px 80px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 32px;
 }
 
-/* ----- Page header ----- */
-.lc-labs-header h1 {
-  font-family: var(--font-lc-serif), Georgia, serif;
-  font-weight: 500;
-  font-size: 28px;
-  margin: 0 0 8px;
-  letter-spacing: -0.01em;
-}
-.lc-labs-header-meta {
+/* ============ HEADER ============ */
+.lc-labs-header {
   display: flex;
-  gap: 16px;
-  font-size: 13px;
-  color: var(--lc-grey);
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--lc-line);
 }
-.lc-labs-header-meta span strong {
+
+.lc-labs-eyebrow {
+  font-family: var(--lc-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--lc-primary);
+}
+
+.lc-labs-eyebrow.grey { color: var(--lc-grey); }
+
+.lc-labs-header h1 {
+  font-family: var(--lc-serif);
+  font-weight: 300;
+  font-size: 40px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin: 0;
   color: var(--lc-ink);
-  font-weight: 600;
-  margin-right: 4px;
 }
-.lc-labs-breadcrumb {
-  font-size: 13px;
+
+.lc-labs-header h1 em {
+  font-style: italic;
+  color: var(--lc-primary);
+  font-weight: 300;
+}
+
+.lc-labs-lede {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--lc-ink-soft);
+  max-width: 600px;
+}
+
+.lc-labs-stat-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px 32px;
+  padding-top: 8px;
+  font-family: var(--lc-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
   color: var(--lc-grey);
-  margin-bottom: 6px;
+  text-transform: uppercase;
 }
+
+.lc-labs-stat-strip .stat {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.lc-labs-stat-strip .stat strong {
+  font-family: var(--lc-serif);
+  font-weight: 400;
+  font-size: 20px;
+  letter-spacing: -0.01em;
+  color: var(--lc-ink);
+  text-transform: none;
+}
+
+.lc-labs-breadcrumb {
+  font-family: var(--lc-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--lc-grey);
+  margin: 0;
+}
+
 .lc-labs-breadcrumb a {
   color: var(--lc-primary);
   text-decoration: none;
 }
+
 .lc-labs-breadcrumb a:hover { text-decoration: underline; }
 
-/* ----- Empty state ----- */
+/* ============ EMPTY STATE ============ */
 .lc-labs-empty {
-  background: var(--lc-canvas);
+  background: var(--lc-surface);
   border: 1px dashed var(--lc-line);
-  border-radius: 14px;
-  padding: 48px 32px;
+  border-radius: 20px;
+  padding: 56px 40px;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
+  box-shadow: 0 2px 6px rgba(24, 40, 52, 0.04);
 }
-.lc-labs-empty h2 {
-  font-family: var(--font-lc-serif), Georgia, serif;
-  font-weight: 500;
-  font-size: 22px;
-  margin: 0;
-}
-.lc-labs-empty p {
-  margin: 0;
-  font-size: 14px;
-  color: var(--lc-ink-soft);
-  max-width: 420px;
-  line-height: 1.5;
-}
-.lc-labs-empty-cta {
-  margin-top: 8px;
-  display: inline-block;
-  background: var(--lc-primary);
-  color: #fff;
-  font-weight: 600;
-  font-size: 14px;
-  padding: 10px 18px;
-  border-radius: 8px;
-  text-decoration: none;
-  transition: background 0.15s;
-}
-.lc-labs-empty-cta:hover { background: var(--lc-primary-700); }
 
-/* ----- Category sections ----- */
-.lc-labs-category {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.lc-labs-category h2 {
-  font-family: var(--font-lc-serif), Georgia, serif;
-  font-weight: 500;
-  font-size: 18px;
+.lc-labs-empty h2 {
+  font-family: var(--lc-serif);
+  font-weight: 400;
+  font-size: 26px;
+  letter-spacing: -0.01em;
   margin: 0;
   color: var(--lc-ink);
 }
 
-/* ----- Biomarker grid ----- */
+.lc-labs-empty p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--lc-ink-soft);
+  max-width: 460px;
+}
+
+.lc-labs-empty-cta {
+  margin-top: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--lc-primary);
+  color: #fff;
+  font-family: var(--lc-sans);
+  font-weight: 500;
+  font-size: 14px;
+  padding: 11px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.lc-labs-empty-cta:hover { background: var(--lc-primary-700); }
+
+/* ============ CATEGORY SECTIONS ============ */
+.lc-labs-category {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.lc-labs-category-headline {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lc-labs-category-eyebrow {
+  font-family: var(--lc-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--lc-grey);
+}
+
+.lc-labs-category h2 {
+  font-family: var(--lc-serif);
+  font-weight: 400;
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  margin: 0;
+  color: var(--lc-ink);
+}
+
+/* ============ BIOMARKER CARD GRID ============ */
 .lc-labs-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+  gap: 14px;
 }
+
 @media (max-width: 900px) {
   .lc-labs-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
 @media (max-width: 640px) {
   .lc-labs-grid { grid-template-columns: 1fr; }
-  .lc-labs { padding: 16px 14px 60px; gap: 18px; }
 }
 
 .lc-labs-card {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   background: var(--lc-surface);
   border: 1px solid var(--lc-line);
-  border-radius: 14px;
-  padding: 16px 18px;
+  border-radius: 16px;
+  padding: 18px 20px;
   text-decoration: none;
   color: var(--lc-ink);
+  box-shadow: 0 2px 6px rgba(24, 40, 52, 0.04);
   transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
 }
+
 .lc-labs-card:hover {
   border-color: var(--lc-primary);
-  box-shadow: 0 2px 8px rgba(47, 111, 143, 0.08);
+  box-shadow: 0 8px 20px -10px rgba(47, 111, 143, 0.18);
+  transform: translateY(-1px);
 }
+
 .lc-labs-card-head {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: 8px;
 }
+
 .lc-labs-card-name {
-  font-weight: 600;
-  font-size: 14px;
-  color: var(--lc-ink);
+  font-family: var(--lc-mono);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--lc-grey);
   line-height: 1.3;
 }
+
 .lc-labs-card-value {
-  font-family: var(--font-lc-serif), Georgia, serif;
-  font-size: 26px;
-  font-weight: 500;
+  font-family: var(--lc-serif);
+  font-weight: 300;
+  font-size: 32px;
   line-height: 1;
-  color: var(--lc-ink);
+  letter-spacing: -0.025em;
+  color: var(--lc-primary);
   font-variant-numeric: tabular-nums;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
 }
+
 .lc-labs-card-unit {
-  font-family: var(--font-lc-sans), system-ui, sans-serif;
-  font-size: 12px;
+  font-family: var(--lc-sans);
+  font-size: 13px;
   font-weight: 400;
   color: var(--lc-grey);
-  margin-left: 4px;
+  letter-spacing: 0;
 }
+
 .lc-labs-card-range {
-  font-size: 12px;
-  color: var(--lc-ink-soft);
+  font-family: var(--lc-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--lc-grey);
 }
+
 .lc-labs-card-foot {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-top: 4px;
+  padding-top: 10px;
+  border-top: 1px solid var(--lc-line-soft);
+  font-family: var(--lc-mono);
   font-size: 11px;
+  letter-spacing: 0.04em;
   color: var(--lc-grey);
 }
+
 .lc-labs-card-trend {
-  font-family: var(--font-lc-mono), ui-monospace, monospace;
+  font-family: var(--lc-mono);
   font-size: 10px;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  padding: 2px 8px;
+  padding: 3px 10px;
   border-radius: 999px;
-  background: var(--lc-line-soft);
-  color: var(--lc-ink-soft);
   font-weight: 500;
 }
-.lc-labs-card-trend.improving { background: #D1FAE5; color: #065F46; }
-.lc-labs-card-trend.stable    { background: var(--lc-line-soft); color: var(--lc-ink-soft); }
-.lc-labs-card-trend.declining { background: #FEE2E2; color: #991B1B; }
 
-/* ----- Status pill ----- */
+.lc-labs-card-trend.improving { background: var(--lc-success-50); color: var(--lc-success); }
+.lc-labs-card-trend.stable    { background: var(--lc-line-soft); color: var(--lc-grey); }
+.lc-labs-card-trend.declining { background: var(--lc-danger-50); color: var(--lc-danger); }
+
+/* ============ STATUS PILL ============ */
 .lc-status {
-  font-family: var(--font-lc-mono), ui-monospace, monospace;
+  font-family: var(--lc-mono);
   font-size: 10px;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  padding: 3px 9px;
+  padding: 4px 10px;
   border-radius: 999px;
-  font-weight: 600;
+  font-weight: 500;
   white-space: nowrap;
 }
+
 .lc-status-low        { background: #DBEAFE; color: #1E40AF; }
-.lc-status-optimal    { background: #D1FAE5; color: #065F46; }
-.lc-status-borderline { background: #FEF3C7; color: #92400E; }
-.lc-status-high       { background: #FEE2E2; color: #991B1B; }
-.lc-status-critical   { background: #B5452F; color: #FFFFFF; }
+.lc-status-optimal    { background: var(--lc-success-50); color: var(--lc-success); }
+.lc-status-borderline { background: #FDF1E4; color: var(--lc-warning); }
+.lc-status-high       { background: var(--lc-danger-50); color: var(--lc-danger); }
+.lc-status-critical   { background: var(--lc-danger); color: #fff; }
 .lc-status-unknown    { background: var(--lc-line-soft); color: var(--lc-grey); }
 
-/* ----- Detail page ----- */
+/* ============ DETAIL PAGE ============ */
 .lc-labs-detail-header {
+  position: relative;
   background: var(--lc-surface);
   border: 1px solid var(--lc-line);
-  border-radius: 14px;
-  padding: 20px 24px;
+  border-radius: 20px;
+  padding: 32px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 14px;
+  box-shadow:
+    0 30px 60px -30px rgba(24, 40, 52, 0.18),
+    0 2px 6px rgba(24, 40, 52, 0.04);
 }
+
+.lc-labs-detail-eyebrow {
+  font-family: var(--lc-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--lc-primary);
+}
+
 .lc-labs-detail-name {
-  font-family: var(--font-lc-serif), Georgia, serif;
-  font-weight: 500;
-  font-size: 26px;
+  font-family: var(--lc-serif);
+  font-weight: 400;
+  font-size: 32px;
+  letter-spacing: -0.015em;
   margin: 0;
+  color: var(--lc-ink);
 }
+
 .lc-labs-detail-row {
   display: flex;
   align-items: baseline;
   gap: 16px;
   flex-wrap: wrap;
+  padding: 12px 0;
+  border-top: 1px solid var(--lc-line);
+  border-bottom: 1px solid var(--lc-line);
 }
+
 .lc-labs-detail-value {
-  font-family: var(--font-lc-serif), Georgia, serif;
-  font-size: 32px;
-  font-weight: 500;
+  font-family: var(--lc-serif);
+  font-size: 56px;
+  font-weight: 300;
   line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--lc-primary);
   font-variant-numeric: tabular-nums;
 }
+
 .lc-labs-detail-unit {
+  font-family: var(--lc-sans);
   font-size: 14px;
   color: var(--lc-grey);
-  margin-left: 4px;
+  margin-left: 6px;
 }
+
 .lc-labs-detail-meta {
-  font-size: 13px;
-  color: var(--lc-ink-soft);
+  font-family: var(--lc-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  color: var(--lc-grey);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
 }
+
 .lc-labs-detail-meta strong {
   color: var(--lc-ink);
-  font-weight: 600;
+  font-weight: 500;
 }
 
-.lc-labs-chart-card {
-  background: var(--lc-surface);
-  border: 1px solid var(--lc-line);
-  border-radius: 14px;
-  padding: 20px 16px;
-}
-
+/* Card chrome reused by chart and history */
+.lc-labs-chart-card,
 .lc-labs-history {
   background: var(--lc-surface);
   border: 1px solid var(--lc-line);
-  border-radius: 14px;
-  padding: 20px 24px;
+  border-radius: 20px;
+  padding: 28px 32px;
+  box-shadow: 0 2px 6px rgba(24, 40, 52, 0.04);
 }
+
+.lc-labs-chart-card { padding: 24px 16px; }
+
+.lc-labs-section-headline {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
 .lc-labs-history h2 {
-  font-family: var(--font-lc-serif), Georgia, serif;
-  font-weight: 500;
-  font-size: 18px;
-  margin: 0 0 12px;
+  font-family: var(--lc-serif);
+  font-weight: 400;
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  margin: 0;
+  color: var(--lc-ink);
 }
+
+/* ============ HISTORY TABLE ============ */
 .lc-labs-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
+  font-size: 13.5px;
 }
+
 .lc-labs-table th,
 .lc-labs-table td {
   text-align: left;
-  padding: 10px 8px;
+  padding: 11px 10px;
   border-bottom: 1px solid var(--lc-line-soft);
 }
+
 .lc-labs-table td { font-variant-numeric: tabular-nums; }
+
 .lc-labs-table th {
+  font-family: var(--lc-mono);
   font-size: 11px;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--lc-grey);
-  font-weight: 600;
+  font-weight: 500;
 }
+
 .lc-labs-table td { color: var(--lc-ink-soft); }
 .lc-labs-table tbody tr:last-child td { border-bottom: none; }
 
 .lc-labs-note {
-  font-size: 12px;
+  font-family: var(--lc-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
   color: var(--lc-grey);
-  font-style: italic;
-  line-height: 1.5;
+  line-height: 1.55;
   padding: 0 4px;
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .lc-labs-detail-header { padding: 24px; }
+  .lc-labs-detail-name { font-size: 26px; }
+  .lc-labs-detail-value { font-size: 44px; }
+  .lc-labs-chart-card,
+  .lc-labs-history { padding: 22px 18px; }
 }

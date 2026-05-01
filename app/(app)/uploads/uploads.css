@@ -1,104 +1,159 @@
-.lc-uploads {
-  --lc-primary: #2F6F8F;
-  --lc-primary-700: #245672;
-  --lc-primary-50: #EEF3F6;
-  --lc-line: #E3E8EC;
-  --lc-line-soft: #EDF1F4;
-  --lc-ink: #2B2B2B;
-  --lc-ink-soft: #4B4B4B;
-  --lc-grey: #8A9AA5;
-  --lc-surface: #FFFFFF;
-  --lc-success: #2A7A5C;
-  --lc-success-50: #E6F4EE;
-  --lc-warning: #B5722F;
-  --lc-warning-50: #FAEFE0;
-  --lc-danger: #B5452F;
-  --lc-danger-50: #FBEAE5;
+/* /uploads — anchored on the marketing design system in home.css.
+ * Tokens come from globals.css (:root); this file only adds shape + layout. */
 
-  font-family: var(--font-lc-sans), system-ui, sans-serif;
+.lc-uploads {
+  font-family: var(--lc-sans);
+  color: var(--lc-ink);
+  max-width: 880px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* ============ HEADER ============ */
+.lc-uploads-header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--lc-line);
+}
+
+.lc-uploads-eyebrow {
+  font-family: var(--lc-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--lc-primary);
+}
+
+.lc-uploads-eyebrow.grey { color: var(--lc-grey); }
+
+.lc-uploads-header h1 {
+  font-family: var(--lc-serif);
+  font-weight: 300;
+  font-size: 40px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin: 0;
   color: var(--lc-ink);
 }
 
-.lc-uploads h1 {
-  font-family: var(--font-lc-serif), Georgia, serif;
-  font-weight: 400;
-  font-size: 32px;
-  margin: 0 0 6px;
-  letter-spacing: -0.01em;
+.lc-uploads-header h1 em {
+  font-style: italic;
+  color: var(--lc-primary);
+  font-weight: 300;
 }
 
-/* Gate state */
-.lc-uploads .gate-card {
-  background: var(--lc-primary-50);
-  border: 1px solid var(--lc-line);
-  border-radius: 16px;
-  padding: 40px 32px;
-  text-align: center;
-  max-width: 520px;
-}
-.lc-uploads .gate-card h2 {
-  font-family: var(--font-lc-serif), Georgia, serif;
-  font-weight: 400;
-  font-size: 22px;
-  margin: 0 0 12px;
-}
-.lc-uploads .gate-card p {
-  color: var(--lc-ink-soft);
-  font-size: 15px;
-  margin: 0 0 24px;
+.lc-uploads-lede {
+  margin: 0;
+  font-size: 16px;
   line-height: 1.55;
+  color: var(--lc-ink-soft);
+  max-width: 600px;
 }
 
-/* Drop zone */
+/* ============ GATE STATE ============ */
+.lc-uploads .gate-card {
+  background: var(--lc-surface);
+  border: 1px dashed var(--lc-line);
+  border-radius: 20px;
+  padding: 56px 40px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 2px 6px rgba(24, 40, 52, 0.04);
+}
+
+.lc-uploads .gate-card h2 {
+  font-family: var(--lc-serif);
+  font-weight: 400;
+  font-size: 26px;
+  letter-spacing: -0.01em;
+  margin: 0;
+  color: var(--lc-ink);
+}
+
+.lc-uploads .gate-card p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--lc-ink-soft);
+  max-width: 460px;
+}
+
+/* ============ DROPZONE ============ */
 .lc-uploads .dropzone {
+  background: var(--lc-surface);
   border: 2px dashed var(--lc-line);
-  border-radius: 16px;
-  padding: 48px 32px;
+  border-radius: 20px;
+  padding: 56px 40px;
   text-align: center;
   cursor: pointer;
   transition: border-color 0.15s, background 0.15s;
-  background: var(--lc-surface);
-  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 2px 6px rgba(24, 40, 52, 0.04);
 }
+
 .lc-uploads .dropzone.drag-over {
   border-color: var(--lc-primary);
   background: var(--lc-primary-50);
 }
+
 .lc-uploads .dropzone input[type="file"] {
   display: none;
 }
+
 .lc-uploads .dropzone-icon {
-  font-size: 36px;
-  margin-bottom: 12px;
+  font-size: 32px;
   color: var(--lc-grey);
-}
-.lc-uploads .dropzone-label {
-  font-size: 15px;
-  color: var(--lc-ink-soft);
-  margin-bottom: 6px;
-}
-.lc-uploads .dropzone-label strong {
-  color: var(--lc-primary);
-  cursor: pointer;
-}
-.lc-uploads .dropzone-hint {
-  font-size: 13px;
-  color: var(--lc-grey);
+  font-family: var(--lc-serif);
+  font-weight: 300;
+  line-height: 1;
 }
 
-/* Upload progress */
+.lc-uploads .dropzone-label {
+  font-family: var(--lc-serif);
+  font-weight: 400;
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  color: var(--lc-ink);
+}
+
+.lc-uploads .dropzone-label strong {
+  color: var(--lc-primary);
+  font-weight: 400;
+  font-style: italic;
+  cursor: pointer;
+}
+
+.lc-uploads .dropzone-hint {
+  font-family: var(--lc-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  color: var(--lc-grey);
+  text-transform: uppercase;
+}
+
+/* ============ UPLOAD PROGRESS ============ */
 .lc-uploads .upload-progress {
   background: var(--lc-primary-50);
-  border: 1px solid var(--lc-line);
+  border: 1px solid var(--lc-primary-50);
   border-radius: 12px;
-  padding: 16px 20px;
-  margin-bottom: 16px;
+  padding: 14px 18px;
   font-size: 14px;
-  color: var(--lc-ink-soft);
+  color: var(--lc-ink);
   display: flex;
   align-items: center;
   gap: 12px;
 }
+
 .lc-uploads .upload-progress .spinner {
   width: 18px;
   height: 18px;
@@ -108,11 +163,12 @@
   animation: lc-spin 0.7s linear infinite;
   flex-shrink: 0;
 }
+
 @keyframes lc-spin {
   to { transform: rotate(360deg); }
 }
 
-/* Error banner */
+/* ============ ERROR BANNER ============ */
 .lc-uploads .error-banner {
   background: var(--lc-danger-50);
   border: 1px solid var(--lc-danger);
@@ -120,41 +176,73 @@
   padding: 12px 16px;
   font-size: 14px;
   color: var(--lc-danger);
-  margin-bottom: 16px;
 }
 
-/* File list */
+/* ============ FILE LIST ============ */
+.lc-uploads-files-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.lc-uploads-files-headline {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lc-uploads-files-headline h2 {
+  font-family: var(--lc-serif);
+  font-weight: 400;
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  margin: 0;
+  color: var(--lc-ink);
+}
+
 .lc-uploads .files-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
+
 .lc-uploads .file-card {
   background: var(--lc-surface);
   border: 1px solid var(--lc-line);
-  border-radius: 14px;
+  border-radius: 16px;
   padding: 20px 24px;
   display: grid;
   grid-template-columns: auto 1fr auto;
   gap: 0 16px;
   align-items: start;
+  box-shadow: 0 2px 6px rgba(24, 40, 52, 0.04);
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
+
+.lc-uploads .file-card:hover {
+  border-color: var(--lc-primary);
+  box-shadow: 0 8px 20px -10px rgba(47, 111, 143, 0.18);
+}
+
 .lc-uploads .file-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   background: var(--lc-primary-50);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 20px;
+  color: var(--lc-primary);
   flex-shrink: 0;
 }
+
 .lc-uploads .file-body {
   min-width: 0;
 }
+
 .lc-uploads .file-name {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 500;
   color: var(--lc-ink);
   margin: 0 0 4px;
@@ -162,17 +250,22 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 .lc-uploads .file-meta {
-  font-size: 13px;
+  font-family: var(--lc-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
   color: var(--lc-grey);
   margin: 0 0 8px;
 }
+
 .lc-uploads .file-summary {
   font-size: 14px;
   color: var(--lc-ink-soft);
   margin: 0;
-  line-height: 1.5;
+  line-height: 1.55;
 }
+
 .lc-uploads .file-actions {
   display: flex;
   flex-direction: column;
@@ -180,72 +273,109 @@
   gap: 8px;
 }
 
-/* Badges */
+/* ============ BADGES ============ */
 .lc-uploads .badge {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 3px 10px;
-  border-radius: 20px;
-  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-family: var(--lc-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   font-weight: 500;
-  font-family: var(--font-lc-mono), monospace;
   white-space: nowrap;
 }
+
 .lc-uploads .badge.pending,
 .lc-uploads .badge.processing {
   background: var(--lc-warning-50);
   color: var(--lc-warning);
 }
+
 .lc-uploads .badge.done { background: var(--lc-success-50); color: var(--lc-success); }
 .lc-uploads .badge.error { background: var(--lc-danger-50); color: var(--lc-danger); }
 
 .lc-uploads .category-badge {
   display: inline-block;
-  padding: 2px 8px;
+  padding: 3px 8px;
   border-radius: 6px;
-  font-size: 12px;
+  font-family: var(--lc-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
   background: var(--lc-primary-50);
-  color: var(--lc-primary-700);
+  color: var(--lc-primary);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  font-family: var(--font-lc-mono), monospace;
+  font-weight: 500;
 }
 
-/* Buttons */
+/* ============ BUTTONS (mirrors home.css .btn) ============ */
 .lc-uploads .btn {
+  font-family: var(--lc-sans);
+  font-weight: 500;
+  font-size: 14px;
+  padding: 11px 20px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 6px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  padding: 8px 18px;
-  cursor: pointer;
-  border: none;
+  gap: 8px;
+  transition: all 0.15s ease;
   text-decoration: none;
-  transition: background 0.12s, color 0.12s;
+  white-space: nowrap;
 }
+
+.lc-uploads .btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 .lc-uploads .btn-primary {
   background: var(--lc-primary);
   color: #fff;
 }
-.lc-uploads .btn-primary:hover { background: var(--lc-primary-700); }
+
+.lc-uploads .btn-primary:hover:not(:disabled) {
+  background: var(--lc-primary-700);
+}
+
 .lc-uploads .btn-ghost {
   background: transparent;
-  color: var(--lc-danger);
+  color: var(--lc-ink-soft);
   border: 1px solid var(--lc-line);
-  padding: 6px 12px;
+  padding: 7px 14px;
   font-size: 13px;
 }
-.lc-uploads .btn-ghost:hover { background: var(--lc-danger-50); border-color: var(--lc-danger); }
-.lc-uploads .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-/* Empty state */
+.lc-uploads .btn-ghost:hover:not(:disabled) {
+  background: var(--lc-danger-50);
+  border-color: var(--lc-danger);
+  color: var(--lc-danger);
+}
+
+/* ============ EMPTY STATE (no files yet) ============ */
 .lc-uploads .empty-state {
   text-align: center;
-  padding: 48px 24px;
+  padding: 32px 24px;
+  font-family: var(--lc-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
   color: var(--lc-grey);
-  font-size: 15px;
+  text-transform: uppercase;
+}
+
+@media (max-width: 640px) {
+  .lc-uploads .file-card {
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+  }
+  .lc-uploads .file-actions {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin-top: 8px;
+  }
+  .lc-uploads .dropzone { padding: 40px 24px; }
 }

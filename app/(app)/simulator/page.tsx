@@ -93,17 +93,19 @@ export default async function SimulatorPage() {
     return (
       <div className="lc-sim">
         <header className="lc-sim-header">
-          <h1>Risk simulator</h1>
-          <p className="lc-sim-subtitle">
-            Move the sliders. See how each one shifts your risk and domain scores.
+          <span className="lc-sim-eyebrow">Insights · Simulator</span>
+          <h1>What <em>if?</em></h1>
+          <p className="lc-sim-lede">
+            Move a number, see how it changes your composite risk and the
+            five domain scores.
           </p>
         </header>
         <div className="lc-sim-empty">
           <h2>Complete your assessment to use the simulator</h2>
           <p>
-            The simulator works off your current baseline. Once you've completed
-            the questionnaire and uploaded a recent panel, you'll be able to see
-            how a change in your numbers shifts your risk profile.
+            The simulator works off your current baseline. Once you&apos;ve
+            completed the questionnaire and uploaded a recent panel, you&apos;ll
+            be able to see how a change in your numbers shifts your risk profile.
           </p>
           <Link href="/onboarding" className="lc-sim-empty-cta">
             Start the assessment →
@@ -134,9 +136,11 @@ export default async function SimulatorPage() {
   return (
     <div className="lc-sim">
       <header className="lc-sim-header">
-        <h1>Risk simulator</h1>
-        <p className="lc-sim-subtitle">
-          Move the sliders. See how each one shifts your risk and domain scores.
+        <span className="lc-sim-eyebrow">Insights · Simulator</span>
+        <h1>What <em>if?</em></h1>
+        <p className="lc-sim-lede">
+          Move a number, see how it changes your composite risk and the
+          five domain scores. Nothing here is saved — it&apos;s a sandbox.
         </p>
       </header>
       <SimulatorClient
