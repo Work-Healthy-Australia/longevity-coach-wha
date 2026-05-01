@@ -6,9 +6,45 @@
   color: var(--lc-ink);
   max-width: 1080px;
   margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 32px;
+}
+
+.lc-report-main {
   display: flex;
   flex-direction: column;
   gap: 32px;
+  min-width: 0;
+}
+
+@media (min-width: 1024px) {
+  .lc-report {
+    max-width: 1184px;
+    grid-template-columns: minmax(0, 1fr) 360px;
+    align-items: start;
+  }
+  .lc-report-aside {
+    position: sticky;
+    top: 88px;
+    align-self: start;
+    height: calc(100dvh - 120px);
+    max-height: 720px;
+  }
+  .lc-report-aside .chat-section {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+  }
+  .lc-report-aside .chat-container {
+    flex: 1;
+    min-height: 0;
+  }
+  .lc-report-aside .chat-messages {
+    flex: 1;
+    min-height: 0;
+    max-height: none;
+  }
 }
 
 /* ============ HEADER ============ */
