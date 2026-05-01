@@ -5,7 +5,7 @@
 .lc-sim {
   font-family: var(--lc-sans);
   color: var(--lc-ink);
-  max-width: 960px;
+  max-width: 1080px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
