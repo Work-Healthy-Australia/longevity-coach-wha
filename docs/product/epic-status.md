@@ -1,6 +1,6 @@
 # Longevity Coach — Epic Status Dashboard
 
-Last updated **2026-04-30** (Booking calendar W1-4 + alert-notification cron + cost monitoring + Sentry install + employer dashboard + journal enhancements + insights category filter + deceased-flag schema all landed since the last sync).
+Last updated **2026-04-30** (Booking calendar W1-4 + alert-notification cron + cost monitoring + Sentry install + employer dashboard + journal enhancements + insights category filter + deceased-flag schema all landed since the last sync). **Late 2026-04-30 hotfix:** PR [#78](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/78) shipped a P0 fix for the silently-failing risk-narrative pipeline (Atlas was throwing schema validation errors against Anthropic's structured-output endpoint for 2 days; every recent `risk_scores` row had `narrative=null`); 11 production migrations that had drifted between repo and Supabase (`agent_usage`, `notification_prefs`, `clinician_availability`, `appointments_cancellation_log`, etc.) were caught up; both affected users (`c32699e1-…`, `865cbc5c-…`) backfilled; and clinical review packs delivered for the GP and integrative-medicine panels.
 
 Companion to [epics.md](./epics.md) (strategy, stable) and [product.md](./product.md) (vision). This file is the **at-a-glance status** of each epic: how far through the build pipeline, what's still outstanding, what's broken right now.
 
@@ -24,8 +24,8 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 |---|---|---|---:|---:|---:|
 | 1 | The Front Door | `●●●●●` | 100% | 0 | 3 |
 | 2 | The Intake | `●●●●○` | 100% | 0 | 0 |
-| 3 | The Number | `●●●○○` | 90% | 0 | 1 |
-| 4 | The Protocol | `●●●○○` | 85% | 0 | 0 |
+| 3 | The Number | `●●●○○` | 92% | 0 | 2 |
+| 4 | The Protocol | `●●●○○` | 87% | 0 | 0 |
 | 5 | The Report | `●●●○○` | 92% | 0 | 1 |
 | 6 | The Coach | `●●●●○` | 100% | 0 | 1 |
 | 7 | The Daily Return | `●●●●○` | 100% | 0 | 0 |
@@ -35,9 +35,9 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 | 11 | The Trust Layer | `●●●○○` | 97% | 0 | 1 |
 | 12 | The Distribution | `●●◐○○` | 75% | 0 | 0 |
 | 13 | The Business Model | `●●◐○○` | 50% | 0 | 0 |
-| 14 | The Platform Foundation | `●●◐○○` | 80% | 0 | 0 |
+| 14 | The Platform Foundation | `●●◐○○` | 78% | 0 | 0 |
 
-**Bug totals:** 0 open, 8 closed. (Bug log: forthcoming `qa/QA-bugs.md`.)
+**Bug totals:** 0 open, 9 closed. (Bug log: forthcoming `qa/QA-bugs.md`.)
 
 ---
 
@@ -99,9 +99,10 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 3: The Number
 
 `●●●○○` Planned · Feature Complete · Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 90%** — risk_analyzer pipeline ships risk narratives end-to-end. Deterministic risk engine ported from Base44 and unit tested; **engine output now injected into Atlas prompt as baseline anchors** (2026-04-29) — Atlas must explain deviations >10 points. BUG-003 closed. GP-panel review still outstanding.
+**Estimate: 92%** — risk_analyzer pipeline ships risk narratives end-to-end. Deterministic risk engine ported from Base44 and unit tested; **engine output now injected into Atlas prompt as baseline anchors** (2026-04-29) — Atlas must explain deviations >10 points. **GP review pack delivered 2026-04-30** at [`docs/qa/2026-04-30-narrative-review-pack.md`](../qa/2026-04-30-narrative-review-pack.md) — 10 representative samples grounded in the deterministic engine baseline; review response pending. BUG-003 closed. **BUG-009 closed (2026-04-30):** risk-narrative pipeline silent failure root-caused to AI SDK's structured-output endpoint rejecting `min`/`max` on numbers and `propertyNames` on records — schema fix in PR [#78](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/78), affected users backfilled.
 
 **Shipped:**
+- **risk-narrative schema hardening** (2026-04-30, PR #78) — Atlas was silently failing every assessment for ~48h because Anthropic's structured-output endpoint rejected `minimum`/`maximum` on number types and `propertyNames` on records; all 3 retry tiers threw and the pipeline caught it as non-fatal so members never saw a narrative. Fix extracts the Zod schema into [`lib/ai/pipelines/risk-narrative-schema.ts`](../../lib/ai/pipelines/risk-narrative-schema.ts), drops the unsupported constraints in favour of `.describe()` guidance, accepts permissive shapes (`z.array(z.unknown())`) and coerces post-parse, adds `clampAtlasOutput()` that clamps numbers / truncates narrative / stringifies object items, and bumps `risk_analyzer.max_tokens` 2048→4096 so structured JSON doesn't truncate. Both affected users backfilled directly via `runRiskNarrativePipeline()`. The `0059_risk_scores_history` constraint preserved the original null rows as audit trail.
 - risk_analyzer pipeline at `lib/ai/pipelines/risk-narrative.ts`.
 - Pipeline endpoint at `app/api/pipelines/risk-narrative/route.ts` (secured with `x-pipeline-secret`).
 - Pipeline triggered by `submitAssessment()`, by every successful upload, and now by every daily check-in.
@@ -119,6 +120,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 **Open bugs:** none.
 
 **Closed bugs:**
+- **BUG-009** (P0, CLOSED 2026-04-30): risk_analyzer pipeline silently failing for ~48h — every recent `risk_scores` row had `narrative=null`. Root cause: AI SDK's structured-output endpoint rejects `minimum`/`maximum` on number types and `propertyNames` on `z.record(...)`. Fixed in PR [#78](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/78); 2 affected users backfilled; the silent-failure mode that hid this for 2 days flagged for follow-up under Epic 14 (cost-monitoring telemetry was also offline because its migration had drifted).
 - **BUG-003** (P1, CLOSED 2026-04-28): risk_analyzer was writing `confidence_level = 'moderate'` for every patient because the deterministic engine was not ported. Deterministic engine now live in `lib/risk/`; scores are evidence-grounded.
 
 ---
@@ -126,7 +128,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 4: The Protocol
 
 `●●●○○` Planned · Feature Complete · Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 85%** — supplement_advisor pipeline ships a 30-day protocol after every risk_analyzer run; supplement_advisor eval suite shipped 2026-04-28 with 4 rubrics. Deterministic supplement catalog (42 evidence-backed items) seeded and live; `recommendFromRisk()` resolver fully wired.
+**Estimate: 87%** — supplement_advisor pipeline ships a 30-day protocol after every risk_analyzer run; supplement_advisor eval suite shipped 2026-04-28 with 4 rubrics. Deterministic supplement catalog (42 evidence-backed items) seeded and live; `recommendFromRisk()` resolver fully wired. **Integrative-medicine review pack delivered 2026-04-30** at [`docs/qa/2026-04-30-protocol-review-pack.md`](../qa/2026-04-30-protocol-review-pack.md) — 10 representative samples (same fixtures as the Atlas pack so reviewers can cross-reference); review response pending.
 
 **Shipped:**
 - supplement_advisor pipeline at `lib/ai/pipelines/supplement-protocol.ts`.
@@ -140,7 +142,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 
 **Outstanding:**
 - Janet (Supplement Advisor mode) tool surface for "tell me more about this item."
-- Integrative-medicine doctor panel review of 10 sample protocols.
+- Integrative-medicine doctor panel review pack DELIVERED 2026-04-30; awaiting reviewer response.
 - Supplement-marketplace integration so a tap on an item adds it to a basket (Epic 12).
 
 **Open bugs:** none.
@@ -473,7 +475,7 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 ### Epic 14: The Platform Foundation
 
 `●●◐○○` Planned · Feature Complete · ◐ Unit Tested · ○ Regression Tested · ○ User Reviewed
-**Estimate: 80%** — substantial pieces already shipped via the existing `.claude/rules/` discipline (RLS, PII boundary, secret-key naming, pipeline auth, migration hygiene). CI Vitest+pgTAP and Gitleaks secret scanning shipped 2026-04-28; **Playwright + Lighthouse CI jobs added 2026-04-29** (Sprint 2 W1). **Cost monitoring shipped 2026-04-30** — `agent_usage` telemetry, `/admin/cost` dashboard, daily rollup cron, $50 budget alert email. **Sentry installed 2026-04-30** (`@sentry/nextjs` wired into `next.config`); DSN env var still pending. The remaining operational layer (DR drill, pen-test cadence, log-scrub automation) is unbuilt.
+**Estimate: 78%** — substantial pieces already shipped via the existing `.claude/rules/` discipline (RLS, PII boundary, secret-key naming, pipeline auth, migration hygiene). CI Vitest+pgTAP and Gitleaks secret scanning shipped 2026-04-28; **Playwright + Lighthouse CI jobs added 2026-04-29** (Sprint 2 W1). **Cost monitoring shipped 2026-04-30** — `agent_usage` telemetry, `/admin/cost` dashboard, daily rollup cron, $50 budget alert email; **migration applied to prod 2026-04-30** (was code-only until then; `[agent_usage] insert failed (non-fatal)` logs gone). **Sentry installed 2026-04-30** (`@sentry/nextjs` wired into `next.config`); DSN env var still pending. **Schema-drift catch-up 2026-04-30** — 11 migrations had landed in repo without being applied to prod (booking calendar, meal-plan idempotency, risk-scores history, agent_usage, notification_prefs, deceased flag, journal enhancements, appointment cancellation); all caught up via direct apply, postgrest schema cache reloaded. **CI infra debt remains:** Lint, Typecheck, pgTAP, and Gitleaks jobs all fail at boot (pnpm action version mismatch + missing org licence + missing `auth.jwt()` in pgTAP container) so PRs ship without those gates exercising. The remaining operational layer (DR drill, pen-test cadence, log-scrub automation, CI repair) is unbuilt.
 
 **Shipped:**
 - RLS on every table across `public`, `biomarkers`, `clinical`, `programs`, `billing` schemas.
@@ -505,6 +507,8 @@ Symbol key: `●` passed · `◐` partial · `○` not yet · `↻` regressed (w
 - Production-readiness checklist (`docs/operations/checklist.md`) and enforcement in PR template.
 - AHPRA breach-notification protocol document.
 - Data residency confirmation per region.
+- **CI repair (P1):** all 4 pre-existing CI failures need fixing so future PRs are actually gated. Fix `pnpm/action-setup` version conflict (remove `version: 10` so it picks up `packageManager` from `package.json`), add Gitleaks org licence secret or swap to a self-hosted scanner, bootstrap `auth.jwt()` in the pgTAP test container.
+- **Schema-drift prevention:** add a CI gate that compares `supabase/migrations/` against `supabase_migrations.schema_migrations` on prod and fails if any file is unapplied for >7 days. Today's drift went unnoticed for 2+ days; the cost was 2 users with broken narratives.
 - ~~Migration filename collisions~~ **RESOLVED** (2026-04-29) — one-shot renumber collapsed collision groups into monotonic ordering. Tracking reconciliation migration at `0057_renumber_tracking.sql` updates `supabase_migrations.schema_migrations` in production. Latest migration is `0067_appointment_cancellation.sql`.
 
 **Open bugs:** none directly.
