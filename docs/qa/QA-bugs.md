@@ -18,8 +18,6 @@ Bug IDs are sequential across the whole project — never re-use.
 
 | ID | Severity | Epic | Title | Surface | First seen | Status | Notes |
 |---|---|---|---|---|---|---|---|
-| BUG-010 | P1 | 3 | Onboarding silently fails to write `risk_scores` row (onConflict mismatch) | onboarding | 2026-04-30 | IN-PROGRESS | Pre-existing. Fix in [#88](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/88). |
-| BUG-011 | P2 | 1 | `/account` Identity + Security forms hide uncaught throws behind global-error.tsx | account | 2026-04-30 | IN-PROGRESS | Pre-existing. Fix in [#93](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/93). |
 | BUG-012 | P1 | 1 | UK clinical credentials shown on AHPRA-regulated AU product | / | 2026-05-01 | OPEN | Hero + science pages cite GMC, Royal College of GPs, Imperial Longevity Lab, UK Biobank. AU regulator is AHPRA. Trust + regulatory mismatch on the front door. See [§BUG-012](#bug-012). |
 | BUG-013 | P1 | 12 | `/pricing` page nav layout completely broken | /pricing | 2026-05-01 | OPEN | `PublicNav` uses `.nav` classes scoped to `.lc-home` in home.css; pricing wraps in `.lc-pricing` so styles don't apply. Logo renders at full 880×203, nav links collapse to plain text. See [§BUG-013](#bug-013). |
 | BUG-014 | P1 | 12, 13 | `/pricing` shows "$0.00/mo" with no plan cards | /pricing | 2026-05-01 | OPEN | `billing.plans` returns empty array → no cards rendered → only the totals row. "Continue to checkout" remains enabled at $0. Either seed prod-like data or hide the totals row when no plans loaded. See [§BUG-014](#bug-014). |
@@ -45,6 +43,8 @@ Bug IDs are sequential across the whole project — never re-use.
 | BUG-005 | P1 | 5 | Branded PDF route returned an unstyled skeleton | 2026-04-29 | Now logo, cover page, big-number summary, swatches, supplement table, footer. |
 | BUG-006 | P3 | 1 | No Account link in logged-in nav | 2026-04-28 | Page now exists and is linked. |
 | BUG-009 | P0 | 3 | risk_analyzer pipeline silently failing for ~48h (`narrative=null`) | 2026-04-30 | AI SDK structured-output rejected `min`/`max` on number types; fixed in PR #78. |
+| BUG-010 | P1 | 3 | Onboarding silently fails to write `risk_scores` row (onConflict mismatch) | 2026-05-02 | Fixed in PR [#88](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/88). |
+| BUG-011 | P2 | 1 | `/account` Identity + Security forms hide uncaught throws behind global-error.tsx | 2026-05-02 | Fix split out of PR [#93](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/93) and shipped as PR [#112](https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/112). |
 
 ---
 
