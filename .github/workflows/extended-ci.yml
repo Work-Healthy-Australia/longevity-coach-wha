@@ -1,0 +1,129 @@
+name: Extended CI (manual)
+
+# These jobs are NOT enabled on PR triggers because each has an outstanding
+# infrastructure problem that needs fixing before it can run cleanly.
+# Run via the Actions tab → Run workflow when needed for spot-checks.
+#
+# What blocks each job from going back on PR triggers:
+#
+# pgtap
+#   - Bare Postgres container has no `auth.jwt()` function.
+#   - 0001_init.sql calls auth.jwt() in a policy and fails immediately.
+#   - Fix: either install + start the full Supabase CLI stack here
+#     (`supabase start --workdir .` against the runner), OR add a
+#     CI-only stub function `auth.jwt() returns jsonb language sql as
+#     'select '{}'::jsonb';` before applying migrations.
+#   - Owner: TBD. Tracked under Epic 14.
+#
+# playwright
+#   - Tests need a fully wired Supabase + signed-in seed user — currently
+#     none of the secrets in the workflow are populated, so even on a
+#     clean run the tests would fail at sign-in.
+#   - Fix: provision a `longevity-coach-test` Supabase project with a
+#     known fixture user, store the URL + publishable key + service-role
+#     key as repo secrets, then re-enable on PR.
+#   - Owner: TBD. Tracked under Epic 14.
+#
+# lighthouse
+#   - Needs a deploy URL or local Next.js server. Currently the job has
+#     neither — pnpm exec lhci autorun has nothing to audit.
+#   - Fix: `pnpm build && pnpm start &` before lhci, OR point lhci at the
+#     Vercel preview URL (passed via $VERCEL_URL).
+#   - Owner: TBD. Tracked under Epic 14.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  pgtap:
+    name: pgTAP RLS regression
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: supabase/postgres:15.6.1.146
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGPASSWORD: postgres
+      PGHOST: localhost
+      PGUSER: postgres
+      PGDATABASE: postgres
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install psql client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Wait for Postgres
+        run: |
+          for i in {1..30}; do
+            if pg_isready -h localhost -U postgres; then
+              echo "Postgres ready"
+              break
+            fi
+            echo "Waiting for Postgres ($i)..."
+            sleep 2
+          done
+
+      - name: Enable required extensions
+        run: |
+          psql -v ON_ERROR_STOP=1 -c "CREATE EXTENSION IF NOT EXISTS pgtap WITH SCHEMA extensions;"
+          psql -v ON_ERROR_STOP=1 -c "CREATE EXTENSION IF NOT EXISTS vector;"
+
+      - name: Apply migrations in order
+        run: |
+          for f in $(ls supabase/migrations/*.sql | sort); do
+            echo "Applying $f"
+            psql -v ON_ERROR_STOP=1 -f "$f"
+          done
+
+      - name: Run pgTAP RLS suite
+        run: |
+          psql -v ON_ERROR_STOP=1 -f supabase/tests/rls.sql | tee /tmp/pgtap.out
+          if grep -E '^not ok' /tmp/pgtap.out; then
+            echo "pgTAP assertion failures detected"
+            exit 1
+          fi
+
+  playwright:
+    name: E2E tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm exec playwright test
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+          NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}
+
+  lighthouse:
+    name: Lighthouse audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - name: Lighthouse CI
+        run: pnpm exec lhci autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
