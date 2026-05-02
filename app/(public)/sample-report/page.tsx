@@ -24,8 +24,8 @@ export const metadata: Metadata = {
 };
 
 const SAMPLE = {
-  name: "Nina Okafor",
-  context: "Architect, London, 38",
+  name: "Eleni Papadakis",
+  context: "Architect, Sydney, 38",
   reportDate: "April 2026",
   bioAge: 34.8,
   chronoAge: 38.0,
