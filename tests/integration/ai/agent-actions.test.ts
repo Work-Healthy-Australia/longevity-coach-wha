@@ -107,7 +107,7 @@ describe("addMCPServer", () => {
     });
     const r = await addMCPServer("janet", newServer);
     expect(r.error).toBeUndefined();
-    const updateArg = mockUpdate.mock.calls[0]![0] as {
+    const updateArg = mockUpdate.mock.calls[0]?.[0] as unknown as {
       mcp_servers: { id: string }[];
     };
     expect(updateArg.mcp_servers).toHaveLength(2);
@@ -124,7 +124,7 @@ describe("addMCPServer", () => {
     });
     const r = await addMCPServer("janet", newServer);
     expect(r.error).toBeUndefined();
-    const updateArg = mockUpdate.mock.calls[0]![0] as {
+    const updateArg = mockUpdate.mock.calls[0]?.[0] as unknown as {
       mcp_servers: { id: string }[];
     };
     expect(updateArg.mcp_servers).toHaveLength(1);
@@ -144,7 +144,7 @@ describe("removeMCPServer", () => {
     });
     const r = await removeMCPServer("janet", "remove-me");
     expect(r.error).toBeUndefined();
-    const updateArg = mockUpdate.mock.calls[0]![0] as {
+    const updateArg = mockUpdate.mock.calls[0]?.[0] as unknown as {
       mcp_servers: { id: string }[];
     };
     expect(updateArg.mcp_servers).toHaveLength(1);
@@ -168,14 +168,14 @@ describe("toggleAgent", () => {
   it("sets enabled=false in the update payload", async () => {
     const r = await toggleAgent("janet", false);
     expect(r.error).toBeUndefined();
-    const updateArg = mockUpdate.mock.calls[0]![0] as { enabled: boolean };
+    const updateArg = mockUpdate.mock.calls[0]?.[0] as unknown as { enabled: boolean };
     expect(updateArg.enabled).toBe(false);
   });
 
   it("sets enabled=true in the update payload", async () => {
     const r = await toggleAgent("atlas", true);
     expect(r.error).toBeUndefined();
-    const updateArg = mockUpdate.mock.calls[0]![0] as { enabled: boolean };
+    const updateArg = mockUpdate.mock.calls[0]?.[0] as unknown as { enabled: boolean };
     expect(updateArg.enabled).toBe(true);
   });
 

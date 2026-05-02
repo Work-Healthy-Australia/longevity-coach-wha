@@ -72,13 +72,13 @@ describe("saveDraft", () => {
 
     // PII routed to profiles.update
     expect(mockProfilesUpdate).toHaveBeenCalledTimes(1);
-    const profileArg = mockProfilesUpdate.mock.calls[0]![0] as Record<string, unknown>;
+    const profileArg = mockProfilesUpdate.mock.calls[0]?.[0] as unknown as Record<string, unknown>;
     expect(profileArg.date_of_birth).toBe("1990-04-15");
     expect(profileArg.phone).toBe("+61400000000");
     expect(profileArg.address_postal).toBe("1 Test St, Sydney");
 
     // Responses to health_profiles must NOT contain PII keys
-    const healthArg = mockHealthInsert.mock.calls[0]![0] as Record<string, unknown>;
+    const healthArg = mockHealthInsert.mock.calls[0]?.[0] as unknown as Record<string, unknown>;
     const cleanedBasics = (healthArg.responses as Record<string, Record<string, unknown>>)
       .basics;
     expect(cleanedBasics.sex).toBe("Male");
@@ -136,12 +136,12 @@ describe("submitAssessment", () => {
     }
 
     expect(mockProfilesUpdate).toHaveBeenCalledTimes(1);
-    const profileArg = mockProfilesUpdate.mock.calls[0]![0] as Record<string, unknown>;
+    const profileArg = mockProfilesUpdate.mock.calls[0]?.[0] as unknown as Record<string, unknown>;
     expect(profileArg.date_of_birth).toBe("1985-12-01");
     expect(profileArg.phone).toBe("+61411111111");
 
     expect(mockHealthUpdate).toHaveBeenCalled();
-    const updateArg = mockHealthUpdate.mock.calls[0]![0] as Record<string, unknown>;
+    const updateArg = mockHealthUpdate.mock.calls[0]?.[0] as unknown as Record<string, unknown>;
     expect(updateArg.completed_at).toBeDefined();
     const basics = (updateArg.responses as Record<string, Record<string, unknown>>).basics;
     expect(basics.date_of_birth).toBeUndefined();
@@ -159,7 +159,7 @@ describe("submitAssessment", () => {
     }
 
     expect(mockHealthInsert).toHaveBeenCalled();
-    const insertArg = mockHealthInsert.mock.calls[0]![0] as Record<string, unknown>;
+    const insertArg = mockHealthInsert.mock.calls[0]?.[0] as unknown as Record<string, unknown>;
     expect(insertArg.user_uuid).toBe("user-123");
     expect(insertArg.completed_at).toBeDefined();
   });

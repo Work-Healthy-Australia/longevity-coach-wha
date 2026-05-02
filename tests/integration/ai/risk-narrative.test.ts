@@ -134,7 +134,7 @@ describe("runRiskNarrativePipeline", () => {
 
   it("includes chronological age in the prompt when DOB is present", async () => {
     await runRiskNarrativePipeline("user-123");
-    const prompt = mockRun.mock.calls[0]![1] as string;
+    const prompt = mockRun.mock.calls[0]?.[1] as unknown as string;
     expect(prompt).toMatch(/Chronological age:/);
   });
 
@@ -144,13 +144,13 @@ describe("runRiskNarrativePipeline", () => {
       error: null,
     });
     await runRiskNarrativePipeline("user-123");
-    const prompt = mockRun.mock.calls[0]![1] as string;
+    const prompt = mockRun.mock.calls[0]?.[1] as unknown as string;
     expect(prompt).not.toMatch(/Chronological age:/);
   });
 
   it("includes questionnaire responses in the prompt", async () => {
     await runRiskNarrativePipeline("user-123");
-    const prompt = mockRun.mock.calls[0]![1] as string;
+    const prompt = mockRun.mock.calls[0]?.[1] as unknown as string;
     expect(prompt).toMatch(/Questionnaire responses/);
   });
 
@@ -208,7 +208,7 @@ describe("runRiskNarrativePipeline", () => {
       error: null,
     });
     await runRiskNarrativePipeline("user-123");
-    const prompt = mockRun.mock.calls[0]![1] as string;
+    const prompt = mockRun.mock.calls[0]?.[1] as unknown as string;
     expect(prompt).toMatch(/blood-test\.pdf/);
     expect(prompt).toMatch(/pathology/);
   });
@@ -222,14 +222,14 @@ describe("runRiskNarrativePipeline", () => {
       error: null,
     });
     await runRiskNarrativePipeline("user-123");
-    const prompt = mockRun.mock.calls[0]![1] as string;
+    const prompt = mockRun.mock.calls[0]?.[1] as unknown as string;
     expect(prompt).toMatch(/Recent daily trends/);
     expect(prompt).toMatch(/Days logged: 2 of last 14/);
   });
 
   it("omits daily trends section when no recent logs exist", async () => {
     await runRiskNarrativePipeline("user-123");
-    const prompt = mockRun.mock.calls[0]![1] as string;
+    const prompt = mockRun.mock.calls[0]?.[1] as unknown as string;
     expect(prompt).not.toMatch(/Recent daily trends/);
   });
 });

@@ -244,8 +244,10 @@ export default async function CareTeamPage() {
                 minute: "2-digit",
                 hour12: true,
               });
-              const hoursUntilStart =
-                (dt.getTime() - Date.now()) / (1000 * 60 * 60);
+              // Server component — runs once per request, so impure-function
+              // rule's re-render instability concern doesn't apply.
+              // eslint-disable-next-line react-hooks/purity
+              const hoursUntilStart = (dt.getTime() - Date.now()) / (1000 * 60 * 60);
               const cancellable = hoursUntilStart >= CANCEL_CUTOFF_HOURS;
               return (
                 <li key={appt.id as string} className="lc-care__upcoming-item">

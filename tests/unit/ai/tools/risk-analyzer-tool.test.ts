@@ -68,22 +68,22 @@ describe('riskAnalyzerTool', () => {
   it('calls createPipelineAgent("risk_analyzer") when executed', async () => {
     const { createPipelineAgent } = await import('@/lib/ai/agent-factory');
     const t = riskAnalyzerTool(SEED_CTX as PatientContext);
-    await t.execute({}, { messages: [], toolCallId: 'tc1' });
+    await t.execute!({}, { messages: [], toolCallId: 'tc1' });
     expect(createPipelineAgent).toHaveBeenCalledWith('risk_analyzer');
   });
 
   it('includes risk scores in the prompt passed to risk_analyzer', async () => {
     const t = riskAnalyzerTool(SEED_CTX as PatientContext);
-    await t.execute({}, { messages: [], toolCallId: 'tc1' });
-    const promptArg = mockRun.mock.calls[0][1] as string;
+    await t.execute!({}, { messages: [], toolCallId: 'tc1' });
+    const promptArg = mockRun.mock.calls[0]?.[1] as unknown as string;
     expect(promptArg).toContain('CV=72');
     expect(promptArg).toContain('elevated LDL');
   });
 
   it('includes pathology summary in the prompt', async () => {
     const t = riskAnalyzerTool(SEED_CTX as PatientContext);
-    await t.execute({}, { messages: [], toolCallId: 'tc1' });
-    const promptArg = mockRun.mock.calls[0][1] as string;
+    await t.execute!({}, { messages: [], toolCallId: 'tc1' });
+    const promptArg = mockRun.mock.calls[0]?.[1] as unknown as string;
     expect(promptArg).toContain('LDL 4.8');
   });
 
@@ -91,7 +91,7 @@ describe('riskAnalyzerTool', () => {
     const adminMock = vi.fn();
     vi.doMock('@/lib/supabase/admin', () => ({ createAdminClient: adminMock }));
     const t = riskAnalyzerTool(SEED_CTX as PatientContext);
-    await t.execute({}, { messages: [], toolCallId: 'tc1' });
+    await t.execute!({}, { messages: [], toolCallId: 'tc1' });
     expect(adminMock).not.toHaveBeenCalled();
   });
 });

@@ -85,7 +85,7 @@ describe("POST /api/stripe/webhook", () => {
     expect(res.status).toBe(200);
     expect(mockFrom).toHaveBeenCalledWith("subscriptions");
     expect(mockUpsert).toHaveBeenCalledTimes(1);
-    const [row, options] = mockUpsert.mock.calls[0]!;
+    const [row, options] = mockUpsert.mock.calls[0] as unknown as [unknown, unknown];
     expect(row).toMatchObject({
       user_uuid: "user-uuid-123",
       stripe_customer_id: "cus_123",
@@ -122,7 +122,7 @@ describe("POST /api/stripe/webhook", () => {
 
     await POST(makeRequest("{}", "sig"));
 
-    const [row] = mockUpsert.mock.calls[0]!;
+    const [row] = mockUpsert.mock.calls[0] as unknown as [unknown];
     expect((row as { status: string }).status).toBe("canceled");
   });
 

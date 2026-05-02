@@ -82,21 +82,21 @@ describe('supplementAdvisorTool', () => {
   it('calls createPipelineAgent("supplement_advisor") when supplement plan exists', async () => {
     const { createPipelineAgent } = await import('@/lib/ai/agent-factory');
     const t = supplementAdvisorTool(BASE_CTX as PatientContext);
-    await t.execute({ focus: undefined }, { messages: [], toolCallId: 'tc1' });
+    await t.execute!({ focus: undefined }, { messages: [], toolCallId: 'tc1' });
     expect(createPipelineAgent).toHaveBeenCalledWith('supplement_advisor');
   });
 
   it('passes focus into the prompt when provided', async () => {
     const t = supplementAdvisorTool(BASE_CTX as PatientContext);
-    await t.execute({ focus: 'omega-3' }, { messages: [], toolCallId: 'tc1' });
-    const promptArg = mockRun.mock.calls[0][1] as string;
+    await t.execute!({ focus: 'omega-3' }, { messages: [], toolCallId: 'tc1' });
+    const promptArg = mockRun.mock.calls[0]?.[1] as unknown as string;
     expect(promptArg).toContain('omega-3');
   });
 
   it('includes supplement items in the prompt', async () => {
     const t = supplementAdvisorTool(BASE_CTX as PatientContext);
-    await t.execute({ focus: undefined }, { messages: [], toolCallId: 'tc1' });
-    const promptArg = mockRun.mock.calls[0][1] as string;
+    await t.execute!({ focus: undefined }, { messages: [], toolCallId: 'tc1' });
+    const promptArg = mockRun.mock.calls[0]?.[1] as unknown as string;
     expect(promptArg).toContain('Omega-3 Fish Oil');
     expect(promptArg).toContain('Berberine');
   });
@@ -104,7 +104,7 @@ describe('supplementAdvisorTool', () => {
   it('returns early without LLM call when supplementPlan is null', async () => {
     const ctxNoplan = { ...BASE_CTX, supplementPlan: null } as PatientContext;
     const t = supplementAdvisorTool(ctxNoplan);
-    const result = await t.execute({ focus: undefined }, { messages: [], toolCallId: 'tc1' });
+    const result = await t.execute!({ focus: undefined }, { messages: [], toolCallId: 'tc1' });
     expect(mockRun).not.toHaveBeenCalled();
     expect(result).toEqual({ summary: 'No supplement protocol has been generated yet.', highlighted_items: [] });
   });
