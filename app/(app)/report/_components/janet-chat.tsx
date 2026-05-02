@@ -132,12 +132,13 @@ export function JanetChat({ initialMessages = [], userId }: { initialMessages?: 
           },
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (payload: any) => {
-            console.log('[janet-chat realtime] payload', payload);
             handlePipelineRow(payload.new);
           },
         )
         .subscribe(async (status, err) => {
-          console.log('[janet-chat realtime] subscribe status', status, err ?? '');
+          if (err) {
+            console.error('[janet-chat realtime] subscribe error', err);
+          }
           // Race-condition safety net: on successful subscribe, do a one-shot
           // catch-up fetch for any pipeline-completion message inserted between
           // the user's tool call and the WebSocket joining. We deliberately
