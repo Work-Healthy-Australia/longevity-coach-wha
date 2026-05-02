@@ -106,7 +106,7 @@ export default async function OGImage() {
         >
           <div style={{ display: "flex" }}>janet.care</div>
           <div style={{ display: "flex" }}>
-            GMC-registered clinicians · Cancel anytime
+            AHPRA-registered clinicians · Cancel anytime
           </div>
         </div>
       </div>
