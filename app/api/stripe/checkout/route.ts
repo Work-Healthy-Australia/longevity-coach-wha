@@ -4,6 +4,27 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { getStripe, priceIdForPlan, type PlanId } from "@/lib/stripe/client";
 
+const isProduction =
+  process.env.NODE_ENV === "production" ||
+  process.env.VERCEL_ENV === "production";
+
+function resolveOrigin(request: NextRequest): string | null {
+  const headerOrigin = request.headers.get("origin");
+  if (headerOrigin) return headerOrigin;
+
+  const envOrigin = process.env.NEXT_PUBLIC_SITE_URL;
+  if (envOrigin) return envOrigin;
+
+  if (isProduction) {
+    console.error(
+      "[stripe/checkout] NEXT_PUBLIC_SITE_URL is unset and no origin header was sent. Refusing to fall back to localhost in production — Stripe redirects would be unreachable."
+    );
+    return null;
+  }
+
+  return "http://localhost:3000";
+}
+
 const NewBodySchema = z.object({
   plan_id: z.string().uuid(),
   addon_ids: z.array(z.string().uuid()).default([]),
@@ -29,10 +50,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const origin =
-    request.headers.get("origin") ??
-    process.env.NEXT_PUBLIC_SITE_URL ??
-    "http://localhost:3000";
+  const origin = resolveOrigin(request);
+  if (!origin) {
+    return NextResponse.json(
+      { error: "Service misconfigured: site URL unavailable" },
+      { status: 500 }
+    );
+  }
 
   const stripe = getStripe();
 
