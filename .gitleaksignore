@@ -1,0 +1,8 @@
+# Gitleaks fingerprints to ignore (false positives only — never real secrets).
+# Format: {commit}:{file}:{rule}:{line}
+# Add a comment above each entry explaining why it's safe.
+
+# Curl example in an old planning doc (file has since been deleted but the
+# commit is in history). Authorization header value was a placeholder, not
+# a real token — but the curl-auth-header rule still flags it.
+705cf2796ee9ad5748178298c896a13fd9f02b2d:docs/engineering/sprints/plan-simple-features.md:curl-auth-header:864
