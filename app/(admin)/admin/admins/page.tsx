@@ -1,7 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { AdminAdminsUI } from "./_components/AdminAdminsUI";
 
-export const metadata = { title: "Admins · Admin · Janet Cares" };
+export const metadata = { title: "Admins · Admin" };
 export const dynamic = "force-dynamic";
 
 export default async function AdminAdminsPage() {

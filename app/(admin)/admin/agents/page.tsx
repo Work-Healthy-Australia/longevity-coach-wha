@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-export const metadata = { title: "Agents · Admin · Janet Cares" };
+export const metadata = { title: "Agents · Admin" };
 export const dynamic = "force-dynamic";
 
 export default async function AdminAgentsPage() {

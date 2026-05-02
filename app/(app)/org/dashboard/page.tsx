@@ -7,7 +7,7 @@ import '../org.css';
 import './dashboard.css';
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: 'Organisation dashboard · Janet Cares' };
+export const metadata = { title: 'Organisation dashboard' };
 
 export default async function OrgDashboardPage() {
   const supabase = await createClient();

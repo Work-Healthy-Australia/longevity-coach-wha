@@ -13,7 +13,7 @@ import Link from "next/link";
 import { SimulatorClient } from "./_components/simulator-client";
 import "./simulator.css";
 
-export const metadata = { title: "Risk simulator · Janet Cares" };
+export const metadata = { title: "Risk simulator" };
 
 const POPULATION_DEFAULTS: Record<SimulatorMetric, number> = {
   ldl: 130,

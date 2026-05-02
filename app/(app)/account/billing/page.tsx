@@ -7,7 +7,7 @@ import { BillingClient } from "./BillingClient";
 import "./billing.css";
 
 export const metadata: Metadata = {
-  title: "Billing & add-ons — Janet Cares",
+  title: "Billing & add-ons",
 };
 
 export const dynamic = "force-dynamic";

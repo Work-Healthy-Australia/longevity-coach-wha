@@ -5,7 +5,7 @@ import { Scoreboard } from "./_components/scoreboard";
 import { deriveGoals, extractGoalInputs } from "@/lib/goals/derive";
 import "./check-in.css";
 
-export const metadata = { title: "Daily check-in · Janet Cares" };
+export const metadata = { title: "Daily check-in" };
 
 export default async function CheckInPage() {
   const supabase = await createClient();

@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 
 import "./clinician.css";
 
-export const metadata = { title: "Clinician · Janet Cares" };
+export const metadata = { title: "Clinician" };
 
 export default async function ClinicianLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();

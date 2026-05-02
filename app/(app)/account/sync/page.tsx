@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import "./sync.css";
 
-export const metadata = { title: "Wearable sync · Janet Cares" };
+export const metadata = { title: "Wearable sync" };
 
 const PROVIDERS = [
   {
