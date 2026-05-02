@@ -11,7 +11,7 @@ import {
 import { StatusBadge } from "./_components/status-badge";
 import "./labs.css";
 
-export const metadata = { title: "Lab results · Janet Cares" };
+export const metadata = { title: "Lab results" };
 
 export default async function LabsPage() {
   const supabase = await createClient();

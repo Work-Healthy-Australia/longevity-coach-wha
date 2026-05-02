@@ -8,7 +8,7 @@ import { SupplementRefreshButton } from "./_components/supplement-refresh-button
 import type { UIMessage } from "ai";
 import "./report.css";
 
-export const metadata = { title: "Report · Janet Cares" };
+export const metadata = { title: "Report" };
 
 function chronologicalAge(dob: string | null): number | null {
   if (!dob) return null;

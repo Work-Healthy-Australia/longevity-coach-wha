@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { UploadClient } from "./upload-client";
 import "./uploads.css";
 
-export const metadata = { title: "Documents · Janet Cares" };
+export const metadata = { title: "Documents" };
 
 export default async function UploadsPage() {
   const supabase = await createClient();

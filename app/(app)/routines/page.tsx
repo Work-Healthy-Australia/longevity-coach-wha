@@ -4,7 +4,7 @@ import { DEFAULT_ROUTINES, ROUTINE_CATEGORIES } from "@/lib/wellness/routines";
 import { RoutineChecklist } from "./_components/routine-checklist";
 import "./routines.css";
 
-export const metadata = { title: "Daily routines · Janet Cares" };
+export const metadata = { title: "Daily routines" };
 
 export default async function RoutinesPage() {
   const supabase = await createClient();

@@ -9,7 +9,7 @@ import {
 import { TrendChart } from "./_components/trend-chart";
 import "./trends.css";
 
-export const metadata = { title: "Trends · Janet Cares" };
+export const metadata = { title: "Trends" };
 
 type CardConfig = {
   metric: Metric;

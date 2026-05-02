@@ -3,7 +3,7 @@ import { JournalClient, type JournalEntry } from './_components/journal-client';
 import { saveJournalEntry } from './actions';
 import './journal.css';
 
-export const metadata = { title: 'Journal · Janet Cares' };
+export const metadata = { title: 'Journal' };
 
 export default async function JournalPage() {
   const supabase = await createClient();
