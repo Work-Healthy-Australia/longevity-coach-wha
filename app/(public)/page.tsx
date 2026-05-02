@@ -61,7 +61,7 @@ export default function Home() {
               <div className="mini">
                 <span><span className="dot" />&nbsp;&nbsp;No credit card to start</span>
                 <span>·</span>
-                <span>GMC-registered clinicians</span>
+                <span>AHPRA-registered clinicians</span>
                 <span>·</span>
                 <span>Cancel anytime</span>
               </div>
@@ -253,10 +253,9 @@ export default function Home() {
         <div className="wrap">
           <div className="row">
             <div className="lbl">Built with and reviewed by</div>
-            <div>Royal College of GPs</div>
-            <div>Imperial Longevity Lab</div>
-            <div>UK BioBank data</div>
-            <div>GMC-registered clinicians</div>
+            <div>RACGP-aligned protocols</div>
+            <div>45 and Up Study data</div>
+            <div>AHPRA-registered clinicians</div>
             <div>ISO 27001</div>
           </div>
         </div>
