@@ -307,7 +307,7 @@ export async function GET(req: Request) {
   }
 
   const datePart = exportedAt.slice(0, 10);
-  const filename = `longevity-coach-export-${datePart}.zip`;
+  const filename = `janet-cares-export-${datePart}.zip`;
 
   return new Response(new Uint8Array(zipBuffer), {
     headers: {
