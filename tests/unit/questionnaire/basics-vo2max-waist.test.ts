@@ -20,7 +20,7 @@ const validLifestyle = (extras: Record<string, unknown> = {}) => ({
   smoking: "Never",
   alcohol: "None",
   exercise_volume: "Moderate (75–150 min/week)",
-  exercise_type: "Mixed cardio + weights",
+  exercise_type: ["Cardio", "Weights"],
   sleep_hours: 7,
   sleep_quality: "Good",
   stress: "Low",

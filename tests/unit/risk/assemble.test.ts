@@ -116,7 +116,7 @@ describe("buildPatientInput → scoreRisk e2e", () => {
           smoking: "Current",
           alcohol: "8–14 units/week",
           exercise_volume: "Light (<75 min/week)",
-          exercise_type: "Cardio only",
+          exercise_type: ["Cardio"],
           sleep_hours: 6,
           diet: "Standard Western",
           stress: "High",

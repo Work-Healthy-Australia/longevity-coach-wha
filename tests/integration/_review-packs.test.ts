@@ -37,6 +37,8 @@ import {
 
 // Five extra fixtures matching the engine pack (kept inline so this file is
 // self-contained for future date-stamped re-runs).
+// `lifestyle.exercise_type` is the engine-layer joined string — see
+// tests/fixtures/risk-profiles.ts header for the schema-boundary note.
 
 const postmenopausalOsteo: PatientInput = {
   patient_id: "postmenopausalOsteo",
