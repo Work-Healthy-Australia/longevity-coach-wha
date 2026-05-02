@@ -16,6 +16,13 @@
 //
 // Snapshot tests run scoreRisk() on each fixture; those snapshots are the
 // canary if anyone changes scoring weights.
+//
+// Schema-boundary note: `lifestyle.exercise_type` here is the engine-layer
+// representation — a single joined string (e.g. "Cardio, Weights"), as
+// produced by `assemble.ts:472–476` from the questionnaire's multiselect
+// array. `Lifestyle.exercise_type` in `lib/risk/types.ts` is typed `string`;
+// do not pass an array here. The questionnaire/form layer (where the
+// multiselect array lives) is upstream of this fixture.
 
 import type { PatientInput } from "@/lib/risk/types";
 
