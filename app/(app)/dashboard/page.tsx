@@ -392,7 +392,7 @@ export default async function DashboardPage() {
       {supplementItems.length > 0 && (
         <section className="lc-supplement">
           <div className="lc-section-head">
-            <h2>Today's protocol</h2>
+            <h2>Today&rsquo;s protocol</h2>
             <Link href="/report" className="lc-section-link">
               Full protocol →
             </Link>
@@ -424,7 +424,7 @@ export default async function DashboardPage() {
       {/* What's new */}
       <section className="lc-whatsnew">
         <article className="lc-whatsnew-card lc-whatsnew-janet">
-          <div className="lc-whatsnew-eyebrow">Janet's insight</div>
+          <div className="lc-whatsnew-eyebrow">Janet&rsquo;s insight</div>
           <p>
             {risk?.narrative
               ? firstSentence(risk.narrative)

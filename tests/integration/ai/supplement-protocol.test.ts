@@ -156,7 +156,7 @@ describe("runSupplementProtocolPipeline", () => {
 
   it("includes the risk profile summary in the prompt when risk scores exist", async () => {
     await runSupplementProtocolPipeline("user-123");
-    const prompt = mockRun.mock.calls[0]![1] as string;
+    const prompt = mockRun.mock.calls[0]?.[1] as unknown as string;
     expect(prompt).toMatch(/Risk profile/);
     expect(prompt).toMatch(/CV=25/);
     expect(prompt).toMatch(/Metabolic=18/);
@@ -164,7 +164,7 @@ describe("runSupplementProtocolPipeline", () => {
 
   it("notes missing pathology in the prompt when no uploads exist", async () => {
     await runSupplementProtocolPipeline("user-123");
-    const prompt = mockRun.mock.calls[0]![1] as string;
+    const prompt = mockRun.mock.calls[0]?.[1] as unknown as string;
     expect(prompt).toMatch(/none uploaded/i);
   });
 
@@ -179,7 +179,7 @@ describe("runSupplementProtocolPipeline", () => {
 
   it("inserts a new supplement_plan with status=active for the correct user", async () => {
     await runSupplementProtocolPipeline("user-abc");
-    const insertArg = mockPlanInsert.mock.calls[0]![0] as {
+    const insertArg = mockPlanInsert.mock.calls[0]?.[0] as unknown as {
       patient_uuid: string;
       status: string;
       created_by_role: string;
@@ -210,7 +210,7 @@ describe("runSupplementProtocolPipeline", () => {
       error: null,
     });
     await runSupplementProtocolPipeline("user-123");
-    const prompt = mockRun.mock.calls[0]![1] as string;
+    const prompt = mockRun.mock.calls[0]?.[1] as unknown as string;
     expect(prompt).toMatch(/thyroid-panel\.pdf/);
   });
 });

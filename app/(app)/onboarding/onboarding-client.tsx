@@ -923,7 +923,7 @@ function CancerHistoryField({
 
       {cv.status === "yes" && (
         <div className="cancer-detail">
-          <p className="field-help">Tap any types that apply. Skip the age if you don't know it.</p>
+          <p className="field-help">Tap any types that apply. Skip the age if you don&rsquo;t know it.</p>
           <div className="chips">
             {CANCER_TYPES.map((t) => (
               <button
@@ -1012,7 +1012,7 @@ function CancerHistoryField({
                           })
                         }
                       />
-                      Don't know
+                      Don&rsquo;t know
                     </label>
                   </div>
                 </div>

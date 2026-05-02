@@ -49,7 +49,7 @@ const makeDef = (overrides = {}) => ({
 });
 
 const messages: UIMessage[] = [
-  { id: '1', role: 'user', content: 'Hello', parts: [{ type: 'text', text: 'Hello' }] },
+  { id: '1', role: 'user', parts: [{ type: 'text', text: 'Hello' }] },
 ];
 
 // --- tests ---

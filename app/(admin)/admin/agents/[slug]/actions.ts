@@ -3,10 +3,15 @@
 import { revalidateTag } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+/* eslint-disable @typescript-eslint/no-explicit-any --
+   The `agents` schema isn't in the generated Database types yet (would
+   require adding `--schema agents` to supabase gen types). Until then,
+   loose-typing this single boundary keeps the call sites elsewhere
+   strictly typed via the helper's return shape. */
 function agentsDb(): any {
   return (createAdminClient() as any).schema("agents");
 }
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 export async function updateAgentDefinition(
   slug: string,

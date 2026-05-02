@@ -244,6 +244,8 @@ export default async function CareTeamPage() {
                 minute: "2-digit",
                 hour12: true,
               });
+              // Server component — runs once per request.
+              // eslint-disable-next-line react-hooks/purity
               const hoursUntilStart =
                 (dt.getTime() - Date.now()) / (1000 * 60 * 60);
               const cancellable = hoursUntilStart >= CANCEL_CUTOFF_HOURS;
