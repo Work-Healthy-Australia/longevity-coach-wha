@@ -139,6 +139,21 @@ export function PricingClient({
     }
   }
 
+  if (plans.length === 0) {
+    return (
+      <div className="pricing-content">
+        <div className="pricing-empty" role="status">
+          <h2>Pricing details coming soon</h2>
+          <p>
+            We&rsquo;re finalising the line-up. Check back shortly, or{" "}
+            <a href="/signup">create your account</a> and we&rsquo;ll let you
+            know the moment plans go live.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="pricing-content">
       <div className="pricing-toggle" role="tablist" aria-label="Billing interval">
