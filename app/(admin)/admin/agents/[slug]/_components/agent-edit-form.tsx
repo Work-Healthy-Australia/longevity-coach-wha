@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState, useState } from "react";
 import { updateAgentDefinition, addMCPServer, removeMCPServer } from "../actions";
 
@@ -47,7 +48,7 @@ export function AgentEditForm({ agent }: { agent: Agent }) {
   return (
     <div style={{ maxWidth: 800, margin: "0 auto", padding: "32px 24px" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 32 }}>
-        <a href="/admin/agents" style={{ color: "#2F6F8F", textDecoration: "none", fontSize: 14 }}>← Agents</a>
+        <Link href="/admin/agents" style={{ color: "#2F6F8F", textDecoration: "none", fontSize: 14 }}>← Agents</Link>
         <h1 style={{ fontSize: 22, fontWeight: 700, margin: 0 }}>{agent.display_name}</h1>
         <code style={{ background: "#F0F4F7", padding: "2px 8px", borderRadius: 4, fontSize: 12 }}>{agent.slug}</code>
       </div>

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -61,9 +62,13 @@ export default async function AdminUserDetailPage({
   const sub = subResult.data;
   const uploads = uploadsResult.data ?? [];
 
+  // Server component — runs once per request, so the impure-function rule
+  // doesn't introduce the re-render instability it warns about.
+  // eslint-disable-next-line react-hooks/purity
+  const requestNow = Date.now();
   const ageYears = profile.date_of_birth
     ? Math.floor(
-        (Date.now() - new Date(profile.date_of_birth).getTime()) /
+        (requestNow - new Date(profile.date_of_birth).getTime()) /
           (365.25 * 24 * 60 * 60 * 1000),
       )
     : null;
@@ -79,7 +84,7 @@ export default async function AdminUserDetailPage({
   return (
     <div className="admin-content">
       <div className="back-link">
-        <a href="/admin/users">← Back to users</a>
+        <Link href="/admin/users">← Back to users</Link>
       </div>
 
       <div className="detail-header">

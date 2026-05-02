@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -29,16 +30,16 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <nav className="admin-nav">
         <div className="admin-nav-brand">Janet Cares · Admin</div>
         <div className="admin-nav-links">
-          <a href="/admin">Overview</a>
-          <a href="/admin/users">Users</a>
-          <a href="/admin/tiers">Tiers</a>
-          <a href="/admin/suppliers">Suppliers</a>
-          <a href="/admin/plan-builder">Plan Builder</a>
-          <a href="/admin/agents">Agents</a>
-          <a href="/admin/cost">Cost</a>
-          <a href="/admin/clinicians">Clinicians</a>
-          <a href="/admin/admins">Admins</a>
-          <a href="/dashboard" className="muted">Exit admin</a>
+          <Link href="/admin">Overview</Link>
+          <Link href="/admin/users">Users</Link>
+          <Link href="/admin/tiers">Tiers</Link>
+          <Link href="/admin/suppliers">Suppliers</Link>
+          <Link href="/admin/plan-builder">Plan Builder</Link>
+          <Link href="/admin/agents">Agents</Link>
+          <Link href="/admin/cost">Cost</Link>
+          <Link href="/admin/clinicians">Clinicians</Link>
+          <Link href="/admin/admins">Admins</Link>
+          <Link href="/dashboard" className="muted">Exit admin</Link>
         </div>
         <div className="admin-nav-user">{profile.full_name ?? user.email}</div>
       </nav>

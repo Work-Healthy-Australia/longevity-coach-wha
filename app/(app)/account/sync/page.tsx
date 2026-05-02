@@ -100,7 +100,7 @@ export default async function SyncSettingsPage() {
             Open the <strong>Shortcuts</strong> app on your iPhone.
           </li>
           <li>
-            Create a new shortcut that reads today's Health data (sleep, steps,
+            Create a new shortcut that reads today&rsquo;s Health data (sleep, steps,
             heart rate).
           </li>
           <li>

@@ -75,9 +75,10 @@ describe('runHealthResearcherPipeline', () => {
     await runHealthResearcherPipeline();
     expect(mockFrom).toHaveBeenCalledWith('health_updates');
     expect(mockInsert).toHaveBeenCalled();
-    const insertArg = mockInsert.mock.calls.find((call) =>
-      Array.isArray(call[0]) && call[0].some((r: { title?: string }) => r.title === 'Test Digest')
-    );
+    const insertArg = mockInsert.mock.calls.find((call: unknown[]) => {
+      const first = call[0];
+      return Array.isArray(first) && first.some((r: { title?: string }) => r.title === 'Test Digest');
+    });
     expect(insertArg).toBeDefined();
   });
 
