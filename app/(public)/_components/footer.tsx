@@ -21,7 +21,7 @@ export function PublicFooter() {
           <a href="#">Clinical governance</a>
           <a href="#">Contact</a>
         </div>
-        <div>© 2026 · LONGEVITY COACH LTD</div>
+        <div>© 2026 · WORK HEALTHY AUSTRALIA PTY LTD</div>
       </div>
     </footer>
   );
