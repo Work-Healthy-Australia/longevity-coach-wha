@@ -55,7 +55,7 @@ export default async function PricingPage() {
   const safeAddons: PricingAddon[] = (addons ?? []) as PricingAddon[];
 
   return (
-    <div className="lc-pricing">
+    <div className="lc-home lc-pricing">
       <PublicNav />
       <main className="pricing-main">
         <header className="pricing-header">
