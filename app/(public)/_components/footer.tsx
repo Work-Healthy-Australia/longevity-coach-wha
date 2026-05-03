@@ -15,10 +15,8 @@ export function PublicFooter() {
         </div>
         <div className="links">
           <Link href="/stories">Stories</Link>
-          <a href="#">Privacy</a>
-          <a href="#">Terms</a>
+          <Link href="/legal/collection-notice">Privacy</Link>
           <Link href="/legal/data-handling">Data handling</Link>
-          <a href="#">Clinical governance</a>
           <a href="#">Contact</a>
         </div>
         <div>© 2026 · WORK HEALTHY AUSTRALIA PTY LTD</div>
