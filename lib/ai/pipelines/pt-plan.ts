@@ -136,7 +136,6 @@ async function _run(userId: string): Promise<void> {
   const planStartDate = new Date().toISOString().slice(0, 8) + '01'; // first of current month
 
   // Supersede old active plans for this user (except the current month's).
-  // Cast to `never` columns added by migration 0041 that are not yet in generated types.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   await (admin.from('training_plans') as any)
     .update({ status: 'superseded' })
@@ -153,7 +152,7 @@ async function _run(userId: string): Promise<void> {
       valid_from: planStartDate,
       plan_name: output.plan_name,
       plan_start_date: planStartDate,
-      exercises: output.exercises as unknown as import('@/lib/supabase/database.types').Json,
+      sessions: output.exercises as unknown as import('@/lib/supabase/database.types').Json,
       notes: output.msk_considerations,
     },
     { onConflict: 'patient_uuid,plan_start_date' },

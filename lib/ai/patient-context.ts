@@ -153,7 +153,7 @@ export async function loadPatientContext(
       // Latest active PT plan
       admin
         .from('training_plans')
-        .select('plan_name, plan_start_date, exercises, notes')
+        .select('plan_name, plan_start_date, sessions, notes')
         .eq('patient_uuid', userId)
         .eq('status', 'active')
         .order('plan_start_date', { ascending: false })
@@ -297,7 +297,7 @@ export async function loadPatientContext(
       ? {
           planName: (ptPlan as unknown as { plan_name: string | null }).plan_name ?? null,
           planStartDate: (ptPlan as unknown as { plan_start_date: string | null }).plan_start_date ?? null,
-          exercises: ((ptPlan as unknown as { exercises: unknown[] }).exercises) ?? [],
+          exercises: ((ptPlan as unknown as { sessions: unknown[] }).sessions) ?? [],
           notes: (ptPlan as unknown as { notes: string | null }).notes ?? null,
         }
       : null,
