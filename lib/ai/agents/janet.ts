@@ -7,6 +7,7 @@ import { riskAnalyzerTool } from '@/lib/ai/tools/risk-analyzer-tool';
 import { supplementAdvisorTool } from '@/lib/ai/tools/supplement-advisor-tool';
 import { ptCoachTool } from '@/lib/ai/tools/pt-coach-tool';
 import { mealPlanTool } from '@/lib/ai/tools/meal-plan-tool';
+import { ptPlanTool } from '@/lib/ai/tools/pt-plan-tool';
 import { supplementProtocolTool } from '@/lib/ai/tools/supplement-protocol-tool';
 
 export async function streamJanetTurn(userId: string, messages: UIMessage[]) {
@@ -27,6 +28,7 @@ export async function streamJanetTurn(userId: string, messages: UIMessage[]) {
       request_supplement_protocol: supplementProtocolTool(ctx),
       consult_pt_coach: ptCoachTool(ctx),
       request_meal_plan: mealPlanTool(ctx),
+      request_pt_plan: ptPlanTool(ctx),
     },
     onFinish: async ({ text, steps }) => {
       const totalMs = Date.now() - t0;
