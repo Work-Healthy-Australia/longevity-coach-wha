@@ -561,38 +561,24 @@ body {
     <div>
       <h1 class="ps-hero-headline">Where the build is, today.</h1>
       <p class="ps-hero-sub">
-        Last updated <strong>2026-05-01</strong>. Full design-system unification across the signed-in app shell, Janet Cares rebrand, <code>/account</code> refresh, branded Supabase Auth emails + deliverability fix, AHPRA breach-notification protocol all landed since the 2026-04-30 sync. Fresh QA pass on 2026-05-01 surfaced <strong>16 open bugs</strong> (7 P1, 6 P2, 3 P3) plus 12 tech-debt items. CI gate is still off. Full lists in <a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/blob/main/docs/qa/QA-bugs.md">QA-bugs.md</a> and <a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/blob/main/docs/qa/TECH-DEBT.md">TECH-DEBT.md</a>.
+        Last updated <strong>2026-05-04</strong>. 30+ PRs merged May 2-4: CI fully restored, 14 bugs closed (all P1/P2 from the 2026-05-01 QA pass), billing tier model fixed, role system + admin UI landed, Janet gains PT plan tool, auth redirect preserved through all guarded routes. <strong>2 open bugs remain</strong> (both P3). Full log in <a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/blob/main/docs/qa/QA-bugs.md">QA-bugs.md</a>.
       </p>
     </div>
     <div class="ps-hero-stats">
       <div class="ps-hero-stat"><div class="num">14</div><div class="label">Epics</div></div>
       <div class="ps-hero-stat"><div class="num">88%</div><div class="label">Avg estimate</div></div>
-      <div class="ps-hero-stat alert"><div class="num">16</div><div class="label">Open bugs</div></div>
-      <div class="ps-hero-stat danger"><div class="num">1</div><div class="label">Regression</div></div>
+      <div class="ps-hero-stat"><div class="num">2</div><div class="label">Open bugs</div></div>
+      <div class="ps-hero-stat"><div class="num">0</div><div class="label">Regressions</div></div>
     </div>
   </header>
-
-  <div class="ps-alert danger">
-    <div class="icon">!</div>
-    <div>
-      <strong>Regression — CI gate is off.</strong> PR-triggered CI checks were disabled via <a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/102">#102</a> because Lint, Typecheck, Gitleaks, and pgTAP all fail at boot with infra bugs. Vercel preview deploy is the only auto gate right now. CI repair upgraded P1 → P0 — see Epic 14.
-    </div>
-  </div>
 
   <div class="ps-alert">
     <div class="icon">⚠</div>
     <div>
-      <strong>Open P1 bugs (7).</strong>
-      <a href="#epic-3">BUG-010</a> onboarding silently fails to write <code>risk_scores</code> (fix in <a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/88">#88</a>).
-      <a href="#epic-1">BUG-012</a> UK clinical credentials shown on AHPRA-regulated AU product (homepage hero, OG image).
-      <a href="#epic-12">BUG-013</a> <code>/pricing</code> nav layout completely broken — `.lc-home`-scoped nav styles don't apply.
-      <a href="#epic-12">BUG-014</a> <code>/pricing</code> renders "$0.00/mo" with no plan cards and an enabled checkout button.
-      <a href="#epic-1">BUG-015</a> footer copyright still says "LONGEVITY COACH LTD" — pre-rebrand stale.
-      <a href="#epic-1">BUG-018</a> <code>signIn()</code> discards <code>?redirect=</code> after successful login.
-      <a href="#epic-11">BUG-019</a> Stripe checkout falls back to <code>http://localhost:3000</code> when env var missing.
-      <br><strong>P2 (6):</strong> BUG-011 <code>/account</code> form errors hidden behind global-error (fix in <a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/93">#93</a>) · BUG-016 dead footer links · BUG-017 duplicated brand in <code>&lt;title&gt;</code> across most routes · BUG-020 stale "longevity-coach-export" ZIP filename · BUG-024 inconsistent post-login redirect preservation · BUG-025 <code>janet-chat</code> realtime payload leaked to browser console.
-      <br><strong>P3 (3):</strong> BUG-021 missing <code>&lt;h1&gt;</code> on /team and /stories · BUG-022 placeholder portrait on /team · BUG-023 London sample-report persona on AU product.
-      <br>Full triage notes in <a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/blob/main/docs/qa/QA-bugs.md">QA-bugs.md</a>; tech-debt in <a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/blob/main/docs/qa/TECH-DEBT.md">TECH-DEBT.md</a>.
+      <strong>2 open bugs (both P3).</strong>
+      <a href="#epic-1">BUG-021</a> missing <code>&lt;h1&gt;</code> on <code>/team</code> and <code>/stories</code> (a11y + SEO).
+      <a href="#epic-1">BUG-022</a> placeholder portrait panel on <code>/team</code> — no actual photo.
+      <br>Also outstanding: Sentry DSN env var not set in Vercel (monitoring wired, signal pending). Full history in <a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/blob/main/docs/qa/QA-bugs.md">QA-bugs.md</a>.
     </div>
   </div>
 
@@ -613,20 +599,20 @@ body {
         </tr>
       </thead>
       <tbody>
-        <tr><td class="col-num">01</td><td><a class="epic-link" href="#epic-1">The Front Door</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span></span></td><td class="col-est">100%</td><td class="col-deps">—</td><td class="col-bugs">11</td><td class="col-bugs">3</td></tr>
+        <tr><td class="col-num">01</td><td><a class="epic-link" href="#epic-1">The Front Door</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span></span></td><td class="col-est">100%</td><td class="col-deps">—</td><td class="col-bugs">2</td><td class="col-bugs">12</td></tr>
         <tr><td class="col-num">02</td><td><a class="epic-link" href="#epic-2">The Intake</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage"></span></span></td><td class="col-est">100%</td><td class="col-deps">1</td><td class="col-bugs">0</td><td class="col-bugs">0</td></tr>
-        <tr><td class="col-num">03</td><td><a class="epic-link" href="#epic-3">The Number</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage"></span><span class="ps-stage"></span></span></td><td class="col-est">90%</td><td class="col-deps">2</td><td class="col-bugs">1</td><td class="col-bugs">2</td></tr>
+        <tr><td class="col-num">03</td><td><a class="epic-link" href="#epic-3">The Number</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage"></span><span class="ps-stage"></span></span></td><td class="col-est">95%</td><td class="col-deps">2</td><td class="col-bugs">0</td><td class="col-bugs">3</td></tr>
         <tr><td class="col-num">04</td><td><a class="epic-link" href="#epic-4">The Protocol</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage"></span><span class="ps-stage"></span></span></td><td class="col-est">87%</td><td class="col-deps">3</td><td class="col-bugs">0</td><td class="col-bugs">0</td></tr>
         <tr><td class="col-num">05</td><td><a class="epic-link" href="#epic-5">The Report</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage"></span><span class="ps-stage"></span></span></td><td class="col-est">92%</td><td class="col-deps">3, 4</td><td class="col-bugs">0</td><td class="col-bugs">1</td></tr>
-        <tr><td class="col-num">06</td><td><a class="epic-link" href="#epic-6">The Coach</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage"></span></span></td><td class="col-est">100%</td><td class="col-deps">3, 4, 10</td><td class="col-bugs">1</td><td class="col-bugs">1</td></tr>
+        <tr><td class="col-num">06</td><td><a class="epic-link" href="#epic-6">The Coach</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage"></span></span></td><td class="col-est">100%</td><td class="col-deps">3, 4, 10</td><td class="col-bugs">0</td><td class="col-bugs">2</td></tr>
         <tr><td class="col-num">07</td><td><a class="epic-link" href="#epic-7">The Daily Return</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage"></span></span></td><td class="col-est">100%</td><td class="col-deps">1, 2</td><td class="col-bugs">0</td><td class="col-bugs">0</td></tr>
         <tr><td class="col-num">08</td><td><a class="epic-link" href="#epic-8">The Living Record</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage"></span><span class="ps-stage"></span></span></td><td class="col-est">90%</td><td class="col-deps">2, 3</td><td class="col-bugs">0</td><td class="col-bugs">0</td></tr>
         <tr><td class="col-num">09</td><td><a class="epic-link" href="#epic-9">The Care Team</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage partial"></span><span class="ps-stage"></span></span></td><td class="col-est">85%</td><td class="col-deps">1, 5, 11</td><td class="col-bugs">0</td><td class="col-bugs">0</td></tr>
         <tr><td class="col-num">10</td><td><a class="epic-link" href="#epic-10">The Knowledge Engine</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage partial"></span><span class="ps-stage"></span><span class="ps-stage"></span></span></td><td class="col-est">75%</td><td class="col-deps">—</td><td class="col-bugs">0</td><td class="col-bugs">1</td></tr>
-        <tr><td class="col-num">11</td><td><a class="epic-link" href="#epic-11">The Trust Layer</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage"></span><span class="ps-stage"></span></span></td><td class="col-est">97%</td><td class="col-deps">1</td><td class="col-bugs">1</td><td class="col-bugs">1</td></tr>
-        <tr><td class="col-num">12</td><td><a class="epic-link" href="#epic-12">The Distribution</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage partial"></span><span class="ps-stage"></span><span class="ps-stage"></span></span></td><td class="col-est">75%</td><td class="col-deps">1</td><td class="col-bugs">2</td><td class="col-bugs">0</td></tr>
-        <tr><td class="col-num">13</td><td><a class="epic-link" href="#epic-13">The Business Model</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage partial"></span><span class="ps-stage"></span><span class="ps-stage"></span></span></td><td class="col-est">50%</td><td class="col-deps">1, 4, 9</td><td class="col-bugs">1</td><td class="col-bugs">0</td></tr>
-        <tr><td class="col-num">14</td><td><a class="epic-link" href="#epic-14">The Platform Foundation</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage partial"></span><span class="ps-stage"></span><span class="ps-stage"></span></span></td><td class="col-est">70%</td><td class="col-deps">—</td><td class="col-bugs">0</td><td class="col-bugs">0</td></tr>
+        <tr><td class="col-num">11</td><td><a class="epic-link" href="#epic-11">The Trust Layer</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage"></span><span class="ps-stage"></span></span></td><td class="col-est">97%</td><td class="col-deps">1</td><td class="col-bugs">0</td><td class="col-bugs">2</td></tr>
+        <tr><td class="col-num">12</td><td><a class="epic-link" href="#epic-12">The Distribution</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage partial"></span><span class="ps-stage"></span><span class="ps-stage"></span></span></td><td class="col-est">80%</td><td class="col-deps">1</td><td class="col-bugs">0</td><td class="col-bugs">2</td></tr>
+        <tr><td class="col-num">13</td><td><a class="epic-link" href="#epic-13">The Business Model</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage partial"></span><span class="ps-stage"></span><span class="ps-stage"></span></span></td><td class="col-est">55%</td><td class="col-deps">1, 4, 9</td><td class="col-bugs">0</td><td class="col-bugs">0</td></tr>
+        <tr><td class="col-num">14</td><td><a class="epic-link" href="#epic-14">The Platform Foundation</a></td><td><span class="ps-pipeline"><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage partial"></span><span class="ps-stage"></span><span class="ps-stage"></span></span></td><td class="col-est">82%</td><td class="col-deps">—</td><td class="col-bugs">0</td><td class="col-bugs">0</td></tr>
       </tbody>
     </table>
   </section>
@@ -732,22 +718,19 @@ body {
             <p class="ps-epic-thesis">Every member walks away with a biological age and a five-domain risk picture they trust enough to share with their GP.</p>
           </div>
           <div class="ps-epic-status-col">
-            <span class="ps-pill warning">Bug · in progress</span>
-            <div class="ps-epic-pct">90%</div>
+            <span class="ps-pill ok">GP review pending</span>
+            <div class="ps-epic-pct">95%</div>
           </div>
         </header>
         <div class="ps-pipeline">
           <span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage"></span><span class="ps-stage"></span>
         </div>
-        <div class="ps-epic-bar"><div class="ps-epic-bar-fill" style="width:90%"></div></div>
-        <div class="ps-epic-bugs">
-          <span class="bug-id">BUG-010</span><strong>P1 OPEN.</strong> Every new onboarding silently fails to write a <code>risk_scores</code> row — migration <code>0059_risk_scores_history</code> changed the unique constraint but the deterministic-scorer upsert still uses <code>onConflict: 'user_uuid'</code>. Fix in open PR <a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/88">#88</a>.
-        </div>
+        <div class="ps-epic-bar"><div class="ps-epic-bar-fill" style="width:95%"></div></div>
         <div class="ps-epic-meta">
           <div class="item"><span class="item-label">Depends on</span><span class="item-value">Epic 2</span></div>
-          <div class="item"><span class="item-label">Open bugs</span><span class="item-value danger">1</span></div>
-          <div class="item"><span class="item-label">Closed bugs</span><span class="item-value">2</span></div>
-          <div class="item"><span class="item-label">Outstanding</span><span class="item-value">2</span></div>
+          <div class="item"><span class="item-label">Open bugs</span><span class="item-value">0</span></div>
+          <div class="item"><span class="item-label">Closed bugs</span><span class="item-value">3</span></div>
+          <div class="item"><span class="item-label">Outstanding</span><span class="item-value">1 (GP review)</span></div>
         </div>
         <a class="ps-epic-deeplink" href="product/epic-status.md#epic-3-the-number">View shipped log →</a>
       </article>
@@ -967,23 +950,17 @@ body {
           </div>
           <div class="ps-epic-status-col">
             <span class="ps-pill in-progress">In progress</span>
-            <div class="ps-epic-pct">75%</div>
+            <div class="ps-epic-pct">80%</div>
           </div>
         </header>
         <div class="ps-pipeline">
           <span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage partial"></span><span class="ps-stage"></span><span class="ps-stage"></span>
         </div>
-        <div class="ps-epic-bar"><div class="ps-epic-bar-fill" style="width:75%"></div></div>
-        <div class="ps-epic-bugs">
-          <span class="bug-id">BUG-013</span><strong>P1 OPEN.</strong> <code>/pricing</code> nav layout completely broken. <code>PublicNav</code> uses <code>.nav</code> classes scoped to <code>.lc-home</code> in home.css; pricing wraps in <code>.lc-pricing</code> so styles don't apply. Logo renders at full 880×203, nav links collapse to plain text "ScienceTeamSign inBegin".
-        </div>
-        <div class="ps-epic-bugs">
-          <span class="bug-id">BUG-014</span><strong>P1 OPEN.</strong> <code>/pricing</code> shows "$0.00/mo" with no plan cards but the "Continue to checkout" button is enabled. <code>billing.plans</code> returns empty in this env → no cards rendered → only the totals row. Either seed prod-like data or hide the totals row when no plans loaded.
-        </div>
+        <div class="ps-epic-bar"><div class="ps-epic-bar-fill" style="width:80%"></div></div>
         <div class="ps-epic-meta">
           <div class="item"><span class="item-label">Depends on</span><span class="item-value">Epic 1</span></div>
-          <div class="item"><span class="item-label">Open bugs</span><span class="item-value danger">2</span></div>
-          <div class="item"><span class="item-label">Closed bugs</span><span class="item-value">0</span></div>
+          <div class="item"><span class="item-label">Open bugs</span><span class="item-value">0</span></div>
+          <div class="item"><span class="item-label">Closed bugs</span><span class="item-value">2</span></div>
           <div class="item"><span class="item-label">Outstanding</span><span class="item-value">4</span></div>
         </div>
         <a class="ps-epic-deeplink" href="product/epic-status.md#epic-12-the-distribution">View shipped log →</a>
@@ -998,19 +975,16 @@ body {
           </div>
           <div class="ps-epic-status-col">
             <span class="ps-pill building">Building</span>
-            <div class="ps-epic-pct">50%</div>
+            <div class="ps-epic-pct">55%</div>
           </div>
         </header>
         <div class="ps-pipeline">
           <span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage partial"></span><span class="ps-stage"></span><span class="ps-stage"></span>
         </div>
-        <div class="ps-epic-bar"><div class="ps-epic-bar-fill" style="width:50%"></div></div>
-        <div class="ps-epic-bugs">
-          <span class="bug-id">BUG-014</span><strong>P1 OPEN (shared with Epic 12).</strong> Empty <code>billing.plans</code> means <code>/pricing</code> renders no cards but still shows "Estimated total: $0.00/mo" with checkout enabled — the billing layer is the root cause. Seed plans for this env, or treat empty-billing as a hard error.
-        </div>
+        <div class="ps-epic-bar"><div class="ps-epic-bar-fill" style="width:55%"></div></div>
         <div class="ps-epic-meta">
           <div class="item"><span class="item-label">Depends on</span><span class="item-value">Epic 1, 4, 9</span></div>
-          <div class="item"><span class="item-label">Open bugs</span><span class="item-value danger">1</span></div>
+          <div class="item"><span class="item-label">Open bugs</span><span class="item-value">0</span></div>
           <div class="item"><span class="item-label">Closed bugs</span><span class="item-value">0</span></div>
           <div class="item"><span class="item-label">Outstanding</span><span class="item-value">10</span></div>
         </div>
@@ -1025,22 +999,19 @@ body {
             <p class="ps-epic-thesis">The engineering substrate — security, observability, cost discipline, DR, dependency hygiene — that makes Janet defensible as a healthcare-grade product.</p>
           </div>
           <div class="ps-epic-status-col">
-            <span class="ps-pill danger">Regressed</span>
-            <div class="ps-epic-pct">70%</div>
+            <span class="ps-pill ok">CI restored</span>
+            <div class="ps-epic-pct">82%</div>
           </div>
         </header>
         <div class="ps-pipeline">
           <span class="ps-stage passed"></span><span class="ps-stage passed"></span><span class="ps-stage partial"></span><span class="ps-stage"></span><span class="ps-stage"></span>
         </div>
-        <div class="ps-epic-bar"><div class="ps-epic-bar-fill regressed" style="width:70%"></div></div>
-        <div class="ps-epic-bugs regressed">
-          <strong>↻ REGRESSION.</strong> PR-triggered CI checks DISABLED via <a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/102">#102</a> — Lint, Typecheck, Gitleaks, pgTAP all fail at boot with infra bugs. Vercel preview deploy is the sole auto gate. CI repair upgraded P1 → P0.
-        </div>
+        <div class="ps-epic-bar"><div class="ps-epic-bar-fill" style="width:82%"></div></div>
         <div class="ps-epic-meta">
           <div class="item"><span class="item-label">Depends on</span><span class="item-value">—</span></div>
           <div class="item"><span class="item-label">Open bugs</span><span class="item-value">0</span></div>
           <div class="item"><span class="item-label">Closed bugs</span><span class="item-value">0</span></div>
-          <div class="item"><span class="item-label">Outstanding</span><span class="item-value danger">11</span></div>
+          <div class="item"><span class="item-label">Outstanding</span><span class="item-value">8</span></div>
         </div>
         <a class="ps-epic-deeplink" href="product/epic-status.md#epic-14-the-platform-foundation">View shipped log →</a>
       </article>
@@ -1053,6 +1024,45 @@ body {
     <h2>Build log</h2>
     <p class="ps-section-meta">PRs merged to <code>main</code>, grouped by UTC date. Newest first. Source: <code>gh pr list --base main --state merged</code>.</p>
     <div class="ps-builds">
+
+      <div class="ps-day">
+        <div class="ps-day-header"><span class="date">2026-05-04</span><span class="count">7 merged</span></div>
+        <ul class="ps-prs">
+          <li class="ps-pr"><span class="ps-pr-num"><a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/141">#141</a></span><span class="ps-pr-title">fix(suppliers): add missing supplier_type column</span><span class="ps-pr-author">Dave Hajdu</span></li>
+          <li class="ps-pr"><span class="ps-pr-num"><a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/139">#139</a></span><span class="ps-pr-title">copy(home): hero promises supplement + exercise + meal plan</span><span class="ps-pr-author">Dave Hajdu</span></li>
+          <li class="ps-pr"><span class="ps-pr-num"><a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/138">#138</a></span><span class="ps-pr-title">feat(admin): role assignment UI on /admin/users/[id]</span><span class="ps-pr-author">Dave Hajdu</span></li>
+          <li class="ps-pr"><span class="ps-pr-num"><a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/135">#135</a></span><span class="ps-pr-title">fix(billing): seed B2C annual plans + flip tier model to core/clinical/elite (BUG-014)</span><span class="ps-pr-author">Dave Hajdu</span></li>
+          <li class="ps-pr"><span class="ps-pr-num"><a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/133">#133</a></span><span class="ps-pr-title">fix(auth): preserve redirect through signup + email-verify flow</span><span class="ps-pr-author">Dave Hajdu</span></li>
+          <li class="ps-pr"><span class="ps-pr-num"><a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/131">#131</a></span><span class="ps-pr-title">fix(auth): preserve redirect target across protected routes (BUG-018, BUG-024)</span><span class="ps-pr-author">Dave Hajdu</span></li>
+        </ul>
+      </div>
+
+      <div class="ps-day">
+        <div class="ps-day-header"><span class="date">2026-05-03</span><span class="count">2 merged</span></div>
+        <ul class="ps-prs">
+          <li class="ps-pr"><span class="ps-pr-num"><a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/130">#130</a></span><span class="ps-pr-title">feat(janet): add request_pt_plan tool and system-prompt directive</span><span class="ps-pr-author">Dave Hajdu</span></li>
+          <li class="ps-pr"><span class="ps-pr-num"><a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/129">#129</a></span><span class="ps-pr-title">fix(footer): route Privacy, remove dead-link stubs (BUG-016)</span><span class="ps-pr-author">Dave Hajdu</span></li>
+        </ul>
+      </div>
+
+      <div class="ps-day">
+        <div class="ps-day-header"><span class="date">2026-05-02</span><span class="count">22 merged</span></div>
+        <ul class="ps-prs">
+          <li class="ps-pr"><span class="ps-pr-num"><a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/127">#127</a></span><span class="ps-pr-title">fix(ci): clear lint + typecheck errors that built up while CI was off</span><span class="ps-pr-author">Dave Hajdu</span></li>
+          <li class="ps-pr"><span class="ps-pr-num"><a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/126">#126</a></span><span class="ps-pr-title">fix(ci): re-enable PR-triggered CI with minimum-viable check set</span><span class="ps-pr-author">Dave Hajdu</span></li>
+          <li class="ps-pr"><span class="ps-pr-num"><a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/124">#124</a></span><span class="ps-pr-title">fix(janet-chat): stop logging realtime payload to browser console (BUG-025)</span><span class="ps-pr-author">Dave Hajdu</span></li>
+          <li class="ps-pr"><span class="ps-pr-num"><a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/123">#123</a></span><span class="ps-pr-title">fix(sample-report): replace London persona with Sydney equivalent (BUG-023)</span><span class="ps-pr-author">Dave Hajdu</span></li>
+          <li class="ps-pr"><span class="ps-pr-num"><a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/122">#122</a></span><span class="ps-pr-title">fix(export): rename data-export ZIP to janet-cares-export-… (BUG-020)</span><span class="ps-pr-author">Dave Hajdu</span></li>
+          <li class="ps-pr"><span class="ps-pr-num"><a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/121">#121</a></span><span class="ps-pr-title">fix(metadata): strip duplicate brand from title metadata (BUG-017)</span><span class="ps-pr-author">Dave Hajdu</span></li>
+          <li class="ps-pr"><span class="ps-pr-num"><a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/118">#118</a></span><span class="ps-pr-title">fix(pricing): nav scope + empty state when no plans loaded (BUG-013)</span><span class="ps-pr-author">Dave Hajdu</span></li>
+          <li class="ps-pr"><span class="ps-pr-num"><a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/117">#117</a></span><span class="ps-pr-title">fix(stripe): hard-fail in production if site URL is unresolvable (BUG-019)</span><span class="ps-pr-author">Dave Hajdu</span></li>
+          <li class="ps-pr"><span class="ps-pr-num"><a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/116">#116</a></span><span class="ps-pr-title">fix(footer): correct legal entity to Work Healthy Australia Pty Ltd (BUG-015)</span><span class="ps-pr-author">Dave Hajdu</span></li>
+          <li class="ps-pr"><span class="ps-pr-num"><a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/115">#115</a></span><span class="ps-pr-title">fix(brand): swap UK clinical credentials for AU AHPRA equivalents (BUG-012)</span><span class="ps-pr-author">Dave Hajdu</span></li>
+          <li class="ps-pr"><span class="ps-pr-num"><a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/113">#113</a></span><span class="ps-pr-title">feat(roles): role system foundation — Phase A</span><span class="ps-pr-author">Dave Hajdu</span></li>
+          <li class="ps-pr"><span class="ps-pr-num"><a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/112">#112</a></span><span class="ps-pr-title">fix(account): surface real action errors instead of global error page (BUG-011)</span><span class="ps-pr-author">Dave Hajdu</span></li>
+          <li class="ps-pr"><span class="ps-pr-num"><a href="https://github.com/Work-Healthy-Australia/longevity-coach-wha/pull/88">#88</a></span><span class="ps-pr-title">fix(onboarding): align risk_scores upsert to new constraint (BUG-010)</span><span class="ps-pr-author">Dave Hajdu</span></li>
+        </ul>
+      </div>
 
       <div class="ps-day">
         <div class="ps-day-header"><span class="date">2026-05-01</span><span class="count">17 merged</span></div>
