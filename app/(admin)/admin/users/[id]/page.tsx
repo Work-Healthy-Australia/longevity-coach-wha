@@ -1,6 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { loose } from "@/lib/supabase/loose-table";
+import { ROLE_LABELS, type AssignableRole } from "@/lib/auth/roles";
+import { RolesCard } from "./_components/RolesCard";
+import { RevokeRoleButton } from "./_components/RevokeRoleButton";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +17,22 @@ export default async function AdminUserDetailPage({
   const { id } = await params;
   const admin = createAdminClient();
 
-  const [profileResult, healthResult, riskResult, supplementResult, subResult, uploadsResult] =
+  // Resolve current admin user (for self-grant hint in RolesCard).
+  const supabase = await createClient();
+  const {
+    data: { user: currentUser },
+  } = await supabase.auth.getUser();
+
+  const [
+    profileResult,
+    healthResult,
+    riskResult,
+    supplementResult,
+    subResult,
+    uploadsResult,
+    rolesResult,
+    auditResult,
+  ] =
     await Promise.all([
       admin.from("profiles").select("id, full_name, date_of_birth, created_at").eq("id", id).single(),
       admin
@@ -51,6 +71,27 @@ export default async function AdminUserDetailPage({
         .eq("user_uuid", id)
         .order("created_at", { ascending: false })
         .limit(10),
+      // user_role_assignments + role_audit_log tables exist (migration 0068)
+      // but aren't yet in the regenerated TS types. loose() bypasses the
+      // type-system narrowing — supabase-js still validates at runtime.
+      loose(admin)
+        .from("user_role_assignments")
+        .select("id, role, scope_type, scope_id, granted_by, granted_at, reason")
+        .eq("user_uuid", id)
+        .is("revoked_at", null)
+        .order("granted_at", { ascending: false }),
+      // Layout already gates on is_admin; admin client used for parity with
+      // rest of page (RLS would also permit, since admin policy on
+      // role_audit_log allows SELECT for has_role('admin'|'super_admin')
+      // callers — see migration 0068 line 252).
+      loose(admin)
+        .from("role_audit_log")
+        .select(
+          "id, actor_uuid, action, role, scope_type, scope_id, reason, ahpra_check_passed, created_at",
+        )
+        .eq("target_uuid", id)
+        .order("created_at", { ascending: false })
+        .limit(10),
     ]);
 
   if (!profileResult.data) notFound();
@@ -61,6 +102,52 @@ export default async function AdminUserDetailPage({
   const supplementPlans = supplementResult.data ?? [];
   const sub = subResult.data;
   const uploads = uploadsResult.data ?? [];
+  type RoleRow = {
+    id: string;
+    role: string;
+    scope_type: string;
+    scope_id: string | null;
+    granted_by: string | null;
+    granted_at: string;
+    reason: string | null;
+  };
+  type AuditRow = {
+    id: string;
+    actor_uuid: string | null;
+    action: string;
+    role: string;
+    scope_type: string;
+    scope_id: string | null;
+    reason: string | null;
+    ahpra_check_passed: boolean | null;
+    created_at: string;
+  };
+  const roles = (rolesResult.data ?? []) as RoleRow[];
+  const auditEvents = (auditResult.data ?? []) as AuditRow[];
+
+  // Resolve actor names for roles + audit log in one query.
+  const actorIds = Array.from(
+    new Set([
+      ...roles.map((r) => r.granted_by).filter((v): v is string => !!v),
+      ...auditEvents
+        .map((e) => e.actor_uuid)
+        .filter((v): v is string => !!v),
+    ]),
+  );
+  const actorNameById = new Map<string, string>();
+  if (actorIds.length > 0) {
+    const { data: actorProfiles } = await admin
+      .from("profiles")
+      .select("id, full_name")
+      .in("id", actorIds);
+    for (const p of actorProfiles ?? []) {
+      if (p.full_name) actorNameById.set(p.id, p.full_name);
+    }
+  }
+  function nameFor(uuid: string | null | undefined): string {
+    if (!uuid) return "—";
+    return actorNameById.get(uuid) ?? `${uuid.slice(0, 8)}…`;
+  }
 
   // Server component — runs once per request, so the impure-function rule
   // doesn't introduce the re-render instability it warns about.
@@ -101,6 +188,58 @@ export default async function AdminUserDetailPage({
       </div>
 
       <div className="detail-grid">
+        {/* Roles */}
+        <div className="admin-card">
+          <h2 className="admin-card-title">Roles</h2>
+          {roles.length > 0 ? (
+            <ul style={{ listStyle: "none", padding: 0, margin: "0 0 16px 0" }}>
+              {roles.map((r) => {
+                const label = ROLE_LABELS[r.role as AssignableRole] ?? r.role;
+                const scope =
+                  r.scope_type === "global"
+                    ? "global"
+                    : `${r.scope_type}${r.scope_id ? ` / ${r.scope_id}` : ""}`;
+                return (
+                  <li
+                    key={r.id}
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      padding: "6px 0",
+                      borderBottom: "1px solid var(--lc-border, #eee)",
+                    }}
+                  >
+                    <div>
+                      <strong>{label}</strong>
+                      <span className="muted-cell" style={{ marginLeft: 8 }}>
+                        {scope} · granted {formatDate(r.granted_at)} by {nameFor(r.granted_by)}
+                      </span>
+                      {r.reason && (
+                        <div className="muted-cell" style={{ fontSize: "0.85em" }}>
+                          {r.reason}
+                        </div>
+                      )}
+                    </div>
+                    <RevokeRoleButton
+                      assignmentId={r.id}
+                      targetUserId={id}
+                      roleLabel={label}
+                    />
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            <p className="muted-cell" style={{ marginBottom: 16 }}>
+              No active role assignments.
+            </p>
+          )}
+          {currentUser && (
+            <RolesCard targetUserId={id} actorUserId={currentUser.id} />
+          )}
+        </div>
+
         {/* Subscription */}
         <div className="admin-card">
           <h2 className="admin-card-title">Subscription</h2>
@@ -200,6 +339,50 @@ export default async function AdminUserDetailPage({
             </table>
           ) : (
             <p className="muted-cell">No documents uploaded.</p>
+          )}
+        </div>
+
+        {/* Recent role audit */}
+        <div className="admin-card full-width">
+          <h2 className="admin-card-title">Recent role audit</h2>
+          {auditEvents.length > 0 ? (
+            <table className="admin-table small">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Action</th>
+                  <th>Role</th>
+                  <th>Scope</th>
+                  <th>Actor</th>
+                  <th>Reason</th>
+                </tr>
+              </thead>
+              <tbody>
+                {auditEvents.map((e) => {
+                  const label = ROLE_LABELS[e.role as AssignableRole] ?? e.role;
+                  const scope =
+                    e.scope_type === "global"
+                      ? "global"
+                      : `${e.scope_type}${e.scope_id ? ` / ${e.scope_id}` : ""}`;
+                  return (
+                    <tr key={e.id}>
+                      <td>{formatDate(e.created_at)}</td>
+                      <td>
+                        <span className={`status-badge status-${e.action}`}>
+                          {e.action}
+                        </span>
+                      </td>
+                      <td>{label}</td>
+                      <td>{scope}</td>
+                      <td>{nameFor(e.actor_uuid)}</td>
+                      <td>{e.reason ?? <span className="muted-cell">—</span>}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          ) : (
+            <p className="muted-cell">No role events yet.</p>
           )}
         </div>
 
