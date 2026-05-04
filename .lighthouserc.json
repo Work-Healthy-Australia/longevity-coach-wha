@@ -1,9 +1,13 @@
 {
   "ci": {
     "collect": {
-      "url": ["http://localhost:3000/", "http://localhost:3000/dashboard", "http://localhost:3000/report"],
+      "url": [
+        "http://localhost:3000/",
+        "http://localhost:3000/sample-report",
+        "http://localhost:3000/science"
+      ],
       "startServerCommand": "pnpm start",
-      "startServerReadyPattern": "Ready on"
+      "startServerReadyPattern": "Ready in"
     },
     "assert": {
       "assertions": {
