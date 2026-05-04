@@ -58,7 +58,7 @@ export function AddonsClient({ initialRows }: { initialRows: AddonRow[] }) {
           description: (fd.get("description") as string) || null,
           price_monthly_cents: Number(fd.get("price_monthly_cents") ?? 0),
           price_annual_cents: Number(fd.get("price_annual_cents") ?? 0),
-          min_tier: String(fd.get("min_tier") ?? "individual"),
+          min_tier: String(fd.get("min_tier") ?? "core"),
           stripe_price_id_monthly: String(fd.get("stripe_price_id_monthly") ?? ""),
           stripe_price_id_annual: String(fd.get("stripe_price_id_annual") ?? ""),
         });
@@ -69,9 +69,9 @@ export function AddonsClient({ initialRows }: { initialRows: AddonRow[] }) {
           <label>Description<input name="description" defaultValue={row.description ?? ""} /></label>
           <label>Min tier
             <select name="min_tier" defaultValue={row.min_tier}>
-              <option value="individual">individual</option>
-              <option value="professional">professional</option>
-              <option value="corporate">corporate</option>
+              <option value="core">Core</option>
+              <option value="clinical">Clinical</option>
+              <option value="elite">Elite</option>
             </select>
           </label>
           <label>Stripe price ID (monthly)<input name="stripe_price_id_monthly" defaultValue={row.stripe_price_id_monthly} required /></label>
@@ -90,7 +90,7 @@ export function AddonsClient({ initialRows }: { initialRows: AddonRow[] }) {
           stripe_price_id_annual: String(fd.get("stripe_price_id_annual") ?? ""),
           price_monthly_cents: Number(fd.get("price_monthly_cents") ?? 0),
           price_annual_cents: Number(fd.get("price_annual_cents") ?? 0),
-          min_tier: String(fd.get("min_tier") ?? "individual"),
+          min_tier: String(fd.get("min_tier") ?? "core"),
           is_active: true,
         });
       }}
@@ -109,10 +109,10 @@ export function AddonsClient({ initialRows }: { initialRows: AddonRow[] }) {
             </select>
           </label>
           <label>Min tier
-            <select name="min_tier" defaultValue="individual">
-              <option value="individual">individual</option>
-              <option value="professional">professional</option>
-              <option value="corporate">corporate</option>
+            <select name="min_tier" defaultValue="core">
+              <option value="core">Core</option>
+              <option value="clinical">Clinical</option>
+              <option value="elite">Elite</option>
             </select>
           </label>
           <label>Stripe price ID (monthly)<input name="stripe_price_id_monthly" required /></label>

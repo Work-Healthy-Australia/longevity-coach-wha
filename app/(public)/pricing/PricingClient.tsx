@@ -7,11 +7,12 @@ import {
   centsToDollarsString,
   type BillingInterval,
 } from "@/lib/pricing/calculate";
+import { TIER_RANK, planKey, type Tier } from "@/lib/pricing/grouping";
 
 export type PricingPlan = {
   id: string;
   name: string;
-  tier: "individual" | "professional" | "corporate";
+  tier: Tier;
   billing_interval: "month" | "year";
   stripe_price_id: string;
   base_price_cents: number;
@@ -27,20 +28,9 @@ export type PricingAddon = {
   feature_key: string;
   price_monthly_cents: number;
   price_annual_cents: number;
-  min_tier: "individual" | "professional" | "corporate";
+  min_tier: Tier;
   is_active: boolean;
 };
-
-const TIER_RANK: Record<PricingPlan["tier"], number> = {
-  individual: 0,
-  professional: 1,
-  corporate: 2,
-};
-
-function planKey(p: PricingPlan): string {
-  // Plans share a name across monthly/annual rows; group by tier+name.
-  return `${p.tier}::${p.name.replace(/\s+(monthly|annual)$/i, "").trim()}`;
-}
 
 export function PricingClient({
   plans,

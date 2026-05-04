@@ -12,7 +12,7 @@ const Body = z.object({
   stripe_price_id_annual: z.string().min(1),
   price_monthly_cents: z.number().int().min(0),
   price_annual_cents: z.number().int().min(0),
-  min_tier: z.enum(["individual", "professional", "corporate"]),
+  min_tier: z.enum(["core", "clinical", "elite"]),
   is_active: z.boolean().default(true),
 });
 

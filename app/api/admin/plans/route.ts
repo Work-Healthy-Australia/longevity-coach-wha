@@ -6,7 +6,7 @@ import { requireAdmin } from "@/lib/admin/guard";
 
 const PlanBody = z.object({
   name: z.string().min(1),
-  tier: z.enum(["individual", "professional", "corporate"]),
+  tier: z.enum(["core", "clinical", "elite"]),
   billing_interval: z.enum(["month", "year"]),
   stripe_price_id: z.string().min(1),
   base_price_cents: z.number().int().min(0),
