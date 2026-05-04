@@ -1,15 +1,20 @@
 "use client";
 
 import { useActionState } from "react";
+import { useSearchParams } from "next/navigation";
 import { signUp } from "../actions";
 import { PasswordInput } from "../_components/password-input";
 
 export function SignupForm() {
+  const params = useSearchParams();
+  const redirectParam = params.get("redirect") ?? "";
+
   const [state, action, pending] = useActionState(signUp, {});
 
   return (
     <form action={action}>
       {state.error && <div className="auth-error">{state.error}</div>}
+      <input type="hidden" name="redirect" value={redirectParam} />
       <label>
         Full name
         <input

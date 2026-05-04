@@ -1,9 +1,11 @@
 import { NextResponse, type NextRequest } from "next/server";
 import type { EmailOtpType } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
+import { safeRedirect } from "@/lib/auth/safe-redirect";
 import { sendWelcomeEmail } from "@/lib/email/welcome";
 
 const JUST_CONFIRMED_WINDOW_MS = 60_000;
+const RECOVERY_LANDING = "/reset-password";
 
 // Handles two Supabase auth callbacks against the same URL:
 //
@@ -18,7 +20,20 @@ export async function GET(request: NextRequest) {
   const code = url.searchParams.get("code");
   const tokenHash = url.searchParams.get("token_hash");
   const type = url.searchParams.get("type") as EmailOtpType | null;
-  const next = url.searchParams.get("next") ?? "/dashboard";
+  const rawNext = url.searchParams.get("next");
+
+  // Recovery flows MUST land on /reset-password — never honour an
+  // attacker-supplied next here. safeRedirect's auth-loop block-list also
+  // rejects /reset-password, so we bypass it for this single type.
+  let next: string;
+  if (type === "recovery") {
+    if (rawNext !== null && rawNext !== RECOVERY_LANDING) {
+      console.warn("auth callback: recovery flow with unexpected next, forcing /reset-password");
+    }
+    next = RECOVERY_LANDING;
+  } else {
+    next = safeRedirect(rawNext);
+  }
 
   const supabase = await createClient();
 

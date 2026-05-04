@@ -1,11 +1,6 @@
+import { safeRedirect } from "@/lib/auth/safe-redirect";
+
 export const metadata = { title: "Email confirmed · Janet" };
-
-const ALLOWED_NEXT = ["/dashboard", "/onboarding", "/account", "/report"];
-
-function safeNext(next: string | undefined): string {
-  if (!next) return "/dashboard";
-  return ALLOWED_NEXT.includes(next) ? next : "/dashboard";
-}
 
 export default async function EmailConfirmedPage({
   searchParams,
@@ -13,7 +8,7 @@ export default async function EmailConfirmedPage({
   searchParams: Promise<{ next?: string }>;
 }) {
   const { next } = await searchParams;
-  const continueUrl = safeNext(next);
+  const continueUrl = safeRedirect(next);
 
   return (
     <>
