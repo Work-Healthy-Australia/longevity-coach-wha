@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -8,6 +9,17 @@ import { AppHeader } from "./_components/app-header";
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
+
+function isSafeInternalPath(value: string): boolean {
+  if (value.length === 0) return false;
+  if (value.charCodeAt(0) !== 47) return false;
+  if (value.charCodeAt(1) === 47 || value.charCodeAt(1) === 92) return false;
+  for (let i = 0; i < value.length; i++) {
+    const code = value.charCodeAt(i);
+    if (code < 0x20 || code === 0x7f) return false;
+  }
+  return true;
+}
 
 export default async function AppLayout({
   children,
@@ -19,7 +31,14 @@ export default async function AppLayout({
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) redirect("/login");
+  if (!user) {
+    const h = await headers();
+    const pathname = h.get("x-pathname");
+    if (pathname && isSafeInternalPath(pathname)) {
+      redirect(`/login?redirect=${encodeURIComponent(pathname)}`);
+    }
+    redirect("/login");
+  }
 
   const admin = createAdminClient();
   const { data: profile } = await admin

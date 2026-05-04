@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const PROTECTED_PREFIXES = ["/dashboard", "/onboarding", "/admin", "/uploads", "/check-in", "/report", "/account", "/labs", "/trends", "/simulator", "/clinician", "/coach", "/org"];
+const PROTECTED_PREFIXES = ["/dashboard", "/onboarding", "/admin", "/uploads", "/check-in", "/report", "/account", "/labs", "/trends", "/simulator", "/clinician", "/coach", "/org", "/insights", "/journal", "/care-team", "/alerts", "/routines"];
 const PAUSE_REDIRECTED_PREFIXES = ["/dashboard", "/report", "/check-in", "/trends", "/labs", "/uploads", "/journal", "/insights"];
 const AUTH_ONLY_PREFIXES = ["/login", "/signup", "/forgot-password"];
 
@@ -24,7 +24,16 @@ export async function updateSession(request: NextRequest) {
   // marketing previews without requiring auth env vars.
   if (!url || !key) return NextResponse.next({ request });
 
-  let response = NextResponse.next({ request });
+  // Forward x-pathname to server components so (app)/layout.tsx can preserve
+  // the destination when bouncing unauthenticated users to /login.
+  // Per Next 16 proxy docs: pass requestHeaders via { request: { headers } }.
+  // .set() (not .append()) intentionally overrides any browser-supplied
+  // x-pathname, so the layout always trusts the proxy's view of the URL.
+  const { pathname, search } = request.nextUrl;
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-pathname", pathname + search);
+
+  let response = NextResponse.next({ request: { headers: requestHeaders } });
 
   const supabase = createServerClient(url, key, {
     cookies: {
@@ -35,7 +44,7 @@ export async function updateSession(request: NextRequest) {
         cookiesToSet.forEach(({ name, value }) =>
           request.cookies.set(name, value),
         );
-        response = NextResponse.next({ request });
+        response = NextResponse.next({ request: { headers: requestHeaders } });
         cookiesToSet.forEach(({ name, value, options }) =>
           response.cookies.set(name, value, options),
         );
@@ -47,8 +56,6 @@ export async function updateSession(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
-  const { pathname, search } = request.nextUrl;
 
   if (!user && matches(pathname, PROTECTED_PREFIXES)) {
     const loginUrl = request.nextUrl.clone();
