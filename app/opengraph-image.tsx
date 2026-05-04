@@ -85,7 +85,7 @@ export default async function OGImage() {
           }}
         >
           A clinically grounded biological age, risk scores across five domains,
-          and a supplement protocol made for you — not for everyone.
+          and a supplement, exercise and meal plan made for you — not for everyone.
         </div>
 
         {/* Footer row */}
