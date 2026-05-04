@@ -1,11 +1,14 @@
+import { authLinkWithRedirect } from "@/lib/auth/safe-redirect";
+
 export const metadata = { title: "Verify your email" };
 
 export default async function VerifyEmailPage({
   searchParams,
 }: {
-  searchParams: Promise<{ email?: string }>;
+  searchParams: Promise<{ email?: string; redirect?: string }>;
 }) {
-  const { email } = await searchParams;
+  const { email, redirect } = await searchParams;
+  const signupHref = authLinkWithRedirect("/signup", redirect);
 
   return (
     <>
@@ -16,7 +19,7 @@ export default async function VerifyEmailPage({
         your account.
       </p>
       <p className="auth-meta">
-        Wrong email? <a href="/signup">Sign up again</a>
+        Wrong email? <a href={signupHref}>Sign up again</a>
       </p>
     </>
   );

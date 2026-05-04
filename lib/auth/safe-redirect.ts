@@ -31,3 +31,18 @@ export function safeRedirect(
 
   return target;
 }
+
+/**
+ * Build a cross-form auth-link href that forwards the original ?redirect=
+ * destination, dropping it entirely if the value is unsafe rather than
+ * substituting a default. Used by login/signup/verify-email pages so the
+ * "Sign in / Create one / Sign up again" links carry the user's intent
+ * across forms.
+ */
+export function authLinkWithRedirect(
+  base: string,
+  redirect: string | null | undefined,
+): string {
+  const safeNext = safeRedirect(redirect, "");
+  return safeNext ? `${base}?redirect=${encodeURIComponent(safeNext)}` : base;
+}

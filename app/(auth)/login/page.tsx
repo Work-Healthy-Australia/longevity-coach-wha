@@ -1,9 +1,17 @@
 import { Suspense } from "react";
 import { LoginForm } from "./login-form";
+import { authLinkWithRedirect } from "@/lib/auth/safe-redirect";
 
 export const metadata = { title: "Sign in" };
 
-export default function LoginPage() {
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ redirect?: string }>;
+}) {
+  const { redirect } = await searchParams;
+  const signupHref = authLinkWithRedirect("/signup", redirect);
+
   return (
     <>
       <h1>Welcome back</h1>
@@ -12,7 +20,7 @@ export default function LoginPage() {
         <LoginForm />
       </Suspense>
       <p className="auth-meta">
-        Don&apos;t have an account? <a href="/signup">Create one</a>
+        Don&apos;t have an account? <a href={signupHref}>Create one</a>
       </p>
     </>
   );
