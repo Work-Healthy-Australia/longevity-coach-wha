@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
+import { safeRedirect } from "@/lib/auth/safe-redirect";
 
 type State = {
   error?: string;
@@ -22,6 +23,7 @@ function originFromHeaders(h: Headers): string {
 export async function signIn(_: State, formData: FormData): Promise<State> {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
+  const redirectParam = formData.get("redirect");
   const values = { email };
 
   if (!email || !password)
@@ -32,7 +34,7 @@ export async function signIn(_: State, formData: FormData): Promise<State> {
   if (error) return { error: error.message, values };
 
   revalidatePath("/", "layout");
-  redirect("/dashboard");
+  redirect(safeRedirect(typeof redirectParam === "string" ? redirectParam : null));
 }
 
 export async function signUp(_: State, formData: FormData): Promise<State> {

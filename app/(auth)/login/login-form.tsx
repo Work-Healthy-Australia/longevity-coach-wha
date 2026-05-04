@@ -10,6 +10,7 @@ export function LoginForm() {
   const callbackError = params.get("error") === "auth_callback_failed"
     ? "We couldn't complete that link. Try signing in again."
     : null;
+  const redirectParam = params.get("redirect") ?? "";
 
   const [state, action, pending] = useActionState(signIn, {});
 
@@ -18,6 +19,7 @@ export function LoginForm() {
   return (
     <form action={action}>
       {error && <div className="auth-error">{error}</div>}
+      <input type="hidden" name="redirect" value={redirectParam} />
       <label>
         Email
         <input
