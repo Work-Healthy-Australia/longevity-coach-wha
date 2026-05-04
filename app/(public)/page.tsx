@@ -14,20 +14,20 @@ import "./home.css";
 export const metadata: Metadata = {
   title: "Live longer, on purpose.",
   description:
-    "Seven minutes of honest questions. A clinically grounded biological age, risk scores across five domains, and a supplement protocol made for you — not for everyone.",
+    "Seven minutes of honest questions. A clinically grounded biological age, risk scores across five domains, and a supplement, exercise and meal plan made for you — not for everyone.",
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     url: "/",
     title: "Janet Cares — Live longer, on purpose.",
     description:
-      "A clinically grounded biological age, risk scores across five domains, and a supplement protocol made for you — not for everyone.",
+      "A clinically grounded biological age, risk scores across five domains, and a supplement, exercise and meal plan made for you — not for everyone.",
   },
   twitter: {
     card: "summary_large_image",
     title: "Janet Cares — Live longer, on purpose.",
     description:
-      "A clinically grounded biological age, risk scores across five domains, and a supplement protocol made for you — not for everyone.",
+      "A clinically grounded biological age, risk scores across five domains, and a supplement, exercise and meal plan made for you — not for everyone.",
   },
 };
 
@@ -52,7 +52,8 @@ export default function Home() {
               <p className="sub">
                 Seven minutes of honest questions. A clinically-grounded
                 biological age, risk scores across five domains, and a
-                supplement protocol made for you - not for everyone.
+                supplement, exercise and meal plan made for you - not for
+                everyone.
               </p>
               <div className="ctas">
                 <a className="btn btn-primary btn-lg" href="/signup">Get my bio-age →</a>
