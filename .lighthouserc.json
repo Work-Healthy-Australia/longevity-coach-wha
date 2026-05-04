@@ -3,9 +3,8 @@
     "collect": {
       "url": [
         "http://localhost:3000/",
-        "http://localhost:3000/pricing",
         "http://localhost:3000/sample-report",
-        "http://localhost:3000/login"
+        "http://localhost:3000/science"
       ],
       "startServerCommand": "pnpm start",
       "startServerReadyPattern": "Ready in"
