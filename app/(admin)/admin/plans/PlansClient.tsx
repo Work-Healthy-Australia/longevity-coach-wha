@@ -107,7 +107,7 @@ export function PlansClient({ initialRows }: { initialRows: PlanRow[] }) {
         }
         await postJson("/api/admin/plans", {
           name: String(fd.get("name") ?? ""),
-          tier: String(fd.get("tier") ?? "individual"),
+          tier: String(fd.get("tier") ?? "core"),
           billing_interval: String(fd.get("billing_interval") ?? "month"),
           stripe_price_id: String(fd.get("stripe_price_id") ?? ""),
           base_price_cents: Number(fd.get("base_price_cents") ?? 0),
@@ -120,10 +120,10 @@ export function PlansClient({ initialRows }: { initialRows: PlanRow[] }) {
         <>
           <label>Name<input name="name" required /></label>
           <label>Tier
-            <select name="tier" defaultValue="individual">
-              <option value="individual">individual</option>
-              <option value="professional">professional</option>
-              <option value="corporate">corporate</option>
+            <select name="tier" defaultValue="core">
+              <option value="core">Core</option>
+              <option value="clinical">Clinical</option>
+              <option value="elite">Elite</option>
             </select>
           </label>
           <label>Billing interval

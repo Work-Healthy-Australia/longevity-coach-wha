@@ -9,7 +9,7 @@ const Patch = z.object({
   description: z.string().nullable().optional(),
   price_monthly_cents: z.number().int().min(0).optional(),
   price_annual_cents: z.number().int().min(0).optional(),
-  min_tier: z.enum(["individual", "professional", "corporate"]).optional(),
+  min_tier: z.enum(["core", "clinical", "elite"]).optional(),
   is_active: z.boolean().optional(),
   stripe_price_id_monthly: z.string().min(1).optional(),
   stripe_price_id_annual: z.string().min(1).optional(),

@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { createClient } from "@/lib/supabase/server";
 import { getStripe, priceIdForPlan, type PlanId } from "@/lib/stripe/client";
+import { TIER_RANK } from "@/lib/pricing/grouping";
 
 const isProduction =
   process.env.NODE_ENV === "production" ||
@@ -103,13 +104,13 @@ export async function POST(request: NextRequest) {
       if (addonRows.length !== addon_ids.length) {
         return NextResponse.json({ error: "One or more add-ons unavailable" }, { status: 400 });
       }
-      const tierRank: Record<string, number> = {
-        individual: 0,
-        professional: 1,
-        corporate: 2,
-      };
+      // Tier-rank gate — single source of truth in lib/pricing/grouping.ts.
+      // Unknown tier values (e.g. legacy rows) default to 99 for the addon
+      // (always blocked) and 0 for the plan (most permissive), preserving
+      // the original guard behaviour.
+      const ranks = TIER_RANK as Record<string, number | undefined>;
       for (const a of addonRows) {
-        if ((tierRank[a.min_tier] ?? 99) > (tierRank[plan.tier] ?? 0)) {
+        if ((ranks[a.min_tier] ?? 99) > (ranks[plan.tier] ?? 0)) {
           return NextResponse.json(
             { error: `Add-on requires ${a.min_tier} tier or above` },
             { status: 400 }
