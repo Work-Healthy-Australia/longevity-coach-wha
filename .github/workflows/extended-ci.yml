@@ -24,13 +24,6 @@ name: Extended CI (manual)
 #     key as repo secrets, then re-enable on PR.
 #   - Owner: TBD. Tracked under Epic 14.
 #
-# lighthouse
-#   - Needs a deploy URL or local Next.js server. Currently the job has
-#     neither — pnpm exec lhci autorun has nothing to audit.
-#   - Fix: `pnpm build && pnpm start &` before lhci, OR point lhci at the
-#     Vercel preview URL (passed via $VERCEL_URL).
-#   - Owner: TBD. Tracked under Epic 14.
-
 on:
   workflow_dispatch:
 
@@ -112,18 +105,3 @@ jobs:
           NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
           NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}
 
-  lighthouse:
-    name: Lighthouse audit
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'pnpm'
-      - run: pnpm install --frozen-lockfile
-      - name: Lighthouse CI
-        run: pnpm exec lhci autorun
-        env:
-          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
