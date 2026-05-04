@@ -72,6 +72,13 @@ jobs:
           psql -v ON_ERROR_STOP=1 -c "CREATE EXTENSION IF NOT EXISTS pgtap WITH SCHEMA extensions;"
           psql -v ON_ERROR_STOP=1 -c "CREATE EXTENSION IF NOT EXISTS vector;"
 
+      # Stub auth.uid() / auth.jwt() / auth.role() so RLS-policy migrations
+      # don't immediately fail. Bootstrap is partial — see file header for
+      # the wider blocker (storage / vault / realtime schemas).
+      - name: Apply CI auth-helper bootstrap
+        run: |
+          psql -v ON_ERROR_STOP=1 -f supabase/tests/_ci_bootstrap.sql
+
       - name: Apply migrations in order
         run: |
           for f in $(ls supabase/migrations/*.sql | sort); do
